@@ -7,4 +7,10 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'dataview/home.html')
 
-class
+class CaregiverPageTest(TestCase):
+    def test_caregiver_page_uses_correct_template(self):
+        response = self.client.get('/data/caregiver')
+        self.assertTemplateUsed(response, 'dataview/caregiver.html')
+
+    def test_mother_page_contains_caregiver_id(self):
+        pass
