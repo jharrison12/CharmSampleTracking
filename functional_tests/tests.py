@@ -30,9 +30,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         #User types in link to caregiver page
         self.browser.get(f'{self.browser.current_url}data/caregiver')
-        time.sleep(10)
+
         #User looks for one caregiver id in page
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('P7000',body_text)
         #User sees the other charm project sampleid
         self.assertIn('P7001',body_text)
+        #User visits the page for P7000
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000')
+        body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('P7000',body_text_id_page)
