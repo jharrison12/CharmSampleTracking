@@ -12,7 +12,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
-        Caregiver.objects.create(charm_project_identifier='P7000')
+        Caregiver.objects.create(charm_project_identifier='P7000', date_of_birth='1985-07-03')
         Caregiver.objects.create(charm_project_identifier='P7001')
 
     def tearDown(self):
@@ -21,6 +21,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_user_can_view_web_page_of_mother_ids(self):
         #User visits the initial page and is given a list of mother ids
+        home_page = self.live_server_url
         self.browser.get(self.live_server_url)
         self.assertIn('Charm Sample Tracking', self.browser.title)
 
@@ -36,7 +37,21 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('P7000',body_text)
         #User sees the other charm project sampleid
         self.assertIn('P7001',body_text)
+
         #User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000')
         body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
+        time.sleep(5)
+        self.assertIn('July 3, 1985',body_text_id_page)
         self.assertIn('P7000',body_text_id_page)
+
+        #User visits the page for P7001
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7001')
+        body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('P7001', body_text_id_page)
+
+
+
