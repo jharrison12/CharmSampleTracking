@@ -16,6 +16,7 @@ class CaregiverModelsTest(TestCase):
         caregiver_one.charm_project_identifier = 'P7000'
         caregiver_one.date_of_birth = '1985-07-03'
         caregiver_one.ewcp_participant_identifier='0000'
+        caregiver_one.echo_pin='333'
         caregiver_one.save()
 
         caregiver_two = Caregiver()
@@ -34,6 +35,7 @@ class CaregiverModelsTest(TestCase):
         self.assertEqual(first_saved_caregiver.charm_project_identifier, 'P7000')
         self.assertEqual(first_saved_caregiver.date_of_birth,datetime.date(1985, 7, 3))
         self.assertEqual(first_saved_caregiver.ewcp_participant_identifier,'0000')
+        self.assertEqual(first_saved_caregiver.echo_pin,'333')
         self.assertEqual(second_saved_caregiver.charm_project_identifier, 'P7001')
         self.assertEqual(second_saved_caregiver.date_of_birth,datetime.date(1985, 7, 4))
 
@@ -87,3 +89,8 @@ class CaregiverInformationPageTest(TestCase):
         Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01')
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, '01')
+
+    def test_caregiver_information_page_contains_participation_id(self):
+        Caregiver.objects.create(charm_project_identifier='P7000',echo_pin='333')
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, '333')

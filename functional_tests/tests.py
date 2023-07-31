@@ -12,7 +12,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
-        Caregiver.objects.create(charm_project_identifier='P7000', date_of_birth='1985-07-03',ewcp_participant_identifier='0000',participation_level_identifier='01')
+        Caregiver.objects.create(charm_project_identifier='P7000', date_of_birth='1985-07-03',ewcp_participant_identifier='0000',participation_level_identifier='01',
+                                 echo_pin='333')
         Caregiver.objects.create(charm_project_identifier='P7001')
 
     def tearDown(self):
@@ -48,6 +49,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('P7000',body_text_id_page)
         self.assertIn('0000',body_text_id_page)
         self.assertIn('01',body_text_id_page)
+        self.assertIn('Echo Pin: 333',body_text_id_page)
 
         #User visits the page for P7001
         self.browser.get(self.live_server_url)

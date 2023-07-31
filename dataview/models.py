@@ -6,3 +6,4 @@ class Caregiver(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     ewcp_participant_identifier = models.CharField(default='',max_length=16)
     participation_level_identifier = models.CharField(default='',max_length=2)
+    echo_pin = models.CharField(default='',max_length=3)
