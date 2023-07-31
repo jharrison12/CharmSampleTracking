@@ -5,7 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-{{ caregiver.charm_project_identifier }}
-{{ caregiver.date_of_birth }}
+    <ul>
+        <li>{{ caregiver.charm_project_identifier }}</li>
+        <li>{{ caregiver.date_of_birth }}</li>
+        <li>{{ caregiver.ewcp_participant_identifier }}</li>
+        <li>Participation Level Identifier: {{ caregiver.participation_level_identifier }}</li>
+    </ul>
 </body>
 </html>

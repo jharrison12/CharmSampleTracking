@@ -4,3 +4,5 @@ from django.db import models
 class Caregiver(models.Model):
     charm_project_identifier = models.CharField(default='', max_length=6)
     date_of_birth = models.DateField(blank=True, null=True)
+    ewcp_participant_identifier = models.CharField(default='',max_length=16)
+    participation_level_identifier = models.CharField(default='',max_length=2)

@@ -15,6 +15,7 @@ class CaregiverModelsTest(TestCase):
         caregiver_one = Caregiver()
         caregiver_one.charm_project_identifier = 'P7000'
         caregiver_one.date_of_birth = '1985-07-03'
+        caregiver_one.ewcp_participant_identifier='0000'
         caregiver_one.save()
 
         caregiver_two = Caregiver()
@@ -32,6 +33,7 @@ class CaregiverModelsTest(TestCase):
         second_saved_caregiver = saved_caregivers[1]
         self.assertEqual(first_saved_caregiver.charm_project_identifier, 'P7000')
         self.assertEqual(first_saved_caregiver.date_of_birth,datetime.date(1985, 7, 3))
+        self.assertEqual(first_saved_caregiver.ewcp_participant_identifier,'0000')
         self.assertEqual(second_saved_caregiver.charm_project_identifier, 'P7001')
         self.assertEqual(second_saved_caregiver.date_of_birth,datetime.date(1985, 7, 4))
 
@@ -72,6 +74,16 @@ class CaregiverInformationPageTest(TestCase):
         self.assertContains(response,'P7001')
 
     def test_caregiver_information_page_contains_birthday(self):
-        Caregiver.objects.create(charm_project_identifier='P7000')
+        Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3))
         response = self.client.get(f'/data/caregiver/P7000')
-        self.assertContains(response, '1985-07-03')
+        self.assertContains(response, 'July 3, 1985')
+
+    def test_caregiver_information_page_contains_ewcp(self):
+        Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000')
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, '0000')
+
+    def test_caregiver_information_page_contains_participation_id(self):
+        Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01')
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, '01')
