@@ -1,6 +1,10 @@
+import logging
 from django.test import TestCase
-from dataview.models import Caregiver
+from dataview.models import Caregiver,Name,CaregiverName
 import datetime
+from django.utils import timezone
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Create your tests here.
 class HomePageTest(TestCase):
@@ -39,6 +43,21 @@ class CaregiverModelsTest(TestCase):
         self.assertEqual(second_saved_caregiver.charm_project_identifier, 'P7001')
         self.assertEqual(second_saved_caregiver.date_of_birth,datetime.date(1985, 7, 4))
 
+class CaregiverNameTest(TestCase):
+
+    def test_caregiver_links_to_name_class(self):
+        first_name = Name.objects.create(first_name='Jane',last_name='Doe')
+        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                 specimen_id='4444',echo_pin='333')
+        CaregiverName.objects.create(caregiver_fk=first_caregiver,name_fk=first_name,revision_number=1,eff_start_date=timezone.now())
+
+        caregiver_one = Caregiver.objects.first()
+
+        self.assertEqual(caregiver_one,first_caregiver)
+
+        caregiver_test = Caregiver.objects.filter(caregivername__name_fk__first_name='Jane').first()
+
+        self.assertEqual(caregiver_test,caregiver_one)
 
 class CaregiverPageTest(TestCase):
     def test_caregiver_page_uses_correct_template(self):
@@ -58,39 +77,64 @@ class CaregiverPageTest(TestCase):
 
 class CaregiverInformationPageTest(TestCase):
 
+    def setUp(self):
+        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                 specimen_id='4444',echo_pin='333')
+        second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',date_of_birth=datetime.date(1985,7,4),ewcp_participant_identifier='0001', participation_level_identifier='02',
+                                 specimen_id='5555',echo_pin='444')
+
+        first_caregiver_name = Name()
+        first_caregiver_name.first_name = 'Jane'
+        first_caregiver_name.last_name = 'Doe'
+        first_caregiver_name.save()
+
+        second_caregiver_name = Name()
+        second_caregiver_name.first_name = 'Jessica'
+        second_caregiver_name.last_name = 'Smith'
+        second_caregiver_name.save()
+
+        CaregiverName.objects.create(caregiver_fk=first_caregiver, name_fk=first_caregiver_name, revision_number=1,
+                                     eff_start_date=timezone.now())
+
+        CaregiverName.objects.create(caregiver_fk=second_caregiver, name_fk=second_caregiver_name, revision_number=1,
+                                     eff_start_date=timezone.now())
+
+
+
     def test_caregiver_information_page_uses_correct_template(self):
-        Caregiver.objects.create(charm_project_identifier='P7000')
         response = self.client.get('/data/caregiver/P7000')
         self.assertTemplateUsed(response,'dataview/caregiver_info.html')
 
     def test_caregiver_info_page_contains_caregiver_id(self):
-        Caregiver.objects.create(charm_project_identifier='P7000')
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response,'P7000')
 
     def test_other_caregiver_info_page_contains_other_caregiver_id(self):
-        Caregiver.objects.create(charm_project_identifier='P7000')
-        Caregiver.objects.create(charm_project_identifier='P7001')
         response = self.client.get(f'/data/caregiver/P7001')
         self.assertNotContains(response,'P7000')
         self.assertContains(response,'P7001')
 
     def test_caregiver_information_page_contains_birthday(self):
-        Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3))
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, 'July 3, 1985')
 
     def test_caregiver_information_page_contains_ewcp(self):
-        Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000')
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, '0000')
 
     def test_caregiver_information_page_contains_participation_id(self):
-        Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01')
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, '01')
 
-    def test_caregiver_information_page_contains_participation_id(self):
-        Caregiver.objects.create(charm_project_identifier='P7000',echo_pin='333')
+    def test_caregiver_information_page_contains_echo_pin(self):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, '333')
+
+    def test_caregiver_information_page_contains_specimen_id(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, '4444')
+
+    def test_caregiver_information_page_contains_name(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, 'Jane')
+        self.assertContains(response, 'Doe')

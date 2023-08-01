@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from dataview.models import Caregiver
+from dataview.models import Caregiver,Name,CaregiverName
 
 # Create your views here.
 def home_page(request):
@@ -11,4 +11,5 @@ def caregiver(request):
 
 def caregiver_info(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    return render(request=request,template_name='dataview/caregiver_info.html',context={'caregiver':caregiver})
+    caregiver_name = Name.objects.get(caregivername__caregiver_fk__charm_project_identifier=caregiver_charm_id)
+    return render(request=request,template_name='dataview/caregiver_info.html',context={'caregiver':caregiver,'caregiver_name':caregiver_name})

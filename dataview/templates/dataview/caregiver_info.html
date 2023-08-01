@@ -5,12 +5,14 @@
     <title>Title</title>
 </head>
 <body>
+    <h1>Mothers name is: {{ caregiver_name.last_name }}, {{ caregiver_name.first_name }}</h1>
     <ul>
-        <li>{{ caregiver.charm_project_identifier }}</li>
-        <li>{{ caregiver.date_of_birth }}</li>
-        <li>{{ caregiver.ewcp_participant_identifier }}</li>
+        <li>Echo ID: {{ caregiver.charm_project_identifier }}</li>
+        <li>Date of Birth: {{ caregiver.date_of_birth }}</li>
+        <li>EWCP Participant Identifier{{ caregiver.ewcp_participant_identifier }}</li>
         <li>Participation Level Identifier: {{ caregiver.participation_level_identifier }}</li>
         <li>Echo Pin: {{ caregiver.echo_pin }}</li>
+        <li>Specimen Id: {{ caregiver.specimen_id }}</li>
     </ul>
 </body>
 </html>
