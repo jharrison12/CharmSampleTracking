@@ -31,3 +31,15 @@ class CaregiverName(models.Model):
     status = models.CharField(default='C',max_length=1)
     eff_start_date = models.DateTimeField()
     eff_end_date = models.DateTimeField(default=datetime.datetime(2999, 12, 31, 0, 0, 0, 127325, tzinfo=pytz.UTC))
+
+class Address(models.Model):
+    address_line_1 = models.CharField(default='', max_length=255)
+    address_line_2 = models.CharField(default='', max_length=255)
+    city = models.CharField(default='', max_length=255)
+    state = models.CharField(default='MI', max_length=2)
+    zip_code = models.CharField(default='',max_length=9)
+
+class CaregiverAddress(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
+

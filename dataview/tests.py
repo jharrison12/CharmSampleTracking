@@ -1,6 +1,6 @@
 import logging
 from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress
 import datetime
 from django.utils import timezone
 
@@ -58,6 +58,19 @@ class CaregiverNameTest(TestCase):
         caregiver_test = Caregiver.objects.filter(caregivername__name_fk__first_name='Jane').first()
 
         self.assertEqual(caregiver_test,caregiver_one)
+
+class CaregiverAddressTest(TestCase):
+    def test_caregiver_links_to_address_class(self):
+        address = Address.objects.create(address_line_1='one drive',city='Lansing',state='MI',zip_code='38000')
+        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
+                                                   date_of_birth=datetime.date(1985, 7, 3),
+                                                   ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                                   specimen_id='4444', echo_pin='333')
+        CaregiverAddress.objects.create(caregiver_fk=first_caregiver,address_fk=address)
+
+        caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__address_line_1='one drive').first()
+
+        self.assertEqual(first_caregiver,caregiver_address_test)
 
 class CaregiverPageTest(TestCase):
     def test_caregiver_page_uses_correct_template(self):
