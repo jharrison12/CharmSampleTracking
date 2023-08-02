@@ -9,13 +9,17 @@
     <ul>
         <li>Echo ID: {{ caregiver.charm_project_identifier }}</li>
         <li>Date of Birth: {{ caregiver.date_of_birth }}</li>
-        <li>EWCP Participant Identifier{{ caregiver.ewcp_participant_identifier }}</li>
+        <li>EWCP Participant Identifier: {{ caregiver.ewcp_participant_identifier }}</li>
         <li>Participation Level Identifier: {{ caregiver.participation_level_identifier }}</li>
         <li>Echo Pin: {{ caregiver.echo_pin }}</li>
         <li>Specimen Id: {{ caregiver.specimen_id }}</li>
     </ul>
     <p>
-        Address: {{ caregiver_address.address_line_1 }}
+        Address: {{ caregiver_address.address_line_1 }}<br>
+                 {{ caregiver_address.address_line_2|default_if_none:"Empty" }}
+                 {{ caregiver_address.city }}<br>
+                 {{ caregiver_address.state }}<br>
+                 {{ caregiver_address.zip_code }}<br>
     </p>
 </body>
 </html>
