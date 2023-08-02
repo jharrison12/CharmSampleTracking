@@ -30,4 +30,4 @@ class CaregiverName(models.Model):
     #TODO add enumerate class
     status = models.CharField(default='C',max_length=1)
     eff_start_date = models.DateTimeField()
-    eff_end_date = models.DateTimeField(default=datetime.datetime(2013, 11, 20, 20, 8, 7, 127325, tzinfo=pytz.UTC))
+    eff_end_date = models.DateTimeField(default=datetime.datetime(2999, 12, 31, 0, 0, 0, 127325, tzinfo=pytz.UTC))
