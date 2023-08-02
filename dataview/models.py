@@ -43,3 +43,6 @@ class CaregiverAddress(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
 
+class CaregiverAddressMove(models.Model):
+    address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
+    address_move_date = models.DateField(blank=False,null=False)

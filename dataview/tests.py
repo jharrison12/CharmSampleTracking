@@ -1,6 +1,6 @@
 import logging
 from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,CaregiverAddressMove
 import datetime
 from django.utils import timezone
 
@@ -43,7 +43,7 @@ class CaregiverModelsTest(TestCase):
         self.assertEqual(second_saved_caregiver.charm_project_identifier, 'P7001')
         self.assertEqual(second_saved_caregiver.date_of_birth,datetime.date(1985, 7, 4))
 
-class CaregiverNameTest(TestCase):
+class CaregiverNameModelsTest(TestCase):
 
     def test_caregiver_links_to_name_class(self):
         first_name = Name.objects.create(first_name='Jane',last_name='Doe')
@@ -59,7 +59,8 @@ class CaregiverNameTest(TestCase):
 
         self.assertEqual(caregiver_test,caregiver_one)
 
-class CaregiverAddressTest(TestCase):
+class CaregiverAddressModelsTest(TestCase):
+
     def test_caregiver_links_to_address_class(self):
         address = Address.objects.create(address_line_1='one drive',city='Lansing',state='MI',zip_code='38000')
         first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
@@ -71,6 +72,33 @@ class CaregiverAddressTest(TestCase):
         caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__address_line_1='one drive').first()
 
         self.assertEqual(first_caregiver,caregiver_address_test)
+
+    def test_caregiver_address_move_works(self):
+        address = Address.objects.create(address_line_1='future street',address_line_2='apt 1',city='Lansing',state='MI',zip_code='38000')
+        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
+                                                   date_of_birth=datetime.date(1985, 7, 3),
+                                                   ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                                   specimen_id='4444', echo_pin='333')
+        CaregiverAddress.objects.create(caregiver_fk=first_caregiver,address_fk=address)
+        one_caregiver_address = CaregiverAddressMove.objects.create(address_fk=address,address_move_date=datetime.date.today())
+
+        caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__caregiveraddressmove=one_caregiver_address).first()
+
+        self.assertEqual(first_caregiver,caregiver_address_test)
+
+
+
+class CaregiverEmailModelsTest(TestCase):
+
+    def test_email_links_to_caregier(self):
+        email = Email.objects.create(email='jharrison12@gmail.com')
+        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
+                                                   date_of_birth=datetime.date(1985, 7, 3),
+                                                   ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                                   specimen_id='4444', echo_pin='333')
+        self.assertFail()
+
+
 
 class CaregiverPageTest(TestCase):
     def test_caregiver_page_uses_correct_template(self):
