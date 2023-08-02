@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
-from dataview.models import Caregiver,Name,CaregiverName
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress
 import datetime
 import time
 from django.utils import timezone
@@ -34,6 +34,14 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         CaregiverName.objects.create(caregiver_fk=second_caregiver, name_fk=second_caregiver_name, revision_number=1,
                                      eff_start_date=timezone.now())
+
+        #Create address
+        address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
+        CaregiverAddress.objects.create(caregiver_fk=first_caregiver, address_fk=address)
+
+        address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
+        CaregiverAddress.objects.create(caregiver_fk=second_caregiver, address_fk=address2)
+
 
     def tearDown(self):
         self.browser.quit()
@@ -72,6 +80,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('01',body_text_id_page)
         self.assertIn('Echo Pin: 333',body_text_id_page)
         self.assertIn('Specimen Id: 4444',body_text_id_page)
+        self.assertIn('Address: One Drive', body_text_id_page)
 
 
         #User visits the page for P7001

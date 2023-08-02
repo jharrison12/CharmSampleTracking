@@ -112,6 +112,12 @@ class CaregiverInformationPageTest(TestCase):
         CaregiverName.objects.create(caregiver_fk=second_caregiver, name_fk=second_caregiver_name, revision_number=1,
                                      eff_start_date=timezone.now())
 
+        #Create address
+        address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
+        CaregiverAddress.objects.create(caregiver_fk=first_caregiver, address_fk=address)
+
+        address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
+        CaregiverAddress.objects.create(caregiver_fk=second_caregiver, address_fk=address2)
 
 
     def test_caregiver_information_page_uses_correct_template(self):
@@ -151,3 +157,7 @@ class CaregiverInformationPageTest(TestCase):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, 'Jane')
         self.assertContains(response, 'Doe')
+
+    def test_caregiver_information_page_contains_address(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, 'One Drive')
