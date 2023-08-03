@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress, Email, CaregiverEmail
 import datetime
 import time
 from django.utils import timezone
@@ -30,10 +30,10 @@ class NewVisitorTest(StaticLiveServerTestCase):
         second_caregiver_name.save()
 
         CaregiverName.objects.create(caregiver_fk=first_caregiver, name_fk=first_caregiver_name, revision_number=1,
-                                     eff_start_date=timezone.now())
+                                     eff_start_date=timezone.now(),status='C')
 
         CaregiverName.objects.create(caregiver_fk=second_caregiver, name_fk=second_caregiver_name, revision_number=1,
-                                     eff_start_date=timezone.now())
+                                     eff_start_date=timezone.now(),status='C')
 
         #Create address
         address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
@@ -41,6 +41,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
         CaregiverAddress.objects.create(caregiver_fk=second_caregiver, address_fk=address2)
+
+        #Create email
+        email = Email.objects.create(email='jharrison12@gmail.com')
+        CaregiverEmail.objects.create(email_fk=email,caregiver_fk=first_caregiver)
+
+        email2 = Email.objects.create(email='jharrison13@gmail.com')
+        CaregiverEmail.objects.create(email_fk=email2,caregiver_fk=second_caregiver)
 
 
     def tearDown(self):
@@ -72,7 +79,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000')
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
         self.assertIn('Mothers name is: Doe, Jane',header_text_id_page)
-        time.sleep(60)
+
         body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('July 3, 1985',body_text_id_page)
         self.assertIn('P7000',body_text_id_page)
@@ -80,7 +87,12 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('01',body_text_id_page)
         self.assertIn('Echo Pin: 333',body_text_id_page)
         self.assertIn('Specimen Id: 4444',body_text_id_page)
-        self.assertIn('Address: One Drive Lansing, MI 38000', body_text_id_page)
+        self.assertIn('Address: One Drive', body_text_id_page)
+        self.assertIn('Lansing', body_text_id_page)
+        self.assertIn('MI', body_text_id_page)
+        self.assertIn('38000', body_text_id_page)
+        self.assertIn('Email: jharrison12@gmail.com', body_text_id_page)
+
 
 
         #User visits the page for P7001

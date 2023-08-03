@@ -2,6 +2,7 @@ import datetime
 from django.utils import timezone
 from django.db import models
 import pytz
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class Caregiver(models.Model):
@@ -28,7 +29,10 @@ class CaregiverName(models.Model):
     name_fk = models.ForeignKey(Name,on_delete=models.PROTECT)
     revision_number = models.IntegerField(default=1,null=False)
     #TODO add enumerate class
-    status = models.CharField(default='C',max_length=1)
+    class CaregiverNameStatusChoice (models.TextChoices):
+        CURRENT = 'C', _('Current')
+        ARCHIVED = 'A', _('Archived')
+    status = models.CharField(default=CaregiverNameStatusChoice.CURRENT,choices=CaregiverNameStatusChoice.choices,max_length=1,)
     eff_start_date = models.DateTimeField()
     eff_end_date = models.DateTimeField(default=datetime.datetime(2999, 12, 31, 0, 0, 0, 127325, tzinfo=pytz.UTC))
 
@@ -43,6 +47,22 @@ class CaregiverAddress(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
 
-class CaregiverAddressMove(models.Model):
+class AddressMove(models.Model):
     address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
     address_move_date = models.DateField(blank=False,null=False)
+
+class Email(models.Model):
+    email = models.EmailField(null=True)
+
+class CaregiverEmail(models.Model):
+    email_fk = models.ForeignKey(Email,on_delete=models.PROTECT)
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+
+    class EmailTypeChoices(models.TextChoices):
+        PRIMARY = 'PR',_('Primary')
+        SECONDARY = 'SD',_('Secondary')
+        INACTIVE = 'IN',_('Inactive')
+
+    email_type = models.CharField(max_length=2,choices=EmailTypeChoices.choices,default=EmailTypeChoices.PRIMARY)
+
+    date_change = models.DateField(blank=False,null=False,default=timezone.now)

@@ -1,10 +1,10 @@
 import logging
 from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,CaregiverAddressMove
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,AddressMove,Email,CaregiverEmail
 import datetime
 from django.utils import timezone
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.CRITICAL)
 
 # Create your tests here.
 class HomePageTest(TestCase):
@@ -49,7 +49,7 @@ class CaregiverNameModelsTest(TestCase):
         first_name = Name.objects.create(first_name='Jane',last_name='Doe')
         first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
                                  specimen_id='4444',echo_pin='333')
-        CaregiverName.objects.create(caregiver_fk=first_caregiver,name_fk=first_name,revision_number=1,eff_start_date=timezone.now())
+        CaregiverName.objects.create(caregiver_fk=first_caregiver,name_fk=first_name,revision_number=1,eff_start_date=timezone.now(),status='C')
 
         caregiver_one = Caregiver.objects.first()
 
@@ -80,9 +80,9 @@ class CaregiverAddressModelsTest(TestCase):
                                                    ewcp_participant_identifier='0000', participation_level_identifier='01',
                                                    specimen_id='4444', echo_pin='333')
         CaregiverAddress.objects.create(caregiver_fk=first_caregiver,address_fk=address)
-        one_caregiver_address = CaregiverAddressMove.objects.create(address_fk=address,address_move_date=datetime.date.today())
+        one_caregiver_address = AddressMove.objects.create(address_fk=address,address_move_date=datetime.date.today())
 
-        caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__caregiveraddressmove=one_caregiver_address).first()
+        caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__addressmove=one_caregiver_address).first()
 
         self.assertEqual(first_caregiver,caregiver_address_test)
 
@@ -96,7 +96,12 @@ class CaregiverEmailModelsTest(TestCase):
                                                    date_of_birth=datetime.date(1985, 7, 3),
                                                    ewcp_participant_identifier='0000', participation_level_identifier='01',
                                                    specimen_id='4444', echo_pin='333')
-        self.assertFail()
+
+        CaregiverEmail.objects.create(caregiver_fk=first_caregiver,email_fk=email,email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
+
+        caregiver_email_test = Caregiver.objects.filter(caregiveremail__email_fk__email__contains='jharrison').first()
+
+        self.assertEqual(caregiver_email_test,first_caregiver)
 
 
 
@@ -135,10 +140,10 @@ class CaregiverInformationPageTest(TestCase):
         second_caregiver_name.save()
 
         CaregiverName.objects.create(caregiver_fk=first_caregiver, name_fk=first_caregiver_name, revision_number=1,
-                                     eff_start_date=timezone.now())
+                                     eff_start_date=timezone.now(),status='C')
 
         CaregiverName.objects.create(caregiver_fk=second_caregiver, name_fk=second_caregiver_name, revision_number=1,
-                                     eff_start_date=timezone.now())
+                                     eff_start_date=timezone.now(),status='C')
 
         #Create address
         address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
@@ -146,6 +151,13 @@ class CaregiverInformationPageTest(TestCase):
 
         address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
         CaregiverAddress.objects.create(caregiver_fk=second_caregiver, address_fk=address2)
+
+        #Create email
+        email = Email.objects.create(email='jharrison12@gmail.com')
+        CaregiverEmail.objects.create(email_fk=email,caregiver_fk=first_caregiver,email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
+
+        email2 = Email.objects.create(email='jharrison13@gmail.com')
+        CaregiverEmail.objects.create(email_fk=email2,caregiver_fk=second_caregiver,email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
 
 
     def test_caregiver_information_page_uses_correct_template(self):
@@ -189,3 +201,7 @@ class CaregiverInformationPageTest(TestCase):
     def test_caregiver_information_page_contains_address(self):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, 'One Drive')
+
+    def test_caregiver_information_page_contains_email(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, 'jharrison12@gmail.com')
