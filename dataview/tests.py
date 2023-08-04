@@ -59,6 +59,9 @@ class CaregiverNameModelsTest(TestCase):
 
         self.assertEqual(caregiver_test,caregiver_one)
 
+    def test_caregiver_name_can_hold_current_name_archived_name(self):
+        self.assertTrue(False, 'finish the test')
+
 class CaregiverAddressModelsTest(TestCase):
 
     def test_caregiver_links_to_address_class(self):
@@ -90,7 +93,7 @@ class CaregiverAddressModelsTest(TestCase):
 
 class CaregiverEmailModelsTest(TestCase):
 
-    def test_email_links_to_caregier(self):
+    def test_email_links_to_caregiver(self):
         email = Email.objects.create(email='jharrison12@gmail.com')
         first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                    date_of_birth=datetime.date(1985, 7, 3),
@@ -103,6 +106,12 @@ class CaregiverEmailModelsTest(TestCase):
 
         self.assertEqual(caregiver_email_test,first_caregiver)
 
+    def test
+
+class CaregiverPhoneModelsTest(TestCase):
+
+    def test_caregiver_phone_links_to_caregiver(self):
+        self.assertTrue(False,'finish test')
 
 
 class CaregiverPageTest(TestCase):
@@ -139,8 +148,13 @@ class CaregiverInformationPageTest(TestCase):
         second_caregiver_name.last_name = 'Smith'
         second_caregiver_name.save()
 
+        first_caregiver_old_name = Name.objects.create(first_name='Jessica',last_name='Smith')
+
         CaregiverName.objects.create(caregiver_fk=first_caregiver, name_fk=first_caregiver_name, revision_number=1,
                                      eff_start_date=timezone.now(),status='C')
+
+        CaregiverName.objects.create(caregiver_fk=first_caregiver, name_fk=first_caregiver_old_name, revision_number=2,
+                                     eff_start_date=timezone.now(),status='A')
 
         CaregiverName.objects.create(caregiver_fk=second_caregiver, name_fk=second_caregiver_name, revision_number=1,
                                      eff_start_date=timezone.now(),status='C')
@@ -193,15 +207,35 @@ class CaregiverInformationPageTest(TestCase):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, '4444')
 
-    def test_caregiver_information_page_contains_name(self):
+    def test_caregiver_information_page_contains_active_name(self):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, 'Jane')
         self.assertContains(response, 'Doe')
+
+    def test_caregiver_information_page_does_not_contain_archived_name(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertNotContains(response, 'Jessica')
+        self.assertNotContains(response, 'Smith')
 
     def test_caregiver_information_page_contains_address(self):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, 'One Drive')
 
-    def test_caregiver_information_page_contains_email(self):
+    def test_caregiver_information_page_shows_primary_email(self):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, 'jharrison12@gmail.com')
+
+    def test_caregiver_information_page_shows_secondary_email(self):
+        self.assertTrue(False,'finish test')
+
+    def test_caregiver_information_page_does_not_show_archived_email(self):
+        self.assertTrue(False,'finish test')
+
+    def test_caregiver_information_page_shows_primary_phone(self):
+        self.assertTrue(False,'finish test')
+
+    def test_caregiver_information_page_shows_secondary_phone(self):
+        self.assertTrue(False,'finish test')
+
+    def test_caregiver_information_page_does_not_show_archived_phone(self):
+        self.assertTrue(False, 'finish test')

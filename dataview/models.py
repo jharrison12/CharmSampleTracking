@@ -66,3 +66,19 @@ class CaregiverEmail(models.Model):
     email_type = models.CharField(max_length=2,choices=EmailTypeChoices.choices,default=EmailTypeChoices.PRIMARY)
 
     date_change = models.DateField(blank=False,null=False,default=timezone.now)
+
+class Phone(models.Model):
+    area_code = models.CharField(null=False,blank=False,max_length=3)
+    phone_number = models.CharField(null=False,blank=False,max_length=8)
+
+class CaregiverPhone(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    phone_number_fk = models.ForeignKey(Phone,on_delete=models.PROTECT)
+
+    class CaregiverPhoneTypeChoices(models.TextChoices):
+        PRIMARY = 'PR',_('Primary')
+        SECONDARY = 'SD',_('Secondary')
+        INACTIVE = 'IN',_('Inactive')
+
+    phone_type = models.CharField(max_length=2,choices=CaregiverPhoneTypeChoices.choices,default=CaregiverPhoneTypeChoices.PRIMARY)
+    date_change = models.DateField(blank=False,null=False,default=timezone.now())
