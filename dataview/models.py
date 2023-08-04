@@ -81,4 +81,4 @@ class CaregiverPhone(models.Model):
         INACTIVE = 'IN',_('Inactive')
 
     phone_type = models.CharField(max_length=2,choices=CaregiverPhoneTypeChoices.choices,default=CaregiverPhoneTypeChoices.PRIMARY)
-    date_change = models.DateField(blank=False,null=False,default=timezone.now())
+    date_change = models.DateField(blank=False,null=False,default=timezone.now)
