@@ -55,6 +55,7 @@ class Email(models.Model):
     email = models.EmailField(null=True)
 
 class CaregiverEmail(models.Model):
+    #Should make the combination of caregiver and email type unique?  Dont need more than one primary, etc.
     email_fk = models.ForeignKey(Email,on_delete=models.PROTECT)
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
 
@@ -73,7 +74,7 @@ class Phone(models.Model):
 
 class CaregiverPhone(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
-    phone_number_fk = models.ForeignKey(Phone,on_delete=models.PROTECT)
+    phone_fk = models.ForeignKey(Phone,on_delete=models.PROTECT)
 
     class CaregiverPhoneTypeChoices(models.TextChoices):
         PRIMARY = 'PR',_('Primary')

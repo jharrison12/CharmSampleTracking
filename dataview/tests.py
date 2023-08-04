@@ -1,6 +1,8 @@
 import logging
+import unittest
+
 from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,AddressMove,Email,CaregiverEmail
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone
 import datetime
 from django.utils import timezone
 
@@ -59,6 +61,7 @@ class CaregiverNameModelsTest(TestCase):
 
         self.assertEqual(caregiver_test,caregiver_one)
 
+    @unittest.skip
     def test_caregiver_name_can_hold_current_name_archived_name(self):
         self.assertTrue(False, 'finish the test')
 
@@ -106,11 +109,12 @@ class CaregiverEmailModelsTest(TestCase):
 
         self.assertEqual(caregiver_email_test,first_caregiver)
 
+    @unittest.skip
     def test_caregiver_email_holds_primary_secondary_email(self):
         self.assertTrue(False,'finish test')
 
 class CaregiverPhoneModelsTest(TestCase):
-
+    @unittest.skip
     def test_caregiver_phone_links_to_caregiver(self):
         self.assertTrue(False,'finish test')
 
@@ -171,8 +175,18 @@ class CaregiverInformationPageTest(TestCase):
         email = Email.objects.create(email='jharrison12@gmail.com')
         CaregiverEmail.objects.create(email_fk=email,caregiver_fk=first_caregiver,email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
 
+        email_secondary = Email.objects.create(email='f@gmail.com')
+        CaregiverEmail.objects.create(email_fk=email_secondary,caregiver_fk=first_caregiver,email_type=CaregiverEmail.EmailTypeChoices.SECONDARY)
+
+        email_archived = Email.objects.create(email='INACTIVE@gmail.com')
+        CaregiverEmail.objects.create(email_fk=email_archived, caregiver_fk=first_caregiver,
+                                      email_type=CaregiverEmail.EmailTypeChoices.INACTIVE)
+
         email2 = Email.objects.create(email='jharrison13@gmail.com')
         CaregiverEmail.objects.create(email_fk=email2,caregiver_fk=second_caregiver,email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
+
+        phone = Phone.objects.create(area_code='555',phone_number='555-5555')
+        CaregiverPhone.objects.create(phone_fk=phone,caregiver_fk=first_caregiver,phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.PRIMARY)
 
 
     def test_caregiver_information_page_uses_correct_template(self):
@@ -227,16 +241,21 @@ class CaregiverInformationPageTest(TestCase):
         self.assertContains(response, 'jharrison12@gmail.com')
 
     def test_caregiver_information_page_shows_secondary_email(self):
-        self.assertTrue(False,'finish test')
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, 'f@gmail.com')
 
     def test_caregiver_information_page_does_not_show_archived_email(self):
-        self.assertTrue(False,'finish test')
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertNotContains(response, 'INACTIVE@gmail.com')
 
     def test_caregiver_information_page_shows_primary_phone(self):
-        self.assertTrue(False,'finish test')
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, '555-555-5555')
 
+    @unittest.skip
     def test_caregiver_information_page_shows_secondary_phone(self):
         self.assertTrue(False,'finish test')
 
+    @unittest.skip
     def test_caregiver_information_page_does_not_show_archived_phone(self):
         self.assertTrue(False, 'finish test')
