@@ -74,6 +74,10 @@ class NewVisitorTest(StaticLiveServerTestCase):
         CaregiverPhone.objects.create(phone_fk=phone, caregiver_fk=first_caregiver,
                                       phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.PRIMARY)
 
+        phone_secondary = Phone.objects.create(area_code='666', phone_number='666-6666')
+        CaregiverPhone.objects.create(phone_fk=phone_secondary, caregiver_fk=first_caregiver,
+                                      phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.SECONDARY)
+
     def tearDown(self):
         self.browser.quit()
 
@@ -118,6 +122,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Email Primary: jharrison12@gmail.com', body_text_id_page)
         self.assertIn('Email Secondary: f@gmail.com', body_text_id_page)
         self.assertIn('Primary Phone: 555-555-5555', body_text_id_page)
+        self.assertIn('Secondary Phone: 666-666-6666', body_text_id_page)
 
 
 

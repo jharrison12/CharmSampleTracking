@@ -188,6 +188,10 @@ class CaregiverInformationPageTest(TestCase):
         phone = Phone.objects.create(area_code='555',phone_number='555-5555')
         CaregiverPhone.objects.create(phone_fk=phone,caregiver_fk=first_caregiver,phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.PRIMARY)
 
+        phone_secondary = Phone.objects.create(area_code='666', phone_number='666-6666')
+        CaregiverPhone.objects.create(phone_fk=phone_secondary, caregiver_fk=first_caregiver,
+                                      phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.SECONDARY)
+
 
     def test_caregiver_information_page_uses_correct_template(self):
         response = self.client.get('/data/caregiver/P7000')
@@ -252,9 +256,9 @@ class CaregiverInformationPageTest(TestCase):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, '555-555-5555')
 
-    @unittest.skip
     def test_caregiver_information_page_shows_secondary_phone(self):
-        self.assertTrue(False,'finish test')
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response, '666-666-6666')
 
     @unittest.skip
     def test_caregiver_information_page_does_not_show_archived_phone(self):
