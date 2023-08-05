@@ -28,11 +28,10 @@ class CaregiverName(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     name_fk = models.ForeignKey(Name,on_delete=models.PROTECT)
     revision_number = models.IntegerField(default=1,null=False)
-    #TODO add enumerate class
     class CaregiverNameStatusChoice (models.TextChoices):
         CURRENT = 'C', _('Current')
         ARCHIVED = 'A', _('Archived')
-    status = models.CharField(default=CaregiverNameStatusChoice.CURRENT,choices=CaregiverNameStatusChoice.choices,max_length=1,)
+    status = models.CharField(default=CaregiverNameStatusChoice.CURRENT,choices=CaregiverNameStatusChoice.choices,max_length=1)
     eff_start_date = models.DateTimeField()
     eff_end_date = models.DateTimeField(default=datetime.datetime(2999, 12, 31, 0, 0, 0, 127325, tzinfo=pytz.UTC))
 

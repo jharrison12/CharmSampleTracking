@@ -47,76 +47,123 @@ class CaregiverModelsTest(TestCase):
 
 class CaregiverNameModelsTest(TestCase):
 
+    def setUp(self):
+        self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                 specimen_id='4444',echo_pin='333')
+
     def test_caregiver_links_to_name_class(self):
         first_name = Name.objects.create(first_name='Jane',last_name='Doe')
-        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
-                                 specimen_id='4444',echo_pin='333')
-        CaregiverName.objects.create(caregiver_fk=first_caregiver,name_fk=first_name,revision_number=1,eff_start_date=timezone.now(),status='C')
+
+        CaregiverName.objects.create(caregiver_fk=self.first_caregiver,name_fk=first_name,revision_number=1,eff_start_date=timezone.now(),status=CaregiverName.CaregiverNameStatusChoice.CURRENT)
 
         caregiver_one = Caregiver.objects.first()
 
-        self.assertEqual(caregiver_one,first_caregiver)
+        self.assertEqual(caregiver_one,self.first_caregiver)
 
         caregiver_test = Caregiver.objects.filter(caregivername__name_fk__first_name='Jane').first()
 
         self.assertEqual(caregiver_test,caregiver_one)
 
-    @unittest.skip
+
     def test_caregiver_name_can_hold_current_name_archived_name(self):
-        self.assertTrue(False, 'finish the test')
+        second_name = Name.objects.create(first_name='Jon',last_name='Smith')
+        first_name = Name.objects.create(first_name='Jane',last_name='Doe')
+
+        CaregiverName.objects.create(caregiver_fk=self.first_caregiver,name_fk=first_name,revision_number=1,eff_start_date=timezone.now(),status=CaregiverName.CaregiverNameStatusChoice.CURRENT)
+
+        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=second_name, revision_number=2,
+                                     eff_start_date=timezone.now(), status=CaregiverName.CaregiverNameStatusChoice.ARCHIVED)
+
+        caregiver_one = Caregiver.objects.first()
+
+        caregiver_test = Caregiver.objects.filter(caregivername__name_fk__first_name='Jane').first()
+
+        self.assertEqual(caregiver_test, caregiver_one)
+
+        caregiver_archived = Caregiver.objects.filter(caregivername__name_fk__first_name='Jon').first()
+
+        self.assertEqual(caregiver_archived, caregiver_one)
 
 class CaregiverAddressModelsTest(TestCase):
 
-    def test_caregiver_links_to_address_class(self):
-        address = Address.objects.create(address_line_1='one drive',city='Lansing',state='MI',zip_code='38000')
-        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
+    def setUp(self):
+        self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                    date_of_birth=datetime.date(1985, 7, 3),
                                                    ewcp_participant_identifier='0000', participation_level_identifier='01',
                                                    specimen_id='4444', echo_pin='333')
-        CaregiverAddress.objects.create(caregiver_fk=first_caregiver,address_fk=address)
 
+        self.address = Address.objects.create(address_line_1='one drive',city='Lansing',state='MI',zip_code='38000')
+        self.address_move = Address.objects.create(address_line_1='future street',address_line_2='apt 1',city='Lansing',state='MI',zip_code='38000')
+
+        CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,address_fk=self.address)
+        CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address_move)
+
+    def test_caregiver_links_to_address_class(self):
         caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__address_line_1='one drive').first()
 
-        self.assertEqual(first_caregiver,caregiver_address_test)
+        self.assertEqual(self.first_caregiver,caregiver_address_test)
 
     def test_caregiver_address_move_works(self):
-        address = Address.objects.create(address_line_1='future street',address_line_2='apt 1',city='Lansing',state='MI',zip_code='38000')
-        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
-                                                   date_of_birth=datetime.date(1985, 7, 3),
-                                                   ewcp_participant_identifier='0000', participation_level_identifier='01',
-                                                   specimen_id='4444', echo_pin='333')
-        CaregiverAddress.objects.create(caregiver_fk=first_caregiver,address_fk=address)
-        one_caregiver_address = AddressMove.objects.create(address_fk=address,address_move_date=datetime.date.today())
+        one_caregiver_address = AddressMove.objects.create(address_fk=self.address_move,address_move_date=datetime.date.today())
 
-        caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__addressmove=one_caregiver_address).first()
+        caregiver_address_test_move =Caregiver.objects.filter(caregiveraddress__address_fk__addressmove=one_caregiver_address).first()
 
-        self.assertEqual(first_caregiver,caregiver_address_test)
-
+        self.assertEqual(self.first_caregiver,caregiver_address_test_move)
 
 
 class CaregiverEmailModelsTest(TestCase):
 
+    def setUp(self):
+        self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
+                                                   date_of_birth=datetime.date(1985, 7, 3),
+                                                   ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                                   specimen_id='4444', echo_pin='333')
+        self.email = Email.objects.create(email='jharrison12@gmail.com')
+        self.email_secondary = Email.objects.create(email='bob@gmail.com')
+
+        CaregiverEmail.objects.create(caregiver_fk=self.first_caregiver, email_fk=self.email,
+                                      email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
+
+        CaregiverEmail.objects.create(caregiver_fk=self.first_caregiver, email_fk=self.email_secondary,
+                                      email_type=CaregiverEmail.EmailTypeChoices.SECONDARY)
+
     def test_email_links_to_caregiver(self):
-        email = Email.objects.create(email='jharrison12@gmail.com')
-        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
+        caregiver_email_test = Caregiver.objects.filter(caregiveremail__email_fk__email__contains='jharrison').first()
+
+        self.assertEqual(caregiver_email_test,self.first_caregiver)
+
+    def test_caregiver_email_holds_primary_secondary_email(self):
+        caregiver_email_test_sd = Caregiver.objects.filter(caregiveremail__email_type='SD').first()
+
+        self.assertEqual(caregiver_email_test_sd, self.first_caregiver)
+
+class CaregiverPhoneModelsTest(TestCase):
+
+    def setUp(self):
+        self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                    date_of_birth=datetime.date(1985, 7, 3),
                                                    ewcp_participant_identifier='0000', participation_level_identifier='01',
                                                    specimen_id='4444', echo_pin='333')
 
-        CaregiverEmail.objects.create(caregiver_fk=first_caregiver,email_fk=email,email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
+        self.phone = Phone.objects.create(area_code='777',phone_number='555-5555')
+        self.phone_inactive = Phone.objects.create(area_code='888', phone_number='888-8888')
 
-        caregiver_email_test = Caregiver.objects.filter(caregiveremail__email_fk__email__contains='jharrison').first()
+        CaregiverPhone.objects.create(caregiver_fk=self.first_caregiver,phone_fk=self.phone,phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.PRIMARY)
+        CaregiverPhone.objects.create(caregiver_fk=self.first_caregiver, phone_fk=self.phone_inactive, phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.INACTIVE)
 
-        self.assertEqual(caregiver_email_test,first_caregiver)
+        self.caregiver_one = Caregiver.objects.first()
 
-    @unittest.skip
-    def test_caregiver_email_holds_primary_secondary_email(self):
-        self.assertTrue(False,'finish test')
-
-class CaregiverPhoneModelsTest(TestCase):
-    @unittest.skip
     def test_caregiver_phone_links_to_caregiver(self):
-        self.assertTrue(False,'finish test')
+        caregiver_phone_test = Caregiver.objects.filter(caregiverphone__phone_fk__phone_number__contains='555').first()
+
+        self.assertEqual(self.caregiver_one,caregiver_phone_test)
+
+    def test_caregiver_phone_holds_primary_inactive(self):
+
+        caregiver_phone_test = Caregiver.objects.filter(caregiverphone__phone_type='IN').first()
+
+        self.assertEqual(self.caregiver_one,caregiver_phone_test)
+
 
 
 class CaregiverPageTest(TestCase):
@@ -192,6 +239,9 @@ class CaregiverInformationPageTest(TestCase):
         CaregiverPhone.objects.create(phone_fk=phone_secondary, caregiver_fk=first_caregiver,
                                       phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.SECONDARY)
 
+        phone_archived = Phone.objects.create(area_code='777', phone_number='666-6666')
+        CaregiverPhone.objects.create(phone_fk=phone_archived, caregiver_fk=first_caregiver,
+                                      phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.INACTIVE)
 
     def test_caregiver_information_page_uses_correct_template(self):
         response = self.client.get('/data/caregiver/P7000')
@@ -260,6 +310,6 @@ class CaregiverInformationPageTest(TestCase):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertContains(response, '666-666-6666')
 
-    @unittest.skip
-    def test_caregiver_information_page_does_not_show_archived_phone(self):
-        self.assertTrue(False, 'finish test')
+    def test_caregiver_information_page_does_not_show_inactive_phone(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertNotContains(response, '777-666-6666')
