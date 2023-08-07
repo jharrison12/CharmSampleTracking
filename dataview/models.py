@@ -88,6 +88,8 @@ class SocialMedia(models.Model):
 
 class CaregiverSocialMedia(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    #As long as you have a history table for social media.  You will not need a one to many relationship and one to one will work
+    #however if they need to easily access social media history, this may have to change
     social_media_fk = models.OneToOneField(SocialMedia,on_delete=models.PROTECT)
     social_media_user_name = models.CharField(null=False,blank=False,max_length=255)
     social_media_consent = models.BooleanField(default=True)
