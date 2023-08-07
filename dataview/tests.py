@@ -256,6 +256,7 @@ class CaregiverInformationPageTest(TestCase):
         email2 = Email.objects.create(email='jharrison13@gmail.com')
         CaregiverEmail.objects.create(email_fk=email2,caregiver_fk=second_caregiver,email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
 
+        #Create phone
         phone = Phone.objects.create(area_code='555',phone_number='555-5555')
         CaregiverPhone.objects.create(phone_fk=phone,caregiver_fk=first_caregiver,phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.PRIMARY)
 
@@ -266,6 +267,14 @@ class CaregiverInformationPageTest(TestCase):
         phone_archived = Phone.objects.create(area_code='777', phone_number='666-6666')
         CaregiverPhone.objects.create(phone_fk=phone_archived, caregiver_fk=first_caregiver,
                                       phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.INACTIVE)
+
+        #Create social media
+        twitter = SocialMedia.objects.create(social_media_name='Twitter')
+        CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=first_caregiver,social_media_user_name='@jonathan')
+        facebook = SocialMedia.objects.create(social_media_name='Facebook')
+        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=first_caregiver,social_media_user_name='jonathan-h')
+        facebook = SocialMedia.objects.create(social_media_name='Instagram')
+        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=first_caregiver,social_media_user_name='@jonathanscat')
 
     def test_caregiver_information_page_uses_correct_template(self):
         response = self.client.get('/data/caregiver/P7000')
@@ -337,3 +346,10 @@ class CaregiverInformationPageTest(TestCase):
     def test_caregiver_information_page_does_not_show_inactive_phone(self):
         response = self.client.get(f'/data/caregiver/P7000')
         self.assertNotContains(response, '777-666-6666')
+
+    def test_caregiver_information_page_shows_social_media_handle(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response,'Twitter: @jonathan')
+        self.assertContains(response,'Facebook: jonathan-h')
+        self.assertContains(response,'Instagram: @jonathanscat')
+

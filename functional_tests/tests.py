@@ -3,7 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone
+from dataview.models import Caregiver,Name,CaregiverName,Address,\
+    CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia
 import datetime
 import time
 from django.utils import timezone
@@ -78,6 +79,14 @@ class NewVisitorTest(StaticLiveServerTestCase):
         CaregiverPhone.objects.create(phone_fk=phone_secondary, caregiver_fk=first_caregiver,
                                       phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.SECONDARY)
 
+        twitter = SocialMedia.objects.create(social_media_name='Twitter')
+        CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=first_caregiver,social_media_user_name='@jonathan')
+        facebook = SocialMedia.objects.create(social_media_name='Facebook')
+        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=first_caregiver,social_media_user_name='jonathan-h')
+        facebook = SocialMedia.objects.create(social_media_name='Instagram')
+        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=first_caregiver,social_media_user_name='@jonathanscat')
+
+
     def tearDown(self):
         self.browser.quit()
 
@@ -123,8 +132,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Email Secondary: f@gmail.com', body_text_id_page)
         self.assertIn('Primary Phone: 555-555-5555', body_text_id_page)
         self.assertIn('Secondary Phone: 666-666-6666', body_text_id_page)
-
-
+        self.assertIn('Twitter: @jonathan', body_text_id_page)
+        self.assertIn('Facebook: jonathan-h', body_text_id_page)
+        self.assertIn('Instagram: @jonathanscat', body_text_id_page)
 
         #User visits the page for P7001
         self.browser.get(self.live_server_url)

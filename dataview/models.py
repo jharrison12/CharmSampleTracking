@@ -88,6 +88,6 @@ class SocialMedia(models.Model):
 
 class CaregiverSocialMedia(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
-    social_media_fk = models.ForeignKey(SocialMedia,on_delete=models.PROTECT)
+    social_media_fk = models.OneToOneField(SocialMedia,on_delete=models.PROTECT)
     social_media_user_name = models.CharField(null=False,blank=False,max_length=255)
     social_media_consent = models.BooleanField(default=True)
