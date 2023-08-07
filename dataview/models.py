@@ -82,3 +82,12 @@ class CaregiverPhone(models.Model):
 
     phone_type = models.CharField(max_length=2,choices=CaregiverPhoneTypeChoices.choices,default=CaregiverPhoneTypeChoices.PRIMARY)
     date_change = models.DateField(blank=False,null=False,default=timezone.now)
+
+class SocialMedia(models.Model):
+    social_media_name = models.CharField(null=True,blank=True,max_length=255)
+
+class CaregiverSocialMedia(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    social_media_fk = models.ForeignKey(SocialMedia,on_delete=models.PROTECT)
+    social_media_user_name = models.CharField(null=False,blank=False,max_length=255)
+    social_media_consent = models.BooleanField(default=True)

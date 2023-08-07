@@ -2,7 +2,8 @@ import logging
 import unittest
 
 from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
+    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia
 import datetime
 from django.utils import timezone
 
@@ -164,9 +165,32 @@ class CaregiverPhoneModelsTest(TestCase):
 
         self.assertEqual(self.caregiver_one,caregiver_phone_test)
 
+class CaregiverSocialMediaTest(TestCase):
+
+    def setUp(self):
+        self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
+                                                   date_of_birth=datetime.date(1985, 7, 3),
+                                                   ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                                   specimen_id='4444', echo_pin='333')
+
+        self.social_media_twitter = SocialMedia.objects.create(social_media_name='Twitter')
+
+        self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                social_media_fk=self.social_media_twitter,
+                                                                                social_media_user_name='bob',
+                                                                                social_media_consent=True)
+
+    def test_caregiver_social_media_links_to_caregiver(self):
+
+        first_caregiver_twitter = Caregiver.objects.filter(caregiversocialmedia__social_media_user_name='bob').first()
+
+        self.assertEqual(first_caregiver_twitter,self.first_caregiver)
+
+
 
 
 class CaregiverPageTest(TestCase):
+
     def test_caregiver_page_uses_correct_template(self):
         response = self.client.get('/data/caregiver')
         self.assertTemplateUsed(response, 'dataview/caregiver.html')
