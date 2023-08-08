@@ -14,7 +14,7 @@
         <li>Echo Pin: {{ caregiver.echo_pin }}</li>
         <li>Specimen Id: {{ caregiver.specimen_id }}</li>
     </ul>
-    <h1>Contact Information:</h1>
+    <h2>Contact Information:</h2>
         <p>
             Address: {{ caregiver_address.address_line_1 }}<br>
                      {{ caregiver_address.address_line_2|default_if_none:"Empty" }}
@@ -26,6 +26,9 @@
         <p>Email Secondary: {{ caregiver_email_secondary.email }}</p>
         <p>Primary Phone: {{ caregiver_phone_primary.area_code }}-{{ caregiver_phone_primary.phone_number }}</p>
         <p>Secondary Phone: {{ caregiver_phone_secondary.area_code }}-{{ caregiver_phone_secondary.phone_number }}</p>
+    <h3>Personal Contact</h3>
+        Contact A First Name: John
+        Contact A Last Name: Jones
     <h2>Social Media</h2>
         <ul>
             {% for social_media_account in caregiver_social_media %}

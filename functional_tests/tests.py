@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
-    CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia
+    CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact
 import datetime
 import time
 from django.utils import timezone
@@ -86,6 +86,24 @@ class NewVisitorTest(StaticLiveServerTestCase):
         facebook = SocialMedia.objects.create(social_media_name='Instagram')
         CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=first_caregiver,social_media_user_name='@jonathanscat')
 
+        # Create caregiver
+        contact_a_email = Email.objects.create(email='b@b.com')
+        contact_b_email = Email.objects.create(email='c@c.com')
+
+        contact_a_name = Name.objects.create(first_name='John', last_name='Jones')
+
+        contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI',
+                                                   zip_code='38000')
+
+        contact_a_phone = Phone.objects.create(area_code='615', phone_number='555-5555')
+
+        self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
+                                                                           name_fk=contact_a_name,
+                                                                           address_fk=contact_a_address,
+                                                                           email_fk=contact_a_email,
+                                                                           phone_fk=contact_a_phone,
+                                                                           caregiver_contact_type='PR')
+
 
     def tearDown(self):
         self.browser.quit()
@@ -116,7 +134,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000')
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
         self.assertIn('Mothers name is: Doe, Jane',header_text_id_page)
-
+        #time.sleep(30)
         body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('July 3, 1985',body_text_id_page)
         self.assertIn('P7000',body_text_id_page)
@@ -135,6 +153,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Twitter: @jonathan', body_text_id_page)
         self.assertIn('Facebook: jonathan-h', body_text_id_page)
         self.assertIn('Instagram: @jonathanscat', body_text_id_page)
+        self.assertIn('Contact A First Name: John', body_text_id_page)
+        self.assertIn('Contact A Last Name: Jones', body_text_id_page)
 
         #User visits the page for P7001
         self.browser.get(self.live_server_url)

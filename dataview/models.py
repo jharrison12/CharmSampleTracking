@@ -93,3 +93,21 @@ class CaregiverSocialMedia(models.Model):
     social_media_fk = models.OneToOneField(SocialMedia,on_delete=models.PROTECT)
     social_media_user_name = models.CharField(null=False,blank=False,max_length=255)
     social_media_consent = models.BooleanField(default=True)
+
+class CaregiverPersonalContact(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    address_fk = models.ForeignKey(Address, on_delete=models.PROTECT)
+    name_fk = models.ForeignKey(Name,on_delete=models.PROTECT)
+    phone_fk = models.ForeignKey(Phone,on_delete=models.PROTECT)
+    email_fk = models.ForeignKey(Email,on_delete=models.PROTECT)
+
+    class CaregiverPersonalContactTypeChoices(models.TextChoices):
+        PRIMARY = 'PR',_('Primary')
+        SECONDARY = 'SD',_('Secondary')
+        INACTIVE = 'IN',_('Inactive')
+
+    caregiver_contact_type = models.CharField(max_length=2,
+                                              choices=CaregiverPersonalContactTypeChoices.choices,
+                                              default=CaregiverPersonalContactTypeChoices.PRIMARY)
+
+    date_change = models.DateField(blank=False,null=False,default=timezone.now)

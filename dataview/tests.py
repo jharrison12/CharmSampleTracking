@@ -3,7 +3,7 @@ import unittest
 
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
-    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia
+    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact
 import datetime
 from django.utils import timezone
 
@@ -186,7 +186,37 @@ class CaregiverSocialMediaTest(TestCase):
 
         self.assertEqual(first_caregiver_twitter,self.first_caregiver)
 
+class CaregiverPersonalContactTest(TestCase):
 
+    def setUp(self):
+        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                 specimen_id='4444',echo_pin='333')
+        second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',date_of_birth=datetime.date(1985,7,4),ewcp_participant_identifier='0001', participation_level_identifier='02',
+                                 specimen_id='5555',echo_pin='444')
+
+        contact_a_email = Email.objects.create(email='b@b.com')
+        contact_b_email = Email.objects.create(email='c@c.com')
+
+        contact_a_name = Name.objects.create(first_name='John',last_name='Smith')
+
+        contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI', zip_code='38000')
+
+        contact_a_phone = Phone.objects.create(area_code='615',phone_number='555-5555')
+
+        self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
+                                                                           name_fk=contact_a_name,
+                                                                           address_fk=contact_a_address,
+                                                                           email_fk=contact_a_email,
+                                                                           phone_fk=contact_a_phone,
+                                                                           caregiver_contact_type='PR')
+
+    def test_personal_contact_a_connects_to_caregiver(self):
+
+        testing_caregiver_a = Caregiver.objects.filter(caregiverpersonalcontact__address_fk__address_line_1='two drive').first()
+
+        caregiver_one = Caregiver.objects.first()
+
+        self.assertEqual(testing_caregiver_a,caregiver_one)
 
 
 class CaregiverPageTest(TestCase):
@@ -276,6 +306,24 @@ class CaregiverInformationPageTest(TestCase):
         facebook = SocialMedia.objects.create(social_media_name='Instagram')
         CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=first_caregiver,social_media_user_name='@jonathanscat')
 
+        #Create caregiver
+        contact_a_email = Email.objects.create(email='b@b.com')
+        contact_b_email = Email.objects.create(email='c@c.com')
+
+        contact_a_name = Name.objects.create(first_name='John', last_name='Jones')
+
+        contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI',
+                                                   zip_code='38000')
+
+        contact_a_phone = Phone.objects.create(area_code='615', phone_number='555-5555')
+
+        self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
+                                                                           name_fk=contact_a_name,
+                                                                           address_fk=contact_a_address,
+                                                                           email_fk=contact_a_email,
+                                                                           phone_fk=contact_a_phone,
+                                                                           caregiver_contact_type='PR')
+
     def test_caregiver_information_page_uses_correct_template(self):
         response = self.client.get('/data/caregiver/P7000')
         self.assertTemplateUsed(response,'dataview/caregiver_info.html')
@@ -352,4 +400,8 @@ class CaregiverInformationPageTest(TestCase):
         self.assertContains(response,'Twitter: @jonathan')
         self.assertContains(response,'Facebook: jonathan-h')
         self.assertContains(response,'Instagram: @jonathanscat')
+
+    def test_caregiver_information_page_shows_contact_a(self):
+        response = self.client.get(f'/data/caregiver/P7000')
+        self.assertContains(response,'Contact A First Name: John')
 
