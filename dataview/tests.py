@@ -497,7 +497,7 @@ class CaregiverContactPageTest(TestCase):
         contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI',
                                                    zip_code='38000')
 
-        contact_a_phone = Phone.objects.create(area_code='615', phone_number='555-5555')
+        contact_a_phone = Phone.objects.create(area_code='999', phone_number='999-9999')
 
         self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
                                                                            name_fk=contact_a_name,
@@ -514,6 +514,10 @@ class CaregiverContactPageTest(TestCase):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'P7000')
 
-    def test_caregiver_information_page_shows_contact_a(self):
+    def test_caregiver_information_page_shows_contact_a_name(self):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact A First Name: John')
+
+    def test_caregiver_information_page_shows_contact_a_phone(self):
+        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        self.assertContains(response,'Phone Number: 999-999-9999')

@@ -7,8 +7,9 @@
 <body>
     <h1>{{ caregiver.charm_project_identifier }} Contact</h1>
         <ul>
-            <li>Contact A First Name: {{ caregiver_personal_contact_a_name.first_name }}</li>
-            <li>Contact A Last Name: {{ caregiver_personal_contact_a_name.last_name }}</li>
+            <li>Contact A First Name: {{ contact_a_name.first_name }}</li>
+            <li>Contact A Last Name: {{ contact_a_name.last_name }}</li>
+            <li>Phone Number: {{ contact_a_phone.area_code }}-{{ contact_a_phone.phone_number }}</li>
         </ul>
 </body>
 </html>

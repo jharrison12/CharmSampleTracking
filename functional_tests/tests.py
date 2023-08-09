@@ -95,7 +95,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI',
                                                    zip_code='38000')
 
-        contact_a_phone = Phone.objects.create(area_code='615', phone_number='555-5555')
+        contact_a_phone = Phone.objects.create(area_code='999', phone_number='999-9999')
 
         self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
                                                                            name_fk=contact_a_name,
@@ -161,6 +161,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         time.sleep(30)
         self.assertIn('Contact A First Name: John', contact_body_text_id_page)
         self.assertIn('Contact A Last Name: Jones', contact_body_text_id_page)
+        self.assertIn('Phone Number: 999-999-9999', contact_body_text_id_page)
 
         #User visits the page for P7001
         self.browser.get(self.live_server_url)
