@@ -20,7 +20,7 @@ def caregiver_info(request,caregiver_charm_id):
     caregiver_phone_primary = Phone.objects.filter(caregiverphone__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiverphone__phone_type='PR').first()
     caregiver_phone_secondary = Phone.objects.filter(caregiverphone__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiverphone__phone_type='SD').first()
     caregiver_social_media = SocialMedia.objects.filter(caregiversocialmedia__caregiver_fk__charm_project_identifier=caregiver_charm_id)
-    caregiver_personal_contact_a = CaregiverPersonalContact.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
+
     return render(request=request,template_name='dataview/caregiver_info.html',context={'caregiver':caregiver,
                                                                                         'caregiver_name':caregiver_name,
                                                                                         'caregiver_address':caregiver_address,
@@ -28,5 +28,10 @@ def caregiver_info(request,caregiver_charm_id):
                                                                                         'caregiver_email_secondary':caregiver_email_secondary,
                                                                                         'caregiver_phone_primary':caregiver_phone_primary,
                                                                                         'caregiver_phone_secondary': caregiver_phone_secondary,
-                                                                                        'caregiver_social_media': caregiver_social_media,
-                                                                                        'caregiver_personal_contact_a':caregiver_personal_contact_a})
+                                                                                        'caregiver_social_media': caregiver_social_media})
+
+def caregiver_contact(request,caregiver_charm_id):
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    caregiver_personal_contact_a_name = Name.objects.filter(caregiverpersonalcontact__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiverpersonalcontact__caregiver_contact_type='PR')
+    return render(request=request,template_name='dataview/caregiver_contact.html',context={'caregiver':caregiver,
+                                                                                           'caregiver_personal_contact_a_name':caregiver_personal_contact_a_name})
