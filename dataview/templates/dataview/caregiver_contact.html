@@ -11,6 +11,7 @@
             <li>Contact A Last Name: {{ contact_a_name.last_name }}</li>
             <li>Contact A Phone Number: {{ contact_a_phone.area_code }}-{{ contact_a_phone.phone_number }}</li>
             <li>Contact A Address: {{ contact_a_address.address_line_1 }} {{ contact_a_address.address_line_2|default_if_none:"Empty" }} {{ contact_a_address.city }}, {{ contact_a_address.state }} {{ contact_a_address.zip_code }}</li>
+            <li>Contact A Email: {{ contact_a_email.email }}</li>
         </ul>
 </body>
 </html>

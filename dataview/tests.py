@@ -522,6 +522,10 @@ class CaregiverContactPageTest(TestCase):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact A Phone Number: 999-999-9999')
 
-    def test_caregiver_information_page_shows_contact_a_phone(self):
+    def test_caregiver_information_page_shows_contact_a_address(self):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact A Address: two drive')
+
+    def test_caregiver_information_page_shows_contact_a_email(self):
+        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        self.assertContains(response,'Contact A Email: b@b.com')

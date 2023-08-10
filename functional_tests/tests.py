@@ -171,6 +171,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Contact A Last Name: Jones', contact_body_text_id_page)
         self.assertIn('Contact A Phone Number: 999-999-9999', contact_body_text_id_page)
         self.assertIn('Contact A Address: two drive', contact_body_text_id_page)
+        self.assertIn('Contact A Email: b@b.com', contact_body_text_id_page)
 
 
 
