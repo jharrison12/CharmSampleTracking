@@ -111,7 +111,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_user_can_view_web_page_of_mother_ids(self):
         #User visits the initial page and is given a list of mother ids
-        home_page = self.live_server_url
+
         self.browser.get(self.live_server_url)
         self.assertIn('Charm Sample Tracking', self.browser.title)
 
@@ -127,6 +127,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('P7000',body_text)
         #User sees the other charm project sampleid
         self.assertIn('P7001',body_text)
+
+    def test_user_can_see_mother_information_page(self):
 
         #User visits the page for P7000
         ## Is there a better way of navigating using selenium?
@@ -154,20 +156,23 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Facebook: jonathan-h', body_text_id_page)
         self.assertIn('Instagram: @jonathanscat', body_text_id_page)
 
-        #User visits caregiver contact page
-        self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/contact')
-        contact_body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
-        time.sleep(30)
-        self.assertIn('Contact A First Name: John', contact_body_text_id_page)
-        self.assertIn('Contact A Last Name: Jones', contact_body_text_id_page)
-        self.assertIn('Phone Number: 999-999-9999', contact_body_text_id_page)
-
         #User visits the page for P7001
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7001')
         body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('P7001', body_text_id_page)
+
+    def test_user_can_view_personal_contact_information(self):
+        #User visits caregiver contact page
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/contact')
+        contact_body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Contact A First Name: John', contact_body_text_id_page)
+        self.assertIn('Contact A Last Name: Jones', contact_body_text_id_page)
+        self.assertIn('Contact A Phone Number: 999-999-9999', contact_body_text_id_page)
+        self.assertIn('Contact A Address: two drive', contact_body_text_id_page)
+
+
 
 
 
