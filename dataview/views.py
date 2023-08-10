@@ -41,8 +41,11 @@ def caregiver_contact(request,caregiver_charm_id):
         .filter(caregiverpersonalcontact__caregiver_contact_type='PR').first()
     contact_a_email = Email.objects.filter(caregiverpersonalcontact__caregiver_fk__charm_project_identifier=caregiver_charm_id)\
         .filter(caregiverpersonalcontact__caregiver_contact_type='PR').first()
+    contact_b_name = Name.objects.filter(caregiverpersonalcontact__caregiver_fk__charm_project_identifier=caregiver_charm_id)\
+        .filter(caregiverpersonalcontact__caregiver_contact_type='SD').first()
     return render(request=request,template_name='dataview/caregiver_contact.html',context={'caregiver':caregiver,
                                                                                            'contact_a_name':contact_a_name,
                                                                                            'contact_a_phone':contact_a_phone,
                                                                                            'contact_a_address':contact_a_address,
-                                                                                           'contact_a_email':contact_a_email})
+                                                                                           'contact_a_email':contact_a_email,
+                                                                                           'contact_b_name':contact_b_name})

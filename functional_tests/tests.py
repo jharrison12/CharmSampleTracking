@@ -91,11 +91,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
         contact_b_email = Email.objects.create(email='c@c.com')
 
         contact_a_name = Name.objects.create(first_name='John', last_name='Jones')
+        contact_b_name = Name.objects.create(first_name='Jessica', last_name='Jones')
 
         contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI',
                                                    zip_code='38000')
 
         contact_a_phone = Phone.objects.create(area_code='999', phone_number='999-9999')
+        contact_b_phone = Phone.objects.create(area_code='999', phone_number='999-9998')
 
         self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
                                                                            name_fk=contact_a_name,
@@ -103,6 +105,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
                                                                            email_fk=contact_a_email,
                                                                            phone_fk=contact_a_phone,
                                                                            caregiver_contact_type='PR')
+
+        self.caregiver_contact_b = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
+                                                                           name_fk=contact_b_name,
+                                                                           address_fk=contact_a_address,
+                                                                           email_fk=contact_b_email,
+                                                                           phone_fk=contact_b_phone,
+                                                                           caregiver_contact_type='SD')
 
 
     def tearDown(self):
@@ -172,6 +181,10 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Contact A Phone Number: 999-999-9999', contact_body_text_id_page)
         self.assertIn('Contact A Address: two drive', contact_body_text_id_page)
         self.assertIn('Contact A Email: b@b.com', contact_body_text_id_page)
+
+        #User can also see Contact B if contact b exists
+        self.assertIn('Contact B First Name: Jessica', contact_body_text_id_page)
+        self.assertIn('Contact B Last Name: Jones', contact_body_text_id_page)
 
 
 

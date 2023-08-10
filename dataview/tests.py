@@ -198,10 +198,12 @@ class CaregiverPersonalContactTest(TestCase):
         contact_b_email = Email.objects.create(email='c@c.com')
 
         contact_a_name = Name.objects.create(first_name='John',last_name='Smith')
+        contact_b_name = Name.objects.create(first_name='Jessica',last_name='Jones')
 
         contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI', zip_code='38000')
 
         contact_a_phone = Phone.objects.create(area_code='615',phone_number='555-5555')
+        contact_b_phone = Phone.objects.create(area_code='615',phone_number='555-5556')
 
         self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
                                                                            name_fk=contact_a_name,
@@ -210,6 +212,13 @@ class CaregiverPersonalContactTest(TestCase):
                                                                            phone_fk=contact_a_phone,
                                                                            caregiver_contact_type='PR')
 
+        self.caregiver_contact_b = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
+                                                                           name_fk=contact_b_name,
+                                                                           address_fk=contact_a_address,
+                                                                           email_fk=contact_b_email,
+                                                                           phone_fk=contact_b_phone,
+                                                                           caregiver_contact_type='SD')
+
     def test_personal_contact_a_connects_to_caregiver(self):
 
         testing_caregiver_a = Caregiver.objects.filter(caregiverpersonalcontact__address_fk__address_line_1='two drive').first()
@@ -217,6 +226,20 @@ class CaregiverPersonalContactTest(TestCase):
         caregiver_one = Caregiver.objects.first()
 
         self.assertEqual(testing_caregiver_a,caregiver_one)
+
+    def test_personal_contact_b_connects_to_caregiver(self):
+
+        testing_caregiver_a = Caregiver.objects.filter(caregiverpersonalcontact__phone_fk__phone_number='555-5556').first()
+
+        caregiver_one = Caregiver.objects.first()
+
+        self.assertEqual(testing_caregiver_a,caregiver_one)
+
+    def test_caregiver_a_has_two_personal_contacts(self):
+        caregiver_one = Caregiver.objects.first()
+        personal_contacts = CaregiverPersonalContact.objects.filter(caregiver_fk=caregiver_one)
+
+        self.assertEqual(personal_contacts.count(),2)
 
 
 class CaregiverPageTest(TestCase):
@@ -493,11 +516,13 @@ class CaregiverContactPageTest(TestCase):
         contact_b_email = Email.objects.create(email='c@c.com')
 
         contact_a_name = Name.objects.create(first_name='John', last_name='Jones')
+        contact_b_name = Name.objects.create(first_name='Jessica', last_name='Jones')
 
         contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI',
                                                    zip_code='38000')
 
         contact_a_phone = Phone.objects.create(area_code='999', phone_number='999-9999')
+        contact_b_phone = Phone.objects.create(area_code='999', phone_number='999-9998')
 
         self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
                                                                            name_fk=contact_a_name,
@@ -505,6 +530,13 @@ class CaregiverContactPageTest(TestCase):
                                                                            email_fk=contact_a_email,
                                                                            phone_fk=contact_a_phone,
                                                                            caregiver_contact_type='PR')
+
+        self.caregiver_contact_b = CaregiverPersonalContact.objects.create(caregiver_fk=first_caregiver,
+                                                                           name_fk=contact_b_name,
+                                                                           address_fk=contact_a_address,
+                                                                           email_fk=contact_b_email,
+                                                                           phone_fk=contact_b_phone,
+                                                                           caregiver_contact_type='SD')
 
     def test_caregiver_contact_page_uses_correct_template(self):
         response = self.client.get('/data/caregiver/P7000/contact/')
@@ -517,6 +549,7 @@ class CaregiverContactPageTest(TestCase):
     def test_caregiver_information_page_shows_contact_a_name(self):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact A First Name: John')
+        self.assertContains(response,'Contact A Last Name: Jones')
 
     def test_caregiver_information_page_shows_contact_a_phone(self):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
@@ -529,3 +562,8 @@ class CaregiverContactPageTest(TestCase):
     def test_caregiver_information_page_shows_contact_a_email(self):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact A Email: b@b.com')
+
+    def test_caregiver_information_page_shows_contact_b_name(self):
+        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        self.assertContains(response,'Contact B First Name: Jessica')
+        self.assertContains(response,'Contact B Last Name: Jones')
