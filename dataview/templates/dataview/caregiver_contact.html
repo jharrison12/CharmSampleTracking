@@ -19,6 +19,8 @@
                 <li>Contact B First Name: {{ contact_b_name.first_name }}</li>
                 <li>Contact B Last Name: {{ contact_b_name.last_name }}</li>
                 <li>Contact B Phone Number: {{ contact_b_phone.area_code }}-{{ contact_b_phone.phone_number }}</li>
+                <li>Contact B Address: {{ contact_b_address.address_line_1 }} {{ contact_b_address.address_line_2|default_if_none:"Empty" }} {{ contact_b_address.city }}, {{ contact_b_address.state }} {{ contact_b_address.zip_code }}</li>
+                <li>Contact B Email: {{ contact_b_email.email }}</li>
             </ul>
 </body>
 </html>

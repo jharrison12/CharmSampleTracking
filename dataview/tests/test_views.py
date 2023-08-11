@@ -341,3 +341,15 @@ class CaregiverContactPageTest(TestCase):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact B First Name: Jessica')
         self.assertContains(response,'Contact B Last Name: Jones')
+
+    def test_caregiver_information_page_shows_contact_b_phone(self):
+        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        self.assertContains(response,'Contact B Phone Number: 999-999-9998')
+
+    def test_caregiver_information_page_shows_contact_b_address(self):
+        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        self.assertContains(response,'Contact B Address: two drive')
+
+    def test_caregiver_information_page_shows_contact_b_address(self):
+        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        self.assertContains(response,'Contact B Email: c@c.com')

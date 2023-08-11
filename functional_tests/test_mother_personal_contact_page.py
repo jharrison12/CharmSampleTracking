@@ -1,8 +1,6 @@
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 
-MAX_WAIT =10
-
 class MotherPersonalContactPageTest(FunctionalTest):
 
     def test_user_can_view_personal_contact_information(self):
@@ -20,6 +18,8 @@ class MotherPersonalContactPageTest(FunctionalTest):
         self.assertIn('Contact B First Name: Jessica', contact_body_text_id_page)
         self.assertIn('Contact B Last Name: Jones', contact_body_text_id_page)
         self.assertIn('Contact B Phone Number: 999-999-9998',contact_body_text_id_page)
+        self.assertIn('Contact B Address: two drive',contact_body_text_id_page)
+        self.assertIn('Contact B Email: c@c.com', contact_body_text_id_page)
 
         #User visits a different caregivers page which has no contact B
         self.fail()
