@@ -19,7 +19,10 @@ class MotherPersonalContactPageTest(FunctionalTest):
         #User can also see Contact B if contact b exists
         self.assertIn('Contact B First Name: Jessica', contact_body_text_id_page)
         self.assertIn('Contact B Last Name: Jones', contact_body_text_id_page)
+        self.assertIn('Contact B Phone Number: 999-999-9998',contact_body_text_id_page)
 
+        #User visits a different caregivers page which has no contact B
+        self.fail()
 
 
 
