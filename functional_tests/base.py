@@ -1,17 +1,13 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.common.by import By
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.keys import Keys
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact
 import datetime
 import time
 from django.utils import timezone
 
-MAX_WAIT =10
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class FunctionalTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -116,78 +112,4 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def tearDown(self):
         self.browser.quit()
-
-
-    def test_user_can_view_web_page_of_mother_ids(self):
-        #User visits the initial page and is given a list of mother ids
-
-        self.browser.get(self.live_server_url)
-        self.assertIn('Charm Sample Tracking', self.browser.title)
-
-        #User sees a list of mother ids
-        link_text = self.browser.find_element(By.LINK_TEXT,'Mother Sample').text
-        self.assertIn('Mother Sample', link_text)
-
-        #User types in link to caregiver page
-        self.browser.get(f'{self.browser.current_url}data/caregiver')
-
-        #User looks for one caregiver id in page
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('P7000',body_text)
-        #User sees the other charm project sampleid
-        self.assertIn('P7001',body_text)
-
-    def test_user_can_see_mother_information_page(self):
-
-        #User visits the page for P7000
-        ## Is there a better way of navigating using selenium?
-        self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000')
-        header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
-        self.assertIn('Mothers name is: Doe, Jane',header_text_id_page)
-        #time.sleep(30)
-        body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('July 3, 1985',body_text_id_page)
-        self.assertIn('P7000',body_text_id_page)
-        self.assertIn('0000',body_text_id_page)
-        self.assertIn('01',body_text_id_page)
-        self.assertIn('Echo Pin: 333',body_text_id_page)
-        self.assertIn('Specimen Id: 4444',body_text_id_page)
-        self.assertIn('Address: One Drive', body_text_id_page)
-        self.assertIn('Lansing', body_text_id_page)
-        self.assertIn('MI', body_text_id_page)
-        self.assertIn('38000', body_text_id_page)
-        self.assertIn('Email Primary: jharrison12@gmail.com', body_text_id_page)
-        self.assertIn('Email Secondary: f@gmail.com', body_text_id_page)
-        self.assertIn('Primary Phone: 555-555-5555', body_text_id_page)
-        self.assertIn('Secondary Phone: 666-666-6666', body_text_id_page)
-        self.assertIn('Twitter: @jonathan', body_text_id_page)
-        self.assertIn('Facebook: jonathan-h', body_text_id_page)
-        self.assertIn('Instagram: @jonathanscat', body_text_id_page)
-
-        #User visits the page for P7001
-        self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}data/caregiver/P7001')
-        body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('P7001', body_text_id_page)
-
-    def test_user_can_view_personal_contact_information(self):
-        #User visits caregiver contact page
-        self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/contact')
-        contact_body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Contact A First Name: John', contact_body_text_id_page)
-        self.assertIn('Contact A Last Name: Jones', contact_body_text_id_page)
-        self.assertIn('Contact A Phone Number: 999-999-9999', contact_body_text_id_page)
-        self.assertIn('Contact A Address: two drive', contact_body_text_id_page)
-        self.assertIn('Contact A Email: b@b.com', contact_body_text_id_page)
-
-        #User can also see Contact B if contact b exists
-        self.assertIn('Contact B First Name: Jessica', contact_body_text_id_page)
-        self.assertIn('Contact B Last Name: Jones', contact_body_text_id_page)
-
-
-
-
-
 
