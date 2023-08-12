@@ -369,3 +369,8 @@ class CaregiverContactPageTest(TestCase):
     def test_caregiver_information_page_does_not_show_contact_b_if_it_does_not_exist(self):
         response = self.client.get(f'/data/caregiver/P7001/contact/')
         self.assertNotContains(response,'Contact B')
+
+class CaregiverSurveyPageTest(TestCase):
+    def test_caregiver_survey_page_returns_correct_tempalte(self):
+        response = self.client.get(f'/data/caregiver/P7000/survey/')
+        self.assertTemplateUsed(response, 'dataview/caregiver_survey.html')

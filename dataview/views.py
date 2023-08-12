@@ -59,3 +59,6 @@ def caregiver_contact(request,caregiver_charm_id):
                                                                                            'contact_b_phone':contact_b_phone,
                                                                                            'contact_b_address':contact_b_address,
                                                                                            'contact_b_email':contact_b_email})
+
+def caregiver_survey(request,caregiver_charm_id):
+    return render(request,template_name='dataview/caregiver_survey.html')

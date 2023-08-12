@@ -22,5 +22,6 @@ import dataview
 urlpatterns = [
     path('caregiver', dataviews.caregiver, name='caregivers'),
     re_path('caregiver/(?P<caregiver_charm_id>\w+)/$', dataviews.caregiver_info,name='caregiver_info'),
-    re_path('caregiver/(?P<caregiver_charm_id>\w+)/contact/$', dataviews.caregiver_contact,name='caregiver_contact')
+    re_path('caregiver/(?P<caregiver_charm_id>\w+)/contact/$', dataviews.caregiver_contact,name='caregiver_contact'),
+    re_path('caregiver/(?P<caregiver_charm_id>\w+)/survey/$', dataviews.caregiver_survey,name='caregiver_survey')
 ]
