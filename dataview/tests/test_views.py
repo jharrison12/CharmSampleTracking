@@ -236,7 +236,6 @@ class CaregiverInformationPageTest(TestCaseSetup):
         self.assertContains(response,'Facebook: jonathan-h')
         self.assertContains(response,'Instagram: @jonathanscat')
 
-
 class CaregiverContactPageTest(TestCaseSetup):
 
     def test_caregiver_contact_page_uses_correct_template(self):
@@ -290,3 +289,7 @@ class CaregiverSurveyPageTest(TestCaseSetup):
     def test_caregiver_survey_page_returns_correct_template(self):
         response = self.client.get(f'/data/caregiver/P7000/survey/')
         self.assertTemplateUsed(response, 'dataview/caregiver_survey.html')
+
+    def test_caregiver_survey_page_shows_prenatal_survey_outcome(self):
+        response = self.client.get(f'/data/caregiver/P7000/survey/')
+        self.assertContains(response,'Prenatal 1: Complete')

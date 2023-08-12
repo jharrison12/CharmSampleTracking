@@ -111,3 +111,10 @@ class CaregiverPersonalContact(models.Model):
                                               default=CaregiverPersonalContactTypeChoices.PRIMARY)
 
     date_change = models.DateField(blank=False,null=False,default=timezone.now)
+
+class Project(models.Model):
+    project_name = models.CharField(null=False,blank=False,max_length=255)
+
+class Survey(models.Model):
+    project_fk = models.ForeignKey(Project,on_delete=models.PROTECT)
+    survey_name = models.CharField(null=False,blank=False,max_length=255)

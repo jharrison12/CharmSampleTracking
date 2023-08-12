@@ -1,7 +1,8 @@
 import logging
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
-    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact
+    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
+    Project,Survey
 import datetime
 from django.utils import timezone
 
@@ -232,3 +233,16 @@ class CaregiverPersonalContactModelsTest(TestCase):
 
         self.assertEqual(personal_contacts.count(),2)
 
+class CaregiverSurveyModelsTest(TestCase):
+    def setUp(self):
+        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
+                                 specimen_id='4444',echo_pin='333')
+        second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',date_of_birth=datetime.date(1985,7,4),ewcp_participant_identifier='0001', participation_level_identifier='02',
+                                 specimen_id='5555',echo_pin='444')
+
+        self.new_project = Project.objects.create(project_name='MARCH')
+
+        self.new_survey = Survey.objects.create(survey_name='Prenatal 1',project_fk=self.new_project)
+
+    def test_survey_associated_with_project(self):
+        test_survey = Survey.objects.filter()
