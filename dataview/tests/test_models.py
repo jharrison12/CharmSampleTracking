@@ -2,7 +2,7 @@ import logging
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey
+    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome
 import datetime
 from django.utils import timezone
 
@@ -242,7 +242,31 @@ class CaregiverSurveyModelsTest(TestCase):
 
         self.new_project = Project.objects.create(project_name='MARCH')
 
-        self.new_survey = Survey.objects.create(survey_name='Prenatal 1',project_fk=self.new_project)
+        self.prenatal_1 = Survey.objects.create(survey_name='Prenatal 1',project_fk=self.new_project)
+        self.prenatal_2 = Survey.objects.create(survey_name='Prenatal 2',project_fk=self.new_project)
+
+        self.completed_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Completed')
+        self.incomplete_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Incomplete')
+
+        self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
+
+        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_date=datetime.date.today(),incentive_amount=100)
+
+        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
+                                                                   survey_fk=self.prenatal_1,
+                                                                   survey_outcome_fk=self.completed_survey_outcome,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   survey_completion_date=datetime.date.today()
+                                                                   )
+
+        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
+                                                                   survey_fk=self.prenatal_2,
+                                                                   survey_outcome_fk=self.incomplete_survey_outcome,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   survey_completion_date=datetime.date.today()
+                                                                   )
 
     def test_survey_associated_with_project(self):
-        test_survey = Survey.objects.filter()
+        test_survey = Survey.objects.filter().first()
+        survey_filter = Survey.objects.filter(project_fk__project_name='MARCH').first()
+        self.assertEqual(test_survey,survey_filter)

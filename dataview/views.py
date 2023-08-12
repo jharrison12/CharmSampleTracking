@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from dataview.models import Caregiver,Name,CaregiverName,\
-    Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact
+    Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
+    Survey,Project,CaregiverSurvey,Incentive,IncentiveType
 
 
 # Create your views here.
@@ -61,4 +62,5 @@ def caregiver_contact(request,caregiver_charm_id):
                                                                                            'contact_b_email':contact_b_email})
 
 def caregiver_survey(request,caregiver_charm_id):
-    return render(request,template_name='dataview/caregiver_survey.html')
+    caregiver_surveys = CaregiverSurvey.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
+    return render(request,template_name='dataview/caregiver_survey.html',context={'caregiver_surveys':caregiver_surveys})

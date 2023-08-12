@@ -1,7 +1,8 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
-    CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact
+    CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
+    Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType
 import datetime
 import time
 from django.utils import timezone
@@ -120,6 +121,35 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                            email_fk=contact_c_email,
                                                                            phone_fk=contact_c_phone,
                                                                            caregiver_contact_type='PR')
+
+        #Create surveys
+
+        self.new_project = Project.objects.create(project_name='MARCH')
+
+        self.prenatal_1 = Survey.objects.create(survey_name='Prenatal 1', project_fk=self.new_project)
+        self.prenatal_2 = Survey.objects.create(survey_name='Prenatal 2', project_fk=self.new_project)
+
+        self.completed_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Completed')
+        self.incomplete_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Incomplete')
+
+        self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
+
+        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
+                                                      incentive_date=datetime.date.today(), incentive_amount=100)
+
+        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
+                                                                   survey_fk=self.prenatal_1,
+                                                                   survey_outcome_fk=self.completed_survey_outcome,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   survey_completion_date=datetime.date.today()
+                                                                   )
+
+        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
+                                                                   survey_fk=self.prenatal_2,
+                                                                   survey_outcome_fk=self.incomplete_survey_outcome,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   survey_completion_date=datetime.date.today()
+                                                                   )
 
 
     def tearDown(self):

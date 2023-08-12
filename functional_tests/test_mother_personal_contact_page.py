@@ -26,7 +26,6 @@ class MotherPersonalContactPageTest(FunctionalTest):
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/contact')
         contact_body_text_id_page_70001 = self.browser.find_element(By.TAG_NAME,'body').text
-        time.sleep(30)
         self.assertIn('Contact A First Name: James', contact_body_text_id_page_70001)
         self.assertIn('Contact A Last Name: Contact', contact_body_text_id_page_70001)
         self.assertIn('Contact A Phone Number: 999-999-9997', contact_body_text_id_page_70001)

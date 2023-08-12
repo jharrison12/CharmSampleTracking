@@ -5,6 +5,8 @@
     <title>Title</title>
 </head>
 <body>
-{{ caregiver_sruvey.prenatal_1 }}
+{% for survey in caregiver_surveys %}
+    {{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}
+{% endfor %}
 </body>
 </html>

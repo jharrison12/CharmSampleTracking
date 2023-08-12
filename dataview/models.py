@@ -112,9 +112,27 @@ class CaregiverPersonalContact(models.Model):
 
     date_change = models.DateField(blank=False,null=False,default=timezone.now)
 
+class IncentiveType(models.Model):
+    incentive_type_text = models.CharField(null=False,blank=False,max_length=255)
+
+class Incentive(models.Model):
+    incentive_type_fk = models.ForeignKey(IncentiveType,on_delete=models.PROTECT)
+    incentive_date = models.DateField(blank=False,null=False,default=timezone.now)
+    incentive_amount =models.IntegerField(null=True)
+
 class Project(models.Model):
-    project_name = models.CharField(null=False,blank=False,max_length=255)
+    project_name = models.CharField(null=False, blank=False, max_length=255)
 
 class Survey(models.Model):
-    project_fk = models.ForeignKey(Project,on_delete=models.PROTECT)
-    survey_name = models.CharField(null=False,blank=False,max_length=255)
+    project_fk = models.ForeignKey(Project, on_delete=models.PROTECT)
+    survey_name = models.CharField(null=False, blank=False, max_length=255)
+
+class SurveyOutcome(models.Model):
+    survey_outcome_text = models.CharField(null=False, blank=False, max_length=255)
+
+class CaregiverSurvey(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
+    survey_fk = models.ForeignKey(Survey, on_delete=models.PROTECT)
+    survey_outcome_fk = models.ForeignKey(SurveyOutcome, on_delete=models.PROTECT)
+    incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT)
+    survey_completion_date = models.DateField(blank=False, null=False, default=timezone.now)
