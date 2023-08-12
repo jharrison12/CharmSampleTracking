@@ -63,4 +63,5 @@ def caregiver_contact(request,caregiver_charm_id):
 
 def caregiver_survey(request,caregiver_charm_id):
     caregiver_surveys = CaregiverSurvey.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
-    return render(request,template_name='dataview/caregiver_survey.html',context={'caregiver_surveys':caregiver_surveys})
+    return render(request,template_name='dataview/caregiver_survey.html',context={'caregiver_surveys':caregiver_surveys,
+                                                                                  'charm_id':caregiver_charm_id})

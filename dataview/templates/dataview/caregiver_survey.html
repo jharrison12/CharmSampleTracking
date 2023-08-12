@@ -5,8 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-{% for survey in caregiver_surveys %}
-    {{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}
-{% endfor %}
+    <h1>{{ charm_id }} Surveys</h1>
+    <ul>
+    {% for survey in caregiver_surveys %}
+        <li>{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</li>
+    {% endfor %}
+    </ul>
 </body>
 </html>
