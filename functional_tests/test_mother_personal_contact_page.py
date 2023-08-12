@@ -33,7 +33,7 @@ class MotherPersonalContactPageTest(FunctionalTest):
         self.assertIn('Contact A Address: three drive', contact_body_text_id_page_70001)
         self.assertIn('Contact A Email: d@d.com', contact_body_text_id_page_70001)
         self.assertNotIn('Contact B',contact_body_text_id_page_70001)
-        self.fail()
+
 
 
 
