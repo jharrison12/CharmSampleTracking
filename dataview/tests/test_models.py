@@ -235,9 +235,9 @@ class CaregiverPersonalContactModelsTest(TestCase):
 
 class CaregiverSurveyModelsTest(TestCase):
     def setUp(self):
-        first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
+        self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',date_of_birth=datetime.date(1985,7,3),ewcp_participant_identifier='0000', participation_level_identifier='01',
                                  specimen_id='4444',echo_pin='333')
-        second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',date_of_birth=datetime.date(1985,7,4),ewcp_participant_identifier='0001', participation_level_identifier='02',
+        self.second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',date_of_birth=datetime.date(1985,7,4),ewcp_participant_identifier='0001', participation_level_identifier='02',
                                  specimen_id='5555',echo_pin='444')
 
         self.new_project = Project.objects.create(project_name='MARCH')
@@ -252,21 +252,37 @@ class CaregiverSurveyModelsTest(TestCase):
 
         self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_date=datetime.date.today(),incentive_amount=100)
 
-        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
+        self.caregiver_1_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
                                                                    survey_completion_date=datetime.date.today()
                                                                    )
 
-        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
+        self.caregiver_1_prenatal_2 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
                                                                    survey_completion_date=datetime.date.today()
                                                                    )
 
+        self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
+                                                                   survey_fk=self.prenatal_1,
+                                                                   survey_outcome_fk=self.completed_survey_outcome,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   survey_completion_date=datetime.date.today()
+                                                                   )
+
+
     def test_survey_associated_with_project(self):
         test_survey = Survey.objects.filter().first()
         survey_filter = Survey.objects.filter(project_fk__project_name='MARCH').first()
         self.assertEqual(test_survey,survey_filter)
+
+    def test_survey_can_be_asscociated_with_two_caregivers(self):
+        survey_filter = Survey.objects.get(caregiversurvey__caregiver_fk=self.second_caregiver)
+        self.assertEqual(survey_filter.survey_name,'Prenatal 1')
+
+    def test_there_are_two_survey_one_rows(self):
+        survey_filter = CaregiverSurvey.objects.filter(survey_fk__survey_name='Prenatal 1')
+        self.assertEqual(survey_filter.count(),2)
