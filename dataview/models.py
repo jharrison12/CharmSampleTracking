@@ -136,3 +136,13 @@ class CaregiverSurvey(models.Model):
     survey_outcome_fk = models.ForeignKey(SurveyOutcome, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT)
     survey_completion_date = models.DateField(blank=False, null=False, default=timezone.now)
+
+class HealthcareFacility(models.Model):
+    name = models.CharField(null=False,blank=False,max_length=255)
+
+class Recruitment(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT)
+    healthcare_facility_fk = models.ForeignKey(HealthcareFacility,on_delete=models.PROTECT)
+    recruitment_date = models.DateField(blank=False,null=False,default=timezone.now)
+    interviewer_comment = models.TextField(blank=True,null=True)

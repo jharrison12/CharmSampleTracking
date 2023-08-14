@@ -2,7 +2,7 @@ import logging
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome
+    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment
 import datetime
 from django.utils import timezone
 
@@ -123,6 +123,14 @@ class ModelTest(TestCase):
                                                                    incentive_fk=self.incentive_one,
                                                                    survey_completion_date=datetime.date.today()
                                                                    )
+
+        #create recruitment
+        self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
+
+        self.caregiver_1_recruitment = Recruitment.objects.create(caregiver_fk=self.first_caregiver,
+                                                                  incentive_fk=self.incentive_one,
+                                                                  healthcare_facility_fk=self.health_care_facility_1,
+                                                                  recruitment_date=datetime.date.today())
 
 
 class CaregiverModelsTest(TestCase):
@@ -277,7 +285,8 @@ class CaregiverSurveyModelsTest(ModelTest):
         survey_filter = CaregiverSurvey.objects.filter(survey_fk__survey_name='Prenatal 1')
         self.assertEqual(survey_filter.count(),2)
 
-class Recruitment(TestCase):
+class RecruitmentModelsTest(ModelTest):
 
     def test_health_care_facility_connects_to_recruitment(self):
-        pass
+        hospital = HealthcareFacility.objects.filter(recruitment__caregiver_fk=self.first_caregiver).first()
+        self.assertEqual(self.health_care_facility_1,hospital)
