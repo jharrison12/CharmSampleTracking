@@ -2,7 +2,8 @@ import logging
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment
+    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
+    ConsentContract
 import datetime
 from django.utils import timezone
 
@@ -132,6 +133,19 @@ class ModelTest(TestCase):
                                                                   healthcare_facility_fk=self.health_care_facility_1,
                                                                   recruitment_date=datetime.date.today())
 
+        #Create consent_version
+
+        self.consent_version_1 = ConsentVersion.objects.create(consent_version='5.1')
+        self.consent_version_2 = ConsentVersion.objects.create(consent_version='5.2')
+        self.consent_contract_1 = ConsentContract.objects.create(caregiver_fk=self.first_caregiver,
+                                                                 consent_version_fk=self.consent_version_1,
+                                                                 consent_date=datetime.date.today() - datetime.timedelta(days=1))
+        self.consent_contract_1 = ConsentContract.objects.create(caregiver_fk=self.first_caregiver,
+                                                                 consent_version_fk=self.consent_version_2,
+                                                                 consent_date=datetime.date.today())
+        self.consent_contract_1_cg_2 = ConsentContract.objects.create(caregiver_fk=self.second_caregiver,
+                                                                      consent_version_fk=self.consent_version_1,
+                                                                      consent_date=datetime.date.today())
 
 class CaregiverModelsTest(TestCase):
 
@@ -290,3 +304,18 @@ class RecruitmentModelsTest(ModelTest):
     def test_health_care_facility_connects_to_recruitment(self):
         hospital = HealthcareFacility.objects.filter(recruitment__caregiver_fk=self.first_caregiver).first()
         self.assertEqual(self.health_care_facility_1,hospital)
+
+class ConsentVersionModelsTest(ModelTest):
+
+    def test_caregiver_can_have_multiple_consent_contract(self):
+        number_of_consents = ConsentContract.objects.filter(caregiver_fk=self.first_caregiver)
+        self.assertEqual(number_of_consents.count(),2)
+
+    def test_you_can_pull_latest_consent(self):
+        latest_consent = ConsentContract.objects.latest('consent_date')
+        self.assertEqual(latest_consent.consent_date,datetime.date.today())
+
+    def test_consents_can_have_multiple_caregivers(self):
+        number_of_consent_signed = ConsentContract.objects.filter(consent_version_fk=self.consent_version_1).all()
+        self.assertEqual(number_of_consent_signed.count(),2)
+

@@ -141,8 +141,20 @@ class HealthcareFacility(models.Model):
     name = models.CharField(null=False,blank=False,max_length=255)
 
 class Recruitment(models.Model):
-    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT)
     healthcare_facility_fk = models.ForeignKey(HealthcareFacility,on_delete=models.PROTECT)
     recruitment_date = models.DateField(blank=False,null=False,default=timezone.now)
     interviewer_comment = models.TextField(blank=True,null=True)
+
+class ConsentVersion(models.Model):
+    consent_version = models.CharField(blank=False,null=False,max_length=255)
+    consent_version_text = models.TextField(blank=True,null=True)
+
+class ConsentContract(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    consent_version_fk = models.ForeignKey(ConsentVersion,on_delete=models.PROTECT)
+    consent_date = models.DateField(default=timezone.now)
+    #This needs to autoincrement but that is not easy in django, maybe remove?
+    #I'm removing consent number because it can be calculated using date if they need it
+    #consent_number = models.IntegerField()
