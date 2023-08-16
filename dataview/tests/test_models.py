@@ -3,7 +3,7 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory
+    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory
 import datetime
 from django.utils import timezone
 
@@ -29,7 +29,7 @@ class ModelTest(TestCase):
         self.address_move = Address.objects.create(address_line_1='future street', address_line_2='apt 1',
                                                             city='Lansing', state='MI', zip_code='38000')
 
-        CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address)
+        self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address)
         CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address_move)
 
         #create email
@@ -226,6 +226,16 @@ class CaregiverAddressModelsTest(ModelTest):
 
         self.assertEqual(self.first_caregiver,caregiver_address_test_move)
 
+class CaregiverAddressHistoryModelsTest(ModelTest):
+    def test_insert_into_address_history_works(self):
+        first_row_of_address_history = CaregiverAddressHistory.objects.create(caregiver_address_fk=self.caregiver_1_address,
+                                                                              caregiver_fk=self.caregiver_1_address.caregiver_fk,
+                                                                              address_fk=self.caregiver_1_address.address_fk,
+                                                                              revision_number=1,
+                                                                              revision_date=datetime.date.today())
+
+        self.assertEqual(first_row_of_address_history.address_fk.address_line_1,'one drive')
+
 class CaregiverEmailModelsTest(ModelTest):
 
     def test_email_links_to_caregiver(self):
@@ -261,7 +271,7 @@ class CaregiverSocialMediaModelsTest(ModelTest):
 
 class CaregiverSocialMediaHistoryModelsTest(ModelTest):
 
-    def test_insert_into_history_works(self):
+    def test_insert_into_social_media_history_works(self):
         first_row_of_social_media_history = CaregiverSocialMediaHistory.\
             objects.create(caregiver_social_media_fk=self.first_caregiver_social_media,
                            caregiver_fk=self.first_caregiver_social_media.caregiver_fk,

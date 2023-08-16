@@ -50,6 +50,13 @@ class AddressMove(models.Model):
     address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
     address_move_date = models.DateField(blank=False,null=False)
 
+class CaregiverAddressHistory(models.Model):
+    caregiver_address_fk = models.ForeignKey(CaregiverAddress,on_delete=models.PROTECT)
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
+    revision_number = models.IntegerField()
+    revision_date = models.DateField(default=timezone.now)
+
 class Email(models.Model):
     email = models.EmailField(null=True)
 
