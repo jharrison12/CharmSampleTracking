@@ -3,7 +3,7 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory
+    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation
 import datetime
 from django.utils import timezone
 
@@ -341,4 +341,16 @@ class ConsentVersionModelsTest(ModelTest):
     def test_consents_can_have_multiple_caregivers(self):
         number_of_consent_signed = ConsentContract.objects.filter(consent_version_fk=self.consent_version_1).all()
         self.assertEqual(number_of_consent_signed.count(),2)
+
+class CaregiverMotherModelsTest(ModelTest):
+    def test_caregiver_links_to_mother_table(self):
+        mother_table_row = Mother.objects.create(caregiver_fk=self.first_caregiver,due_date=datetime.date(2020,7,3))
+        mother_table_row_2 = Mother.objects.create(caregiver_fk=self.second_caregiver,due_date=datetime.date(2020,7,3))
+        self.assertNotEqual(mother_table_row_2,mother_table_row)
+
+class NonMotherCaregiverModelsTest(ModelTest):
+    def test_non_mother_caregiver_links_to_caregiver_table(self):
+        mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
+        non_mother_table_row = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=mother_in_law)
+        self.assertEqual(non_mother_table_row.relation_fk.relation_type,'Mother-in-law')
 

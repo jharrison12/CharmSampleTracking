@@ -175,3 +175,13 @@ class ConsentContract(models.Model):
     #I'm removing consent number because it can be calculated using date if they need it
     #consent_number = models.IntegerField()
 
+class Mother(models.Model):
+    caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT)
+    due_date = models.DateField(null=False,blank=False)
+
+class Relation(models.Model):
+    relation_type = models.CharField(max_length=255)
+
+class NonMotherCaregiver(models.Model):
+    caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT)
+    relation_fk = models.ForeignKey(Relation,on_delete=models.PROTECT)
