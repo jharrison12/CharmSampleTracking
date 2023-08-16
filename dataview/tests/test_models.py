@@ -3,7 +3,7 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract
+    ConsentContract,CaregiverSocialMediaHistory
 import datetime
 from django.utils import timezone
 
@@ -226,7 +226,6 @@ class CaregiverAddressModelsTest(ModelTest):
 
         self.assertEqual(self.first_caregiver,caregiver_address_test_move)
 
-
 class CaregiverEmailModelsTest(ModelTest):
 
     def test_email_links_to_caregiver(self):
@@ -259,6 +258,20 @@ class CaregiverSocialMediaModelsTest(ModelTest):
         first_caregiver_twitter = Caregiver.objects.filter(caregiversocialmedia__social_media_user_name='bob').first()
 
         self.assertEqual(first_caregiver_twitter,self.first_caregiver)
+
+class CaregiverSocialMediaHistoryModelsTest(ModelTest):
+
+    def test_insert_into_history_works(self):
+        first_row_of_social_media_history = CaregiverSocialMediaHistory.\
+            objects.create(caregiver_social_media_fk=self.first_caregiver_social_media,
+                           caregiver_fk=self.first_caregiver_social_media.caregiver_fk,
+                           social_media_fk=self.first_caregiver_social_media.social_media_fk,
+                           social_media_user_name=self.first_caregiver_social_media.social_media_user_name,
+                           social_media_consent=self.first_caregiver_social_media.social_media_consent,
+                           revision_number=1,
+                           revision_date=datetime.date.today()
+                           )
+        self.assertEqual(first_row_of_social_media_history.social_media_user_name,'bob')
 
 class CaregiverPersonalContactModelsTest(ModelTest):
 

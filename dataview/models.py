@@ -94,6 +94,15 @@ class CaregiverSocialMedia(models.Model):
     social_media_user_name = models.CharField(null=False,blank=False,max_length=255)
     social_media_consent = models.BooleanField(default=True)
 
+class CaregiverSocialMediaHistory(models.Model):
+    caregiver_social_media_fk = models.ForeignKey(CaregiverSocialMedia,on_delete=models.PROTECT)
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    social_media_fk = models.ForeignKey(SocialMedia,on_delete=models.PROTECT)
+    social_media_user_name = models.CharField(null=False,blank=False,max_length=255)
+    social_media_consent = models.BooleanField(default=True)
+    revision_number = models.IntegerField(null=False)
+    revision_date = models.DateField(default=timezone.now)
+
 class CaregiverPersonalContact(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     address_fk = models.ForeignKey(Address, on_delete=models.PROTECT)
@@ -158,3 +167,4 @@ class ConsentContract(models.Model):
     #This needs to autoincrement but that is not easy in django, maybe remove?
     #I'm removing consent number because it can be calculated using date if they need it
     #consent_number = models.IntegerField()
+
