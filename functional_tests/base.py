@@ -6,12 +6,16 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,\
 import datetime
 import time
 from django.utils import timezone
-
+import os
 
 class FunctionalTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
+            return
         first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                    date_of_birth=datetime.date(1985, 7, 3),
                                                    ewcp_participant_identifier='0000',
