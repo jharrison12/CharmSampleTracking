@@ -10,7 +10,6 @@ class CaregiverSurveyPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/survey')
 
         #User sees information on Prenatal 1 Survey for P7000
-        time.sleep(30)
         survey_body_text_page = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Prenatal 1: Complete',survey_body_text_page)
         self.assertIn('Prenatal 2: Incomplete',survey_body_text_page)

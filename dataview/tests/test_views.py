@@ -174,18 +174,18 @@ class HomePageTest(TestCaseSetup):
 class CaregiverPageTest(TestCaseSetup):
 
     def test_caregiver_page_uses_correct_template(self):
-        response = self.client.get('/data/caregiver')
+        response = self.client.get('/data/caregiver/')
         self.assertTemplateUsed(response, 'dataview/caregiver.html')
 
     def test_mother_page_contains_caregiver_id(self):
         Caregiver.objects.create(charm_project_identifier='P7000')
-        response = self.client.get(f'/data/caregiver')
+        response = self.client.get(f'/data/caregiver/')
         self.assertContains(response,'P7000')
 
     def test_mother_page_contains_second_caregiver_id(self):
         Caregiver.objects.create(charm_project_identifier='P7000')
         Caregiver.objects.create(charm_project_identifier='P7001')
-        response = self.client.get(f'/data/caregiver')
+        response = self.client.get(f'/data/caregiver/')
         self.assertContains(response,'P7001')
 
 class CaregiverInformationPageTest(TestCaseSetup):
