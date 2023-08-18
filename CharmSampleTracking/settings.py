@@ -22,6 +22,8 @@ else:
     ALLOWED_HOSTS = []
 
 logging.critical(DEBUG)
+logging.critical(SECRET_KEY)
+logging.critical(ALLOWED_HOSTS)
 
 from pathlib import Path
 
