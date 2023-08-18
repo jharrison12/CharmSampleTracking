@@ -19,14 +19,8 @@ if 'DJANGO_DEBUG_FALSE' in os.environ:
     ALLOWED_HOSTS = [os.environ['SITENAME']]
 else:
     DEBUG=True
-    SECRET_KEY = 'insecure-key-for-dev'
+    SECRET_KEY = 'django-insecure-tw4p8+j%-fr8qv7g999lv-_&q)_l!4w41h4*t5%=g(y2x*8zih'
     ALLOWED_HOSTS = []
-
-logging.critical(DEBUG)
-logging.critical(SECRET_KEY)
-logging.critical(ALLOWED_HOSTS)
-
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
