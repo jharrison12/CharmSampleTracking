@@ -307,7 +307,7 @@ class CaregiverContactPageTest(TestCaseSetup):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact B Address: two drive')
 
-    def test_caregiver_information_page_shows_contact_b_address(self):
+    def test_caregiver_information_page_shows_contact_b_email(self):
         response = self.client.get(f'/data/caregiver/P7000/contact/')
         self.assertContains(response,'Contact B Email: c@c.com')
 

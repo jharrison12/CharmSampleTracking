@@ -8,22 +8,22 @@
     <h1>{{ caregiver.charm_project_identifier }} Contact</h1>
         <h2>Contact A</h2>
             <ul>
-                <li>Contact A First Name: {{ contact_a_name.first_name }}</li>
-                <li>Contact A Last Name: {{ contact_a_name.last_name }}</li>
-                <li>Contact A Phone Number: {{ contact_a_phone.area_code }}-{{ contact_a_phone.phone_number }}</li>
-                <li>Contact A Address: {{ contact_a_address.address_line_1 }} {{ contact_a_address.address_line_2|default_if_none:"Empty" }} {{ contact_a_address.city }}, {{ contact_a_address.state }} {{ contact_a_address.zip_code }}</li>
-                <li>Contact A Email: {{ contact_a_email.email }}</li>
+                <li>Contact A First Name: {{ contact_a.name_fk.first_name }}</li>
+                <li>Contact A Last Name: {{ contact_a.name_fk.last_name}}</li>
+                <li>Contact A Phone Number: {{ contact_a.phone_fk.area_code}}-{{ contact_a.phone_fk.phone_number }}</li>
+                <li>Contact A Address: {{ contact_a.address_fk.address_line_1 }} {{ contact_a.address_fk.address_line_2|default_if_none:"Empty" }} {{ contact_a.address_fk.city }}, {{ contact_a.address_fk.state}} {{ contact_a.address_fk.zip_code }}</li>
+                <li>Contact A Email: {{ contact_a.email_fk.email }}</li>
             </ul>
-    {% if contact_b_name %}
+        {% if contact_b %}
         <h2>Contact B</h2>
             <ul>
-                <li>Contact B First Name: {{ contact_b_name.first_name }}</li>
-                <li>Contact B Last Name: {{ contact_b_name.last_name }}</li>
-                <li>Contact B Phone Number: {{ contact_b_phone.area_code }}-{{ contact_b_phone.phone_number }}</li>
-                <li>Contact B Address: {{ contact_b_address.address_line_1 }} {{ contact_b_address.address_line_2|default_if_none:"Empty" }} {{ contact_b_address.city }}, {{ contact_b_address.state }} {{ contact_b_address.zip_code }}</li>
-                <li>Contact B Email: {{ contact_b_email.email }}</li>
+                <li>Contact B First Name: {{ contact_b.name_fk.first_name}}</li>
+                <li>Contact B Last Name: {{ contact_b.name_fk.last_name}}</li>
+                <li>Contact B Phone Number: {{ contact_b.phone_fk.area_code}}-{{ contact_b.phone_fk.phone_number }}</li>
+                <li>Contact B Address: {{ contact_b.address_fk.address_line_1 }} {{ contact_b.address_fk.address_line_2|default_if_none:"Empty" }} {{ contact_b.address_fk.city }}, {{ contact_b.address_fk.state}} {{ contact_b.address_fk.zip_code }}</li>
+                <li>Contact B Email: {{ contact_b.email_fk.email }}</li>
             </ul>
-   {% else %}
-   {% endif %}
+        {% else %}
+        {% endif %}
 </body>
 </html>
