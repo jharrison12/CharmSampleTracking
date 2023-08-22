@@ -26,4 +26,4 @@ class MotherIdPageTest(FunctionalTest):
         #User clicks on P7000 and sees mother info page
         self.browser.find_element(By.LINK_TEXT,'P7000').click()
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
-        self.assertIn('Mothers name is: Doe, Jane',header_text_id_page)
+        self.assertIn('Mother\'s name is: Doe, Jane',header_text_id_page)

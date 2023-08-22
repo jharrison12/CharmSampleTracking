@@ -34,7 +34,7 @@ class TestCaseSetup(TestCase):
         second_caregiver_name.last_name = 'Smith'
         second_caregiver_name.save()
 
-        first_caregiver_old_name = Name.objects.create(first_name='Jessica', last_name='Smith')
+        first_caregiver_old_name = Name.objects.create(first_name='Sandy', last_name='Cheeks')
 
         CaregiverName.objects.create(caregiver_fk=first_caregiver, name_fk=first_caregiver_name, revision_number=1,
                                      eff_start_date=timezone.now(), status='C')
@@ -230,8 +230,8 @@ class CaregiverInformationPageTest(TestCaseSetup):
 
     def test_caregiver_information_page_does_not_contain_archived_name(self):
         response = self.client.get(f'/data/caregiver/P7000/')
-        self.assertNotContains(response, 'Jessica')
-        self.assertNotContains(response, 'Smith')
+        self.assertNotContains(response, 'Sandy')
+        self.assertNotContains(response, 'Cheeks')
 
     def test_caregiver_information_page_contains_address(self):
         response = self.client.get(f'/data/caregiver/P7000/')
@@ -267,53 +267,44 @@ class CaregiverInformationPageTest(TestCaseSetup):
         self.assertContains(response,'Facebook: jonathan-h')
         self.assertContains(response,'Instagram: @jonathanscat')
 
-class CaregiverContactPageTest(TestCaseSetup):
-
-    def test_caregiver_contact_page_uses_correct_template(self):
-        response = self.client.get('/data/caregiver/P7000/contact/')
-        self.assertTemplateUsed(response, 'dataview/caregiver_contact.html')
-
-    def test_caregiver_contact_page_contains_caregiver_id(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
-        self.assertContains(response,'P7000')
-
     def test_caregiver_information_page_shows_contact_a_name(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact A First Name: John')
         self.assertContains(response,'Contact A Last Name: Jones')
 
     def test_caregiver_information_page_shows_contact_a_phone(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact A Phone Number: 999-999-9999')
 
     def test_caregiver_information_page_shows_contact_a_address(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact A Address: two drive')
 
     def test_caregiver_information_page_shows_contact_a_email(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact A Email: b@b.com')
 
     def test_caregiver_information_page_shows_contact_b_name(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact B First Name: Jessica')
         self.assertContains(response,'Contact B Last Name: Jones')
 
     def test_caregiver_information_page_shows_contact_b_phone(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact B Phone Number: 999-999-9998')
 
     def test_caregiver_information_page_shows_contact_b_address(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact B Address: two drive')
 
     def test_caregiver_information_page_shows_contact_b_email(self):
-        response = self.client.get(f'/data/caregiver/P7000/contact/')
+        response = self.client.get(f'/data/caregiver/P7000/')
         self.assertContains(response,'Contact B Email: c@c.com')
 
     def test_caregiver_information_page_does_not_show_contact_b_if_it_does_not_exist(self):
-        response = self.client.get(f'/data/caregiver/P7001/contact/')
+        response = self.client.get(f'/data/caregiver/P7001/')
         self.assertNotContains(response,'Contact B')
+
 
 class CaregiverSurveyPageTest(TestCaseSetup):
 

@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
     <body>
+        <h2>Caregiver Charm Sample Identifiers:</h2>
         <ul>
             {% for person in mother_or_caregiver %}
                 <li><a href="{% url 'dataview:caregiver_info' person.charm_project_identifier %}">{{ person.charm_project_identifier }}</a></li>

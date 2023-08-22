@@ -22,6 +22,8 @@ def caregiver_info(request,caregiver_charm_id):
     caregiver_phone_secondary = Phone.objects.filter(caregiverphone__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiverphone__phone_type='SD').first()
     #caregiver_social_media = SocialMedia.objects.filter(caregiversocialmedia__caregiver_fk__charm_project_identifier=caregiver_charm_id)
     caregiver_social_media = CaregiverSocialMedia.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
+    contact_a = CaregiverPersonalContact.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiver_contact_type='PR').first()
+    contact_b = CaregiverPersonalContact.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiver_contact_type='SD').first()
 
     return render(request=request,template_name='dataview/caregiver_info.html',context={'caregiver':caregiver,
                                                                                         'caregiver_name':caregiver_name,
@@ -30,15 +32,10 @@ def caregiver_info(request,caregiver_charm_id):
                                                                                         'caregiver_email_secondary':caregiver_email_secondary,
                                                                                         'caregiver_phone_primary':caregiver_phone_primary,
                                                                                         'caregiver_phone_secondary': caregiver_phone_secondary,
-                                                                                        'caregiver_social_media': caregiver_social_media})
-
-def caregiver_contact(request,caregiver_charm_id):
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    contact_a = CaregiverPersonalContact.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiver_contact_type='PR').first()
-    contact_b = CaregiverPersonalContact.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiver_contact_type='SD').first()
-    return render(request=request,template_name='dataview/caregiver_contact.html',context={'caregiver': caregiver,
-                                                                                           'contact_a': contact_a,
-                                                                                           'contact_b': contact_b})
+                                                                                        'caregiver_social_media': caregiver_social_media,
+                                                                                        'contact_a': contact_a,
+                                                                                        'contact_b': contact_b
+                                                                                        })
 
 def caregiver_survey(request,caregiver_charm_id):
     caregiver_surveys = CaregiverSurvey.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
