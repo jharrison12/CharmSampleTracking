@@ -34,13 +34,11 @@ def caregiver_info(request,caregiver_charm_id):
 
 def caregiver_contact(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    ##TODO is there a better way of filtering?
-
     contact_a = CaregiverPersonalContact.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiver_contact_type='PR').first()
     contact_b = CaregiverPersonalContact.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregiver_contact_type='SD').first()
-    return render(request=request,template_name='dataview/caregiver_contact.html',context={'caregiver':caregiver,
+    return render(request=request,template_name='dataview/caregiver_contact.html',context={'caregiver': caregiver,
                                                                                            'contact_a': contact_a,
-                                                                                           'contact_b':contact_b})
+                                                                                           'contact_b': contact_b})
 
 def caregiver_survey(request,caregiver_charm_id):
     caregiver_surveys = CaregiverSurvey.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)

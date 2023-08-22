@@ -19,6 +19,7 @@ from django.urls import include,path,re_path
 from dataview import views as dataviews
 import dataview
 
+app_name = "dataview"
 urlpatterns = [
     re_path(r"^caregiver/$", dataviews.caregiver, name='caregivers'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", dataviews.caregiver_info,name='caregiver_info'),

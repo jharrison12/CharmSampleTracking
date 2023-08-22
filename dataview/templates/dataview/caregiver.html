@@ -7,7 +7,7 @@
     <body>
         <ul>
             {% for person in mother_or_caregiver %}
-                <li>{{ person.charm_project_identifier }}</li>
+                <li><a href="{% url 'dataview:caregiver_info' person.charm_project_identifier %}">{{ person.charm_project_identifier }}</a></li>
             {% endfor %}
         </ul>
     </body>
