@@ -65,3 +65,12 @@ class MotherInformationPageTest(FunctionalTest):
         self.assertIn('Contact A Address: three drive', contact_body_text_id_page_70001)
         self.assertIn('Contact A Email: d@d.com', contact_body_text_id_page_70001)
         self.assertNotIn('Contact B',contact_body_text_id_page_70001)
+
+    def test_user_can_visit_caregiver_survey_page(self):
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/')
+        self.browser.find_element(By.LINK_TEXT,"Caregiver Surveys").click()
+        surveys = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn("Prenatal 1:", surveys)
+        self.assertIn("Prenatal 2:", surveys)
+

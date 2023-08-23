@@ -148,7 +148,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                    survey_completion_date=datetime.date.today()
                                                                    )
 
-        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
+        self.caregiver_prenatal_2 = CaregiverSurvey.objects.create(caregiver_fk=first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
