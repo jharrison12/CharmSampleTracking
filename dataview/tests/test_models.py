@@ -3,7 +3,8 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation
+    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
+    CaregiverBiospecimen,Collection
 import datetime
 from django.utils import timezone
 
@@ -146,6 +147,19 @@ class ModelTest(TestCase):
         self.consent_contract_1_cg_2 = ConsentContract.objects.create(caregiver_fk=self.second_caregiver,
                                                                       consent_version_fk=self.consent_version_1,
                                                                       consent_date=datetime.date.today())
+
+        #create biospecimen
+
+        self.completed_status = Status.objects.create(status='Complete')
+        self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
+
+        self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                   status_fk=self.completed_status,
+                                                                   collection_fk=self.urine_one,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   biospecimen_date=datetime.date.today())
+
+
 
 class CaregiverModelsTest(TestCase):
 
@@ -354,3 +368,12 @@ class NonMotherCaregiverModelsTest(ModelTest):
         non_mother_table_row = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=mother_in_law)
         self.assertEqual(non_mother_table_row.relation_fk.relation_type,'Mother-in-law')
 
+
+class BioSpecimenCaregiverTest(ModelTest):
+    def test_biospecimen_links_to_mother_table(self):
+        caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine').first()
+        self.assertEqual(caregiver_bio_one,self.first_caregiver)
+
+    def test_biospecimen_links_to_incentive_table(self):
+        first_incentive =   Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine').first()
+        self.assertEqual(first_incentive.incentive_amount,100)

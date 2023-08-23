@@ -183,3 +183,19 @@ class Relation(models.Model):
 class NonMotherCaregiver(models.Model):
     caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT)
     relation_fk = models.ForeignKey(Relation,on_delete=models.PROTECT)
+
+class Status(models.Model):
+    #todo sublcass text choices for status
+    status = models.CharField(max_length=255)
+
+class Collection(models.Model):
+    #todo subclass text choices
+    collection_type = models.CharField(max_length=255)
+    collection_number = models.CharField(max_length=255)
+
+class CaregiverBiospecimen(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    status_fk = models.ForeignKey(Status, on_delete=models.PROTECT)
+    collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT)
+    biospecimen_date = models.DateField(blank=False,null=False,default=timezone.now)
