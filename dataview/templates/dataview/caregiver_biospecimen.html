@@ -5,9 +5,37 @@
     <title>Title</title>
 </head>
 <body>
-    <h2>Mothers name: {{ caregiver_name.last_name }}, {{ caregiver_name.first_name }} Specimen Id: {{ caregiver.specimen_id }}</h2>
+    <h2>ID</h2>
+        <div class="mother_id">
+            <div class="charm_id">
+                Charm Id: {{ caregiver.charm_project_identifier }}
+            </div>
+            <div class="family_id">
+                Family Id: {{ caregiver.specimen_id }}
+            </div>
+        </div>
+    <h2>Serum</h2>
+        <div class="mother_serum">
+            <div class="serum1">
+                Serum 1: {{ biospecimen_serum_one.status_fk.status }} Date: {{ biospecimen_serum_one.biospecimen_date }}
+            </div>
+            <div class="serum2">
+                Serum 2: {{ biospecimen_serum_two.status_fk.status }} Date: {{ biospecimen_serum_two.biospecimen_date }}
+            </div>
+        </div>
+    <h2>Plasma</h2>
+        <div class="mother_plasma">
+            <div class="plasma1">
+                Plasma 1: {{ biospecimen_plasma_one.status_fk.status }} Date: {{ biospecimen_plasma_one.biospecimen_date }}
+            </div>
+            <div class="plasma2">
+                Plasma 2: {{ biospecimen_plasma_two.status_fk.status }} Date: {{ biospecimen_plasma_two.biospecimen_date }}
+            </div>
+        </div>
         {% for biospecimen in biospecimens %}
+                <h2>{{ biospecimen.collection_fk.collection_type. }}</h2>
             {{ biospecimen.collection_fk.collection_type }} {{ biospecimen.collection_fk.collection_number }}: {{ biospecimen.status_fk.status }}
         {% endfor %}
+
 </body>
 </html>

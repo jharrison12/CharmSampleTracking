@@ -149,15 +149,56 @@ class ModelTest(TestCase):
                                                                       consent_date=datetime.date.today())
 
         #create biospecimen
-
         self.completed_status = Status.objects.create(status='Completed')
+        self.incomplete = Status.objects.create(status='Incomplete')
         self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
+        self.urine_two = Collection.objects.create(collection_type='Urine',collection_number=2)
+        self.serum_one = Collection.objects.create(collection_type='Serum',collection_number=1)
+        self.serum_two = Collection.objects.create(collection_type='Serum',collection_number=2)
+        self.plasma_one = Collection.objects.create(collection_type='plasma',collection_number=1)
+        self.plasma_two = Collection.objects.create(collection_type='plasma',collection_number=2)
 
         self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                    status_fk=self.completed_status,
                                                                    collection_fk=self.urine_one,
                                                                    incentive_fk=self.incentive_one,
                                                                    biospecimen_date=datetime.date.today())
+
+        self.biospecimen_two_caregiver_two = CaregiverBiospecimen.objects.create(caregiver_fk=self.second_caregiver,
+                                                                   status_fk=self.completed_status,
+                                                                   collection_fk=self.urine_one,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   biospecimen_date=datetime.date.today())
+
+        self.biospecimen_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.incomplete,
+                                                                                 collection_fk=self.urine_two,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_serum_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.completed_status,
+                                                                                 collection_fk=self.serum_one,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_serum_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.incomplete,
+                                                                                 collection_fk=self.serum_two,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.completed_status,
+                                                                                 collection_fk=self.plasma_one,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.incomplete,
+                                                                                 collection_fk=self.plasma_two,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
 
 
 
@@ -371,9 +412,14 @@ class NonMotherCaregiverModelsTest(ModelTest):
 
 class BioSpecimenCaregiverTest(ModelTest):
     def test_biospecimen_links_to_mother_table(self):
-        caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine').first()
+        caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine')\
+            .filter(charm_project_identifier='P7000').first()
         self.assertEqual(caregiver_bio_one,self.first_caregiver)
 
+    def test_biospecimen_urine_links_to_two_caregivers(self):
+        urine_samples = CaregiverBiospecimen.objects.filter(collection_fk__collection_type='Urine').filter(collection_fk__collection_number=1)
+        self.assertEqual(urine_samples.count(),2)
+
     def test_biospecimen_links_to_incentive_table(self):
-        first_incentive =   Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine').first()
+        first_incentive =  Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine').first()
         self.assertEqual(first_incentive.incentive_amount,100)

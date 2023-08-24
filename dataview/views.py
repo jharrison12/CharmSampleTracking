@@ -42,9 +42,17 @@ def caregiver_survey(request,caregiver_charm_id):
     return render(request,template_name='dataview/caregiver_survey.html',context={'caregiver_surveys':caregiver_surveys,
                                                                                   'charm_id':caregiver_charm_id})
 def caregiver_biospecimen(request,caregiver_charm_id):
-    caregiver_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    caregiver_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
+    biospecimen_serum_one = caregiver_biospecimens.filter(collection_fk__collection_type='Serum').filter(collection_fk__collection_number=1).first()
+    biospecimen_serum_two = caregiver_biospecimens.filter(collection_fk__collection_type='Serum').filter(collection_fk__collection_number=2).first()
+    biospecimen_plasma_one = caregiver_biospecimens.filter(collection_fk__collection_type='plasma').filter(collection_fk__collection_number=1).first()
+    biospecimen_plasma_two = caregiver_biospecimens.filter(collection_fk__collection_type='plasma').filter(collection_fk__collection_number=2).first()
     caregiver_name = Name.objects.filter(caregivername__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregivername__status='C').first()
     return render(request,template_name='dataview/caregiver_biospecimen.html',context={'biospecimens': caregiver_biospecimens,
+                                                                                       'biospecimen_serum_one': biospecimen_serum_one,
+                                                                                       'biospecimen_serum_two':biospecimen_serum_two,
+                                                                                       'biospecimen_plasma_one': biospecimen_plasma_one,
+                                                                                       'biospecimen_plasma_two':biospecimen_plasma_two,
                                                                                        'caregiver':caregiver,
                                                                                        'caregiver_name': caregiver_name})
