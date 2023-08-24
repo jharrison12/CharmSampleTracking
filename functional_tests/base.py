@@ -2,7 +2,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType
+    Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen
 import datetime
 import time
 from django.utils import timezone
@@ -154,6 +154,16 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                    incentive_fk=self.incentive_one,
                                                                    survey_completion_date=datetime.date.today()
                                                                    )
+
+
+        self.completed_status = Status.objects.create(status='Completed')
+        self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
+
+        self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=first_caregiver,
+                                                                   status_fk=self.completed_status,
+                                                                   collection_fk=self.urine_one,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   biospecimen_date=datetime.date.today())
 
 
     def tearDown(self):

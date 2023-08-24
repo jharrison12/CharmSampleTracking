@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>Mothers name: {{ caregiver_name.last_name }}, {{ caregiver_name.first_name }} Specimen Id: {{ caregiver.specimen_id }}</h2>
+        {% for biospecimen in biospecimens %}
+            {{ biospecimen.collection_fk.collection_type }} {{ biospecimen.collection_fk.collection_number }}: {{ biospecimen.status_fk.status }}
+        {% endfor %}
+</body>
+</html>

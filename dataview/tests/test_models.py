@@ -150,7 +150,7 @@ class ModelTest(TestCase):
 
         #create biospecimen
 
-        self.completed_status = Status.objects.create(status='Complete')
+        self.completed_status = Status.objects.create(status='Completed')
         self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
 
         self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,

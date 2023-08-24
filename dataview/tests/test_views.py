@@ -4,7 +4,7 @@ import unittest
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType
+    Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen
 import datetime
 from django.utils import timezone
 
@@ -164,6 +164,18 @@ class TestCaseSetup(TestCase):
                                                                    survey_completion_date=datetime.date.today()
                                                                    )
 
+        # create biospecimen
+        #create biospecimen
+
+        self.completed_status = Status.objects.create(status='Completed')
+        self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
+
+        self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=first_caregiver,
+                                                                   status_fk=self.completed_status,
+                                                                   collection_fk=self.urine_one,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   biospecimen_date=datetime.date.today())
+
 # Create your tests here.
 class HomePageTest(TestCaseSetup):
 
@@ -319,3 +331,13 @@ class CaregiverSurveyPageTest(TestCaseSetup):
     def test_caregiver_survey_page_shows_prenatal2_survey_outcome(self):
         response = self.client.get(f'/data/caregiver/P7000/survey/')
         self.assertContains(response,'Prenatal 2: Incomplete')
+
+class CaregiverBiospecimenPageTest(TestCaseSetup):
+
+    def test_caregiver_biospeciment_page_returns_correct_template(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertTemplateUsed(response,'dataview/caregiver_biospecimen.html')
+
+    def test_caregiver_biospeciment_page_returns_correct_template(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertContains(response,'Urine 1: Completed')
