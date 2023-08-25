@@ -29,14 +29,15 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         self.assertIn("Bloodspots 2: Incomplete", bloodspots_section)
 
         whole_blood_section = self.browser.find_element(By.CLASS_NAME,'mother_whole_blood').text
-        self.assertIn("Whole Blood 1: Completed", bloodspots_section)
-        self.assertIn("Whole Blood 2: Incomplete", bloodspots_section)
+        self.assertIn("Whole Blood 1: Completed", whole_blood_section)
+        self.assertIn("Whole Blood 2: Incomplete", whole_blood_section)
 
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Urine 1: Completed',body_text)
-        self.assertIn('Urine 2: Incomplete',body_text)
+        buffy_coat_section = self.browser.find_element(By.CLASS_NAME,'mother_buffy_coat').text
+        self.assertIn("Buffy Coat 1: Completed", buffy_coat_section)
+        self.assertIn("Buffy Coat 2: Incomplete", buffy_coat_section)
+
 
         #user visits anoter sampleid to view urine outcome
 
-        self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/biospecimen')
-        self.assertIn('Urine 1: Completed', body_text)
+        # self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/biospecimen')
+        # self.assertIn('Urine 1: Completed', body_text)

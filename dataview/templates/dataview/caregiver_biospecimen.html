@@ -41,6 +41,25 @@
                 Bloodspots 2: {{ biospecimen_bloodspots_two.status_fk.status }} Date: {{ biospecimen_bloodspots_two.biospecimen_date }}
             </div>
         </div>
+    <h2>Whole Blood</h2>
+        <div class="mother_whole_blood">
+            <div class="whole_blood1">
+                Whole Blood 1: {{ biospecimen_whole_blood_one.status_fk.status }} Date: {{ biospecimen_whole_blood_one.biospecimen_date }}
+            </div>
+            <div class="whole_blood2">
+                Whole Blood 2: {{ biospecimen_whole_blood_two.status_fk.status }} Date: {{ biospecimen_whole_blood_two.biospecimen_date }}
+            </div>
+        </div>
+    <h2>Buffy Coat</h2>
+        <div class="mother_buffy_coat">
+            <div class="buffy_coat1">
+                Buffy Coat 1: {{ biospecimen_buffy_coat_one.status_fk.status }} Date: {{ biospecimen_buffy_coat_one.biospecimen_date }}
+            </div>
+            <div class="buffy_coat2">
+                Buffy Coat 2: {{ biospecimen_buffy_coat_two.status_fk.status }} Date: {{ biospecimen_buffy_coat_two.biospecimen_date }}
+            </div>
+        </div>
+
 
 
 {#        {% regroup biospecimens by  biospecimens.collection_fk.collection_type as bio_list %}#}
