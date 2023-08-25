@@ -32,7 +32,15 @@
                 Plasma 2: {{ biospecimen_plasma_two.status_fk.status }} Date: {{ biospecimen_plasma_two.biospecimen_date }}
             </div>
         </div>
-    <h2> </h2>
+    <h2>Bloodspots</h2>
+        <div class="mother_bloodspots">
+            <div class="bloodspots1">
+                Bloodspots 1: {{ biospecimen_bloodspots_one.status_fk.status }} Date: {{ biospecimen_bloodspots_one.biospecimen_date }}
+            </div>
+            <div class="bloodspots2">
+                Bloodspots 2: {{ biospecimen_bloodspots_two.status_fk.status }} Date: {{ biospecimen_bloodspots_two.biospecimen_date }}
+            </div>
+        </div>
 
 
 {#        {% regroup biospecimens by  biospecimens.collection_fk.collection_type as bio_list %}#}

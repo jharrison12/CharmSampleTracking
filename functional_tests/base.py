@@ -164,8 +164,10 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.urine_two = Collection.objects.create(collection_type='Urine',collection_number=2)
         self.serum_one = Collection.objects.create(collection_type='Serum',collection_number=1)
         self.serum_two = Collection.objects.create(collection_type='Serum',collection_number=2)        
-        self.plasma_one = Collection.objects.create(collection_type='plasma',collection_number=1)
-        self.plasma_two = Collection.objects.create(collection_type='plasma',collection_number=2)
+        self.plasma_one = Collection.objects.create(collection_type='Plasma',collection_number=1)
+        self.plasma_two = Collection.objects.create(collection_type='Plasma',collection_number=2)
+        self.bloodspots_one = Collection.objects.create(collection_type='Bloodspots',collection_number=1)
+        self.bloodspots_two = Collection.objects.create(collection_type='Bloodspots',collection_number=2)
 
         self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                    status_fk=self.completed_status,
@@ -197,7 +199,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                                  incentive_fk=self.incentive_one,
                                                                                  biospecimen_date=datetime.date.today())
 
-        self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+        self.biospecimen_plasma_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                                  status_fk=self.completed_status,
                                                                                  collection_fk=self.plasma_one,
                                                                                  incentive_fk=self.incentive_one,
@@ -206,6 +208,18 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                                  status_fk=self.incomplete,
                                                                                  collection_fk=self.plasma_two,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.completed_status,
+                                                                                 collection_fk=self.bloodspots_one,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.incomplete,
+                                                                                 collection_fk=self.bloodspots_two,
                                                                                  incentive_fk=self.incentive_one,
                                                                                  biospecimen_date=datetime.date.today())
 

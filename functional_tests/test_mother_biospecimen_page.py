@@ -24,6 +24,14 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         self.assertIn("Plasma 1: Completed", plasma_section)
         self.assertIn("Plasma 2: Incomplete", plasma_section)
 
+        bloodspots_section = self.browser.find_element(By.CLASS_NAME,'mother_bloodspots').text
+        self.assertIn("Bloodspots 1: Completed", bloodspots_section)
+        self.assertIn("Bloodspots 2: Incomplete", bloodspots_section)
+
+        whole_blood_section = self.browser.find_element(By.CLASS_NAME,'mother_whole_blood').text
+        self.assertIn("Whole Blood 1: Completed", bloodspots_section)
+        self.assertIn("Whole Blood 2: Incomplete", bloodspots_section)
+
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Urine 1: Completed',body_text)
         self.assertIn('Urine 2: Incomplete',body_text)
