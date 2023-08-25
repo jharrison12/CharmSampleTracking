@@ -54,6 +54,8 @@ def caregiver_biospecimen(request,caregiver_charm_id):
     biospecimen_whole_blood_two = caregiver_biospecimens.filter(collection_fk__collection_type='Whole Blood').filter(collection_fk__collection_number=2).first()
     biospecimen_buffy_coat_one = caregiver_biospecimens.filter(collection_fk__collection_type='Buffy Coat').filter(collection_fk__collection_number=1).first()
     biospecimen_buffy_coat_two = caregiver_biospecimens.filter(collection_fk__collection_type='Buffy Coat').filter(collection_fk__collection_number=2).first()
+    biospecimen_red_blood_cells_one = caregiver_biospecimens.filter(collection_fk__collection_type='Red Blood Cells').filter(collection_fk__collection_number=1).first()
+    biospecimen_red_blood_cells_two = caregiver_biospecimens.filter(collection_fk__collection_type='Red Blood Cells').filter(collection_fk__collection_number=2).first()
     caregiver_name = Name.objects.filter(caregivername__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregivername__status='C').first()
     return render(request,template_name='dataview/caregiver_biospecimen.html',context={'biospecimens': caregiver_biospecimens,
                                                                                        'biospecimen_serum_one': biospecimen_serum_one,
@@ -66,5 +68,7 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                        'biospecimen_whole_blood_two': biospecimen_whole_blood_two,
                                                                                        'biospecimen_buffy_coat_one': biospecimen_buffy_coat_one,
                                                                                        'biospecimen_buffy_coat_two':biospecimen_buffy_coat_two,
+                                                                                       'biospecimen_red_blood_cells_one':biospecimen_red_blood_cells_one,
+                                                                                       'biospecimen_red_blood_cells_two':biospecimen_red_blood_cells_two,
                                                                                        'caregiver':caregiver,
                                                                                        'caregiver_name': caregiver_name})

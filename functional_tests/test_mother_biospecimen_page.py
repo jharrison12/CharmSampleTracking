@@ -36,6 +36,10 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         self.assertIn("Buffy Coat 1: Completed", buffy_coat_section)
         self.assertIn("Buffy Coat 2: Incomplete", buffy_coat_section)
 
+        red_blood_cells = self.browser.find_element(By.CLASS_NAME,'mother_red_blood_cells').text
+        self.assertIn("Red Blood Cells 1: Completed", red_blood_cells)
+        self.assertIn("Red Blood Cells 2: Incomplete", red_blood_cells)
+
 
         #user visits anoter sampleid to view urine outcome
 

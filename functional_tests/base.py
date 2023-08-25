@@ -172,6 +172,8 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.whole_blood_two = Collection.objects.create(collection_type='Whole Blood',collection_number=2)
         self.buffy_coat_one = Collection.objects.create(collection_type='Buffy Coat',collection_number=1)
         self.buffy_coat_two = Collection.objects.create(collection_type='Buffy Coat',collection_number=2)
+        self.red_blood_cells_one = Collection.objects.create(collection_type='Red Blood Cells',collection_number=1)
+        self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells',collection_number=2)
 
         self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                    status_fk=self.completed_status,
@@ -248,6 +250,18 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.biospecimen_buffy_coat_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                                  status_fk=self.incomplete,
                                                                                  collection_fk=self.buffy_coat_two,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_red_blood_cells_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.completed_status,
+                                                                                 collection_fk=self.red_blood_cells_one,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_red_blood_cells_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.incomplete,
+                                                                                 collection_fk=self.red_blood_cells_two,
                                                                                  incentive_fk=self.incentive_one,
                                                                                  biospecimen_date=datetime.date.today())
 
