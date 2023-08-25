@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 import time
+import datetime
 
 class MotherBioSpecimenPageTest(FunctionalTest):
 
@@ -12,13 +13,14 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         header_text = self.browser.find_elements(By.TAG_NAME,'h2')
         self.assertIn('ID',[item.text for item in header_text])
         mother_id_section = self.browser.find_element(By.CLASS_NAME,'mother_id').text
-        time.sleep(10)
+        time.sleep(60)
         self.assertIn('P7000',mother_id_section)
         self.assertIn('4444',mother_id_section)
 
         serum_section = self.browser.find_element(By.CLASS_NAME,'mother_serum').text
         self.assertIn("Serum 1: Completed", serum_section)
         self.assertIn("Serum 2: Incomplete", serum_section)
+        self.assertIn(f"Date: Aug. 23, 2023", serum_section)
 
         plasma_section = self.browser.find_element(By.CLASS_NAME,'mother_plasma').text
         self.assertIn("Plasma 1: Completed", plasma_section)
@@ -39,6 +41,13 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         red_blood_cells = self.browser.find_element(By.CLASS_NAME,'mother_red_blood_cells').text
         self.assertIn("Red Blood Cells 1: Completed", red_blood_cells)
         self.assertIn("Red Blood Cells 2: Incomplete", red_blood_cells)
+
+        urine = self.browser.find_element(By.CLASS_NAME,'mother_urine').text
+        self.assertIn("Urine 1: Completed", urine)
+        self.assertIn("Urine 2: Incomplete", urine)
+        self.assertIn("Urine 3: Completed", urine)
+        self.assertIn("EC Urine: Incomplete", urine)
+        self.assertIn("MC Urine: Incomplete", urine)
 
 
         #user visits anoter sampleid to view urine outcome

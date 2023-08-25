@@ -387,3 +387,7 @@ class CaregiverBiospecimenPageTest(TestCaseSetup):
     def test_caregiver_b_biospecimen_does_not_appear_in_caregiver_a_page(self):
         response = self.client.get(f'/data/caregiver/P7001/biospecimen/')
         self.assertNotContains(response,'Serum 1: Completed')
+
+    def test_caregiver_a_bio_page_shows_all_urines(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertContains(response,"Urine 1")

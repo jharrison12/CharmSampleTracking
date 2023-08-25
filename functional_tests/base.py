@@ -197,7 +197,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                                  status_fk=self.completed_status,
                                                                                  collection_fk=self.serum_one,
                                                                                  incentive_fk=self.incentive_one,
-                                                                                 biospecimen_date=datetime.date.today())
+                                                                                 biospecimen_date=datetime.date(2023, 8, 23))
 
         self.biospecimen_serum_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                                  status_fk=self.incomplete,
