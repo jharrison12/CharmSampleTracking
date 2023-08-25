@@ -180,6 +180,9 @@ class Mother(models.Model):
 class Relation(models.Model):
     relation_type = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.relation_type
+
 class NonMotherCaregiver(models.Model):
     caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT)
     relation_fk = models.ForeignKey(Relation,on_delete=models.PROTECT)
@@ -188,10 +191,16 @@ class Status(models.Model):
     #todo sublcass text choices for status
     status = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.status
+
 class Collection(models.Model):
     #todo subclass text choices
     collection_type = models.CharField(max_length=255)
     collection_number = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.collection_type} {self.collection_number}"
 
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)

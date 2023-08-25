@@ -32,10 +32,17 @@
                 Plasma 2: {{ biospecimen_plasma_two.status_fk.status }} Date: {{ biospecimen_plasma_two.biospecimen_date }}
             </div>
         </div>
-        {% for biospecimen in biospecimens %}
-                <h2>{{ biospecimen.collection_fk.collection_type. }}</h2>
-            {{ biospecimen.collection_fk.collection_type }} {{ biospecimen.collection_fk.collection_number }}: {{ biospecimen.status_fk.status }}
-        {% endfor %}
+    <h2> </h2>
+
+
+{#        {% regroup biospecimens by  biospecimens.collection_fk.collection_type as bio_list %}#}
+{#        {% for bio in bio_list %}#}
+{#            {{ bio }}#}
+{#        {% for biospecimen in biospecimens.values %}#}
+{#                <h2>{{ biospecimen }}</h2>#}
+{#            {{ biospecimen.collection_fk.collection_type }} {{ biospecimen.collection_fk.collection_number }}: {{ biospecimen.status_fk.status }}#}
+{#        {% endfor %}#}
+{#        {% endfor %}#}
 
 </body>
 </html>
