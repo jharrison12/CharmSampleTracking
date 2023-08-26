@@ -162,6 +162,9 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.incomplete = Status.objects.create(status='Incomplete')
         self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
         self.urine_two = Collection.objects.create(collection_type='Urine',collection_number=2)
+        self.urine_three = Collection.objects.create(collection_type='Urine',collection_number=3)
+        self.urine_ec = Collection.objects.create(collection_type='Urine',collection_number='EC')
+        self.urine_mc = Collection.objects.create(collection_type='Urine',collection_number='MC')
         self.serum_one = Collection.objects.create(collection_type='Serum',collection_number=1)
         self.serum_two = Collection.objects.create(collection_type='Serum',collection_number=2)        
         self.plasma_one = Collection.objects.create(collection_type='Plasma',collection_number=1)
@@ -175,21 +178,39 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.red_blood_cells_one = Collection.objects.create(collection_type='Red Blood Cells',collection_number=1)
         self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells',collection_number=2)
 
-        self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+        self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                    status_fk=self.completed_status,
                                                                    collection_fk=self.urine_one,
                                                                    incentive_fk=self.incentive_one,
                                                                    biospecimen_date=datetime.date.today())
 
-        self.biospecimen_two_caregiver_two = CaregiverBiospecimen.objects.create(caregiver_fk=self.second_caregiver,
+        self.biospecimen_urine_one_caregiver_two = CaregiverBiospecimen.objects.create(caregiver_fk=self.second_caregiver,
                                                                    status_fk=self.completed_status,
                                                                    collection_fk=self.urine_one,
                                                                    incentive_fk=self.incentive_one,
                                                                    biospecimen_date=datetime.date.today())
 
-        self.biospecimen_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+        self.biospecimen_urine_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                                  status_fk=self.incomplete,
                                                                                  collection_fk=self.urine_two,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_urine_three_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.completed_status,
+                                                                                 collection_fk=self.urine_three,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_urine_ec_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.incomplete,
+                                                                                 collection_fk=self.urine_ec,
+                                                                                 incentive_fk=self.incentive_one,
+                                                                                 biospecimen_date=datetime.date.today())
+
+        self.biospecimen_urine_mc_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                 status_fk=self.incomplete,
+                                                                                 collection_fk=self.urine_mc,
                                                                                  incentive_fk=self.incentive_one,
                                                                                  biospecimen_date=datetime.date.today())
 

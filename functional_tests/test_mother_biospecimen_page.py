@@ -13,7 +13,7 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         header_text = self.browser.find_elements(By.TAG_NAME,'h2')
         self.assertIn('ID',[item.text for item in header_text])
         mother_id_section = self.browser.find_element(By.CLASS_NAME,'mother_id').text
-        time.sleep(60)
+        time.sleep(5)
         self.assertIn('P7000',mother_id_section)
         self.assertIn('4444',mother_id_section)
 
@@ -46,8 +46,8 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         self.assertIn("Urine 1: Completed", urine)
         self.assertIn("Urine 2: Incomplete", urine)
         self.assertIn("Urine 3: Completed", urine)
-        self.assertIn("EC Urine: Incomplete", urine)
-        self.assertIn("MC Urine: Incomplete", urine)
+        self.assertIn("Urine EC: Incomplete", urine)
+        self.assertIn("Urine MC: Incomplete", urine)
 
 
         #user visits anoter sampleid to view urine outcome

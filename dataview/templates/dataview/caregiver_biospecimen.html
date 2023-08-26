@@ -69,8 +69,17 @@
             </div>
         </div>
     <h2>Urine</h2>
-        <div class="{{ biospecimen_urines.values }}">
-
+        <div class="mother_urine">
+            {% for urine in biospecimen_urines %}
+                <div class="{{ urine.collection_fk.collection_type }}{{ urine.collection_fk.collection_number }}">
+                    <div class="{{ urine.collection_fk.collection_type }}{{ urine.collection_fk.collection_number }}_status">
+                    {{ urine.collection_fk.collection_type }} {{ urine.collection_fk.collection_number }}: {{ urine.status_fk.status }}
+                    </div>
+                    <div class="{{ urine.collection_fk.collection_type }}{{ urine.collection_fk.collection_number }}_date">
+                    Date: {{ urine.biospecimen_date }}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
 
 
