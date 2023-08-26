@@ -140,6 +140,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
                                                       incentive_date=datetime.date.today(), incentive_amount=100)
+        self.incentive_two = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
+                                                      incentive_date=datetime.date(2023,8,24), incentive_amount=100)
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
@@ -160,6 +162,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.completed_status = Status.objects.create(status='Completed')
         self.incomplete = Status.objects.create(status='Incomplete')
+        self.collected = Status.objects.create(status='Collected')
         self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
         self.urine_two = Collection.objects.create(collection_type='Urine',collection_number=2)
         self.urine_three = Collection.objects.create(collection_type='Urine',collection_number=3)
@@ -177,6 +180,8 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.buffy_coat_two = Collection.objects.create(collection_type='Buffy Coat',collection_number=2)
         self.red_blood_cells_one = Collection.objects.create(collection_type='Red Blood Cells',collection_number=1)
         self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells',collection_number=2)
+        self.hair_prenatal = Collection.objects.create(collection_type='Hair',collection_number="Prenatal")
+        self.toenail_prenatal = Collection.objects.create(collection_type='Toenail',collection_number="Prenatal")
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                    status_fk=self.completed_status,
@@ -285,6 +290,20 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                                  collection_fk=self.red_blood_cells_two,
                                                                                  incentive_fk=self.incentive_one,
                                                                                  biospecimen_date=datetime.date.today())
+
+        self.biospecimen_hair_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.hair_prenatal,
+            incentive_fk=self.incentive_two,
+            biospecimen_date=datetime.date(2023, 8, 23))
+
+        self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.toenail_prenatal,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
 
     def tearDown(self):
         self.browser.quit()

@@ -105,6 +105,38 @@
                 </div>
             {% endfor %}
         </div>
+    <h2>Hair</h2>
+        <div class="mother_hair">
+            {% for hair in biospecimen_hair %}
+                <div class="{{ hair.collection_fk.collection_type }}{{ hair.collection_fk.collection_number }}">
+                    <div class="{{ hair.collection_fk.collection_type }}{{ hair.collection_fk.collection_number }}_status">
+                    {{ hair.collection_fk.collection_number }} {{ hair.collection_fk.collection_type }}: {{ hair.status_fk.status }}
+                    </div>
+                    <div class="{{ hair.collection_fk.collection_type }}{{ hair.collection_fk.collection_number }}_date">
+                    {{ hair.collection_fk.collection_number }} {{ hair.collection_fk.collection_type }} Date: {{ hair.biospecimen_date }}
+                    </div>
+                    <div class="{{ hair.collection_fk.collection_type }}{{ hair.collection_fk.collection_number }}_gc">
+                    {{ hair.collection_fk.collection_number }} {{ hair.collection_fk.collection_type }} GC: {{ hair.incentive_fk.incentive_date }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    <h2>Toenails</h2>
+        <div class="mother_toenails">
+            {% for toenail in biospecimen_toenails %}
+                <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}">
+                    <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}_status">
+                    {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }}: {{ toenail.status_fk.status }}
+                    </div>
+                    <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}_date">
+                    {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }} Date: {{ toenail.biospecimen_date }}
+                    </div>
+                    <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}_gc">
+                    {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }} GC: {{ toenail.incentive_fk.incentive_date }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
 
 
 

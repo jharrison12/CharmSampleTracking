@@ -165,58 +165,169 @@ class TestCaseSetup(TestCase):
                                                                    )
 
         # create biospecimen
-        #create biospecimen
+        # create biospecimen
 
         self.completed_status = Status.objects.create(status='Completed')
         self.incomplete = Status.objects.create(status='Incomplete')
-        self.urine_one = Collection.objects.create(collection_type='Urine',collection_number=1)
-        self.urine_two = Collection.objects.create(collection_type='Urine',collection_number=2)
-        self.serum_one = Collection.objects.create(collection_type='Serum',collection_number=1)
-        self.serum_two = Collection.objects.create(collection_type='Serum',collection_number=2)
-        self.plasma_one = Collection.objects.create(collection_type='plasma',collection_number=1)
-        self.plasma_two = Collection.objects.create(collection_type='plasma',collection_number=2)
+        self.collected = Status.objects.create(status='Collected')
+        self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
+        self.urine_two = Collection.objects.create(collection_type='Urine', collection_number=2)
+        self.urine_three = Collection.objects.create(collection_type='Urine', collection_number=3)
+        self.urine_ec = Collection.objects.create(collection_type='Urine', collection_number='EC')
+        self.urine_mc = Collection.objects.create(collection_type='Urine', collection_number='MC')
+        self.serum_one = Collection.objects.create(collection_type='Serum', collection_number=1)
+        self.serum_two = Collection.objects.create(collection_type='Serum', collection_number=2)
+        self.plasma_one = Collection.objects.create(collection_type='Plasma', collection_number=1)
+        self.plasma_two = Collection.objects.create(collection_type='Plasma', collection_number=2)
+        self.bloodspots_one = Collection.objects.create(collection_type='Bloodspots', collection_number=1)
+        self.bloodspots_two = Collection.objects.create(collection_type='Bloodspots', collection_number=2)
+        self.whole_blood_one = Collection.objects.create(collection_type='Whole Blood', collection_number=1)
+        self.whole_blood_two = Collection.objects.create(collection_type='Whole Blood', collection_number=2)
+        self.buffy_coat_one = Collection.objects.create(collection_type='Buffy Coat', collection_number=1)
+        self.buffy_coat_two = Collection.objects.create(collection_type='Buffy Coat', collection_number=2)
+        self.red_blood_cells_one = Collection.objects.create(collection_type='Red Blood Cells', collection_number=1)
+        self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells', collection_number=2)
+        self.hair_prenatal = Collection.objects.create(collection_type='Hair', collection_number='Prenatal')
+        self.toenail_prenatal = Collection.objects.create(collection_type='Toenail', collection_number='Prenatal')
 
-        self.biospecimen_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                   status_fk=self.completed_status,
-                                                                   collection_fk=self.urine_one,
-                                                                   incentive_fk=self.incentive_one,
-                                                                   biospecimen_date=datetime.date.today())
 
-        self.biospecimen_two_caregiver_two = CaregiverBiospecimen.objects.create(caregiver_fk=self.second_caregiver,
-                                                                   status_fk=self.completed_status,
-                                                                   collection_fk=self.urine_one,
-                                                                   incentive_fk=self.incentive_one,
-                                                                   biospecimen_date=datetime.date.today())
+        self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.urine_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
 
-        self.biospecimen_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                 status_fk=self.incomplete,
-                                                                                 collection_fk=self.urine_two,
-                                                                                 incentive_fk=self.incentive_one,
-                                                                                 biospecimen_date=datetime.date.today())
+        self.biospecimen_urine_one_caregiver_two = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.second_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.urine_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
 
-        self.biospecimen_serum_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                 status_fk=self.completed_status,
-                                                                                 collection_fk=self.serum_one,
-                                                                                 incentive_fk=self.incentive_one,
-                                                                                 biospecimen_date=datetime.date.today())
+        self.biospecimen_urine_two_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.incomplete,
+            collection_fk=self.urine_two,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
 
-        self.biospecimen_serum_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                 status_fk=self.incomplete,
-                                                                                 collection_fk=self.serum_two,
-                                                                                 incentive_fk=self.incentive_one,
-                                                                                 biospecimen_date=datetime.date.today())
+        self.biospecimen_urine_three_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.urine_three,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
 
-        self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                 status_fk=self.completed_status,
-                                                                                 collection_fk=self.plasma_one,
-                                                                                 incentive_fk=self.incentive_one,
-                                                                                 biospecimen_date=datetime.date.today())
+        self.biospecimen_urine_ec_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                      status_fk=self.incomplete,
+                                                                                      collection_fk=self.urine_ec,
+                                                                                      incentive_fk=self.incentive_one,
+                                                                                      biospecimen_date=datetime.date.today())
 
-        self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                 status_fk=self.incomplete,
-                                                                                 collection_fk=self.plasma_two,
-                                                                                 incentive_fk=self.incentive_one,
-                                                                                 biospecimen_date=datetime.date.today())
+        self.biospecimen_urine_mc_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
+                                                                                      status_fk=self.incomplete,
+                                                                                      collection_fk=self.urine_mc,
+                                                                                      incentive_fk=self.incentive_one,
+                                                                                      biospecimen_date=datetime.date.today())
+
+        self.biospecimen_serum_one_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.serum_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date(2023, 8, 23))
+
+        self.biospecimen_serum_two_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.incomplete,
+            collection_fk=self.serum_two,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_plasma_one_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.plasma_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.incomplete,
+            collection_fk=self.plasma_two,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.bloodspots_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.incomplete,
+            collection_fk=self.bloodspots_two,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_whole_blood_one_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.whole_blood_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_whole_blood_two_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.incomplete,
+            collection_fk=self.whole_blood_two,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_buffy_coat_one_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.buffy_coat_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_buffy_coat_two_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.incomplete,
+            collection_fk=self.buffy_coat_two,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_red_blood_cells_one_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.completed_status,
+            collection_fk=self.red_blood_cells_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_red_blood_cells_two_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.incomplete,
+            collection_fk=self.red_blood_cells_two,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_hair_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.hair_prenatal,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.toenail_prenatal,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
 
 # Create your tests here.
 class HomePageTest(TestCaseSetup):
@@ -391,3 +502,12 @@ class CaregiverBiospecimenPageTest(TestCaseSetup):
     def test_caregiver_a_bio_page_shows_all_urines(self):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
         self.assertContains(response,"Urine 1")
+        self.assertContains(response,"Urine EC")
+
+    def test_caregiver_a_bio_page_shows_hair(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertContains(response,"Prenatal Hair: Collected")
+
+    def test_caregiver_a_bio_page_shows_toenails(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertContains(response, "Prenatal Toenail: Collected")

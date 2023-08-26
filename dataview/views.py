@@ -44,6 +44,7 @@ def caregiver_survey(request,caregiver_charm_id):
 def caregiver_biospecimen(request,caregiver_charm_id):
     #TODO: Fix this so you're iterating over one queryset and not 15
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    caregiver_name = Name.objects.filter(caregivername__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregivername__status='C').first()
     caregiver_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
     biospecimen_serum = caregiver_biospecimens.filter(collection_fk__collection_type='Serum')
     biospecimen_plasma = caregiver_biospecimens.filter(collection_fk__collection_type='Plasma')
@@ -52,7 +53,8 @@ def caregiver_biospecimen(request,caregiver_charm_id):
     biospecimen_buffy_coat = caregiver_biospecimens.filter(collection_fk__collection_type='Buffy Coat')
     biospecimen_red_blood_cells = caregiver_biospecimens.filter(collection_fk__collection_type='Red Blood Cells')
     biospecimen_urines = caregiver_biospecimens.filter(collection_fk__collection_type='Urine')
-    caregiver_name = Name.objects.filter(caregivername__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregivername__status='C').first()
+    biospecimen_hair = caregiver_biospecimens.filter(collection_fk__collection_type='Hair')
+    biospecimen_toenails = caregiver_biospecimens.filter(collection_fk__collection_type='Toenail')
     return render(request,template_name='dataview/caregiver_biospecimen.html',context={'biospecimens': caregiver_biospecimens,
                                                                                        'biospecimen_serum': biospecimen_serum,
                                                                                        'biospecimen_plasma': biospecimen_plasma,
@@ -61,5 +63,7 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                        'biospecimen_buffy_coat': biospecimen_buffy_coat,
                                                                                        'biospecimen_red_blood_cells': biospecimen_red_blood_cells,
                                                                                        'biospecimen_urines':biospecimen_urines,
+                                                                                       'biospecimen_hair':biospecimen_hair,
+                                                                                       'biospecimen_toenails':biospecimen_toenails,
                                                                                        'caregiver':caregiver,
                                                                                        'caregiver_name': caregiver_name})

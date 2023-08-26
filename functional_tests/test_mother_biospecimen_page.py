@@ -49,6 +49,15 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         self.assertIn("Urine EC: Incomplete", urine)
         self.assertIn("Urine MC: Incomplete", urine)
 
+        hair = self.browser.find_element(By.CLASS_NAME,'mother_hair').text
+        self.assertIn("Prenatal Hair: Collected", hair)
+        self.assertIn("Prenatal Hair Date: Aug. 23, 2023", hair)
+        self.assertIn("Prenatal Hair GC: Aug. 24, 2023", hair)
+
+        toenails = self.browser.find_element(By.CLASS_NAME,'mother_toenails').text
+        self.assertIn("Prenatal Toenail: Collected", toenails)
+        self.assertIn("Prenatal Toenail Date: Aug. 26, 2023", toenails)
+        self.assertIn("Prenatal Toenail GC: Aug. 26, 2023", toenails)
 
         #user visits anoter sampleid to view urine outcome
 
