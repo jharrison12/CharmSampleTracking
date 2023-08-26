@@ -123,7 +123,7 @@
         </div>
     <h2>Toenails</h2>
         <div class="mother_toenails">
-            {% for toenail in biospecimen_toenails %}
+            {% for toenail in biospecimen_toenail %}
                 <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}">
                     <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}_status">
                     {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }}: {{ toenail.status_fk.status }}
@@ -133,6 +133,32 @@
                     </div>
                     <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}_gc">
                     {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }} GC: {{ toenail.incentive_fk.incentive_date }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    <h2>Saliva</h2>
+        <div class="mother_saliva">
+            {% for saliva in biospecimen_saliva %}
+                <div class="{{ saliva.collection_fk.collection_type }}{{ saliva.collection_fk.collection_number }}">
+                    <div class="{{ saliva.collection_fk.collection_type }}{{ saliva.collection_fk.collection_number }}_status">
+                    {{ saliva.collection_fk.collection_number|default_if_none:"" }} {{ saliva.collection_fk.collection_type }}: {{ saliva.status_fk.status }}
+                    </div>
+                    <div class="{{ saliva.collection_fk.collection_type }}{{ saliva.collection_fk.collection_number }}_date">
+                    {{ saliva.collection_fk.collection_number|default_if_none:"" }} {{ saliva.collection_fk.collection_type }} Date: {{ saliva.biospecimen_date }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    <h2>Placenta</h2>
+        <div class="mother_placenta">
+            {% for placenta in biospecimen_placenta %}
+                <div class="{{ placenta.collection_fk.collection_type }}{{ placenta.collection_fk.collection_number }}">
+                    <div class="{{ placenta.collection_fk.collection_type }}{{ placenta.collection_fk.collection_number }}_status">
+                    {{ placenta.collection_fk.collection_number|default_if_none:"" }} {{ placenta.collection_fk.collection_type }}: {{ placenta.status_fk.status }}
+                    </div>
+                    <div class="{{ placenta.collection_fk.collection_type }}{{ placenta.collection_fk.collection_number }}_date">
+                    {{ placenta.collection_fk.collection_number|default_if_none:"" }} {{ placenta.collection_fk.collection_type }} Date: {{ placenta.biospecimen_date }}
                     </div>
                 </div>
             {% endfor %}

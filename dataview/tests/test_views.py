@@ -189,6 +189,8 @@ class TestCaseSetup(TestCase):
         self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells', collection_number=2)
         self.hair_prenatal = Collection.objects.create(collection_type='Hair', collection_number='Prenatal')
         self.toenail_prenatal = Collection.objects.create(collection_type='Toenail', collection_number='Prenatal')
+        self.saliva = Collection.objects.create(collection_type='Saliva')
+        self.placenta = Collection.objects.create(collection_type='Placenta')
 
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -326,6 +328,20 @@ class TestCaseSetup(TestCase):
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.toenail_prenatal,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.saliva,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.placenta,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
@@ -511,3 +527,19 @@ class CaregiverBiospecimenPageTest(TestCaseSetup):
     def test_caregiver_a_bio_page_shows_toenails(self):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
         self.assertContains(response, "Prenatal Toenail: Collected")
+
+    def test_caregiver_a_bio_page_shows_saliva(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertContains(response, "Saliva: Collected")
+
+    def test_caregiver_a_bio_page_does_not_show_none_saliva(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertNotContains(response, "None Saliva")
+
+    def test_caregiver_a_bio_page_does_not_show_none_placenta(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertNotContains(response, "None Placenta")
+
+    def test_caregiver_a_bio_page_shows_placenta(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
+        self.assertContains(response, "Placenta: Collected")

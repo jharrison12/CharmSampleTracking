@@ -59,6 +59,15 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         self.assertIn("Prenatal Toenail Date: Aug. 26, 2023", toenails)
         self.assertIn("Prenatal Toenail GC: Aug. 26, 2023", toenails)
 
+        saliva = self.browser.find_element(By.CLASS_NAME,'mother_saliva').text
+        self.assertIn("Saliva: Collected", saliva)
+        self.assertIn("Saliva Date: Aug. 26, 2023", saliva)
+
+        placenta = self.browser.find_element(By.CLASS_NAME,'mother_placenta').text
+        self.assertIn("Placenta: Collected", placenta)
+        self.assertIn("Placenta Date: Aug. 26, 2023", placenta)
+
+
         #user visits anoter sampleid to view urine outcome
 
         # self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/biospecimen')

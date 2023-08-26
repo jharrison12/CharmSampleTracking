@@ -54,7 +54,9 @@ def caregiver_biospecimen(request,caregiver_charm_id):
     biospecimen_red_blood_cells = caregiver_biospecimens.filter(collection_fk__collection_type='Red Blood Cells')
     biospecimen_urines = caregiver_biospecimens.filter(collection_fk__collection_type='Urine')
     biospecimen_hair = caregiver_biospecimens.filter(collection_fk__collection_type='Hair')
-    biospecimen_toenails = caregiver_biospecimens.filter(collection_fk__collection_type='Toenail')
+    biospecimen_toenail = caregiver_biospecimens.filter(collection_fk__collection_type='Toenail')
+    biospecimen_saliva = caregiver_biospecimens.filter(collection_fk__collection_type='Saliva')
+    biospecimen_placenta = caregiver_biospecimens.filter(collection_fk__collection_type='Placenta')
     return render(request,template_name='dataview/caregiver_biospecimen.html',context={'biospecimens': caregiver_biospecimens,
                                                                                        'biospecimen_serum': biospecimen_serum,
                                                                                        'biospecimen_plasma': biospecimen_plasma,
@@ -64,6 +66,8 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                        'biospecimen_red_blood_cells': biospecimen_red_blood_cells,
                                                                                        'biospecimen_urines':biospecimen_urines,
                                                                                        'biospecimen_hair':biospecimen_hair,
-                                                                                       'biospecimen_toenails':biospecimen_toenails,
+                                                                                       'biospecimen_toenail':biospecimen_toenail,
+                                                                                       'biospecimen_saliva':biospecimen_saliva,
+                                                                                       'biospecimen_placenta':biospecimen_placenta,
                                                                                        'caregiver':caregiver,
                                                                                        'caregiver_name': caregiver_name})

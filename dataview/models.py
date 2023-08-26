@@ -197,7 +197,7 @@ class Status(models.Model):
 class Collection(models.Model):
     #todo subclass text choices
     collection_type = models.CharField(max_length=255)
-    collection_number = models.CharField(max_length=255)
+    collection_number = models.CharField(max_length=255,null=True,blank=True)
 
     def __str__(self):
         return f"{self.collection_type} {self.collection_number}"

@@ -182,6 +182,8 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells',collection_number=2)
         self.hair_prenatal = Collection.objects.create(collection_type='Hair',collection_number="Prenatal")
         self.toenail_prenatal = Collection.objects.create(collection_type='Toenail',collection_number="Prenatal")
+        self.saliva = Collection.objects.create(collection_type='Saliva')
+        self.placenta = Collection.objects.create(collection_type='Placenta')
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                    status_fk=self.completed_status,
@@ -302,6 +304,20 @@ class FunctionalTest(StaticLiveServerTestCase):
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.toenail_prenatal,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.saliva,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today())
+
+        self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=self.collected,
+            collection_fk=self.placenta,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
