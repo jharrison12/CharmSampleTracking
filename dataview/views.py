@@ -45,33 +45,21 @@ def caregiver_biospecimen(request,caregiver_charm_id):
     #TODO: Fix this so you're iterating over one queryset and not 15
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     caregiver_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
-    biospecimen_serum_one = caregiver_biospecimens.filter(collection_fk__collection_type='Serum').filter(collection_fk__collection_number=1).first()
-    biospecimen_serum_two = caregiver_biospecimens.filter(collection_fk__collection_type='Serum').filter(collection_fk__collection_number=2).first()
-    biospecimen_plasma_one = caregiver_biospecimens.filter(collection_fk__collection_type='Plasma').filter(collection_fk__collection_number=1).first()
-    biospecimen_plasma_two = caregiver_biospecimens.filter(collection_fk__collection_type='Plasma').filter(collection_fk__collection_number=2).first()
-    biospecimen_bloodspots_one = caregiver_biospecimens.filter(collection_fk__collection_type='Bloodspots').filter(collection_fk__collection_number=1).first()
-    biospecimen_bloodspots_two = caregiver_biospecimens.filter(collection_fk__collection_type='Bloodspots').filter(collection_fk__collection_number=2).first()
-    biospecimen_whole_blood_one = caregiver_biospecimens.filter(collection_fk__collection_type='Whole Blood').filter(collection_fk__collection_number=1).first()
-    biospecimen_whole_blood_two = caregiver_biospecimens.filter(collection_fk__collection_type='Whole Blood').filter(collection_fk__collection_number=2).first()
-    biospecimen_buffy_coat_one = caregiver_biospecimens.filter(collection_fk__collection_type='Buffy Coat').filter(collection_fk__collection_number=1).first()
-    biospecimen_buffy_coat_two = caregiver_biospecimens.filter(collection_fk__collection_type='Buffy Coat').filter(collection_fk__collection_number=2).first()
-    biospecimen_red_blood_cells_one = caregiver_biospecimens.filter(collection_fk__collection_type='Red Blood Cells').filter(collection_fk__collection_number=1).first()
-    biospecimen_red_blood_cells_two = caregiver_biospecimens.filter(collection_fk__collection_type='Red Blood Cells').filter(collection_fk__collection_number=2).first()
+    biospecimen_serum = caregiver_biospecimens.filter(collection_fk__collection_type='Serum')
+    biospecimen_plasma = caregiver_biospecimens.filter(collection_fk__collection_type='Plasma')
+    biospecimen_bloodspots = caregiver_biospecimens.filter(collection_fk__collection_type='Bloodspots')
+    biospecimen_whole_blood = caregiver_biospecimens.filter(collection_fk__collection_type='Whole Blood')
+    biospecimen_buffy_coat = caregiver_biospecimens.filter(collection_fk__collection_type='Buffy Coat')
+    biospecimen_red_blood_cells = caregiver_biospecimens.filter(collection_fk__collection_type='Red Blood Cells')
     biospecimen_urines = caregiver_biospecimens.filter(collection_fk__collection_type='Urine')
     caregiver_name = Name.objects.filter(caregivername__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregivername__status='C').first()
     return render(request,template_name='dataview/caregiver_biospecimen.html',context={'biospecimens': caregiver_biospecimens,
-                                                                                       'biospecimen_serum_one': biospecimen_serum_one,
-                                                                                       'biospecimen_serum_two':biospecimen_serum_two,
-                                                                                       'biospecimen_plasma_one': biospecimen_plasma_one,
-                                                                                       'biospecimen_plasma_two':biospecimen_plasma_two,
-                                                                                       'biospecimen_bloodspots_one':biospecimen_bloodspots_one,
-                                                                                       'biospecimen_bloodspots_two':biospecimen_bloodspots_two,
-                                                                                       'biospecimen_whole_blood_one': biospecimen_whole_blood_one,
-                                                                                       'biospecimen_whole_blood_two': biospecimen_whole_blood_two,
-                                                                                       'biospecimen_buffy_coat_one': biospecimen_buffy_coat_one,
-                                                                                       'biospecimen_buffy_coat_two':biospecimen_buffy_coat_two,
-                                                                                       'biospecimen_red_blood_cells_one':biospecimen_red_blood_cells_one,
-                                                                                       'biospecimen_red_blood_cells_two':biospecimen_red_blood_cells_two,
+                                                                                       'biospecimen_serum': biospecimen_serum,
+                                                                                       'biospecimen_plasma': biospecimen_plasma,
+                                                                                       'biospecimen_bloodspots':biospecimen_bloodspots,
+                                                                                       'biospecimen_whole_blood': biospecimen_whole_blood,
+                                                                                       'biospecimen_buffy_coat': biospecimen_buffy_coat,
+                                                                                       'biospecimen_red_blood_cells': biospecimen_red_blood_cells,
                                                                                        'biospecimen_urines':biospecimen_urines,
                                                                                        'caregiver':caregiver,
                                                                                        'caregiver_name': caregiver_name})
