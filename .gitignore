@@ -2,3 +2,5 @@
 *.pyc
 db.sqlite3
 .env
+*.sqlite3
+load_fixture.py
