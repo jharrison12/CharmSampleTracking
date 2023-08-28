@@ -191,6 +191,9 @@ class CaregiverPersonalContact(models.Model):
 class IncentiveType(models.Model):
     incentive_type_text = models.CharField(null=False,blank=False,max_length=255,unique=True)
 
+    def __str__(self):
+        return self.incentive_type_text
+
 class Incentive(models.Model):
     incentive_type_fk = models.ForeignKey(IncentiveType,on_delete=models.PROTECT)
     incentive_date = models.DateField(blank=False,null=False,default=timezone.now)
@@ -200,6 +203,9 @@ class Incentive(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['incentive_type_fk','incentive_date','incentive_amount'],name="incentive_unique_constraint")
         ]
+
+    def __str__(self):
+        return f"{self.incentive_type_fk}: {self.incentive_amount}"
 
 class Project(models.Model):
     project_name = models.CharField(null=False, blank=False, max_length=255,unique=True)
