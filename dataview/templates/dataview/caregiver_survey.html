@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "dataview/base.html" %}
+{% block body %}
     <h1>{{ charm_id }} Surveys</h1>
     <ul>
     {% for survey in caregiver_surveys %}
         <li>{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</li>
     {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

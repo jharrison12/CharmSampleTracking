@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "dataview/base.html" %}
+{% block body %}
     <h1>Mother's name is: {{ caregiver_name.last_name }}, {{ caregiver_name.first_name }}</h1>
     <ul>
         <li>Echo ID: {{ caregiver.charm_project_identifier }}</li>
@@ -57,5 +52,5 @@
         </ul>
 
     <h2><a href="{% url "dataview:caregiver_survey" caregiver.charm_project_identifier %}">Caregiver Surveys</a></h2>
-</body>
-</html>
+
+{% endblock %}
