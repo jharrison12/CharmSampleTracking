@@ -2,6 +2,7 @@ from django.shortcuts import render,get_object_or_404
 from dataview.models import Caregiver,Name,CaregiverName,\
     Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen
+from dataview.forms import CaregiverBiospecimenForm
 
 
 # Create your views here.
@@ -71,3 +72,6 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                        'biospecimen_placenta':biospecimen_placenta,
                                                                                        'caregiver':caregiver,
                                                                                        'caregiver_name': caregiver_name})
+
+def caregiver_biospecimen_entry(request,caregiver_charm_id):
+    return render(request,template_name='dataview/caregiver_biospecimen_entry.html', context={'bio_form':CaregiverBiospecimenForm()})

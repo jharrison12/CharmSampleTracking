@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <form method="POST" action="{% block form_action %}{% endblock %}">
+    {{ bio_form }}
+    {% csrf_token %}
+    {% if error %}
+        <div class="form-group has-error"></div>
+    {% endif %}
+  </form>
+
+</body>
+</html>

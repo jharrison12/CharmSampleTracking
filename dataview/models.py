@@ -302,5 +302,5 @@ class CaregiverBiospecimen(models.Model):
 
     class Meta:
         constraints=[
-            models.UniqueConstraint(fields=['caregiver_fk','collection_fk'],name="caregiver_biospecimen_unique_constraint:wq")
+            models.UniqueConstraint(fields=['caregiver_fk','collection_fk'],name="caregiver_biospecimen_unique_constraint")
         ]

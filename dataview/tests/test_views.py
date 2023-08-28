@@ -7,6 +7,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen
 import datetime
 from django.utils import timezone
+from dataview.forms import CaregiverBiospecimenForm
 
 logging.basicConfig(level=logging.CRITICAL)
 
@@ -540,3 +541,13 @@ class CaregiverBiospecimenPageTest(TestCaseSetup):
     def test_caregiver_a_bio_page_shows_placenta(self):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/')
         self.assertContains(response, "Placenta: Collected")
+
+class CaregiverBioSpecimenEntryPage(TestCaseSetup):
+
+    def test_using_correct_template(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
+        self.assertTemplateUsed(response, 'dataview/caregiver_biospecimen_entry.html')
+
+    def test_caregiver_bio_page_uses_correct_form(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
+        self.assertIsInstance(response.context['bio_form'], CaregiverBiospecimenForm)
