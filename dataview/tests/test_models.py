@@ -202,24 +202,9 @@ class ModelTest(TestCase):
 
 
 
-class CaregiverModelsTest(TestCase):
+class CaregiverModelsTest(ModelTest):
 
     def test_saving_and_retrieving_caregiver(self):
-        caregiver_one = Caregiver()
-        caregiver_one.charm_project_identifier = 'P7000'
-        caregiver_one.date_of_birth = '1985-07-03'
-        caregiver_one.ewcp_participant_identifier='0000'
-        caregiver_one.echo_pin='333'
-        caregiver_one.save()
-
-        caregiver_two = Caregiver()
-        caregiver_two.charm_project_identifier='P7001'
-        caregiver_two.date_of_birth = '1985-07-04'
-        caregiver_two.save()
-
-        saved_caregiver = Caregiver.objects.first()
-        self.assertEqual(saved_caregiver,caregiver_one)
-
         saved_caregivers = Caregiver.objects.all()
         self.assertEqual(saved_caregivers.count(), 2)
 

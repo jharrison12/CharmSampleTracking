@@ -359,13 +359,10 @@ class CaregiverPageTest(TestCaseSetup):
         self.assertTemplateUsed(response, 'dataview/caregiver.html')
 
     def test_mother_page_contains_caregiver_id(self):
-        Caregiver.objects.create(charm_project_identifier='P7000')
         response = self.client.get(f'/data/caregiver/')
         self.assertContains(response,'P7000')
 
     def test_mother_page_contains_second_caregiver_id(self):
-        Caregiver.objects.create(charm_project_identifier='P7000')
-        Caregiver.objects.create(charm_project_identifier='P7001')
         response = self.client.get(f'/data/caregiver/')
         self.assertContains(response,'P7001')
 
