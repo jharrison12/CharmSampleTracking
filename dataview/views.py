@@ -1,9 +1,12 @@
+import logging
+
 from django.shortcuts import render,get_object_or_404,redirect
 from dataview.models import Caregiver,Name,CaregiverName,\
     Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen
 from dataview.forms import CaregiverBiospecimenForm
 
+logging.basicConfig(level=logging.DEBUG)
 
 # Create your views here.
 def home_page(request):
@@ -75,8 +78,12 @@ def caregiver_biospecimen(request,caregiver_charm_id):
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
     if request.method=="POST":
-        form = CaregiverBiospecimenForm(caregiver_charm_id=caregiver_charm_id, data=request.POST)
+        caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+        logging.critical(request.POST)
+        form = CaregiverBiospecimenForm(data=request.POST)
+        #form.full_clean()
         if form.is_valid():
-            form.save()
-            return redirect(f"caregiver/{caregiver_charm_id})/biospecimen/$")
-    return render(request,template_name='dataview/caregiver_biospecimen_entry.html', context={'bio_form':CaregiverBiospecimenForm()})
+            form.save(caregiver_charm_fk_id=caregiver)
+            return redirect('dataview:caregiver_biospecimen',caregiver_charm_id=caregiver_charm_id)
+    return render(request,template_name='dataview/caregiver_biospecimen_entry.html', context={'bio_form':CaregiverBiospecimenForm(),
+                                                                                              'charm_project_identifier':caregiver_charm_id})

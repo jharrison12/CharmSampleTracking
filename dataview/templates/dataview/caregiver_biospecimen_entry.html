@@ -1,10 +1,11 @@
 {% extends "dataview/base.html" %}
 {% block body %}
-  <form method="POST" action={% url 'caregiver_biospecimen_entry' caregiver %}>
+  <form method="POST" action={% url 'dataview:caregiver_biospecimen_entry' charm_project_identifier %}>
     {{ bio_form }}
     {% csrf_token %}
     {% if error %}
         <div class="form-group has-error"></div>
     {% endif %}
+  <input type="submit" value="Submit" />
   </form>
 {% endblock %}

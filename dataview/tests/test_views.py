@@ -1,6 +1,5 @@
 import logging
 import unittest
-
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
@@ -192,6 +191,7 @@ class TestCaseSetup(TestCase):
         self.toenail_prenatal = Collection.objects.create(collection_type='Toenail', collection_number='Prenatal')
         self.saliva = Collection.objects.create(collection_type='Saliva')
         self.placenta = Collection.objects.create(collection_type='Placenta')
+        self.placenta_two = Collection.objects.create(collection_type='Placenta',collection_number=2)
 
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -552,4 +552,12 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
         self.assertIsInstance(response.context['bio_form'], CaregiverBiospecimenForm)
 
+    def test_bio_entry_redirects_after_post(self):
 
+        response = self.client.post(f'/data/caregiver/P7000/biospecimen/entry/', data={'collection_fk':self.placenta_two.pk,
+                                                                                       'status_fk':self.collected.pk,
+                                                                                       'biospecimen_date':datetime.date(2023,8,23),
+                                                                                       'incentive_fk':  self.incentive_one.pk,
+                                                                                       })
+
+        self.assertRedirects(response,f"/data/caregiver/P7000/biospecimen/")
