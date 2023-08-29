@@ -1,6 +1,6 @@
 {% extends "dataview/base.html" %}
 {% block body %}
-  <form method="POST" action="{% block form_action %}{% endblock %}">
+  <form method="POST" action={% url 'caregiver_biospecimen_entry' caregiver %}>
     {{ bio_form }}
     {% csrf_token %}
     {% if error %}

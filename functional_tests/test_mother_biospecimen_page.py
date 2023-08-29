@@ -57,7 +57,7 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         toenails = self.browser.find_element(By.CLASS_NAME,'mother_toenails').text
         self.assertIn("Prenatal Toenail: Collected", toenails)
         self.assertIn("Prenatal Toenail Date: Aug. 26, 2023", toenails)
-        self.assertIn("Prenatal Toenail GC: Aug. 26, 2023", toenails)
+        self.assertIn("Prenatal Toenail GC: Aug. 24, 2023", toenails)
 
         saliva = self.browser.find_element(By.CLASS_NAME,'mother_saliva').text
         self.assertIn("Saliva: Collected", saliva)

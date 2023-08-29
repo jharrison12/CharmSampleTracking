@@ -25,5 +25,5 @@ urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", dataviews.caregiver_info,name='caregiver_info'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/survey/$", dataviews.caregiver_survey,name='caregiver_survey'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/biospecimen/$", dataviews.caregiver_biospecimen,name='caregiver_biospecimen'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/biospecimen/entry/$", dataviews.caregiver_biospecimen_entry,name='caregiver_biospecimen entry')
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/biospecimen/entry/$", dataviews.caregiver_biospecimen_entry,name='caregiver_biospecimen_entry')
 ]

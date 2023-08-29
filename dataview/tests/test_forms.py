@@ -5,4 +5,4 @@ class CaregiverBioFormTest(TestCase):
 
     def test_form_renders_item_text_input(self):
         form = CaregiverBiospecimenForm()
-        self.assertIn('Urine 1', form.as_p())
+        self.assertIn('Collection', form.as_p())

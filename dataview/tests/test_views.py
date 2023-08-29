@@ -551,3 +551,5 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
     def test_caregiver_bio_page_uses_correct_form(self):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
         self.assertIsInstance(response.context['bio_form'], CaregiverBiospecimenForm)
+
+

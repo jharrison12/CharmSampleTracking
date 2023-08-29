@@ -304,22 +304,22 @@ class FunctionalTest(StaticLiveServerTestCase):
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.toenail_prenatal,
-            incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today())
+            incentive_fk=self.incentive_two,
+            biospecimen_date=datetime.date(2023,8,26) )
 
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.saliva,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today())
+            biospecimen_date=datetime.date(2023,8,26) )
 
         self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.placenta,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today())
+            biospecimen_date=datetime.date(2023,8,26) )
 
     def tearDown(self):
         self.browser.quit()

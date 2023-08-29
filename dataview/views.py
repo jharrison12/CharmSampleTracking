@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404,redirect
 from dataview.models import Caregiver,Name,CaregiverName,\
     Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen
@@ -74,4 +74,9 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                        'caregiver_name': caregiver_name})
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
+    if request.method=="POST":
+        form = CaregiverBiospecimenForm(caregiver_charm_id=caregiver_charm_id, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(f"caregiver/{caregiver_charm_id})/biospecimen/$")
     return render(request,template_name='dataview/caregiver_biospecimen_entry.html', context={'bio_form':CaregiverBiospecimenForm()})
