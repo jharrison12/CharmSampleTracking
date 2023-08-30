@@ -561,3 +561,4 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
                                                                                        })
 
         self.assertRedirects(response,f"/data/caregiver/P7000/biospecimen/")
+

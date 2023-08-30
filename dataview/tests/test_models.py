@@ -1,4 +1,6 @@
 import logging
+import sqlite3
+
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
@@ -7,6 +9,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     CaregiverBiospecimen,Collection
 import datetime
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 logging.basicConfig(level=logging.CRITICAL)
 
@@ -394,7 +397,6 @@ class NonMotherCaregiverModelsTest(ModelTest):
         non_mother_table_row = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=mother_in_law)
         self.assertEqual(non_mother_table_row.relation_fk.relation_type,'Mother-in-law')
 
-
 class BioSpecimenCaregiverTest(ModelTest):
     def test_biospecimen_links_to_mother_table(self):
         caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine')\
@@ -408,3 +410,10 @@ class BioSpecimenCaregiverTest(ModelTest):
     def test_biospecimen_links_to_incentive_table(self):
         first_incentive =  Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine').first()
         self.assertEqual(first_incentive.incentive_amount,100)
+
+    def test_caregiver_biospecimen_doesnt_allow_duplicates(self):
+        caregiverbio_one = CaregiverBiospecimen(caregiver_fk=self.first_caregiver,collection_fk=self.serum_one,
+                                                status_fk=self.completed_status,biospecimen_date=datetime.date.today(),
+                                                incentive_fk=self.incentive_one)
+        with self.assertRaises(ValidationError):
+            caregiverbio_one.full_clean()

@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 import time
 import datetime
+from selenium.webdriver.support.ui import Select
 
 class MotherBioSpecimenPageTest(FunctionalTest):
 
@@ -69,6 +70,28 @@ class MotherBioSpecimenPageTest(FunctionalTest):
 
 
         #user visits anoter sampleid to view urine outcome
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/biospecimen')
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Urine 1: Completed', body_text)
 
-        # self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/biospecimen')
-        # self.assertIn('Urine 1: Completed', body_text)
+    def test_user_visits_bio_entry_page_and_enters_in_data(self):
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/biospecimen/entry')
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+
+        self.assertIn('Urine 1',body_text)
+        #user tries to submit duplicate biospecimen and gets an error.
+        collection = Select(self.browser.find_element(By.ID,'id_collection_fk'))
+        collection.select_by_visible_text('Urine 1')
+        status = Select(self.browser.find_element(By.ID,'id_status_fk'))
+        status.select_by_visible_text('Completed')
+        incentive = Select(self.browser.find_element(By.ID,'id_incentive_fk'))
+        incentive.select_by_visible_text('Gift Card: 100')
+        date_input  = self.browser.find_element(By.ID,'id_incentive_fk')
+        date_input.send_keys('2023-08-03')
+        submit = self.browser.find_element(By.XPATH,'/html/body/form/input[4]')
+        submit.click()
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('WHAT',body_text)
+
