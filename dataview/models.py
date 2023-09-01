@@ -14,6 +14,9 @@ class Caregiver(models.Model):
     echo_pin = models.CharField(default='',max_length=3)
     specimen_id = models.CharField(null=False,max_length=4,unique=True)
 
+    def __str__(self):
+        return self.charm_project_identifier
+
 
 class Name(models.Model):
     #name_pk = models.AutoField(primary_key=True)
