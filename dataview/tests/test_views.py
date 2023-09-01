@@ -568,9 +568,11 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
                                                                                        'status_fk':self.collected.pk,
                                                                                        'biospecimen_date':datetime.date(2023,8,23),
                                                                                        'incentive_fk':  self.incentive_one.pk,
+                                                                                       'caregiver_fk': self.first_caregiver.pk
                                                                                        })
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'caregiver_biospecimen_entry.html')
+
+        self.assertTemplateUsed(response, 'dataview/caregiver_biospecimen_entry.html')
         expected_error = "You can't have a duplicate item"
         self.assertContains(response, expected_error)
 

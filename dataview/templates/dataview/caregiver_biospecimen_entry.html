@@ -3,9 +3,11 @@
   <form method="POST" action={% url 'dataview:caregiver_biospecimen_entry' charm_project_identifier %}>
     {{ bio_form }}
     {% csrf_token %}
-    {% if error %}
-        <div class="form-group has-error"></div>
-    {% endif %}
+      {% if bio_form.errors %}
+          <div class="form-group has-error">
+              <div class="help-block">{{ bio_form.text.errors }}</div>
+          </div>
+      {% endif %}
   <input type="submit" value="Submit" />
   </form>
 {% endblock %}
