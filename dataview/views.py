@@ -79,8 +79,10 @@ def caregiver_biospecimen(request,caregiver_charm_id):
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
     if request.method=="POST":
         caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-        logging.debug(request.POST)
+        logging.critical(f" post is {request.POST}")
         form = CaregiverBiospecimenForm(data=request.POST)
+        logging.critical(f" form is {form.data}")
+        logging.critical(f"form is valid {form.is_valid()}")
         #form.full_clean()
         if form.is_valid():
             form.save(caregiver_charm_fk_id=caregiver)

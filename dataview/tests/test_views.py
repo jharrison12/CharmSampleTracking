@@ -548,7 +548,7 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
         self.assertTemplateUsed(response, 'dataview/caregiver_biospecimen_entry.html')
 
-    def test_caregiver_bio_page_uses_correct_form(self):
+    def test_caregiver_bio_entry_page_uses_correct_form(self):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
         self.assertIsInstance(response.context['bio_form'], CaregiverBiospecimenForm)
 
@@ -558,7 +558,19 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
                                                                                        'status_fk':self.collected.pk,
                                                                                        'biospecimen_date':datetime.date(2023,8,23),
                                                                                        'incentive_fk':  self.incentive_one.pk,
+                                                                                       'caregiver_fk': self.first_caregiver.pk
                                                                                        })
 
         self.assertRedirects(response,f"/data/caregiver/P7000/biospecimen/")
+
+    def test_unique_validation_errors_are_sent_back_to_entry_page(self):
+        response = self.client.post(f'/data/caregiver/P7000/biospecimen/entry/', data={'collection_fk':self.placenta.pk,
+                                                                                       'status_fk':self.collected.pk,
+                                                                                       'biospecimen_date':datetime.date(2023,8,23),
+                                                                                       'incentive_fk':  self.incentive_one.pk,
+                                                                                       })
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'caregiver_biospecimen_entry.html')
+        expected_error = "You can't have a duplicate item"
+        self.assertContains(response, expected_error)
 
