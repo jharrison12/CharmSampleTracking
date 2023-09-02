@@ -204,7 +204,7 @@ class Incentive(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['incentive_type_fk','incentive_date','incentive_amount'],name="incentive_unique_constraint")
+            models.UniqueConstraint(fields=['incentive_type_fk','incentive_amount'],name="incentive_unique_constraint")
         ]
 
     def __str__(self):
