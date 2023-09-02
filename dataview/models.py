@@ -311,5 +311,7 @@ class CaregiverBiospecimen(models.Model):
 
     class Meta:
         constraints=[
-            models.UniqueConstraint(fields=['caregiver_fk','collection_fk'],name="caregiver_biospecimen_unique_constraint")
+            models.UniqueConstraint(fields=['caregiver_fk','collection_fk'],
+                                    name="caregiver_biospecimen_unique_constraint",
+                                    violation_error_message="You can't have a duplicate item")
         ]

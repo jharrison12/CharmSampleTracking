@@ -93,5 +93,5 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'/html/body/form/input[4]')
         submit.click()
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('WHAT',body_text)
+        self.assertIn('This type of biospecimen for this charm id already exists',body_text)
 

@@ -1,6 +1,7 @@
 from django import forms
 from dataview.models import CaregiverBiospecimen
 from django.core.exceptions import ValidationError
+from django.core.exceptions import NON_FIELD_ERRORS
 
 
 
@@ -19,6 +20,11 @@ class CaregiverBiospecimenForm(forms.models.ModelForm):
     class Meta:
         model = CaregiverBiospecimen
         fields = ['caregiver_fk','collection_fk','status_fk','incentive_fk','biospecimen_date']
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                'unique_together': f"This type of biospecimen for this charm id already exists",
+            }
+        }
         widgets = {
             "caregiver_fk": forms.HiddenInput()
         }

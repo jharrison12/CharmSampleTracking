@@ -7,6 +7,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm
+from django.utils.html import escape
 
 logging.basicConfig(level=logging.CRITICAL)
 
@@ -573,6 +574,6 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         self.assertEqual(response.status_code, 200)
 
         self.assertTemplateUsed(response, 'dataview/caregiver_biospecimen_entry.html')
-        expected_error = "You can't have a duplicate item"
+        expected_error = escape("This type of biospecimen for this charm id already exists")
         self.assertContains(response, expected_error)
 
