@@ -1,13 +1,33 @@
 {% extends "dataview/base.html" %}
 {% block body %}
   <form method="POST" action={% url 'dataview:caregiver_biospecimen_entry' charm_project_identifier %}>
-    {{ bio_form }}
-    {% csrf_token %}
-      {% if bio_form.errors %}
-          <div class="form-group has-error">
-              <div class="help-block">{{ bio_form.text.errors }}</div>
-          </div>
-      {% endif %}
+  {% csrf_token %}
+    {{ bio_form.non_field_errors }}
+      <div class="fieldWrapper">
+            {{ bio_form.subject.errors }}
+            <!--<label for="{{ bio_form.caregiver_fk.id_for_label }}">Caregiver:</label>-->
+            {{ bio_form.caregiver_fk }}
+      </div>
+      <div class="fieldWrapper">
+            {{ bio_form.collection_fk.errors }}
+            <label for="{{ bio_form.collection_fk.id_for_label }}">Collection Type:</label>
+            {{ bio_form.collection_fk }}
+      </div>
+      <div class="fieldWrapper">
+            {{ bio_form.status_fk.errors }}
+            <label for="{{ bio_form.status_fk.id_for_label }}">Status:</label>
+            {{ bio_form.status_fk }}
+      </div>
+      <div class="fieldWrapper">
+            {{ bio_form.incentive_fk.errors }}
+            <label for="{{ bio_form.incentive_fk.id_for_label }}">Incentive:</label>
+            {{ bio_form.incentive_fk }}
+      </div>
+      <div class="fieldWrapper">
+            {{ bio_form.biospecimen_date.errors }}
+            <label for="{{ bio_form.biospecimen_date.id_for_label }}">Date Collected:</label>
+            {{ bio_form.biospecimen_date }}
+      </div>
   <input type="submit" value="Submit" />
   </form>
 {% endblock %}

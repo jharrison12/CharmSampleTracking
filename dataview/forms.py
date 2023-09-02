@@ -10,13 +10,15 @@ class CaregiverBiospecimenForm(forms.models.ModelForm):
     #     self.instance.caregiver_fk = caregiver_charm_fk_id
     #     return super().save()
 
-    def validate_unique(self):
-        try:
-            self.instance.validate_unique()
-        except ValidationError as e:
-            e.error_dict = {'text': "You can't have a duplicate item"}
-            self._update_errors(e)
+    def clean(self):
+        cd = self.cleaned_data
+        if self.non_field_errors():
+            self.add_error('caregiver_fk','DERP')
+        return cd
 
     class Meta:
         model = CaregiverBiospecimen
-        fields = ('caregiver_fk','collection_fk','status_fk','incentive_fk','biospecimen_date',)
+        fields = ['caregiver_fk','collection_fk','status_fk','incentive_fk','biospecimen_date']
+        widgets = {
+            "caregiver_fk": forms.HiddenInput()
+        }

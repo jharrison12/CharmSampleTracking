@@ -77,9 +77,8 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                        'caregiver_name': caregiver_name})
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
-    form = CaregiverBiospecimenForm()
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
         logging.critical(f" post is {request.POST}")
         form = CaregiverBiospecimenForm(data=request.POST)
         logging.critical(f" form is {form.data}")
@@ -88,5 +87,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id):
         if form.is_valid():
             form.save()
             return redirect('dataview:caregiver_biospecimen',caregiver_charm_id=caregiver_charm_id)
+    else:
+        form = CaregiverBiospecimenForm(initial={"caregiver_fk":caregiver})
     return render(request,template_name='dataview/caregiver_biospecimen_entry.html', context={'bio_form':form,
                                                                                               'charm_project_identifier':caregiver_charm_id})
