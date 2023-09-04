@@ -2,6 +2,7 @@
 {% block body %}
   <form method="POST" action={% url 'dataview:caregiver_biospecimen_entry' charm_project_identifier %}>
   {% csrf_token %}
+      <h2>Biospecimen Form</h2>
     {{ bio_form.non_field_errors }}
       <div class="fieldWrapper">
             {{ bio_form.subject.errors }}
