@@ -81,7 +81,7 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
 
         self.assertIn('Urine 1',body_text)
-        #user tries to submit duplicate biospecimen and gets an error.
+        #user submits new biospecimen
         collection = Select(self.browser.find_element(By.ID,'id_bio_form-collection_fk'))
         collection.select_by_visible_text('Serum 1')
         status = Select(self.browser.find_element(By.ID,'id_bio_form-status_fk'))
@@ -90,7 +90,6 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         date_input  = self.browser.find_element(By.ID,'id_bio_form-biospecimen_date')
         date_input.clear()
         date_input.send_keys('2023-08-03')
-
 
         #user sees the incentive form
         incentive = Select(self.browser.find_element(By.ID,'id_incentive_form-incentive_type_fk'))
@@ -109,6 +108,30 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         mother_id_section = self.browser.find_element(By.CLASS_NAME,'mother_id').text
         self.assertIn('P7001',mother_id_section)
 
-        # ##TODO: test duplicate entries
-        # body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        # self.assertIn('This type of biospecimen for this charm id already exists', body_text)
+        # user submits duplicate entry and gets an error
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/biospecimen/entry')
+        collection = Select(self.browser.find_element(By.ID,'id_bio_form-collection_fk'))
+        collection.select_by_visible_text('Serum 1')
+        status = Select(self.browser.find_element(By.ID,'id_bio_form-status_fk'))
+        status.select_by_visible_text('Completed')
+
+        date_input  = self.browser.find_element(By.ID,'id_bio_form-biospecimen_date')
+        date_input.clear()
+        date_input.send_keys('2023-08-03')
+
+        #user sees the incentive form
+        incentive = Select(self.browser.find_element(By.ID,'id_incentive_form-incentive_type_fk'))
+        incentive.select_by_visible_text('Gift Card')
+
+        incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-08-03')
+
+        incentive_amount = self.browser.find_element(By.ID,'id_incentive_form-incentive_amount')
+        incentive_amount.send_keys(50)
+        submit = self.browser.find_element(By.XPATH,'/html/body/form/input[2]')
+        submit.click()
+        time.sleep(20)
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('This type of biospecimen for this charm id already exists', body_text)

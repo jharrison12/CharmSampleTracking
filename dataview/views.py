@@ -79,20 +79,12 @@ def caregiver_biospecimen(request,caregiver_charm_id):
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        logging.critical(f" post is {request.POST}")
         bio_form = CaregiverBiospecimenForm(data=request.POST,prefix='bio_form')
         incentive_form = IncentiveForm(data=request.POST, prefix='incentive_form')
-        logging.critical(f" form is {bio_form.data}")
-        logging.critical(f"form is valid {bio_form.is_valid()}\n")
-        logging.critical(f"form errors {bio_form.errors}\n\n")
-        #form.full_clean()
         if bio_form.is_valid() and incentive_form.is_valid():
             incentive = incentive_form.save()
             bio_form_final = bio_form.save(commit=False)
             bio_form_final.incentive_fk = incentive
-            #logging.critical(f"bio form incentive {bio_form.incentive_fk}\n")
-            logging.critical(f" post form is {bio_form.data}\n")
-            logging.critical(f"form is valid {bio_form.is_valid()}\n")
             bio_form_final.save()
             return redirect('dataview:caregiver_biospecimen',caregiver_charm_id=caregiver_charm_id)
     else:
