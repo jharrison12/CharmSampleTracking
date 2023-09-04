@@ -4,7 +4,7 @@ from django.shortcuts import render,get_object_or_404,redirect
 from dataview.models import Caregiver,Name,CaregiverName,\
     Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen
-from dataview.forms import CaregiverBiospecimenForm
+from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -80,14 +80,24 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
         logging.critical(f" post is {request.POST}")
-        form = CaregiverBiospecimenForm(data=request.POST)
-        logging.critical(f" form is {form.data}")
-        logging.critical(f"form is valid {form.is_valid()}")
+        bio_form = CaregiverBiospecimenForm(data=request.POST,prefix='bio_form')
+        incentive_form = IncentiveForm(data=request.POST, prefix='incentive_form')
+        logging.critical(f" form is {bio_form.data}")
+        logging.critical(f"form is valid {bio_form.is_valid()}\n")
+        logging.critical(f"form errors {bio_form.errors}\n\n")
         #form.full_clean()
-        if form.is_valid():
-            form.save()
+        if bio_form.is_valid() and incentive_form.is_valid():
+            incentive = incentive_form.save()
+            bio_form_final = bio_form.save(commit=False)
+            bio_form_final.incentive_fk = incentive
+            #logging.critical(f"bio form incentive {bio_form.incentive_fk}\n")
+            logging.critical(f" post form is {bio_form.data}\n")
+            logging.critical(f"form is valid {bio_form.is_valid()}\n")
+            bio_form_final.save()
             return redirect('dataview:caregiver_biospecimen',caregiver_charm_id=caregiver_charm_id)
     else:
-        form = CaregiverBiospecimenForm(initial={"caregiver_fk":caregiver})
-    return render(request,template_name='dataview/caregiver_biospecimen_entry.html', context={'bio_form':form,
+        incentive_form = IncentiveForm(prefix='incentive_form')
+        bio_form = CaregiverBiospecimenForm(initial={"caregiver_fk":caregiver},prefix='bio_form')
+    return render(request,template_name='dataview/caregiver_biospecimen_entry.html', context={'bio_form':bio_form,
+                                                                                              'incentive_form':incentive_form,
                                                                                               'charm_project_identifier':caregiver_charm_id})

@@ -14,7 +14,7 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         header_text = self.browser.find_elements(By.TAG_NAME,'h2')
         self.assertIn('ID',[item.text for item in header_text])
         mother_id_section = self.browser.find_element(By.CLASS_NAME,'mother_id').text
-        time.sleep(5)
+        #time.sleep(5)
         self.assertIn('P7000',mother_id_section)
         self.assertIn('4444',mother_id_section)
 
@@ -79,19 +79,36 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7001/biospecimen/entry')
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-
+        time.sleep(10)
         self.assertIn('Urine 1',body_text)
         #user tries to submit duplicate biospecimen and gets an error.
         collection = Select(self.browser.find_element(By.ID,'id_collection_fk'))
-        collection.select_by_visible_text('Urine 1')
+        collection.select_by_visible_text('Serum 1')
         status = Select(self.browser.find_element(By.ID,'id_status_fk'))
         status.select_by_visible_text('Completed')
+
+        date_input  = self.browser.find_element(By.ID,'id_biospecimen_date')
+        date_input.send_keys('2023-08-03')
+
+        #user sees the incentive form
+        incentive = Select(self.browser.find_element(By.ID,'id_incentive_type_fk'))
+        incentive.select_by_visible_text('Gift Card')
+
+        incentive_date = self.browser.find_element(By.ID,'id_incentive_date')
+        incentive_date.send_keys('2023-08-03')
+
+        incentive_amount = self.browser.find_element(By.ID,'id_incentive_amount')
+        incentive_amount.send_keys(50)
+
+        submit = self.browser.find_element(By.XPATH,'/html/body/form/input[2]')
+        submit.click()
+
+
+        #user sees the incentive form
         incentive = Select(self.browser.find_element(By.ID,'id_incentive_fk'))
         incentive.select_by_visible_text('Gift Card: 100')
-        date_input  = self.browser.find_element(By.ID,'id_incentive_fk')
-        date_input.send_keys('2023-08-03')
-        submit = self.browser.find_element(By.XPATH,'/html/body/form/input[4]')
-        submit.click()
-        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('This type of biospecimen for this charm id already exists',body_text)
 
+
+        ##TODO: test duplicate entries
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('This type of biospecimen for this charm id already exists', body_text)

@@ -202,11 +202,6 @@ class Incentive(models.Model):
     incentive_date = models.DateField(blank=False,null=False,default=timezone.now)
     incentive_amount =models.IntegerField(null=True)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['incentive_type_fk','incentive_amount'],name="incentive_unique_constraint")
-        ]
-
     def __str__(self):
         return f"{self.incentive_type_fk}: {self.incentive_amount}"
 
@@ -224,7 +219,7 @@ class CaregiverSurvey(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
     survey_fk = models.ForeignKey(Survey, on_delete=models.PROTECT)
     survey_outcome_fk = models.ForeignKey(SurveyOutcome, on_delete=models.PROTECT)
-    incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT)
+    incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT,blank=True,null=True)
     survey_completion_date = models.DateField(blank=False, null=False, default=timezone.now)
 
     class Meta:
@@ -306,7 +301,7 @@ class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     status_fk = models.ForeignKey(Status, on_delete=models.PROTECT)
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
-    incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT)
+    incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     biospecimen_date = models.DateField(blank=False,null=False,default=timezone.now)
 
     class Meta:

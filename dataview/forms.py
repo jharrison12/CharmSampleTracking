@@ -1,5 +1,5 @@
 from django import forms
-from dataview.models import CaregiverBiospecimen
+from dataview.models import CaregiverBiospecimen, Incentive
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 
@@ -14,7 +14,7 @@ class CaregiverBiospecimenForm(forms.models.ModelForm):
     def clean(self):
         cd = self.cleaned_data
         if self.non_field_errors():
-            self.add_error('caregiver_fk','DERP')
+            self.add_error('caregiver_fk','this doesn\'t work')
         return cd
 
     class Meta:
@@ -26,5 +26,13 @@ class CaregiverBiospecimenForm(forms.models.ModelForm):
             }
         }
         widgets = {
-            "caregiver_fk": forms.HiddenInput()
+            "caregiver_fk": forms.HiddenInput(),
+            "incentive_fk": forms.HiddenInput()
         }
+        exclude = ('incentive_fk',)
+
+class IncentiveForm(forms.models.ModelForm):
+
+    class Meta:
+        model = Incentive
+        fields = ['incentive_type_fk','incentive_date','incentive_amount']

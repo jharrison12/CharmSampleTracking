@@ -6,7 +6,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen
 import datetime
 from django.utils import timezone
-from dataview.forms import CaregiverBiospecimenForm
+from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
 from django.utils.html import escape
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -549,27 +549,35 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
         self.assertTemplateUsed(response, 'dataview/caregiver_biospecimen_entry.html')
 
-    def test_caregiver_bio_entry_page_uses_correct_form(self):
+    def test_caregiver_bio_entry_page_uses_bio_form(self):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
         self.assertIsInstance(response.context['bio_form'], CaregiverBiospecimenForm)
 
     def test_bio_entry_redirects_after_post(self):
 
-        response = self.client.post(f'/data/caregiver/P7000/biospecimen/entry/', data={'collection_fk':self.placenta_two.pk,
-                                                                                       'status_fk':self.collected.pk,
-                                                                                       'biospecimen_date':datetime.date(2023,8,23),
-                                                                                       'incentive_fk':  self.incentive_one.pk,
-                                                                                       'caregiver_fk': self.first_caregiver.pk
+        response = self.client.post(f'/data/caregiver/P7000/biospecimen/entry/', data={'bio_form-collection_fk':self.placenta_two.pk,
+                                                                                       'bio_form-status_fk':self.collected.pk,
+                                                                                       'bio_form-biospecimen_date':datetime.date(2023,8,23),
+                                                                                       #'incentive_fk':  self.incentive_one.pk,
+                                                                                       'bio_form-caregiver_fk': self.first_caregiver.pk,
+                                                                                       'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
+                                                                                       'incentive_form-incentive_date':datetime.date(2023,8,23),
+                                                                                       'incentive_form-incentive_amount':1,
                                                                                        })
 
         self.assertRedirects(response,f"/data/caregiver/P7000/biospecimen/")
 
     def test_unique_validation_errors_are_sent_back_to_entry_page(self):
-        response = self.client.post(f'/data/caregiver/P7000/biospecimen/entry/', data={'collection_fk':self.placenta.pk,
-                                                                                       'status_fk':self.collected.pk,
-                                                                                       'biospecimen_date':datetime.date(2023,8,23),
+        response = self.client.post(f'/data/caregiver/P7000/biospecimen/entry/', data={'bio_form-collection_fk':self.placenta.pk,
+                                                                                       'bio_form-status_fk':self.collected.pk,
+                                                                                       'bio_form-biospecimen_date':datetime.date(2023,8,23),
+                                                                                       'bio_form-caregiver_fk': self.first_caregiver.pk,
                                                                                        'incentive_fk':  self.incentive_one.pk,
-                                                                                       'caregiver_fk': self.first_caregiver.pk
+                                                                                       'caregiver_fk': self.first_caregiver.pk,
+                                                                                       'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
+                                                                                       'incentive_form-incentive_date': datetime.date(
+                                                                                           2023, 8, 23),
+                                                                                       'incentive_form-incentive_amount': 1,
                                                                                        })
         self.assertEqual(response.status_code, 200)
 
@@ -577,3 +585,7 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         expected_error = escape("This type of biospecimen for this charm id already exists")
         self.assertContains(response, expected_error)
 
+
+    def test_caregiver_bio_entry_page_uses_incentive_form(self):
+        response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
+        self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
