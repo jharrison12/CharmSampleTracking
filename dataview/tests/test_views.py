@@ -589,3 +589,21 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
     def test_caregiver_bio_entry_page_uses_incentive_form(self):
         response = self.client.get(f'/data/caregiver/P7000/biospecimen/entry/')
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
+
+    def test_bio_entry_is_connected_to_incentive_submitted_in_form(self):
+
+        response = self.client.post(f'/data/caregiver/P7000/biospecimen/entry/', data={'bio_form-collection_fk':self.placenta_two.pk,
+                                                                                       'bio_form-status_fk':self.collected.pk,
+                                                                                       'bio_form-biospecimen_date':datetime.date(2023,8,23),
+                                                                                       #'incentive_fk':  self.incentive_one.pk,
+                                                                                       'bio_form-caregiver_fk': self.first_caregiver.pk,
+                                                                                       'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
+                                                                                       'incentive_form-incentive_date':datetime.date(2023,8,23),
+                                                                                       'incentive_form-incentive_amount':1,
+                                                                                       })
+
+        placenta_two = CaregiverBiospecimen.objects.filter(collection_fk__collection_type="Placenta").filter(collection_fk__collection_number=2).first()
+
+        correct_incentive = Incentive.objects.filter(incentive_amount=1).first()
+
+        self.assertEqual(placenta_two.incentive_fk,correct_incentive)

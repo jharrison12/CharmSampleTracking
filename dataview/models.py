@@ -277,6 +277,11 @@ class NonMotherCaregiver(models.Model):
             models.UniqueConstraint(fields=['caregiver_fk','relation_fk'],name="non_mother_caregiver_unqiue_constraint")
         ]
 
+class PrimaryCaregiver(models.Model):
+    mother_fk = models.OneToOneField(Mother,on_delete=models.PROTECT,null=True)
+    non_mother_caregiver_fk = models.OneToOneField(NonMotherCaregiver,on_delete=models.PROTECT,null=True)
+
+
 class Status(models.Model):
     #todo sublcass text choices for status
     status = models.CharField(max_length=255,unique=True)

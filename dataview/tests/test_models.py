@@ -6,7 +6,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
-    CaregiverBiospecimen,Collection
+    CaregiverBiospecimen,Collection,PrimaryCaregiver
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -203,6 +203,13 @@ class ModelTest(TestCase):
                                                                                  incentive_fk=self.incentive_one,
                                                                                  biospecimen_date=datetime.date.today())
 
+        #create mother and nonmother caregiver tables
+
+        self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
+
+        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver,due_date=datetime.date(2021,1,3))
+        self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
+
 
 
 class CaregiverModelsTest(ModelTest):
@@ -387,17 +394,16 @@ class ConsentVersionModelsTest(ModelTest):
 
 class CaregiverMotherModelsTest(ModelTest):
     def test_caregiver_links_to_mother_table(self):
-        mother_table_row = Mother.objects.create(caregiver_fk=self.first_caregiver,due_date=datetime.date(2020,7,3))
+        mother_table_row = Mother.objects.filter(caregiver_fk=self.first_caregiver).first()
         mother_table_row_2 = Mother.objects.create(caregiver_fk=self.second_caregiver,due_date=datetime.date(2020,7,3))
         self.assertNotEqual(mother_table_row_2,mother_table_row)
 
 class NonMotherCaregiverModelsTest(ModelTest):
     def test_non_mother_caregiver_links_to_caregiver_table(self):
-        mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
-        non_mother_table_row = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=mother_in_law)
+        non_mother_table_row = NonMotherCaregiver.objects.filter(caregiver_fk=self.second_caregiver).first()
         self.assertEqual(non_mother_table_row.relation_fk.relation_type,'Mother-in-law')
 
-class BioSpecimenCaregiverTest(ModelTest):
+class BioSpecimenCaregiverModelsTest(ModelTest):
     def test_biospecimen_links_to_mother_table(self):
         caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine')\
             .filter(charm_project_identifier='P7000').first()
@@ -417,3 +423,14 @@ class BioSpecimenCaregiverTest(ModelTest):
                                                 incentive_fk=self.incentive_one)
         with self.assertRaises(ValidationError):
             caregiverbio_one.full_clean()
+
+class PrimaryCaregiverModelsTest(ModelTest):
+
+    def test_primary_caregiver_links_to_caregiver_table(self):
+        primary_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
+        self.assertEqual(primary_one.mother_fk.caregiver_fk,self.first_caregiver)
+
+    def test_primary_caregiver_links_to_non_caregiver_table(self):
+        primary_two = PrimaryCaregiver.objects.create(non_mother_caregiver_fk=self.non_mother_one)
+        self.assertEqual(primary_two.non_mother_caregiver_fk.caregiver_fk,self.second_caregiver)
+
