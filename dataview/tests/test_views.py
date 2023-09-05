@@ -607,3 +607,9 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         correct_incentive = Incentive.objects.filter(incentive_amount=1).first()
 
         self.assertEqual(placenta_two.incentive_fk,correct_incentive)
+
+class CaregiverConsentItemPage(TestCaseSetup):
+
+    def test_caregiver_consent_item_page_returns_correct_template(self):
+        response = self.client.get(f'/data/caregiver/P7000/consentitem/')
+        self.assertTemplateUsed(response,'dataview/caregiver_consent_item.html')

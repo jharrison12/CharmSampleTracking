@@ -315,3 +315,18 @@ class CaregiverBiospecimen(models.Model):
                                     name="caregiver_biospecimen_unique_constraint",
                                     violation_error_message="You can't have a duplicate item")
         ]
+
+class ConsentType(models.Model):
+
+    class ConsentTypeChoices(models.TextChoices):
+        MOTHER_URINE = 'MTHRUR',_('Mother Urine')
+        MOTHER_BLOOD = 'MTHRBLD',_('Mother Blood')
+        MOTHER_PLACENTA = 'MTHRPLCNT',_('Mother Placenta')
+
+    consent_type_text = models.CharField(max_length=20,
+                                              choices=ConsentTypeChoices.choices)
+
+
+class ConsentItem(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    consent_type_fk = models.ForeignKey(ConsentType, on_delete=models.PROTECT)
