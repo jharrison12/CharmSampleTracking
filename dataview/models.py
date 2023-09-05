@@ -326,7 +326,11 @@ class ConsentType(models.Model):
     consent_type_text = models.CharField(max_length=20,
                                               choices=ConsentTypeChoices.choices)
 
+    def __str__(self):
+        return f"{self.consent_type_text}"
+
 
 class ConsentItem(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     consent_type_fk = models.ForeignKey(ConsentType, on_delete=models.PROTECT)
+    consent_boolean = models.BooleanField(default=True)

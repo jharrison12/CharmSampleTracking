@@ -613,3 +613,8 @@ class CaregiverConsentItemPage(TestCaseSetup):
     def test_caregiver_consent_item_page_returns_correct_template(self):
         response = self.client.get(f'/data/caregiver/P7000/consentitem/')
         self.assertTemplateUsed(response,'dataview/caregiver_consent_item.html')
+
+    def test_caregiver_consent_shows_mother_placenta(self):
+        response = self.client.get(f'/data/caregiver/P7000/consentitem/')
+        self.assertContains(response, "Mother Placenta")
+
