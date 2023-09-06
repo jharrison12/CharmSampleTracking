@@ -97,4 +97,5 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id):
 def caregiver_consent_item(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     consent_items = ConsentItem.objects.filter(caregiver_fk=caregiver)
-    return render(request,template_name='dataview/caregiver_consent_item.html',context={'consent_items':consent_items})
+    return render(request,template_name='dataview/caregiver_consent_item.html',context={'consent_items':consent_items,
+                                                                                        'caregiver':caregiver})

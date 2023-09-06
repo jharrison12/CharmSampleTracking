@@ -1,8 +1,10 @@
 {% extends "dataview/base.html" %}
 {% block body %}
-
+<h1>{{ caregiver.charm_project_identifier }} Consent Items:</h1>
+        <ul>
     {% for item in consent_items %}
-     {{ item.consent_type_fk }}
+         <li>{{ item.consent_type_fk.get_consent_type_text_display }}: {{ item.consent_boolean }}</li>
     {% endfor %}
+        </ul>
 
 {% endblock %}

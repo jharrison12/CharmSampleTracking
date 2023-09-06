@@ -319,9 +319,23 @@ class CaregiverBiospecimen(models.Model):
 class ConsentType(models.Model):
 
     class ConsentTypeChoices(models.TextChoices):
-        MOTHER_URINE = 'MTHRUR',_('Mother Urine')
-        MOTHER_BLOOD = 'MTHRBLD',_('Mother Blood')
-        MOTHER_PLACENTA = 'MTHRPLCNT',_('Mother Placenta')
+        MOTHER_URINE = 'MTHR_UR',_('Mother Urine')
+        MOTHER_BLOOD = 'MTHR_BLD',_('Mother Blood')
+        MOTHER_PLACENTA = 'MTHR_PLCNT',_('Mother Placenta')
+        NAIL_HAIR_URINE = 'MTHR_NL_HR_UR',_('Mother Nail Hair Urine')
+        BIRTH_CERTIFICATE = 'BIRTH_CERT', _('Birth Certificate')
+        MDHHS = 'MDHHS', _('Michigan Department of Health and Human Services')
+        CHILD_POOP = 'CHLD_POOP', _('Child Poop')
+        CHILD_TEETH = 'CHLD_TEETH', _('Child Teeth')
+        SRV_HOME = 'SRV_HOME', _('Serve Home')
+        ADDRESSB = 'ADDRS_B', _('Address B')
+        CHILD_BLOOD = 'CHILD_BLD', _('Child Blood')
+        INFO_SHARE = 'INFO_SHARE', _('Information Sharing')
+        ADDRESS = 'ADDRESS', _('Address')
+        DNA = 'DNA', _('DNA')
+        OTHER_STUDY = 'OTH_STUDY', _('Other Study')
+        UOFM = 'UOFM', _('University of Michigan')
+        SOCIAL_MEDIA = 'SCL_MEDIA', _('Social Media')
 
     consent_type_text = models.CharField(max_length=20,
                                               choices=ConsentTypeChoices.choices)
