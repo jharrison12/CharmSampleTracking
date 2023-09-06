@@ -12,3 +12,6 @@ class MotherConsentItemPageTest(FunctionalTest):
         time.sleep(10)
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Mother Placenta', body_text)
+        self.assertIn('Mother Blood', body_text)
+        self.assertIn('Mother Urine', body_text)
+        self.assertIn('Address', body_text)

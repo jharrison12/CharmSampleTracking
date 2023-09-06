@@ -1,14 +1,6 @@
 {% extends "dataview/base.html" %}
-{% block body %}
-    <h2>ID</h2>
-        <div class="mother_id">
-            <div class="charm_id">
-                Charm Id: {{ caregiver.charm_project_identifier }}
-            </div>
-            <div class="family_id">
-                Family Id: {{ caregiver.specimen_id }}
-            </div>
-        </div>
+{% block header %}Charm ID: {{ caregiver.charm_project_identifier }} Family ID: {{ caregiver.specimen_id }}{% endblock %}
+{% block section %}
     <h2>Serum</h2>
         <div class="mother_serum">
             {% for serum in biospecimen_serum|dictsort:"collection_fk.collection_number" %}

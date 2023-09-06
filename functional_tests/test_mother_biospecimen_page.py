@@ -10,13 +10,8 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         # User visits the caregiver biospecimen page and sees urine
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/biospecimen')
-
-        header_text = self.browser.find_elements(By.TAG_NAME,'h2')
-        self.assertIn('ID',[item.text for item in header_text])
-        mother_id_section = self.browser.find_element(By.CLASS_NAME,'mother_id').text
-        #time.sleep(5)
-        self.assertIn('P7000',mother_id_section)
-        self.assertIn('4444',mother_id_section)
+        header_text = self.browser.find_elements(By.TAG_NAME,'h1')
+        self.assertIn('Charm ID: P7000 Family ID: 4444',[item.text for item in header_text])
 
         serum_section = self.browser.find_element(By.CLASS_NAME,'mother_serum').text
         self.assertIn("Serum 1: Completed", serum_section)
@@ -105,8 +100,8 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         submit.click()
 
         #Confirm that page redirected after submitting
-        mother_id_section = self.browser.find_element(By.CLASS_NAME,'mother_id').text
-        self.assertIn('P7001',mother_id_section)
+        mother_header = self.browser.find_element(By.TAG_NAME,'h1').text
+        self.assertIn('P7001',mother_header)
 
         # user submits duplicate entry and gets an error
         self.browser.get(self.live_server_url)

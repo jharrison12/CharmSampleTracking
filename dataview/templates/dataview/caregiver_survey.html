@@ -1,6 +1,7 @@
 {% extends "dataview/base.html" %}
-{% block body %}
-    <h1>{{ charm_id }} Surveys</h1>
+{% block header %}Charm ID: {{ charm_id }}{% endblock %}
+{% block section %}
+    <h2>Surveys</h2>
     <ul>
     {% for survey in caregiver_surveys %}
         <li>{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</li>

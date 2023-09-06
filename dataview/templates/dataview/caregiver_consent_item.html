@@ -1,5 +1,6 @@
 {% extends "dataview/base.html" %}
-{% block body %}
+{% block header %}Charm ID: {{ caregiver.charm_project_identifier }}{% endblock %}
+{% block section %}
 <h1>{{ caregiver.charm_project_identifier }} Consent Items:</h1>
         <ul>
     {% for item in consent_items %}

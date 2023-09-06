@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 
@@ -11,7 +13,7 @@ class MotherIdPageTest(FunctionalTest):
         #User sees a list of mother ids
         link_text = self.browser.find_element(By.LINK_TEXT,'Mother Sample').text
         self.assertIn('Mother Sample', link_text)
-
+        time.sleep(20)
         #User finds mother sample and clicks link
         self.browser.find_element(By.LINK_TEXT,'Mother Sample').click()
         #User types in link to caregiver page

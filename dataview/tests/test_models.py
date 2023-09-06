@@ -445,5 +445,5 @@ class PrimaryCaregiverModelsTest(ModelTest):
 class ConsentItemModelTest(ModelTest):
 
     def test_that_consent_item_links_to_caregiver(self):
-        first_caregiver_placenta = Caregiver.objects.filter(consentitem__consent_type_fk__consent_type_text="MTHRPLCNT").first()
+        first_caregiver_placenta = Caregiver.objects.filter(consentitem__consent_type_fk__consent_type_text="MTHR_PLCNT").first()
         self.assertEqual(first_caregiver_placenta,self.first_caregiver)

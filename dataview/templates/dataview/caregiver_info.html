@@ -1,6 +1,6 @@
 {% extends "dataview/base.html" %}
-{% block body %}
-    <h1>Mother's name is: {{ caregiver_name.last_name }}, {{ caregiver_name.first_name }}</h1>
+{% block header %}Mother's name is: {{ caregiver_name.last_name }}, {{ caregiver_name.first_name }}{% endblock %}
+{% block section %}
     <ul>
         <li>Echo ID: {{ caregiver.charm_project_identifier }}</li>
         <li>Date of Birth: {{ caregiver.date_of_birth }}</li>
