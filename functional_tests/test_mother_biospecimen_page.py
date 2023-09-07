@@ -93,10 +93,9 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-08-03')
-
         incentive_amount = self.browser.find_element(By.ID,'id_incentive_form-incentive_amount')
         incentive_amount.send_keys(50)
-        submit = self.browser.find_element(By.XPATH,'/html/body/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'/html/body/div/form/input[2]')
         submit.click()
 
         #Confirm that page redirected after submitting
@@ -122,11 +121,11 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-08-03')
-
+        time.sleep(20)
         incentive_amount = self.browser.find_element(By.ID,'id_incentive_form-incentive_amount')
         incentive_amount.send_keys(50)
-        submit = self.browser.find_element(By.XPATH,'/html/body/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'/html/body/div/form/input[2]')
         submit.click()
-        time.sleep(20)
+
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('This type of biospecimen for this charm id already exists', body_text)

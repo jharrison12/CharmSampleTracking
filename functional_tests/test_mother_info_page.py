@@ -1,5 +1,5 @@
 import time
-
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 
@@ -70,9 +70,13 @@ class MotherInformationPageTest(FunctionalTest):
 
     def test_user_can_visit_caregiver_survey_page(self):
         self.browser.get(self.live_server_url)
+        self.browser.maximize_window()
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/')
-        time.sleep(40)
-        self.browser.find_element(By.LINK_TEXT,"Caregiver Surveys").click()
+        self.browser.implicitly_wait(5)
+        link = self.browser.find_element(By.LINK_TEXT,"Caregiver Surveys")
+
+        webdriver.ActionChains(self.browser).move_to_element(link).click(link).perform()
+
 
         surveys = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn("Prenatal 1:", surveys)
