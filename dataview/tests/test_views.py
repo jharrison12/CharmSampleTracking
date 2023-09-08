@@ -4,7 +4,7 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment
+    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -379,13 +379,14 @@ class TestCaseSetup(TestCase):
         self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_birth_cert,caregiver_fk=self.first_caregiver)
 
         # create child
+        #create child
 
-        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
-                                              charm_project_identifier='7000M1',
-                                              birth_hospital=self.health_care_facility_1)
-        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
-                                              charm_project_identifier='7002M1',
-                                              birth_hospital=self.health_care_facility_1)
+        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,charm_project_identifier='7000M1',birth_hospital=self.health_care_facility_1)
+        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,charm_project_identifier='7002M1',birth_hospital=self.health_care_facility_1)
+
+        self.child_one_name = Name.objects.create(last_name='Harrison',first_name='Jonathan')
+
+        self.child_name_connection = ChildName.objects.create(child_fk=self.child_one,name_fk=self.child_one_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
 
 
 # Create your tests here.
@@ -685,4 +686,4 @@ class ChildInformationPage(TestCaseSetup):
 
     def test_child_information_page(self):
         response = self.client.get(f'/data/child/7000M1/')
-        self.assertContains(response,'Child ID: 7000M1')
+        self.assertContains(response,'Child\'s Name is: Harrison, Jonathan')

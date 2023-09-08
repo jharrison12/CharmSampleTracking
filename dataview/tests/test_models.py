@@ -6,7 +6,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
-    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child
+    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -225,6 +225,11 @@ class ModelTest(TestCase):
 
         self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,charm_project_identifier='7000M1',birth_hospital=self.health_care_facility_1)
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,charm_project_identifier='7002M1',birth_hospital=self.health_care_facility_1)
+
+        self.child_one_name = Name.objects.create(last_name='Harrison',first_name='Jonathan')
+
+        self.child_name_connection = ChildName.objects.create(child_fk=self.child_one,name_fk=self.child_one_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
+
 
 class CaregiverModelsTest(ModelTest):
 
@@ -462,3 +467,9 @@ class ChildModelTest(ModelTest):
     def different_child_links_to_non_primary_caregiver(self):
         caregiver_two_through_child = Caregiver.objects.get(nonmothercaregiver__primarycaregiver__child=self.child_two)
         self.assertEqual(self.second_caregiver,caregiver_two_through_child)
+
+class ChildNameModelTest(ModelTest):
+
+    def test_child_name_links_to_child(self):
+        child_object = Child.objects.filter(childname__name_fk__last_name='Harrison').first()
+        self.assertEqual(child_object,self.child_one)

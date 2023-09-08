@@ -364,6 +364,20 @@ class Child(models.Model):
     birth_sex = models.CharField(max_length=1, choices=BirthSexChoices.choices)
     birth_hospital = models.ForeignKey(HealthcareFacility,on_delete=models.PROTECT)
     child_interviewer_comments = models.TextField()
+
+    def __str__(self):
+        return f"{self.charm_project_identifier}"
     #todo calculate child_twin with function
     #todo calculate inactive status with function
 
+class ChildName(models.Model):
+    child_fk = models.ForeignKey(Child,on_delete=models.PROTECT)
+    name_fk = models.ForeignKey(Name,on_delete=models.PROTECT)
+    revision_number = models.IntegerField(default=0)
+    class ChildNameStatusChoice (models.TextChoices):
+        CURRENT = 'C', _('Current')
+        ARCHIVED = 'A', _('Archived')
+
+    status = models.CharField(max_length=1,choices=ChildNameStatusChoice.choices)
+    effective_start_date = models.DateField(default=timezone.now)
+    effective_end_date = models.DateField(default=datetime.date(2099,12,31))

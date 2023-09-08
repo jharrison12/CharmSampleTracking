@@ -17,14 +17,16 @@ class ChildIdPageTest(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('7000M1',body_text)
         self.assertIn('Information Page',body_text)
-        self.assertIn('Biospecimen',body_text)
-
-        self.assertIn('Surveys',body_text)
-        self.assertIn('Consent Items',body_text)
 
         #User clicks on Information Page link and sees mother info page
         self.browser.find_element(By.LINK_TEXT,'Information Page').click()
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
-        self.assertIn('Child\'s name is: Doe, Jane',header_text_id_page)
+        time.sleep(30)
+        self.assertIn('Child\'s name is: Harrison, Jonathan',header_text_id_page)
 
         self.browser.back()
+
+        self.assertIn('Biospecimen',body_text)
+        self.assertIn('Surveys',body_text)
+        self.assertIn('Consent Items',body_text)
+

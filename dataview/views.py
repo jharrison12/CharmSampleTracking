@@ -3,7 +3,7 @@ import logging
 from django.shortcuts import render,get_object_or_404,redirect
 from dataview.models import Caregiver,Name,CaregiverName,\
     Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen, ConsentItem,Child
+    Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen, ConsentItem,Child,ChildName
 from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 
 logging.basicConfig(level=logging.DEBUG)
@@ -106,4 +106,6 @@ def child(request):
 
 def child_information_page(request, child_charm_id):
     child = Child.objects.filter(charm_project_identifier=child_charm_id).first()
-    return render(request,template_name='dataview/child_information.html',context={'child':child})
+    child_name = Name.objects.filter(childname__child_fk=child).filter(childname__status='C').first()
+    return render(request,template_name='dataview/child_information.html',context={'child':child,
+                                                                                   'child_name':child_name})
