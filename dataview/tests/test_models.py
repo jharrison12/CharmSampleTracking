@@ -6,7 +6,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
-    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType
+    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -210,6 +210,9 @@ class ModelTest(TestCase):
         self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver,due_date=datetime.date(2021,1,3))
         self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
+        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
+        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(non_mother_caregiver_fk=self.non_mother_one)
+
         #creat consent item
 
         self.consent_mother_placenta = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_PLACENTA)
@@ -218,7 +221,9 @@ class ModelTest(TestCase):
         self.consent_mother_placenta_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_placenta,caregiver_fk=self.first_caregiver)
         self.consent_mother_blood_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_blood,caregiver_fk=self.first_caregiver)
 
+        #create child
 
+        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one)
 
 class CaregiverModelsTest(ModelTest):
 
@@ -435,15 +440,25 @@ class BioSpecimenCaregiverModelsTest(ModelTest):
 class PrimaryCaregiverModelsTest(ModelTest):
 
     def test_primary_caregiver_links_to_caregiver_table(self):
-        primary_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
-        self.assertEqual(primary_one.mother_fk.caregiver_fk,self.first_caregiver)
+        self.assertEqual(self.primary_care_giver_child_one.mother_fk.caregiver_fk,self.first_caregiver)
 
     def test_primary_caregiver_links_to_non_caregiver_table(self):
-        primary_two = PrimaryCaregiver.objects.create(non_mother_caregiver_fk=self.non_mother_one)
-        self.assertEqual(primary_two.non_mother_caregiver_fk.caregiver_fk,self.second_caregiver)
+        self.assertEqual(self.primary_care_giver_child_two.non_mother_caregiver_fk.caregiver_fk,self.second_caregiver)
 
 class ConsentItemModelTest(ModelTest):
 
     def test_that_consent_item_links_to_caregiver(self):
         first_caregiver_placenta = Caregiver.objects.filter(consentitem__consent_type_fk__consent_type_text="MTHR_PLCNT").first()
         self.assertEqual(first_caregiver_placenta,self.first_caregiver)
+
+class ChildModelTest(ModelTest):
+
+    def test_child_links_to_only_one_caregiver(self):
+        caregiver_one = self.first_caregiver
+        caregiver_one_through_child = Caregiver.objects.get(mother__primarycaregiver__child=self.child_one)
+        self.assertEqual(caregiver_one,caregiver_one_through_child)
+
+    def different_child_links_to_non_primary_caregiver(self):
+        child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two)
+        caregiver_two_through_child = Caregiver.objects.get(nonmothercaregiver__primarycaregiver__child=child_two)
+        self.assertEqual(self.second_caregiver,caregiver_two_through_child)

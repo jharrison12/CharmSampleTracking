@@ -295,7 +295,7 @@ class Collection(models.Model):
     collection_number = models.CharField(max_length=255,null=True,blank=True)
 
     def __str__(self):
-        return f"{self.collection_type} {self.collection_number}"
+        return f"{self.collection_type} {self.collection_number or ''}"
 
     class Meta:
         constraints=[
@@ -348,3 +348,21 @@ class ConsentItem(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     consent_type_fk = models.ForeignKey(ConsentType, on_delete=models.PROTECT)
     consent_boolean = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.consent_type_fk}: {self.consent_boolean}"
+
+class Child(models.Model):
+    primary_care_giver_fk = models.ForeignKey(PrimaryCaregiver, on_delete=models.PROTECT)
+    birth_date = models.DateField(null=True)
+
+    class BirthSexChoices(models.TextChoices):
+        MALE = 'M', _('Male')
+        FEMALE = 'F', _('Female')
+
+    birth_sex = models.CharField(max_length=1, choices=BirthSexChoices.choices)
+    birth_hospital = models.ForeignKey(HealthcareFacility,on_delete=models.PROTECT)
+    child_interviewer_comments = models.TextField()
+    #todo calculate child_twin with function
+    #todo calculate inactive status with function
+
