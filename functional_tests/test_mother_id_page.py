@@ -25,7 +25,44 @@ class MotherIdPageTest(FunctionalTest):
         #User sees the other charm project sampleid
         self.assertIn('P7001',body_text)
 
-        #User clicks on P7000 and sees mother info page
-        self.browser.find_element(By.LINK_TEXT,'P7000').click()
+        # self.wait_for(lambda: self.assertTrue(
+        #     self.browser.find_element(By.ID,''.is_displayed()
+        # ))
+
+        self.assertIn('Information Page',body_text)
+        self.assertIn('Biospecimen',body_text)
+
+        self.assertIn('Surveys',body_text)
+        self.assertIn('Consent Items',body_text)
+
+        #User clicks on Information Page link and sees mother info page
+        self.browser.find_element(By.LINK_TEXT,'Information Page').click()
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
         self.assertIn('Mother\'s name is: Doe, Jane',header_text_id_page)
+
+        self.browser.back()
+
+        #User clicks on Biospecimen and sees mother biospecimen
+        self.browser.find_element(By.LINK_TEXT,'Biospecimen').click()
+        header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
+        self.assertIn('Charm ID: P7000',header_text_id_page)
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Urine',body)
+
+        self.browser.back()
+
+        #User clicks on Survey and sees mother surveys
+        self.browser.find_element(By.LINK_TEXT,'Surveys').click()
+        header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
+        self.assertIn('Charm ID: P7000',header_text_id_page)
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Prenatal 1',body)
+
+        self.browser.back()
+
+        #User clicks on consent and sees consent
+        self.browser.find_element(By.LINK_TEXT,'Consent Items').click()
+        header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
+        self.assertIn('Charm ID: P7000',header_text_id_page)
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Mother Placenta',body)

@@ -390,6 +390,10 @@ class CaregiverPageTest(TestCaseSetup):
         response = self.client.get(f'/data/caregiver/')
         self.assertContains(response,'P7001')
 
+    def test_mother_page_contains_biospecimen_page_link(self):
+        response = self.client.get(f'/data/caregiver/')
+        self.assertContains(response,'Biospecimen')
+
 class CaregiverInformationPageTest(TestCaseSetup):
 
     def test_caregiver_information_page_uses_correct_template(self):
