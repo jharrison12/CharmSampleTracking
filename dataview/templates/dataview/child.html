@@ -1,0 +1,11 @@
+{% extends "dataview/base.html" %}
+{% block section %}
+    <ul>
+    {% for child in children %}
+        <li>{{ child.charm_project_identifier }}</li>
+            <ul>
+                <li><a href={% url "dataview:child_information_page" child.charm_project_identifier %}>Information Page</a></li>
+            </ul>
+    {% endfor %}
+    </ul>
+{% endblock %}

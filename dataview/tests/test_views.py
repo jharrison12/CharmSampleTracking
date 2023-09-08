@@ -4,7 +4,7 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType
+    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -150,7 +150,7 @@ class TestCaseSetup(TestCase):
         self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
         self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
-                                                      incentive_date=datetime.date.today(), incentive_amount=100)
+                                                      incentive_date=datetime.date(2023,8,24), incentive_amount=100)
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
@@ -166,7 +166,13 @@ class TestCaseSetup(TestCase):
                                                                    survey_completion_date=datetime.date.today()
                                                                    )
 
-        # create biospecimen
+        #create recruitment
+        self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
+
+        self.caregiver_1_recruitment = Recruitment.objects.create(caregiver_fk=self.first_caregiver,
+                                                                  incentive_fk=self.incentive_one,
+                                                                  healthcare_facility_fk=self.health_care_facility_1,
+                                                                  recruitment_date=datetime.date.today())
         # create biospecimen
 
         self.completed_status = Status.objects.create(status='Completed')
@@ -325,28 +331,28 @@ class TestCaseSetup(TestCase):
             status_fk=self.collected,
             collection_fk=self.hair_prenatal,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today())
+            biospecimen_date=datetime.date(2023,8,23))
 
         self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.toenail_prenatal,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today())
+            biospecimen_date=datetime.date(2023,8,26))
 
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.saliva,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today())
+            biospecimen_date=datetime.date(2023,8,26))
 
         self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.collected,
             collection_fk=self.placenta,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today())
+            biospecimen_date=datetime.date(2023,8,26))
 
         #create mother and nonmother caregiver tables
 
@@ -354,6 +360,9 @@ class TestCaseSetup(TestCase):
 
         self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver,due_date=datetime.date(2021,1,3))
         self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
+
+        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
+        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(non_mother_caregiver_fk=self.non_mother_one)
 
         #creat consent item
 
@@ -368,6 +377,16 @@ class TestCaseSetup(TestCase):
         self.consent_mother_urine_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_urine,caregiver_fk=self.first_caregiver)
         self.consent_mother_address_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_address,caregiver_fk=self.first_caregiver)
         self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_birth_cert,caregiver_fk=self.first_caregiver)
+
+        # create child
+
+        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
+                                              charm_project_identifier='7000M1',
+                                              birth_hospital=self.health_care_facility_1)
+        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+                                              charm_project_identifier='7002M1',
+                                              birth_hospital=self.health_care_facility_1)
+
 
 # Create your tests here.
 class HomePageTest(TestCaseSetup):
@@ -644,3 +663,26 @@ class CaregiverConsentItemPage(TestCaseSetup):
         response = self.client.get(f'/data/caregiver/P7000/consentitem/')
         self.assertContains(response, "Mother Placenta")
 
+class ChildPage(TestCaseSetup):
+
+    def test_child_page_returns_correct_template(self):
+        response = self.client.get(f'/data/child/')
+        self.assertTemplateUsed(response,'dataview/child.html')
+
+    def test_child_page_contains_child_id(self):
+        response = self.client.get(f'/data/child/')
+        self.assertContains(response,'7000M1')
+
+    def test_child_page_contains_information_page(self):
+        response = self.client.get(f'/data/child/')
+        self.assertContains(response,'Information Page')
+
+class ChildInformationPage(TestCaseSetup):
+
+    def test_child_info_page_returns_correct_template(self):
+        response = self.client.get(f'/data/child/7000M1/')
+        self.assertTemplateUsed(response,'dataview/child_information.html')
+
+    def test_child_information_page(self):
+        response = self.client.get(f'/data/child/7000M1/')
+        self.assertContains(response,'Child ID: 7000M1')

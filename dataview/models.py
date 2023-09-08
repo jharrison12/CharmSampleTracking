@@ -354,6 +354,7 @@ class ConsentItem(models.Model):
 
 class Child(models.Model):
     primary_care_giver_fk = models.ForeignKey(PrimaryCaregiver, on_delete=models.PROTECT)
+    charm_project_identifier = models.CharField(max_length=8)
     birth_date = models.DateField(null=True)
 
     class BirthSexChoices(models.TextChoices):

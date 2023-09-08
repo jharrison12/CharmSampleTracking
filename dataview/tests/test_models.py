@@ -106,7 +106,7 @@ class ModelTest(TestCase):
 
         self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
-        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_date=datetime.date.today(),incentive_amount=100)
+        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_date=datetime.date(2023,8,24),incentive_amount=100)
 
         self.caregiver_1_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
@@ -223,7 +223,8 @@ class ModelTest(TestCase):
 
         #create child
 
-        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one)
+        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,charm_project_identifier='7000M1',birth_hospital=self.health_care_facility_1)
+        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,charm_project_identifier='7002M1',birth_hospital=self.health_care_facility_1)
 
 class CaregiverModelsTest(ModelTest):
 
@@ -459,6 +460,5 @@ class ChildModelTest(ModelTest):
         self.assertEqual(caregiver_one,caregiver_one_through_child)
 
     def different_child_links_to_non_primary_caregiver(self):
-        child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two)
-        caregiver_two_through_child = Caregiver.objects.get(nonmothercaregiver__primarycaregiver__child=child_two)
+        caregiver_two_through_child = Caregiver.objects.get(nonmothercaregiver__primarycaregiver__child=self.child_two)
         self.assertEqual(self.second_caregiver,caregiver_two_through_child)
