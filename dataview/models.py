@@ -230,6 +230,9 @@ class CaregiverSurvey(models.Model):
 class HealthcareFacility(models.Model):
     name = models.CharField(null=False,blank=False,max_length=255,unique=True)
 
+    def __str__(self):
+        return f"{self.name}"
+
 class Recruitment(models.Model):
     caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT)
@@ -364,6 +367,7 @@ class Child(models.Model):
     birth_sex = models.CharField(max_length=1, choices=BirthSexChoices.choices)
     birth_hospital = models.ForeignKey(HealthcareFacility,on_delete=models.PROTECT)
     child_interviewer_comments = models.TextField()
+    child_twin = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.charm_project_identifier}"

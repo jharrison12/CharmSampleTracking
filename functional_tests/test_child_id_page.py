@@ -21,7 +21,7 @@ class ChildIdPageTest(FunctionalTest):
         #User clicks on Information Page link and sees mother info page
         self.browser.find_element(By.LINK_TEXT,'Information Page').click()
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
-        time.sleep(30)
+
         self.assertIn('Child\'s name is: Harrison, Jonathan',header_text_id_page)
 
         self.browser.back()

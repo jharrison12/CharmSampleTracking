@@ -382,8 +382,18 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         # create child
 
-        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,charm_project_identifier='7000M1',birth_hospital=self.health_care_facility_1)
-        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,charm_project_identifier='7002M1',birth_hospital=self.health_care_facility_1)
+        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
+                                              charm_project_identifier='7000M1',
+                                              birth_hospital=self.health_care_facility_1,
+                                              birth_sex=Child.BirthSexChoices.MALE,
+                                              birth_date=datetime.date(2020,7,3),
+                                              child_twin=False)
+        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+                                              charm_project_identifier='7002M1',
+                                              birth_hospital=self.health_care_facility_1,
+                                              birth_sex=Child.BirthSexChoices.FEMALE,
+                                              birth_date=datetime.date(2021,8,10),
+                                              child_twin=False)
 
         self.child_one_name = Name.objects.create(last_name='Harrison',first_name='Jonathan')
 

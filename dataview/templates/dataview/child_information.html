@@ -1,5 +1,13 @@
 {% extends "dataview/base.html" %}
-{% block header %}Child's Name is: {{ child_name.last_name }}, {{ child_name.first_name }}{% endblock %}
+{% block header %}Child's name is: {{ child_name.last_name }}, {{ child_name.first_name }}{% endblock %}
 {% block section %}
+    <ul>
+        <li>Echo ID: {{ child.charm_project_identifier }}</li>
+        <li>Date of Birth: {{ child.birth_date }}</li>
+        <li>Birth Sex: {{ child.get_birth_sex_display }}</li>
+        <li>Birth Hospital: {{ child.birth_hospital }}</li>
+        <li>Is twin?: {{ child.child_twin }}</li>
+        <li>Child Interviewer Comments: {{ child.child_interviewer_comments }}</li>
+    </ul>
 
 {% endblock %}
