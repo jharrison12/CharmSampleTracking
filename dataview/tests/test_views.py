@@ -14,7 +14,6 @@ logging.basicConfig(level=logging.CRITICAL)
 
 class TestCaseSetup(TestCase):
     def setUp(self):
-
         self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                    date_of_birth=datetime.date(1985, 7, 3),
                                                    ewcp_participant_identifier='0000',
@@ -379,8 +378,6 @@ class TestCaseSetup(TestCase):
         self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_birth_cert,caregiver_fk=self.first_caregiver)
 
         # create child
-        #create child
-
 
         self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
                                               charm_project_identifier='7000M1',
