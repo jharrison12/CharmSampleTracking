@@ -11,7 +11,7 @@ import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.DEBUG)
 
 class ModelTest(TestCase):
     def setUp(self):
@@ -230,7 +230,7 @@ class ModelTest(TestCase):
                                               birth_date=datetime.date(2020,7,3),
                                               child_twin=False)
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
-                                              charm_project_identifier='7002M1',
+                                              charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021,8,10),
@@ -473,9 +473,38 @@ class ChildModelTest(ModelTest):
         caregiver_one_through_child = Caregiver.objects.get(mother__primarycaregiver__child=self.child_one)
         self.assertEqual(caregiver_one,caregiver_one_through_child)
 
-    def different_child_links_to_non_primary_caregiver(self):
+    def test_different_child_links_to_non_primary_caregiver(self):
         caregiver_two_through_child = Caregiver.objects.get(nonmothercaregiver__primarycaregiver__child=self.child_two)
         self.assertEqual(self.second_caregiver,caregiver_two_through_child)
+
+    def test_is_mother_model_function_works_for_non_mother(self):
+        self.assertEqual(self.child_two.is_caregiver_mother(),False)
+
+    def test_is_mother_model_function_works_for_mother(self):
+        self.assertEqual(self.child_one.is_caregiver_mother(),True)
+
+    def test_primary_caregiver_table_cannot_have_mother_fk_and_non_mother_fk_on_same_row(self):
+        third_caregiver = Caregiver.objects.create(charm_project_identifier='P7003',
+                                                        date_of_birth=datetime.date(1985,7,3),
+                                                        ewcp_participant_identifier='0000',
+                                                        participation_level_identifier='01',
+                                                        specimen_id='7777',
+                                                        echo_pin='333')
+        fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7004',
+                                                         date_of_birth=datetime.date(1985,7,4),
+                                                         ewcp_participant_identifier='0001',
+                                                         participation_level_identifier='02',
+                                                         specimen_id='6666',
+                                                         echo_pin='444')
+
+        new_mother = Mother.objects.create(caregiver_fk=third_caregiver,due_date=datetime.date(2023,7,3))
+        new_non_mother = NonMotherCaregiver.objects.create(caregiver_fk=fourth_caregiver,relation_fk=self.mother_in_law)
+
+
+        primary_care_giver_one = PrimaryCaregiver(mother_fk=new_mother,non_mother_caregiver_fk=new_non_mother)
+        with self.assertRaises(ValidationError):
+            primary_care_giver_one.full_clean()
+
 
 class ChildNameModelTest(ModelTest):
 

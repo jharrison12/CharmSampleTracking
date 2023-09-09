@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.db import models
 import pytz
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
 
 # Create your models here.
 class Caregiver(models.Model):
@@ -283,6 +284,16 @@ class NonMotherCaregiver(models.Model):
 class PrimaryCaregiver(models.Model):
     mother_fk = models.OneToOneField(Mother,on_delete=models.PROTECT,null=True)
     non_mother_caregiver_fk = models.OneToOneField(NonMotherCaregiver,on_delete=models.PROTECT,null=True)
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=(
+                                            (Q(mother_fk__isnull=False) | Q(non_mother_caregiver_fk__isnull=False))
+                                             and ~(Q(mother_fk__isnull=False) & Q(non_mother_caregiver_fk__isnull=False)
+                                                    )
+                                         ),
+                name='primary caregiver row has two primary caregivers or none'
+            )
+        ]
 
 
 class Status(models.Model):
@@ -371,7 +382,16 @@ class Child(models.Model):
 
     def __str__(self):
         return f"{self.charm_project_identifier}"
-    #todo calculate child_twin with function
+
+    def is_caregiver_mother(self):
+        #pcg = PrimaryCaregiver.objects.get(child__charm_project_identifier=self.charm_project_identifier)
+        if self.primary_care_giver_fk.mother_fk and not self.primary_care_giver_fk.non_mother_caregiver_fk:
+            return True
+        elif self.primary_care_giver_fk.non_mother_caregiver_fk and not self.primary_care_giver_fk.mother_fk:
+            return False
+        else:
+            raise Exception
+
     #todo calculate inactive status with function
 
 class ChildName(models.Model):

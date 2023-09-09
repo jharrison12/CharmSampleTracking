@@ -381,6 +381,7 @@ class TestCaseSetup(TestCase):
         # create child
         #create child
 
+
         self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
                                               charm_project_identifier='7000M1',
                                               birth_hospital=self.health_care_facility_1,
@@ -388,15 +389,17 @@ class TestCaseSetup(TestCase):
                                               birth_date=datetime.date(2020,7,3),
                                               child_twin=False)
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
-                                              charm_project_identifier='7002M1',
+                                              charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021,8,10),
                                               child_twin=False)
 
         self.child_one_name = Name.objects.create(last_name='Harrison',first_name='Jonathan')
+        self.child_two_name = Name.objects.create(last_name='Smith',first_name='Kevin')
 
         self.child_name_connection = ChildName.objects.create(child_fk=self.child_one,name_fk=self.child_one_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
+        self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two,name_fk=self.child_two_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
 
 # Create your tests here.
 class HomePageTest(TestCaseSetup):
@@ -702,9 +705,17 @@ class ChildInformationPage(TestCaseSetup):
         self.assertContains(response,'Caregiver\'s Charm ID: P7000')
 
     def test_child_information_page_shows_non_mother_caregiver_id(self):
-        response = self.client.get(f'/data/child/7002M1/')
+        response = self.client.get(f'/data/child/7001M1/')
         self.assertContains(response,'Caregiver\'s Charm ID: P7001')
 
     def test_child_information_page_wrong_id_shows_404(self):
-        response = self.client.get(f'/data/child/7001M1/')
+        response = self.client.get(f'/data/child/7002M1/')
         self.assertEqual(response.status_code,404)
+
+    def test_child_information_page_shows_relation_if_not_mother(self):
+        response = self.client.get(f'/data/child/7001M1/')
+        self.assertContains(response,'Relation: Mother-in-law')
+
+    def test_child_information_page_does_not_shows_relation_mother(self):
+        response = self.client.get(f'/data/child/7000M1/')
+        self.assertNotContains(response,'Relation')

@@ -389,15 +389,17 @@ class FunctionalTest(StaticLiveServerTestCase):
                                               birth_date=datetime.date(2020,7,3),
                                               child_twin=False)
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
-                                              charm_project_identifier='7002M1',
+                                              charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021,8,10),
                                               child_twin=False)
 
         self.child_one_name = Name.objects.create(last_name='Harrison',first_name='Jonathan')
+        self.child_two_name = Name.objects.create(last_name='Smith',first_name='Kevin')
 
         self.child_name_connection = ChildName.objects.create(child_fk=self.child_one,name_fk=self.child_one_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
+        self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two,name_fk=self.child_two_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
 
 
     def tearDown(self):
