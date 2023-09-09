@@ -9,5 +9,9 @@
         <li>Is twin?: {{ child.child_twin }}</li>
         <li>Child Interviewer Comments: {{ child.child_interviewer_comments }}</li>
     </ul>
+    <h2>Caregiver Information</h2>
+        <ul>
+            <li>Caregiver's Charm ID: {% firstof child.primary_care_giver_fk.mother_fk.caregiver_fk.charm_project_identifier child.primary_care_giver_fk.non_mother_caregiver_fk.caregiver_fk.charm_project_identifier %}</li>
+        </ul>
 
 {% endblock %}

@@ -693,6 +693,18 @@ class ChildInformationPage(TestCaseSetup):
         response = self.client.get(f'/data/child/7000M1/')
         self.assertTemplateUsed(response,'dataview/child_information.html')
 
-    def test_child_information_page(self):
+    def test_child_information_page_has_name(self):
         response = self.client.get(f'/data/child/7000M1/')
-        self.assertContains(response,'Child\'s Name is: Harrison, Jonathan')
+        self.assertContains(response,'Child\'s name is: Harrison, Jonathan')
+
+    def test_child_information_page_has_mother_id(self):
+        response = self.client.get(f'/data/child/7000M1/')
+        self.assertContains(response,'Caregiver\'s Charm ID: P7000')
+
+    def test_child_information_page_shows_non_mother_caregiver_id(self):
+        response = self.client.get(f'/data/child/7002M1/')
+        self.assertContains(response,'Caregiver\'s Charm ID: P7001')
+
+    def test_child_information_page_wrong_id_shows_404(self):
+        response = self.client.get(f'/data/child/7001M1/')
+        self.assertEqual(response.status_code,404)
