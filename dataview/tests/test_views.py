@@ -87,14 +87,14 @@ class TestCaseSetup(TestCase):
 
         # Create social media
         twitter = SocialMedia.objects.create(social_media_name='Twitter')
-        CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=self.first_caregiver,
-                                            social_media_user_name='@jonathan')
+        self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=self.first_caregiver,
+                                            social_media_user_name='@jonathan',social_media_consent=True)
         facebook = SocialMedia.objects.create(social_media_name='Facebook')
         CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
-                                            social_media_user_name='jonathan-h')
+                                            social_media_user_name='jonathan-h', social_media_consent=True)
         facebook = SocialMedia.objects.create(social_media_name='Instagram')
         CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
-                                            social_media_user_name='@jonathanscat')
+                                            social_media_user_name='@jonathanscat',social_media_consent=True)
 
         # Create caregiver
         contact_a_email = Email.objects.create(email='b@b.com')

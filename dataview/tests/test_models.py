@@ -38,9 +38,15 @@ class ModelTest(TestCase):
 
         self.first_caregiver_old_name = Name.objects.create(first_name='Sandy', last_name='Cheeks')
 
+        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_name,revision_number=1,eff_start_date = timezone.now(), status = 'C')
+
+        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_old_name,revision_number = 2,eff_start_date = timezone.now(), status = 'A')
+
+        CaregiverName.objects.create(caregiver_fk=self.second_caregiver, name_fk=self.second_caregiver_name,revision_number = 1,eff_start_date = timezone.now(), status = 'C')
+
 
         #create address
-        self.address = Address.objects.create(address_line_1='one drive', city='Lansing', state='MI', zip_code='38000')
+        self.address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
         self.address_move = Address.objects.create(address_line_1='future street', address_line_2='apt 1',
                                                             city='Lansing', state='MI', zip_code='38000')
 
@@ -49,7 +55,7 @@ class ModelTest(TestCase):
 
         #create email
         self.email = Email.objects.create(email='jharrison12@gmail.com')
-        self.email_secondary = Email.objects.create(email='bob@gmail.com')
+        self.email_secondary = Email.objects.create(email='f@gmail.com')
 
         CaregiverEmail.objects.create(caregiver_fk=self.first_caregiver,
                                       email_fk=self.email,email_type = CaregiverEmail.EmailTypeChoices.PRIMARY)
@@ -59,22 +65,27 @@ class ModelTest(TestCase):
                                       email_type = CaregiverEmail.EmailTypeChoices.SECONDARY)
         #create phone
 
-        self.phone = Phone.objects.create(area_code='777', phone_number='555-5555')
+        self.phone = Phone.objects.create(area_code='555', phone_number='555-5555')
+        self.phone_two = Phone.objects.create(area_code='666', phone_number='666-6666')
         self.phone_inactive = Phone.objects.create(area_code='888', phone_number='888-8888')
 
         CaregiverPhone.objects.create(caregiver_fk=self.first_caregiver, phone_fk=self.phone,
                                                phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.PRIMARY)
+        CaregiverPhone.objects.create(caregiver_fk=self.first_caregiver, phone_fk=self.phone_two,
+                                               phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.SECONDARY)
         CaregiverPhone.objects.create(caregiver_fk=self.first_caregiver, phone_fk=self.phone_inactive,
                                                phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.INACTIVE)
 
-        #create social media
-
-        self.social_media_twitter = SocialMedia.objects.create(social_media_name='Twitter')
-
-        self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                social_media_fk = self.social_media_twitter,
-                                                                                social_media_user_name='@jonathan',
-                                                                                social_media_consent=True)
+        # Create social media
+        twitter = SocialMedia.objects.create(social_media_name='Twitter')
+        self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=self.first_caregiver,
+                                            social_media_user_name='@jonathan',social_media_consent=True)
+        facebook = SocialMedia.objects.create(social_media_name='Facebook')
+        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
+                                            social_media_user_name='jonathan-h', social_media_consent=True)
+        facebook = SocialMedia.objects.create(social_media_name='Instagram')
+        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
+                                            social_media_user_name='@jonathanscat',social_media_consent=True)
 
         #create contact
         contact_a_name = Name.objects.create(first_name='John', last_name='Jones')
@@ -464,7 +475,7 @@ class CaregiverNameModelsTest(ModelTest):
 class CaregiverAddressModelsTest(ModelTest):
 
     def test_caregiver_links_to_address_class(self):
-        caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__address_line_1='one drive').first()
+        caregiver_address_test =Caregiver.objects.filter(caregiveraddress__address_fk__address_line_1='One Drive').first()
 
         self.assertEqual(self.first_caregiver,caregiver_address_test)
 
@@ -483,7 +494,7 @@ class CaregiverAddressHistoryModelsTest(ModelTest):
                                                                               revision_number=1,
                                                                               revision_date=datetime.date.today())
 
-        self.assertEqual(first_row_of_address_history.address_fk.address_line_1,'one drive')
+        self.assertEqual(first_row_of_address_history.address_fk.address_line_1,'One Drive')
 
 class CaregiverEmailModelsTest(ModelTest):
 
