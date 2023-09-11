@@ -1,5 +1,7 @@
 {% extends "dataview/base.html" %}
+{% block header %}Caregiver Charm Sample Identifiers: {% endblock %}
 {% block section %}
+
     <ul>
     {% for child in children %}
         <li>{{ child.charm_project_identifier }}</li>
