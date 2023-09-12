@@ -4,7 +4,7 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName,ChildAddress
+    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName,ChildAddress,ChildSurvey
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -411,6 +411,21 @@ class TestCaseSetup(TestCase):
 
         self.child_address = ChildAddress.objects.create(child_fk=self.child_one, address_fk=self.address)
 
+        #create child survey
+
+        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey',project_fk=self.new_project)
+        self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',project_fk=self.new_project)
+
+        self.child_one_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
+                                                           survey_fk=self.survey_that_child_takes,
+                                                           survey_outcome_fk=self.completed_survey_outcome,
+                                                           survey_completion_date=datetime.date(2023,9,12))
+
+        self.child_two_survey_one = ChildSurvey.objects.create(child_fk=self.child_two,
+                                                           survey_fk=self.other_survey_that_child_takes,
+                                                           survey_outcome_fk=self.incomplete_survey_outcome,
+                                                           survey_completion_date=datetime.date(2023,9,12))
+
 
 # Create your tests here.
 class HomePageTest(TestCaseSetup):
@@ -758,3 +773,15 @@ class ChildSurveyPage(TestCaseSetup):
     def test_child_survey_page_returns_correct_template(self):
         response = self.client.get(f'/data/child/7000M1/survey/')
         self.assertTemplateUsed(response,'dataview/child_survey.html')
+
+    def test_child_survey_page_has_eight_year_survey(self):
+        response = self.client.get(f'/data/child/7000M1/survey/')
+        self.assertContains(response, 'Eight Year Survey: Completed')
+
+    def test_other_child_page_shows_other_survey(self):
+        response = self.client.get(f'/data/child/7001M1/survey/')
+        self.assertContains(response, 'Five Year Survey: Incomplete')
+
+    def test_child_one_survey_page_does_not_show_five_year(self):
+        response = self.client.get(f'/data/child/7000M1/survey/')
+        self.assertNotContains(response, 'Five Year Survey: Incomplete')

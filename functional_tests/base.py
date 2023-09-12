@@ -4,7 +4,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
     NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver,HealthcareFacility,Recruitment,ChildName, ConsentContract,ConsentVersion,\
-    ChildAddress
+    ChildAddress, ChildSurvey
 import datetime
 import time
 from django.utils import timezone
@@ -430,6 +430,15 @@ class FunctionalTest(StaticLiveServerTestCase):
         #create child address
 
         self.child_address = ChildAddress.objects.create(child_fk=self.child_one, address_fk=self.address)
+
+        #create child survey
+
+        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey',project_fk=self.new_project)
+
+        self.child_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
+                                                           survey_fk=self.survey_that_child_takes,
+                                                           survey_outcome_fk=self.completed_survey_outcome,
+                                                           survey_completion_date=datetime.date(2023,9,12))
 
     def tearDown(self):
         self.browser.quit()
