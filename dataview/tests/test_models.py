@@ -6,7 +6,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
-    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName
+    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -48,10 +48,16 @@ class ModelTest(TestCase):
         #create address
         self.address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
         self.address_move = Address.objects.create(address_line_1='future street', address_line_2='apt 1',
-                                                            city='Lansing', state='MI', zip_code='38000')
+                                                   city='Lansing', state='MI', zip_code='38000')
 
-        self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address)
-        CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address_move)
+        self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
+                                                                   address_fk=self.address)
+        self.caregiver_1_address_move = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
+                                                                        address_fk=self.address_move)
+
+        self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
+        self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver,
+                                                                   address_fk=self.address2)
 
         #create email
         self.email = Email.objects.create(email='jharrison12@gmail.com')
@@ -422,6 +428,10 @@ class ModelTest(TestCase):
         self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two, name_fk=self.child_two_name,
                                                                   status=ChildName.ChildNameStatusChoice.CURRENT, )
 
+        #create child address
+
+        self.child_address = ChildAddress.objects.create(child_fk=self.child_one,address_fk=self.address)
+
 class CaregiverModelsTest(ModelTest):
 
     def test_saving_and_retrieving_caregiver(self):
@@ -693,3 +703,21 @@ class ChildNameModelTest(ModelTest):
     def test_child_name_links_to_child(self):
         child_object = Child.objects.filter(childname__name_fk__last_name='Harrison').first()
         self.assertEqual(child_object,self.child_one)
+
+class ChildAddressModelTest(ModelTest):
+
+    def test_child_address_links_to_child(self):
+        child_object = Child.objects.filter(childaddress__address_fk__address_line_1='One Drive').first()
+        self.assertEqual(child_object, self.child_one)
+
+    def test_child_address_links_to_second_child(self):
+        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+                                              charm_project_identifier='7002M1',
+                                              birth_hospital=self.health_care_facility_1,
+                                              birth_sex=Child.BirthSexChoices.FEMALE,
+                                              birth_date=datetime.date(2021, 8, 10),
+                                              child_twin=False)
+        new_child_address = ChildAddress.objects.create(address_fk=self.address,child_fk=child_three)
+
+        child_addresses = ChildAddress.objects.filter(address_fk__address_line_1='One Drive')
+        self.assertEqual(child_addresses.count(),2)

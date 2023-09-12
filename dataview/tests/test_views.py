@@ -4,7 +4,7 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName
+    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName,ChildAddress
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -49,11 +49,18 @@ class TestCaseSetup(TestCase):
                                      eff_start_date=timezone.now(), status='C')
 
         # Create address
-        address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
-        CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=address)
+        self.address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
+        self.address_move = Address.objects.create(address_line_1='future street', address_line_2='apt 1',
+                                                   city='Lansing', state='MI', zip_code='38000')
 
-        address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
-        CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver, address_fk=address2)
+        self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
+                                                                   address_fk=self.address)
+        self.caregiver_1_address_move = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
+                                                                        address_fk=self.address_move)
+
+        self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
+        self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver,
+                                                                   address_fk=self.address2)
 
         # Create email
         email = Email.objects.create(email='jharrison12@gmail.com')
@@ -398,6 +405,13 @@ class TestCaseSetup(TestCase):
         self.child_name_connection = ChildName.objects.create(child_fk=self.child_one,name_fk=self.child_one_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
         self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two,name_fk=self.child_two_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
 
+        #create child address
+
+        # create child address
+
+        self.child_address = ChildAddress.objects.create(child_fk=self.child_one, address_fk=self.address)
+
+
 # Create your tests here.
 class HomePageTest(TestCaseSetup):
 
@@ -699,11 +713,13 @@ class ChildInformationPage(TestCaseSetup):
 
     def test_child_information_page_has_mother_id(self):
         response = self.client.get(f'/data/child/7000M1/')
-        self.assertContains(response,'Caregiver\'s Charm ID: P7000')
+        ##TODO figure out how to test for text when using link
+        self.assertContains(response,'<a href=/data/caregiver/P7000/> P7000</a>')
 
     def test_child_information_page_shows_non_mother_caregiver_id(self):
         response = self.client.get(f'/data/child/7001M1/')
-        self.assertContains(response,'Caregiver\'s Charm ID: P7001')
+        ##TODO figure out how to test for text when using link
+        self.assertContains(response,'<a href=/data/caregiver/P7001/> P7001</a>')
 
     def test_child_information_page_wrong_id_shows_404(self):
         response = self.client.get(f'/data/child/7002M1/')
@@ -716,3 +732,19 @@ class ChildInformationPage(TestCaseSetup):
     def test_child_information_page_does_not_shows_relation_mother(self):
         response = self.client.get(f'/data/child/7000M1/')
         self.assertNotContains(response,'Relation')
+
+    def test_child_information_page_shows_address(self):
+        response = self.client.get(f'/data/child/7000M1/')
+        self.assertContains(response,'One Drive')
+
+    def test_child_information_page_shows_address_if_address_associated_with_two_children(self):
+        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+                                           charm_project_identifier='7002M1',
+                                           birth_hospital=self.health_care_facility_1,
+                                           birth_sex=Child.BirthSexChoices.FEMALE,
+                                           birth_date=datetime.date(2021, 8, 10),
+                                           child_twin=False)
+        new_child_address = ChildAddress.objects.create(address_fk=self.address, child_fk=child_three)
+
+        response = self.client.get(f'/data/child/7000M1/')
+        self.assertContains(response,'One Drive')

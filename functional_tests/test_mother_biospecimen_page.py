@@ -121,7 +121,7 @@ class MotherBioSpecimenPageTest(FunctionalTest):
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-08-03')
-        time.sleep(20)
+
         incentive_amount = self.browser.find_element(By.ID,'id_incentive_form-incentive_amount')
         incentive_amount.send_keys(50)
         submit = self.browser.find_element(By.XPATH,'/html/body/div/form/input[2]')

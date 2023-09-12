@@ -77,7 +77,7 @@ class MotherInformationPageTest(FunctionalTest):
         self.browser.maximize_window()
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/')
         self.browser.implicitly_wait(5)
-        time.sleep(30)
+
         link = self.browser.find_element(By.XPATH,'//*[@id="survey_link"]')
         self.browser.implicitly_wait(5)
         # webdriver.ActionChains(self.browser).move_to_element(link).click(link).perform()

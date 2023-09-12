@@ -27,6 +27,9 @@ class Name(models.Model):
     nick_name =models.CharField(max_length=255)
     maiden_name =models.CharField(max_length=255)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class CaregiverName(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
@@ -39,10 +42,14 @@ class CaregiverName(models.Model):
     eff_start_date = models.DateTimeField()
     eff_end_date = models.DateTimeField(default=datetime.datetime(2999, 12, 31, 0, 0, 0, 127325, tzinfo=pytz.UTC))
 
+    def __str__(self):
+        return f"{self.name_fk}"
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['name_fk','status','caregiver_fk'], name=f"caregiver_name_unique_constraint")
         ]
+
 
 class Address(models.Model):
     address_line_1 = models.CharField(default='', max_length=255)
@@ -50,6 +57,9 @@ class Address(models.Model):
     city = models.CharField(default='', max_length=255)
     state = models.CharField(default='MI', max_length=2)
     zip_code = models.CharField(default='',max_length=9)
+
+    def __str__(self):
+        return f"{self.address_line_1} {self.address_line_2 or ''} {self.city} {self.state}, {self.zip_code}"
 
     class Meta:
         constraints = [
@@ -59,6 +69,9 @@ class Address(models.Model):
 class CaregiverAddress(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.address_fk}"
 
     class Meta:
         constraints = [
@@ -81,6 +94,9 @@ class CaregiverAddressHistory(models.Model):
     revision_number = models.IntegerField()
     revision_date = models.DateField(default=timezone.now)
 
+    def __str__(self):
+        return f"{self.address_fk}"
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['caregiver_address_fk','caregiver_fk','address_fk','revision_number'],
@@ -89,6 +105,9 @@ class CaregiverAddressHistory(models.Model):
 
 class Email(models.Model):
     email = models.EmailField(null=True,unique=True)
+
+    def __str__(self):
+        return f"{self.email}"
 
 class CaregiverEmail(models.Model):
     #Should make the combination of caregiver and email type unique?  Dont need more than one primary, etc.
@@ -104,6 +123,9 @@ class CaregiverEmail(models.Model):
 
     date_change = models.DateField(blank=False,null=False,default=timezone.now)
 
+    def __str__(self):
+        return f"{self.email_fk}"
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['email_fk','caregiver_fk','email_type'],
@@ -113,6 +135,9 @@ class CaregiverEmail(models.Model):
 class Phone(models.Model):
     area_code = models.CharField(null=False,blank=False,max_length=3)
     phone_number = models.CharField(null=False,blank=False,max_length=8)
+
+    def __str__(self):
+        return f"{self.area_code}-{self.phone_number}"
 
     class Meta:
         constraints = [
@@ -132,6 +157,9 @@ class CaregiverPhone(models.Model):
     phone_type = models.CharField(max_length=2,choices=CaregiverPhoneTypeChoices.choices,default=CaregiverPhoneTypeChoices.PRIMARY)
     date_change = models.DateField(blank=False,null=False,default=timezone.now)
 
+    def __str__(self):
+        return f"{self.phone_fk}"
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['caregiver_fk', 'phone_fk','phone_type'],
@@ -141,11 +169,17 @@ class CaregiverPhone(models.Model):
 class SocialMedia(models.Model):
     social_media_name = models.CharField(null=True,blank=True,max_length=255,unique=True)
 
+    def __str__(self):
+        return f"{self.social_media_name}"
+
 class CaregiverSocialMedia(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     social_media_fk = models.ForeignKey(SocialMedia,on_delete=models.PROTECT)
     social_media_user_name = models.CharField(null=False,blank=False,max_length=255)
     social_media_consent = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.social_media_user_name}"
 
     class Meta:
         constraints = [
@@ -209,12 +243,21 @@ class Incentive(models.Model):
 class Project(models.Model):
     project_name = models.CharField(null=False, blank=False, max_length=255,unique=True)
 
+    def __str__(self):
+        return f"{self.project_name}"
+
 class Survey(models.Model):
     project_fk = models.ForeignKey(Project, on_delete=models.PROTECT)
     survey_name = models.CharField(null=False, blank=False, max_length=255,unique=True)
 
+    def __str__(self):
+        return f"{self.survey_name}"
+
 class SurveyOutcome(models.Model):
     survey_outcome_text = models.CharField(null=False, blank=False, max_length=255,unique=True)
+
+    def __str__(self):
+        return f"{self.survey_outcome_text}"
 
 class CaregiverSurvey(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
@@ -249,6 +292,9 @@ class Recruitment(models.Model):
 class ConsentVersion(models.Model):
     consent_version = models.CharField(blank=False,null=False,max_length=255, unique=True)
     consent_version_text = models.TextField(blank=True,null=True)
+
+    def __str__(self):
+        return f"{self.consent_version}"
 
 class ConsentContract(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
@@ -368,7 +414,7 @@ class ConsentItem(models.Model):
 
 class Child(models.Model):
     primary_care_giver_fk = models.ForeignKey(PrimaryCaregiver, on_delete=models.PROTECT)
-    charm_project_identifier = models.CharField(max_length=8)
+    charm_project_identifier = models.CharField(max_length=8, unique=True)
     birth_date = models.DateField(null=True)
 
     class BirthSexChoices(models.TextChoices):
@@ -405,3 +451,18 @@ class ChildName(models.Model):
     status = models.CharField(max_length=1,choices=ChildNameStatusChoice.choices)
     effective_start_date = models.DateField(default=timezone.now)
     effective_end_date = models.DateField(default=datetime.date(2099,12,31))
+
+    def __str__(self):
+        return f"{self.name_fk.first_name} {self.name_fk.last_name}"
+
+class ChildAddress(models.Model):
+    child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
+    address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
+
+    class Meta:
+        constraints=[
+            models.UniqueConstraint(fields=["child_fk","address_fk"],name="child address unique constraint")
+        ]
+
+    def __str__(self):
+        return f"{self.address_fk.address_line_1} {self.address_fk.address_line_2} {self.address_fk.city}, {self.address_fk.state} {self.address_fk.zip_code}"

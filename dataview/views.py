@@ -107,5 +107,7 @@ def child(request):
 def child_information_page(request, child_charm_id):
     child = get_object_or_404(Child, charm_project_identifier=child_charm_id)
     child_name = Name.objects.filter(childname__child_fk=child).filter(childname__status='C').first()
+    child_address = Address.objects.filter(childaddress__child_fk=child).first()
     return render(request,template_name='dataview/child_information.html',context={'child':child,
-                                                                                   'child_name':child_name})
+                                                                                   'child_name':child_name,
+                                                                                   'child_address':child_address})

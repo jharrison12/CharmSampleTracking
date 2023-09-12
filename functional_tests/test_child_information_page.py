@@ -28,5 +28,18 @@ class ChildInformationPageTest(FunctionalTest):
         self.assertIn('Is biological mother?: False',body)
         self.assertIn('Relation: Mother-in-law',body)
 
+
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/child/7000M1/')
         mothers_link = self.browser.find_element(By.LINK_TEXT,"P7000")
         mothers_link.click()
+
+        header = self.browser.find_element(By.TAG_NAME,"h1").text
+        self.assertIn("Mother's name is: Doe, Jane",header)
+
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/child/7000M1/')
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+
+        self.assertIn('One Drive',body)

@@ -3,7 +3,8 @@ from selenium import webdriver
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver,HealthcareFacility,Recruitment,ChildName, ConsentContract,ConsentVersion
+    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver,HealthcareFacility,Recruitment,ChildName, ConsentContract,ConsentVersion,\
+    ChildAddress
 import datetime
 import time
 from django.utils import timezone
@@ -52,7 +53,10 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                             city='Lansing', state='MI', zip_code='38000')
 
         self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address)
-        CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address_move)
+        self.caregiver_1_address_move = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver, address_fk=self.address_move)
+
+        self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
+        self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver, address_fk=self.address2)
 
         #create email
         self.email = Email.objects.create(email='jharrison12@gmail.com')
@@ -422,6 +426,10 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                               status=ChildName.ChildNameStatusChoice.CURRENT, )
         self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two, name_fk=self.child_two_name,
                                                                   status=ChildName.ChildNameStatusChoice.CURRENT, )
+
+        #create child address
+
+        self.child_address = ChildAddress.objects.create(child_fk=self.child_one, address_fk=self.address)
 
     def tearDown(self):
         self.browser.quit()
