@@ -111,3 +111,7 @@ def child_information_page(request, child_charm_id):
     return render(request,template_name='dataview/child_information.html',context={'child':child,
                                                                                    'child_name':child_name,
                                                                                    'child_address':child_address})
+
+def child_survey_page(request,child_charm_id):
+    child = get_object_or_404(Child, charm_project_identifier=child_charm_id)
+    return render(request,template_name='dataview/child_survey.html',context={'child':child})

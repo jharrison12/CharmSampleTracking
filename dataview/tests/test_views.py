@@ -701,6 +701,10 @@ class ChildPage(TestCaseSetup):
         response = self.client.get(f'/data/child/')
         self.assertContains(response,'Information Page')
 
+    def test_child_page_contains_information_page(self):
+        response = self.client.get(f'/data/child/')
+        self.assertContains(response,'Survey Page')
+
 class ChildInformationPage(TestCaseSetup):
 
     def test_child_info_page_returns_correct_template(self):
@@ -748,3 +752,9 @@ class ChildInformationPage(TestCaseSetup):
 
         response = self.client.get(f'/data/child/7000M1/')
         self.assertContains(response,'One Drive')
+
+class ChildSurveyPage(TestCaseSetup):
+
+    def test_child_survey_page_returns_correct_template(self):
+        response = self.client.get(f'/data/child/7000M1/survey/')
+        self.assertTemplateUsed(response,'dataview/child_survey.html')

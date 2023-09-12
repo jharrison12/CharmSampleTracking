@@ -18,7 +18,7 @@ class ChildIdPageTest(FunctionalTest):
         self.assertIn('7000M1',body_text)
         self.assertIn('Information Page',body_text)
 
-        #User clicks on Information Page link and sees mother info page
+        #User clicks on Information Page link and sees child info page
         self.browser.find_element(By.LINK_TEXT,'Information Page').click()
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
 
@@ -26,7 +26,12 @@ class ChildIdPageTest(FunctionalTest):
 
         self.browser.back()
 
+        self.assertIn('Survey Page',body_text)
+        #user clicks on Survey Page and sees child survey page
+        self.browser.find_element(By.LINK_TEXT, 'Survey Page').click()
+        header_text_survey_page = self.browser.find_element(By.TAG_NAME,'h1').text
+        self.assertIn("Child ID: 7000M1",header_text_survey_page)
         # self.assertIn('Biospecimen',body_text)
-        # self.assertIn('Surveys',body_text)
+
         # self.assertIn('Consent Items',body_text)
 
