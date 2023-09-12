@@ -6,7 +6,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
-    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress
+    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -721,3 +721,13 @@ class ChildAddressModelTest(ModelTest):
 
         child_addresses = ChildAddress.objects.filter(address_fk__address_line_1='One Drive')
         self.assertEqual(child_addresses.count(),2)
+
+    def test_child_address_history_links_to_child_address(self):
+        child_address_history = ChildAddressHistory.objects.create(child_address_fk=self.child_address,
+                                                                   child_fk=self.child_one,
+                                                                   address_fk=self.address,
+                                                                   revision_number=0,
+                                                                   revision_date=datetime.date.today()
+                                                                )
+        child_one_test = Child.objects.get(childaddresshistory__child_address_fk__address_fk=self.address)
+        self.assertEqual(child_one_test,self.child_one)

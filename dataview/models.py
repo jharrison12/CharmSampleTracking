@@ -466,3 +466,16 @@ class ChildAddress(models.Model):
 
     def __str__(self):
         return f"{self.address_fk.address_line_1} {self.address_fk.address_line_2} {self.address_fk.city}, {self.address_fk.state} {self.address_fk.zip_code}"
+
+class ChildAddressHistory(models.Model):
+    child_address_fk = models.ForeignKey(ChildAddress, on_delete=models.PROTECT)
+    child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
+    address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
+    revision_number = models.IntegerField(default=0)
+    revision_date = models.DateField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['child_address_fk','child_fk','address_fk','revision_number'],
+                                    name="child_address_history_unique_constraint")
+        ]
