@@ -479,3 +479,16 @@ class ChildAddressHistory(models.Model):
             models.UniqueConstraint(fields=['child_address_fk','child_fk','address_fk','revision_number'],
                                     name="child_address_history_unique_constraint")
         ]
+
+class ChildSurvey(models.Model):
+    child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
+    survey_fk = models.ForeignKey(Survey, on_delete=models.PROTECT)
+    survey_outcome_fk = models.ForeignKey(SurveyOutcome,on_delete=models.PROTECT)
+    incentive_fk = models.ForeignKey(Incentive,on_delete=models.PROTECT,null=True,blank=True)
+    survey_completion_date = models.DateField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['child_fk','survey_fk'], name='child survey unique constraint')
+
+        ]

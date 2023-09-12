@@ -6,7 +6,8 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
-    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory
+    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
+    ChildSurvey
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -432,6 +433,16 @@ class ModelTest(TestCase):
 
         self.child_address = ChildAddress.objects.create(child_fk=self.child_one,address_fk=self.address)
 
+        #create child survey
+
+        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey',project_fk=self.new_project)
+
+        self.child_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
+                                                           survey_fk=self.survey_that_child_takes,
+                                                           survey_outcome_fk=self.completed_survey_outcome,
+                                                           survey_completion_date=datetime.date(2023,9,12))
+
+
 class CaregiverModelsTest(ModelTest):
 
     def test_saving_and_retrieving_caregiver(self):
@@ -731,3 +742,23 @@ class ChildAddressModelTest(ModelTest):
                                                                 )
         child_one_test = Child.objects.get(childaddresshistory__child_address_fk__address_fk=self.address)
         self.assertEqual(child_one_test,self.child_one)
+
+
+class ChildSurveyModelTest(ModelTest):
+
+    def test_child_survey_links_to_child(self):
+        child_test = Child.objects.get(childsurvey__survey_outcome_fk__survey_outcome_text='Completed')
+
+        self.assertEqual(child_test,self.child_one)
+
+    def test_child_survey_links_to_two_children(self):
+        child_survey_test = ChildSurvey.objects.create(child_fk=self.child_two,
+                                                           survey_fk=self.survey_that_child_takes,
+                                                           survey_outcome_fk=self.completed_survey_outcome,
+                                                           survey_completion_date=datetime.date(2023, 9, 13))
+
+        number_of_surveys = ChildSurvey.objects.filter(survey_fk=self.survey_that_child_takes)
+
+        self.assertEqual(number_of_surveys.count(),2)
+
+
