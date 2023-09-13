@@ -162,14 +162,21 @@ class TestCaseSetup(TestCase):
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date.today()
+                                                                   survey_completion_date=datetime.date(2023,8,30)
                                                                    )
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date.today()
+                                                                   survey_completion_date=datetime.date(2023,8,30)
+                                                                   )
+
+        self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
+                                                                   survey_fk=self.prenatal_1,
+                                                                   survey_outcome_fk=self.completed_survey_outcome,
+                                                                   incentive_fk=self.incentive_one,
+                                                                   survey_completion_date=datetime.date(2023,8,30)
                                                                    )
 
         #create recruitment

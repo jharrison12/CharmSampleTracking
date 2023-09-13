@@ -153,21 +153,21 @@ class ModelTest(TestCase):
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date.today()
+                                                                   survey_completion_date=datetime.date(2023,8,30)
                                                                    )
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date.today()
+                                                                   survey_completion_date=datetime.date(2023,8,30)
                                                                    )
 
         self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date.today()
+                                                                   survey_completion_date=datetime.date(2023,8,30)
                                                                    )
 
         # create recruitment
@@ -436,10 +436,16 @@ class ModelTest(TestCase):
         #create child survey
 
         self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey',project_fk=self.new_project)
+        self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',project_fk=self.new_project)
 
-        self.child_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
+        self.child_one_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
                                                            survey_fk=self.survey_that_child_takes,
                                                            survey_outcome_fk=self.completed_survey_outcome,
+                                                           survey_completion_date=datetime.date(2023,9,12))
+
+        self.child_two_survey_one = ChildSurvey.objects.create(child_fk=self.child_two,
+                                                           survey_fk=self.other_survey_that_child_takes,
+                                                           survey_outcome_fk=self.incomplete_survey_outcome,
                                                            survey_completion_date=datetime.date(2023,9,12))
 
 
