@@ -8,6 +8,7 @@
             <ul>
                 <li><a href={% url "dataview:child_information_page" child.charm_project_identifier %}>Information Page</a></li>
                 <li><a href={% url "dataview:child_survey_page" child.charm_project_identifier %}>Survey Page</a></li>
+                <li><a href={% url "dataview:child_assent_page" child.charm_project_identifier %}>Assent Page</a></li>
             </ul>
     {% endfor %}
     </ul>

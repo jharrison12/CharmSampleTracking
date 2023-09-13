@@ -448,6 +448,17 @@ class ModelTest(TestCase):
                                                            survey_outcome_fk=self.incomplete_survey_outcome,
                                                            survey_completion_date=datetime.date(2023,9,12))
 
+        #child assent
+        self.eight_year_assent = Assent.objects.create(assent_text='Eight Year Survey')
+        self.five_year_assent = Assent.objects.create(assent_text='Five Year Survey')
+        self.child_one_eight_year_assent = ChildAssent.objects.create(child_fk=self.child_one,
+                                                                  assent_fk=self.eight_year_assent,
+                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=True)
+        self.child_two_five_year_assent = ChildAssent.objects.create(child_fk=self.child_two,
+                                                                  assent_fk=self.five_year_assent,
+                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=False)
+
+
 
 class CaregiverModelsTest(ModelTest):
 
@@ -771,10 +782,7 @@ class ChildSurveyModelTest(ModelTest):
 class ChildAssentModelTest(ModelTest):
 
     def test_child_assent_links_to_child(self):
-        new_assent = Assent.objects.create(assent_text='Eight Year Survey')
-        new_child_assent = ChildAssent.objects.create(child_fk=self.child_one,assent_fk=new_assent,assent_date=datetime.date(2023,9,5),assent_boolean=True)
-
-        test_child = Child.objects.get(childassent__assent_fk=new_assent)
+        test_child = Child.objects.get(childassent__assent_fk=self.eight_year_assent)
         self.assertEqual(self.child_one,test_child)
 
 

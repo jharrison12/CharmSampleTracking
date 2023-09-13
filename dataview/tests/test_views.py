@@ -4,7 +4,8 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName,ChildAddress,ChildSurvey
+    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName,ChildAddress,ChildSurvey,\
+    Assent,ChildAssent
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -433,6 +434,17 @@ class TestCaseSetup(TestCase):
                                                            survey_outcome_fk=self.incomplete_survey_outcome,
                                                            survey_completion_date=datetime.date(2023,9,12))
 
+        #child assent
+        self.eight_year_assent = Assent.objects.create(assent_text='Eight Year Survey')
+        self.five_year_assent = Assent.objects.create(assent_text='Five Year Survey')
+        self.child_one_eight_year_assent = ChildAssent.objects.create(child_fk=self.child_one,
+                                                                  assent_fk=self.eight_year_assent,
+                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=True)
+        self.child_two_five_year_assent = ChildAssent.objects.create(child_fk=self.child_two,
+                                                                  assent_fk=self.five_year_assent,
+                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=False)
+
+
 
 # Create your tests here.
 class HomePageTest(TestCaseSetup):
@@ -723,9 +735,13 @@ class ChildPage(TestCaseSetup):
         response = self.client.get(f'/data/child/')
         self.assertContains(response,'Information Page')
 
-    def test_child_page_contains_information_page(self):
+    def test_child_page_contains_survey_page(self):
         response = self.client.get(f'/data/child/')
         self.assertContains(response,'Survey Page')
+
+    def test_child_page_contains_assent_page(self):
+        response = self.client.get(f'/data/child/')
+        self.assertContains(response,'Assent Page')
 
 class ChildInformationPage(TestCaseSetup):
 
@@ -796,3 +812,30 @@ class ChildSurveyPage(TestCaseSetup):
     def test_child_survey_page_does_not_show_incentive_if_it_doesnt_exist(self):
         response = self.client.get(f'/data/child/7000M1/survey/')
         self.assertNotContains(response, 'Incentive')
+
+class ChildAssentPage(TestCaseSetup):
+
+    def test_child_assent_page_uses_correct_template(self):
+        response = self.client.get(f'/data/child/7000M1/assent/')
+        self.assertTemplateUsed(response,'dataview/child_assent.html')
+
+    def test_child_assent_page_has_header(self):
+        response = self.client.get(f'/data/child/7000M1/assent/')
+        self.assertContains(response,'Child ID: 7000M1')
+
+    def test_child_assent_page_has_assent(self):
+        response = self.client.get(f'/data/child/7000M1/assent/')
+        self.assertContains(response,'Eight Year Survey: True')
+
+    def test_that_child_one_page_doesnt_contain_five_year(self):
+        response = self.client.get(f'/data/child/7000M1/assent/')
+        self.assertNotContains(response, 'Five Year Survey')
+
+    def test_that_other_child_assent_page_doesnt_contain_Eight_Year(self):
+        response = self.client.get(f'/data/child/7001M1/assent/')
+        self.assertNotContains(response, 'Eight Year Survey')
+
+
+    def test_child_assent_page_wrong_id_shows_404(self):
+        response = self.client.get(f'/data/child/7002M1/')
+        self.assertEqual(response.status_code,404)

@@ -4,7 +4,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
     NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver,HealthcareFacility,Recruitment,ChildName, ConsentContract,ConsentVersion,\
-    ChildAddress, ChildSurvey
+    ChildAddress, ChildSurvey,Assent,ChildAssent
 import datetime
 import time
 from django.utils import timezone
@@ -445,6 +445,16 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                            survey_fk=self.other_survey_that_child_takes,
                                                            survey_outcome_fk=self.incomplete_survey_outcome,
                                                            survey_completion_date=datetime.date(2023,9,12))
+
+        #child assent
+        self.eight_year_assent = Assent.objects.create(assent_text='Eight Year Survey')
+        self.five_year_assent = Assent.objects.create(assent_text='Five Year Survey')
+        self.child_one_eight_year_assent = ChildAssent.objects.create(child_fk=self.child_one,
+                                                                  assent_fk=self.eight_year_assent,
+                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=True)
+        self.child_two_five_year_assent = ChildAssent.objects.create(child_fk=self.child_two,
+                                                                  assent_fk=self.five_year_assent,
+                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=False)
 
     def tearDown(self):
         self.browser.quit()
