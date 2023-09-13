@@ -7,7 +7,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
     CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey
+    ChildSurvey,ChildAssent,Assent
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -766,5 +766,15 @@ class ChildSurveyModelTest(ModelTest):
         number_of_surveys = ChildSurvey.objects.filter(survey_fk=self.survey_that_child_takes)
 
         self.assertEqual(number_of_surveys.count(),2)
+
+
+class ChildAssentModelTest(ModelTest):
+
+    def test_child_assent_links_to_child(self):
+        new_assent = Assent.objects.create(assent_text='Eight Year Survey')
+        new_child_assent = ChildAssent.objects.create(child_fk=self.child_one,assent_fk=new_assent,assent_date=datetime.date(2023,9,5),assent_boolean=True)
+
+        test_child = Child.objects.get(childassent__assent_fk=new_assent)
+        self.assertEqual(self.child_one,test_child)
 
 

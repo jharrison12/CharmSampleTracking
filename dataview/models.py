@@ -492,3 +492,33 @@ class ChildSurvey(models.Model):
             models.UniqueConstraint(fields=['child_fk','survey_fk'], name='child survey unique constraint')
 
         ]
+
+    def __str__(self):
+        return f"{self.child_fk.charm_project_identifier} {self.survey_fk.survey_name}"
+
+class Assent(models.Model):
+    assent_text = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return f"{self.assent_text}"
+
+class ChildAssent(models.Model):
+    child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
+    assent_fk = models.ForeignKey(Assent, on_delete=models.PROTECT)
+    assent_date = models.DateField(default=timezone.now)
+    assent_boolean = models.BooleanField(default=True, null=False,blank=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['child_fk','assent_fk'], name='child assent unique constraint')
+
+        ]
+
+    def __str__(self):
+        return f"{self.child_fk.charm_project_identifier} {self.assent_fk.assent_text}"
+
+class ChildAssentHistory(models.Model):
+    child_assent_fk = models.ForeignKey(ChildAssent,on_delete=models.PROTECT)
+    assent_fk = models.ForeignKey(Assent,on_delete=models.PROTECT)
+    assent_date = models.DateField(default=timezone.now)
+    assent_boolean = models.BooleanField(default=True, null=False, blank=False)
