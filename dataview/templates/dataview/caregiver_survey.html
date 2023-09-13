@@ -9,6 +9,7 @@
             <div class="col-md">{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</div>
             <div class="col-md">{{ survey.survey_fk.survey_name }} Date: {{ survey.survey_completion_date }}</div>
             <div class="col-md">{{ survey.survey_fk.survey_name }} Incentive: {{ survey.incentive_fk.incentive_type_fk }}</div>
+            <div class="col-md">{{ survey.survey_fk.survey_name }} Incentive Date: {{ survey.incentive_fk.incentive_date }}</div>
         </div>
     {% endfor %}
 
