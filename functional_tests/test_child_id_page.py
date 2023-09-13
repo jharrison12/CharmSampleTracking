@@ -31,7 +31,15 @@ class ChildIdPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Survey Page').click()
         header_text_survey_page = self.browser.find_element(By.TAG_NAME,'h1').text
         self.assertIn("Child ID: 7000M1",header_text_survey_page)
+        body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Eight Year Survey: Completed',body_text)
+        self.assertIn('Eight Year Survey Date: Sept. 12, 2023',body_text)
+
+        self.browser.back()
+
+        self.assertIn('Assent Page',body_text)
+
         # self.assertIn('Biospecimen',body_text)
 
-        # self.assertIn('Consent Items',body_text)
+
 

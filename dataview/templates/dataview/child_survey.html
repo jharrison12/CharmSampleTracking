@@ -2,10 +2,19 @@
 {% block header %}Child ID: {{ child.charm_project_identifier }} {% endblock %}
 {% block section %}
     <h2>Surveys</h2>
-    <ul>
-    {% for survey in child_survey %}
-        <li>{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</li>
-    {% endfor %}
-    </ul>
+    <div class="container">
 
+    {% for survey in child_survey %}
+        <div class="row">
+            <div class="col-sm">{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</div>
+            <div class="col-sm">{{ survey.survey_fk.survey_name }} Date: {{ survey.survey_completion_date }}</div>
+            {% if survey.incentive_fk.incentive_type_fk %}
+            <div class="col-sm">{{ survey.survey_fk.survey_name }} Incentive: {{ survey.incentive_fk.incentive_type_fk }}</div>
+            <div class="col-sm">{{ survey.survey_fk.survey_name }} Incentive Date: {{ survey.incentive_fk.incentive_date }}</div>
+            {% else %}
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    </div>
 {% endblock %}

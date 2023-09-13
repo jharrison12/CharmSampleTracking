@@ -10,6 +10,8 @@ class ChildSurveyPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}data/child/7000M1/survey/')
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-
+        time.sleep(30)
         self.assertIn('Eight Year Survey: Completed',body)
-        self.assertIn('Date Completed: September 12, 2023',body)
+        self.assertIn('Eight Year Survey Date: Sept. 12, 2023',body)
+
+        self.assertNotIn('Incentive',body)

@@ -792,3 +792,7 @@ class ChildSurveyPage(TestCaseSetup):
     def test_child_one_survey_page_does_not_show_five_year(self):
         response = self.client.get(f'/data/child/7000M1/survey/')
         self.assertNotContains(response, 'Five Year Survey: Incomplete')
+
+    def test_child_survey_page_does_not_show_incentive_if_it_doesnt_exist(self):
+        response = self.client.get(f'/data/child/7000M1/survey/')
+        self.assertNotContains(response, 'Incentive')
