@@ -1,10 +1,16 @@
 {% extends "dataview/base.html" %}
-{% block header %}Charm ID: {{ charm_id }}{% endblock %}
+{% block header %}Charm ID: {{ charm_id }} Surveys{% endblock %}
 {% block section %}
-    <h2>Surveys</h2>
-    <ul>
+    <h2>Prenatal</h2>
+    <div class="container">
+
     {% for survey in caregiver_surveys %}
-        <li>{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</li>
+        <div class="row">
+            <div class="col-md">{{ survey.survey_fk.survey_name }}: {{ survey.survey_outcome_fk.survey_outcome_text }}</div>
+            <div class="col-md">{{ survey.survey_fk.survey_name }} Date: {{ survey.survey_completion_date }}</div>
+            <div class="col-md">{{ survey.survey_fk.survey_name }} Incentive: {{ survey.incentive_fk.incentive_type_fk }}</div>
+        </div>
     {% endfor %}
-    </ul>
+
+    </div>
 {% endblock %}
