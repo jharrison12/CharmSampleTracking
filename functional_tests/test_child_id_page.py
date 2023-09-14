@@ -37,6 +37,7 @@ class ChildIdPageTest(FunctionalTest):
 
         self.browser.back()
 
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Assent Page',body_text)
 
         # self.assertIn('Biospecimen',body_text)
