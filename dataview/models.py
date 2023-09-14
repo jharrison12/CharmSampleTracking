@@ -522,3 +522,32 @@ class ChildAssentHistory(models.Model):
     assent_fk = models.ForeignKey(Assent,on_delete=models.PROTECT)
     assent_date = models.DateField(default=timezone.now)
     assent_boolean = models.BooleanField(default=True, null=False, blank=False)
+
+class AgeCategory(models.Model):
+
+    class AgeCategoryChoice (models.TextChoices):
+        EARLY_CHILDHOOD = 'EC', _('Early Childhood')
+        MIDDLE_CHILDHOOD = 'MC', _('Middle Childhood')
+        LATE_CHILDHOOD = 'LC', _('Late Childhood')
+
+    age_category = models.CharField(max_length=2,choices=AgeCategoryChoice.choices)
+
+    def __str__(self):
+        return f"{self.age_category}"
+
+class ChildBiospecimen(models.Model):
+    child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
+    status_fk = models.ForeignKey(Status, on_delete=models.PROTECT)
+    collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
+    age_category_fk = models.ForeignKey(AgeCategory, on_delete=models.PROTECT)
+    collection_date = models.DateField(default=timezone.now)
+    kit_sent_date = models.DateField(default=timezone.now,blank=True,null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['child_fk','collection_fk','age_category_fk'], name='child biospeciment unique constraint')
+        ]
+
+    def __str__(self):
+        return f"{self.child_fk.charm_project_identifier} {self.collection_fk}"

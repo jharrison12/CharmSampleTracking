@@ -7,7 +7,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
     CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent
+    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -458,6 +458,16 @@ class ModelTest(TestCase):
                                                                   assent_fk=self.five_year_assent,
                                                                   assent_date=datetime.date(2023,9,5),assent_boolean=False)
 
+        #child biospeciment
+        self.early_childhood = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
+        self.child_one_biospecimen = ChildBiospecimen.objects.create(child_fk=self.child_one,
+                                                                status_fk=self.completed_status,
+                                                                collection_fk=self.urine_one,
+                                                                incentive_fk=self.incentive_one,
+                                                                age_category_fk=self.early_childhood,
+                                                                collection_date=datetime.date(2023,8,15),
+                                                                kit_sent_date=datetime.date(2023,8,10))
+
 
 
 class CaregiverModelsTest(ModelTest):
@@ -785,4 +795,27 @@ class ChildAssentModelTest(ModelTest):
         test_child = Child.objects.get(childassent__assent_fk=self.eight_year_assent)
         self.assertEqual(self.child_one,test_child)
 
+    def test_child_assent_primary_key_works(self):
+        dup_child_assent = ChildAssent(assent_fk=self.eight_year_assent,child_fk=self.child_one)
+        with self.assertRaises(ValidationError):
+            dup_child_assent.full_clean()
 
+
+class ChildBiospecimenModelTest(ModelTest):
+
+    def test_child_links_to_biospecimen(self):
+        test_child = Child.objects.filter(childbiospecimen__age_category_fk=self.early_childhood,childbiospecimen__collection_fk=self.urine_one).first()
+        self.assertEqual(test_child,self.child_one)
+
+    def test_multiple_children_link_to_one_biospecimen(self):
+        self.child_one_biospecimen = ChildBiospecimen.objects.create(child_fk=self.child_two,
+                                                                status_fk=self.completed_status,
+                                                                collection_fk=self.urine_one,
+                                                                incentive_fk=self.incentive_one,
+                                                                age_category_fk=self.early_childhood,
+                                                                collection_date=datetime.date(2023,8,15),
+                                                                kit_sent_date=datetime.date(2023,8,10))
+
+        urine = ChildBiospecimen.objects.filter(collection_fk=self.urine_one)
+
+        self.assertEqual(urine.count(),2)
