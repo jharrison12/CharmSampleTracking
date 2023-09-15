@@ -124,3 +124,6 @@ def child_assent_page(request,child_charm_id):
     child_assent = ChildAssent.objects.filter(child_fk__charm_project_identifier=child_charm_id)
     return render(request,template_name='dataview/child_assent.html',context={'child':child,
                                                                               'child_assent':child_assent})
+
+def child_biospecimen_page(request,child_charm_id):
+    return render(request,template_name='dataview/child_biospecimen.html',context={'child':child})

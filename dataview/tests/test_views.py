@@ -847,7 +847,16 @@ class ChildAssentPage(TestCaseSetup):
         response = self.client.get(f'/data/child/7001M1/assent/')
         self.assertNotContains(response, 'Eight Year Survey')
 
-
     def test_child_assent_page_wrong_id_shows_404(self):
         response = self.client.get(f'/data/child/7002M1/')
         self.assertEqual(response.status_code,404)
+
+class ChildBiospecimenPage(TestCaseSetup):
+
+    def test_child_biospecimen_page_uses_correct_template(self):
+        response = self.client.get(f'/data/child/7000M1/biospecimen/')
+        self.assertTemplateUsed(response,'dataview/child_biospecimen.html')
+
+    def test_child_biospecimen_page_has_header(self):
+        response = self.client.get(f"/data/child/700M1/biospecimen/")
+        self.assertContains(response,'')
