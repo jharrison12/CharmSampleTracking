@@ -214,7 +214,9 @@ class ModelTest(TestCase):
         self.red_blood_cells_one = Collection.objects.create(collection_type='Red Blood Cells', collection_number=1)
         self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells', collection_number=2)
         self.hair_prenatal = Collection.objects.create(collection_type='Hair', collection_number='Prenatal')
+        self.hair = Collection.objects.create(collection_type='Hair')
         self.toenail_prenatal = Collection.objects.create(collection_type='Toenail', collection_number='Prenatal')
+        self.toenail = Collection.objects.create(collection_type='Toenail')
         self.saliva = Collection.objects.create(collection_type='Saliva')
         self.placenta = Collection.objects.create(collection_type='Placenta')
         self.placenta_two = Collection.objects.create(collection_type='Placenta', collection_number=2)
@@ -458,16 +460,39 @@ class ModelTest(TestCase):
                                                                   assent_fk=self.five_year_assent,
                                                                   assent_date=datetime.date(2023,9,5),assent_boolean=False)
 
-        #child biospeciment
+        # child biospecimen
         self.early_childhood = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
-        self.child_one_biospecimen = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                status_fk=self.completed_status,
-                                                                collection_fk=self.urine_one,
-                                                                incentive_fk=self.incentive_one,
-                                                                age_category_fk=self.early_childhood,
-                                                                collection_date=datetime.date(2023,8,15),
-                                                                kit_sent_date=datetime.date(2023,8,10))
+        self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
+                                                                           status_fk=self.completed_status,
+                                                                           collection_fk=self.urine_one,
+                                                                           incentive_fk=self.incentive_one,
+                                                                           age_category_fk=self.early_childhood,
+                                                                           collection_date=datetime.date(2023, 8, 15),
+                                                                           kit_sent_date=datetime.date(2023, 8, 10))
 
+        self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
+                                                                           status_fk=self.completed_status,
+                                                                           collection_fk=self.urine_one,
+                                                                           incentive_fk=self.incentive_one,
+                                                                           age_category_fk=self.early_childhood,
+                                                                           collection_date=datetime.date(2023, 8, 15),
+                                                                           kit_sent_date=datetime.date(2023, 8, 10))
+
+        self.child_one_biospecimen_hair = ChildBiospecimen.objects.create(child_fk=self.child_one,
+                                                                          status_fk=self.completed_status,
+                                                                          collection_fk=self.hair,
+                                                                          incentive_fk=self.incentive_one,
+                                                                          age_category_fk=self.early_childhood,
+                                                                          collection_date=datetime.date(2023, 8, 15),
+                                                                          kit_sent_date=datetime.date(2023, 8, 12))
+
+        self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
+                                                                             status_fk=self.completed_status,
+                                                                             collection_fk=self.toenail,
+                                                                             incentive_fk=self.incentive_one,
+                                                                             age_category_fk=self.early_childhood,
+                                                                             collection_date=datetime.date(2023, 8, 15),
+                                                                             kit_sent_date=datetime.date(2023, 8, 12))
 
 
 class CaregiverModelsTest(ModelTest):
@@ -808,14 +833,6 @@ class ChildBiospecimenModelTest(ModelTest):
         self.assertEqual(test_child,self.child_one)
 
     def test_multiple_children_link_to_one_biospecimen(self):
-        self.child_one_biospecimen = ChildBiospecimen.objects.create(child_fk=self.child_two,
-                                                                status_fk=self.completed_status,
-                                                                collection_fk=self.urine_one,
-                                                                incentive_fk=self.incentive_one,
-                                                                age_category_fk=self.early_childhood,
-                                                                collection_date=datetime.date(2023,8,15),
-                                                                kit_sent_date=datetime.date(2023,8,10))
-
         urine = ChildBiospecimen.objects.filter(collection_fk=self.urine_one)
 
         self.assertEqual(urine.count(),2)

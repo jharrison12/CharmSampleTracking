@@ -1,5 +1,8 @@
 {% extends "dataview/base.html" %}
 {% block header %}Child ID: {{ child.charm_project_identifier }} {% endblock %}
 {% block section %}
+{% for item in child_biospecimens %}
+    <h2>{{ item }}</h2>
 
+{% endfor %}
 {% endblock %}

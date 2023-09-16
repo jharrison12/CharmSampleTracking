@@ -4,7 +4,7 @@ from django.shortcuts import render,get_object_or_404,redirect
 from dataview.models import Caregiver,Name,CaregiverName,\
     Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen, ConsentItem,Child,ChildName,ChildSurvey,\
-    ChildAssent
+    ChildAssent,ChildBiospecimen
 from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 
 logging.basicConfig(level=logging.DEBUG)
@@ -126,4 +126,8 @@ def child_assent_page(request,child_charm_id):
                                                                               'child_assent':child_assent})
 
 def child_biospecimen_page(request,child_charm_id):
-    return render(request,template_name='dataview/child_biospecimen.html',context={'child':child})
+    child = get_object_or_404(Child,charm_project_identifier=child_charm_id)
+    # child_biospecimens = ChildBiospecimen.objects.filter(child_fk__charm_project_identifier=child_charm_id)
+    child_biospecimens = ChildBiospecimen.objects.filter(child_fk__charm_project_identifier=child_charm_id).values("collection_fk__collection_type","status_fk__status")
+    return render(request,template_name='dataview/child_biospecimen.html',context={'child':child,
+                                                                                   'child_biospecimens':child_biospecimens})
