@@ -195,6 +195,7 @@ class TestCaseSetup(TestCase):
         self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
         self.urine_two = Collection.objects.create(collection_type='Urine', collection_number=2)
         self.urine_three = Collection.objects.create(collection_type='Urine', collection_number=3)
+        self.urine_six = Collection.objects.create(collection_type='Urine', collection_number=6)
         self.urine_ec = Collection.objects.create(collection_type='Urine', collection_number='EC')
         self.urine_mc = Collection.objects.create(collection_type='Urine', collection_number='MC')
         self.serum_one = Collection.objects.create(collection_type='Serum', collection_number=1)
@@ -451,7 +452,7 @@ class TestCaseSetup(TestCase):
         self.early_childhood = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
         self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                            status_fk=self.completed_status,
-                                                                           collection_fk=self.urine_one,
+                                                                           collection_fk=self.urine_six,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood,
                                                                            collection_date=datetime.date(2023, 8, 15),
@@ -888,3 +889,12 @@ class ChildBiospecimenPage(TestCaseSetup):
     def test_child_biospecimen_page_has_urine(self):
         response = self.client.get(f"/data/child/7000M1/biospecimen/")
         self.assertContains(response,'Urine 6: Completed')
+
+    def test_child_biospecimen_contains_all_child_biospecimens(self):
+        response = self.client.get(f"/data/child/7000M1/biospecimen/")
+        child_bios = ChildBiospecimen.objects.values('collection_fk__collection_type')
+        logging.critical(child_bios)
+        child_bios_list = list(set(value for dic in child_bios for value in dic.values()))
+        logging.critical(child_bios_list)
+        for value in child_bios_list:
+            self.assertContains(response, value)

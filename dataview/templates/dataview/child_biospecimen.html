@@ -1,8 +1,15 @@
 {% extends "dataview/base.html" %}
 {% block header %}Child ID: {{ child.charm_project_identifier }} {% endblock %}
 {% block section %}
-{% for item in child_biospecimens %}
-    <h2>{{ item }}</h2>
-
+{% for bio_collection in child_collections %}
+    <h2>{{ bio_collection }}</h2>
+    {% for child_bio in child_biospecimens %}
+        {% if child_bio.collection_fk.collection_type == bio_collection %}
+            {{ child_bio.collection_fk.collection_type }} {{ child_bio.collection_fk.collection_number|default_if_none:"" }}: {{ child_bio.status_fk }}
+        {% elif child_bio.collection_fk.collection_type != bio_collection %}
+        {% else %}
+            <p>No biospecimen of this type</p>
+        {% endif %}
+    {% endfor %}
 {% endfor %}
 {% endblock %}

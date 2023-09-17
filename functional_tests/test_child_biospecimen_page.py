@@ -13,4 +13,6 @@ class ChildBiospecimenPageTest(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
 
-        self.assertIn('Urine 6: Completed ',body)
+        self.assertIn('Toenail',body)
+        self.assertIn('Urine',body)
+        self.assertIn('Hair',body)
