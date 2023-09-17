@@ -197,6 +197,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
         self.urine_two = Collection.objects.create(collection_type='Urine', collection_number=2)
         self.urine_three = Collection.objects.create(collection_type='Urine', collection_number=3)
+        self.urine_six = Collection.objects.create(collection_type='Urine', collection_number=6)
         self.urine_ec = Collection.objects.create(collection_type='Urine', collection_number='EC')
         self.urine_mc = Collection.objects.create(collection_type='Urine', collection_number='MC')
         self.serum_one = Collection.objects.create(collection_type='Serum', collection_number=1)
@@ -462,7 +463,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.early_childhood = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
         self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                      status_fk=self.completed_status,
-                                                                     collection_fk=self.urine_one,
+                                                                     collection_fk=self.urine_six,
                                                                      incentive_fk=self.incentive_one,
                                                                      age_category_fk=self.early_childhood,
                                                                      collection_date=datetime.date(2023, 8, 15),
