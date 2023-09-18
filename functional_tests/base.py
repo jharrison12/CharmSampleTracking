@@ -4,7 +4,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
     NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver,HealthcareFacility,Recruitment,ChildName, ConsentContract,ConsentVersion,\
-    ChildAddress, ChildSurvey,Assent,ChildAssent,AgeCategory,ChildBiospecimen
+    ChildAddress, ChildSurvey,Assent,ChildAssent,AgeCategory,ChildBiospecimen,Race,Ethnicity
 import datetime
 import time
 from django.utils import timezone
@@ -18,16 +18,31 @@ class FunctionalTest(StaticLiveServerTestCase):
         if staging_server:
             self.live_server_url = 'http://' + staging_server
             return
+        #create caregiver
+        self.caucasion = Race.objects.create(race='W')
+        self.black = Race.objects.create(race='B')
+        self.black = Race.objects.create(race='U')
+
+        self.hispanic = Ethnicity.objects.create(ethnicity='H')
+        self.non_hispanic = Ethnicity.objects.create(ethnicity='N')
+        self.non_hispanic = Ethnicity.objects.create(ethnicity='U')
+
+
         self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                         date_of_birth=datetime.date(1985, 7, 3),
                                                         ewcp_participant_identifier='0000',
                                                         participation_level_identifier='01',
-                                                        specimen_id='4444', echo_pin='333')
+                                                        specimen_id='4444', echo_pin='333',
+                                                        race_fk=self.caucasion,
+                                                        ethnicity_fk=self.hispanic)
         self.second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',
                                                          date_of_birth=datetime.date(1985, 7, 4),
                                                          ewcp_participant_identifier='0001',
                                                          participation_level_identifier='02',
-                                                         specimen_id='5555', echo_pin='444')
+                                                         specimen_id='5555', echo_pin='444',
+                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                         )
+
 
         self.first_caregiver_name = Name()
         self.first_caregiver_name.first_name = 'Jane'
@@ -414,13 +429,13 @@ class FunctionalTest(StaticLiveServerTestCase):
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.MALE,
                                               birth_date=datetime.date(2020, 7, 3),
-                                              child_twin=False)
+                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic)
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
                                               charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021, 8, 10),
-                                              child_twin=False)
+                                              child_twin=False, race_fk=self.black,ethnicity_fk=self.non_hispanic)
 
         self.child_one_name = Name.objects.create(last_name='Harrison', first_name='Jonathan')
         self.child_two_name = Name.objects.create(last_name='Smith', first_name='Kevin')

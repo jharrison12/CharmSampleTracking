@@ -5,9 +5,19 @@ import pytz
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 
+
+class Race(models.Model):
+    race = models.CharField(blank=True,null=True, max_length=1)
+
+class Ethnicity(models.Model):
+    ethnicity = models.CharField(blank=True,null=True,max_length=1)
+
 # Create your models here.
 class Caregiver(models.Model):
     #caregiver_pk = models.AutoField(primary_key=True)
+    #should race and ethnicity be nullable?
+    race_fk = models.ForeignKey(Race,on_delete=models.PROTECT)
+    ethnicity_fk = models.ForeignKey(Ethnicity, on_delete=models.PROTECT)
     charm_project_identifier = models.CharField(default='', max_length=6,unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     ewcp_participant_identifier = models.CharField(default='',max_length=16)
@@ -17,7 +27,6 @@ class Caregiver(models.Model):
 
     def __str__(self):
         return self.charm_project_identifier
-
 
 class Name(models.Model):
     #name_pk = models.AutoField(primary_key=True)
@@ -414,6 +423,8 @@ class ConsentItem(models.Model):
 
 class Child(models.Model):
     primary_care_giver_fk = models.ForeignKey(PrimaryCaregiver, on_delete=models.PROTECT)
+    race_fk = models.ForeignKey(Race,on_delete=models.PROTECT, null=True)
+    ethnicity_fk = models.ForeignKey(Ethnicity, on_delete=models.PROTECT,null=True)
     charm_project_identifier = models.CharField(max_length=8, unique=True)
     birth_date = models.DateField(null=True)
 

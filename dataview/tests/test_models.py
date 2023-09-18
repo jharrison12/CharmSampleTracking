@@ -7,7 +7,8 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
     CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory
+    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory,Race, Ethnicity
+
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -16,16 +17,28 @@ logging.basicConfig(level=logging.DEBUG)
 
 class ModelTest(TestCase):
     def setUp(self):
+        self.caucasion = Race.objects.create(race='W')
+        self.black = Race.objects.create(race='B')
+        self.black = Race.objects.create(race='U')
+
+        self.hispanic = Ethnicity.objects.create(ethnicity='H')
+        self.non_hispanic = Ethnicity.objects.create(ethnicity='N')
+        self.non_hispanic = Ethnicity.objects.create(ethnicity='U')
+
         self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                         date_of_birth=datetime.date(1985, 7, 3),
                                                         ewcp_participant_identifier='0000',
                                                         participation_level_identifier='01',
-                                                        specimen_id='4444', echo_pin='333')
+                                                        specimen_id='4444', echo_pin='333',
+                                                        race_fk=self.caucasion,
+                                                        ethnicity_fk=self.hispanic)
         self.second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',
                                                          date_of_birth=datetime.date(1985, 7, 4),
                                                          ewcp_participant_identifier='0001',
                                                          participation_level_identifier='02',
-                                                         specimen_id='5555', echo_pin='444')
+                                                         specimen_id='5555', echo_pin='444',
+                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                         )
 
         self.first_caregiver_name = Name()
         self.first_caregiver_name.first_name = 'Jane'
@@ -416,13 +429,13 @@ class ModelTest(TestCase):
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.MALE,
                                               birth_date=datetime.date(2020, 7, 3),
-                                              child_twin=False)
+                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic)
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
                                               charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021, 8, 10),
-                                              child_twin=False)
+                                              child_twin=False, race_fk=self.black,ethnicity_fk=self.non_hispanic)
 
         self.child_one_name = Name.objects.create(last_name='Harrison', first_name='Jonathan')
         self.child_two_name = Name.objects.create(last_name='Smith', first_name='Kevin')
@@ -510,6 +523,13 @@ class CaregiverModelsTest(ModelTest):
         self.assertEqual(first_saved_caregiver.echo_pin,'333')
         self.assertEqual(second_saved_caregiver.charm_project_identifier, 'P7001')
         self.assertEqual(second_saved_caregiver.date_of_birth,datetime.date(1985, 7, 4))
+
+    def test_caregiver_links_to_race(self):
+        caregiver_one = Caregiver.objects.get(charm_project_identifier='P7000')
+        self.assertEqual(caregiver_one.race_fk.race,'W')
+
+    def test_caregiver_links_to_ethnicity(self):
+        self.fail()
 
 class CaregiverNameModelsTest(ModelTest):
 
