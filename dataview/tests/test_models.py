@@ -473,7 +473,7 @@ class ModelTest(TestCase):
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
                                                                            status_fk=self.completed_status,
-                                                                           collection_fk=self.urine_one,
+                                                                           collection_fk=self.urine_six,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood,
                                                                            collection_date=datetime.date(2023, 8, 15),
@@ -830,10 +830,10 @@ class ChildAssentModelTest(ModelTest):
 class ChildBiospecimenModelTest(ModelTest):
 
     def test_child_links_to_biospecimen(self):
-        test_child = Child.objects.filter(childbiospecimen__age_category_fk=self.early_childhood,childbiospecimen__collection_fk=self.urine_one).first()
+        test_child = Child.objects.filter(childbiospecimen__age_category_fk=self.early_childhood,childbiospecimen__collection_fk=self.urine_six).first()
         self.assertEqual(test_child,self.child_one)
 
     def test_multiple_children_link_to_one_biospecimen(self):
-        urine = ChildBiospecimen.objects.filter(collection_fk=self.urine_one)
+        urine = ChildBiospecimen.objects.filter(collection_fk=self.urine_six)
 
         self.assertEqual(urine.count(),2)
