@@ -15,14 +15,13 @@ logging.basicConfig(level=logging.CRITICAL)
 
 class TestCaseSetup(TestCase):
     def setUp(self):
-        self.caucasion = Race.objects.create(race='W')
-        self.black = Race.objects.create(race='B')
-        self.black = Race.objects.create(race='U')
+        self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
+        self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
+        self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
 
-        self.hispanic = Ethnicity.objects.create(ethnicity='H')
-        self.non_hispanic = Ethnicity.objects.create(ethnicity='N')
-        self.non_hispanic = Ethnicity.objects.create(ethnicity='U')
-
+        self.hispanic = Ethnicity.objects.create(ethnicity=Ethnicity.EthnicityChoice.HISPANIC)
+        self.non_hispanic = Ethnicity.objects.create(ethnicity=Ethnicity.EthnicityChoice.NON_HISPANIC)
+        self.hispanic_unknown = Ethnicity.objects.create(ethnicity=Ethnicity.EthnicityChoice.UNKNOWN)
 
         self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
                                                         date_of_birth=datetime.date(1985, 7, 3),

@@ -7,10 +7,21 @@ from django.db.models import Q
 
 
 class Race(models.Model):
-    race = models.CharField(blank=True,null=True, max_length=1)
+    class RaceChoice(models.TextChoices):
+        AMERICAN_INDIAN = 'I',_('American Indian or Alaska Native')
+        ASIAN = 'A', _('Asian')
+        BLACK = 'B', _('Black or African American')
+        PACIFIC_ISLANDER = 'P', _('Native Hawaiian or Other Pacific Islander')
+        WHITE = 'W', _('White')
+        UNKNOWN = 'U', _('Unknown')
+    race = models.CharField(default=RaceChoice.UNKNOWN,choices=RaceChoice.choices, max_length=1)
 
 class Ethnicity(models.Model):
-    ethnicity = models.CharField(blank=True,null=True,max_length=1)
+    class EthnicityChoice(models.TextChoices):
+        HISPANIC = 'H',_('Hispanic')
+        NON_HISPANIC = 'N', _('Non-Hispanic')
+        UNKNOWN = 'U',_('Unknown')
+    ethnicity = models.CharField(default=EthnicityChoice.UNKNOWN,choices=EthnicityChoice.choices,max_length=1)
 
 # Create your models here.
 class Caregiver(models.Model):

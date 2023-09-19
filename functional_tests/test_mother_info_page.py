@@ -21,6 +21,8 @@ class MotherInformationPageTest(FunctionalTest):
         self.assertIn('P7000',body_text_id_page)
         self.assertIn('0000',body_text_id_page)
         self.assertIn('01',body_text_id_page)
+        self.assertIn('White',body_text_id_page)
+        self.assertIn('Non-Hispanic',body_text_id_page)
         self.assertIn('Echo Pin: 333',body_text_id_page)
         self.assertIn('Specimen Id: 4444',body_text_id_page)
         self.assertIn('Address: One Drive', body_text_id_page)
