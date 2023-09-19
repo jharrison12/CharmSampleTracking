@@ -4,6 +4,8 @@
     <ul>
         <li>Echo ID: {{ caregiver.charm_project_identifier }}</li>
         <li>Date of Birth: {{ caregiver.date_of_birth }}</li>
+        <li>Race: {{ caregiver.race_fk.get_race_display }}</li>
+        <li>Ethnicity: {{ caregiver.ethnicity_fk.get_ethnicity_display }}</li>
         <li>EWCP Participant Identifier: {{ caregiver.ewcp_participant_identifier }}</li>
         <li>Participation Level Identifier: {{ caregiver.participation_level_identifier }}</li>
         <li>Echo Pin: {{ caregiver.echo_pin }}</li>
