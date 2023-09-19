@@ -10,7 +10,7 @@ class CaregiverSurveyPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000/survey')
 
         #User sees information on Prenatal 1 Survey for P7000
-        # time.sleep(30)
+
         survey_header = self.browser.find_element(By.TAG_NAME, 'h2').text
         self.assertIn('Prenatal',survey_header)
 

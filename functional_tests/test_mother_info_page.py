@@ -15,7 +15,7 @@ class MotherInformationPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}data/caregiver/P7000')
         header_text_id_page = self.browser.find_element(By.TAG_NAME, 'h1').text
         self.assertIn('Mother\'s name is: Doe, Jane',header_text_id_page)
-        #time.sleep(30)
+
         body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('July 3, 1985',body_text_id_page)
         self.assertIn('P7000',body_text_id_page)

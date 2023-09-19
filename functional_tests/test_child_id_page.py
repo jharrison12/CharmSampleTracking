@@ -42,7 +42,7 @@ class ChildIdPageTest(FunctionalTest):
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Assent Page',body_text)
-        time.sleep(30)
+
         self.browser.find_element(By.LINK_TEXT, 'Assent Page').click()
         header_text_survey_page = self.browser.find_element(By.TAG_NAME,'h1').text
         self.assertIn("Child ID: 7000M1",header_text_survey_page)

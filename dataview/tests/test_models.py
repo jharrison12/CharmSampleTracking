@@ -529,7 +529,8 @@ class CaregiverModelsTest(ModelTest):
         self.assertEqual(caregiver_one.race_fk.race,'W')
 
     def test_caregiver_links_to_ethnicity(self):
-        self.fail()
+        caregiver_one = Caregiver.objects.get(charm_project_identifier='P7000')
+        self.assertEqual(caregiver_one.ethnicity_fk.ethnicity,'H')
 
 class CaregiverNameModelsTest(ModelTest):
 
@@ -765,13 +766,13 @@ class ChildModelTest(ModelTest):
                                                         ewcp_participant_identifier='0000',
                                                         participation_level_identifier='01',
                                                         specimen_id='7777',
-                                                        echo_pin='333')
+                                                        echo_pin='333',race_fk=self.black,ethnicity_fk=self.hispanic)
         fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7004',
                                                          date_of_birth=datetime.date(1985,7,4),
                                                          ewcp_participant_identifier='0001',
                                                          participation_level_identifier='02',
                                                          specimen_id='6666',
-                                                         echo_pin='444')
+                                                         echo_pin='444',race_fk=self.black,ethnicity_fk=self.non_hispanic)
 
         new_mother = Mother.objects.create(caregiver_fk=third_caregiver,due_date=datetime.date(2023,7,3))
         new_non_mother = NonMotherCaregiver.objects.create(caregiver_fk=fourth_caregiver,relation_fk=self.mother_in_law)
