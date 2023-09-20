@@ -12,6 +12,8 @@ class ChildInformationPageTest(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME, 'body').text
 
         self.assertIn('7000M1',body)
+        self.assertIn('White',body)
+        self.assertIn('Hispanic',body)
         self.assertIn('July 3, 2020',body)
         self.assertIn('Male',body)
         self.assertIn('University of Michigan',body)
