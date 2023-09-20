@@ -4,6 +4,8 @@ from django.db import models
 import pytz
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
+import logging
+logging.basicConfig(level=logging.CRITICAL)
 
 
 class Race(models.Model):
@@ -330,7 +332,28 @@ class ConsentContract(models.Model):
 
 class Mother(models.Model):
     caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT,unique=True)
-    due_date = models.DateField(null=False,blank=False)
+
+class Pregnancy(models.Model):
+    mother_fk = models.ForeignKey(Mother,on_delete=models.PROTECT)
+    pregnancy_id = models.CharField(max_length=255,unique=True)
+    due_date = models.DateField(null=True,blank=True)
+    last_menstrual_period = models.DateField(null=True,blank=True)
+    gestational_age = models.CharField(max_length=255)
+
+    class Meta:
+        constraints=[
+            models.UniqueConstraint(fields=['mother_fk','pregnancy_id'],name="pregnancy_unique_constraint")
+        ]
+
+    def __string__(self):
+        return f"{self.pregnancy_id}"
+
+    def calculate_gestational_age(self):
+        gestational_age = datetime.date.today() - self.last_menstrual_period
+        return f"{gestational_age.days//7}"
+
+    def clean(self):
+        self.gestational_age = self.calculate_gestational_age()
 
 class Relation(models.Model):
     relation_type = models.CharField(max_length=255,unique=True)

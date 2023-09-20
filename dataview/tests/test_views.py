@@ -5,7 +5,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
     NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName,ChildAddress,ChildSurvey,\
-    Assent,ChildAssent,AgeCategory,ChildBiospecimen,Race, Ethnicity
+    Assent,ChildAssent,AgeCategory,ChildBiospecimen,Race, Ethnicity,Pregnancy
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -389,7 +389,13 @@ class TestCaseSetup(TestCase):
 
         self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
 
-        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver,due_date=datetime.date(2021,1,3))
+        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
+        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
+                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
+                                                                 due_date=datetime.date(2023, 5, 4),
+                                                                 last_menstrual_period=datetime.date(2023, 3, 3),
+                                                                 )
+        self.mother_one_pregnancy_one.clean()
         self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
         self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
@@ -906,8 +912,6 @@ class ChildBiospecimenPage(TestCaseSetup):
     def test_child_biospecimen_contains_all_child_biospecimens(self):
         response = self.client.get(f"/data/child/7000M1/biospecimen/")
         child_bios = ChildBiospecimen.objects.values('collection_fk__collection_type')
-        logging.critical(child_bios)
         child_bios_list = list(set(value for dic in child_bios for value in dic.values()))
-        logging.critical(child_bios_list)
         for value in child_bios_list:
             self.assertContains(response, value)

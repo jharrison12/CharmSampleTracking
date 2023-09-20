@@ -7,7 +7,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
     CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory,Race, Ethnicity
+    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory,Race, Ethnicity,Pregnancy
 
 import datetime
 from django.utils import timezone
@@ -391,7 +391,14 @@ class ModelTest(TestCase):
 
         self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
 
-        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver, due_date=datetime.date(2021, 1, 3))
+        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
+        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
+                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
+                                                                 due_date=datetime.date(2023,5,4),
+                                                                 last_menstrual_period=datetime.date(2023,3,3),
+                                                                 )
+        self.mother_one_pregnancy_one.clean()
+
         self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,
                                                                 relation_fk=self.mother_in_law)
 
@@ -700,8 +707,18 @@ class ConsentVersionModelsTest(ModelTest):
 class CaregiverMotherModelsTest(ModelTest):
     def test_caregiver_links_to_mother_table(self):
         mother_table_row = Mother.objects.filter(caregiver_fk=self.first_caregiver).first()
-        mother_table_row_2 = Mother.objects.create(caregiver_fk=self.second_caregiver,due_date=datetime.date(2020,7,3))
+        mother_table_row_2 = Mother.objects.create(caregiver_fk=self.second_caregiver)
         self.assertNotEqual(mother_table_row_2,mother_table_row)
+
+class CaregiverMotherPregnancyTest(ModelTest):
+
+    def test_pregnancy_links_to_mother(self):
+        mother_one_test = Caregiver.objects.filter(mother__pregnancy=self.mother_one_pregnancy_one).first()
+        self.assertEqual(mother_one_test,self.first_caregiver)
+
+    def test_save_gestational_age_works(self):
+        right_gest_age = str(( datetime.date.today() - self.mother_one_pregnancy_one.last_menstrual_period).days // 7)
+        self.assertEqual(right_gest_age,self.mother_one_pregnancy_one.gestational_age)
 
 class NonMotherCaregiverModelsTest(ModelTest):
     def test_non_mother_caregiver_links_to_caregiver_table(self):
@@ -774,7 +791,7 @@ class ChildModelTest(ModelTest):
                                                          specimen_id='6666',
                                                          echo_pin='444',race_fk=self.black,ethnicity_fk=self.non_hispanic)
 
-        new_mother = Mother.objects.create(caregiver_fk=third_caregiver,due_date=datetime.date(2023,7,3))
+        new_mother = Mother.objects.create(caregiver_fk=third_caregiver)
         new_non_mother = NonMotherCaregiver.objects.create(caregiver_fk=fourth_caregiver,relation_fk=self.mother_in_law)
 
 
@@ -858,3 +875,4 @@ class ChildBiospecimenModelTest(ModelTest):
         urine = ChildBiospecimen.objects.filter(collection_fk=self.urine_six)
 
         self.assertEqual(urine.count(),2)
+

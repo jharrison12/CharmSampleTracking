@@ -4,7 +4,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,\
     CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
     NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver,HealthcareFacility,Recruitment,ChildName, ConsentContract,ConsentVersion,\
-    ChildAddress, ChildSurvey,Assent,ChildAssent,AgeCategory,ChildBiospecimen,Race,Ethnicity
+    ChildAddress, ChildSurvey,Assent,ChildAssent,AgeCategory,ChildBiospecimen,Race,Ethnicity,Pregnancy
 import datetime
 import time
 from django.utils import timezone
@@ -391,7 +391,13 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
 
-        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver, due_date=datetime.date(2021, 1, 3))
+        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
+        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
+                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
+                                                                 due_date=datetime.date(2023, 5, 4),
+                                                                 last_menstrual_period=datetime.date(2023, 3, 3),
+                                                                 )
+        self.mother_one_pregnancy_one.clean()
         self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,
                                                                 relation_fk=self.mother_in_law)
 
