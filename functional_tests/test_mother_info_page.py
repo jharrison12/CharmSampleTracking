@@ -72,6 +72,14 @@ class MotherInformationPageTest(FunctionalTest):
         self.assertIn('Contact A Email: d@d.com', contact_body_text_id_page_70001)
         self.assertNotIn('Contact B',contact_body_text_id_page_70001)
 
+    def test_user_can_see_pregnancy_information(self):
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}data/caregiver/P7000')
+        body_text_id_page = self.browser.find_element(By.TAG_NAME, 'body').text
+
+        self.assertIn('Pregnancy Information:',body_text_id_page)
+        self.assertIn('Gestational Age:',body_text_id_page)
+
     @unittest.skip
     def test_user_can_visit_caregiver_survey_page(self):
         #i cannot get selenium to find the link.

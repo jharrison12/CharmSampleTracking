@@ -653,6 +653,14 @@ class CaregiverInformationPageTest(TestCaseSetup):
         response = self.client.get(f'/data/caregiver/P7001/')
         self.assertNotContains(response,'Contact B')
 
+    def test_caregiver_information_page_shows_pregnancy_for_pregnant_mom(self):
+        response = self.client.get(f'/data/caregiver/P7000/')
+        self.assertContains(response, 'Pregnancy Information:')
+
+    def test_caregiver_information_page_does_not_show_pregnancy_info_for_non_mom(self):
+        response = self.client.get(f'/data/caregiver/P7001/')
+        self.assertNotContains(response, 'Pregnancy Information:')
+
 
 class CaregiverSurveyPageTest(TestCaseSetup):
 

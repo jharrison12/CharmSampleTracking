@@ -53,4 +53,17 @@
             {% endfor %}
         </ul>
 
+    {% if caregiver_pregnancies %}
+        <h2>Pregnancy Information:</h2>
+        {% for pregnancy in caregiver_pregnancies %}
+            <h3>{{ pregnancy.pregnancy_id }}</h3>
+                <ul>
+                <li>Due Date: {{ pregnancy.due_date }}</li>
+                <li>Gestational Age: {{ pregnancy.calculate_gestational_age }} weeks</li>
+                <li>LMP: {{ pregnancy.last_menstrual_period }}</li>
+                </ul>
+        {% endfor %}
+
+    {% endif %}
+
 {% endblock %}
