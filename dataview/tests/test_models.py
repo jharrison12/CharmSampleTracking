@@ -5,9 +5,9 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonMotherCaregiver,Relation, Status,\
+    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation, Status,\
     CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory,Race, Ethnicity,Pregnancy
+    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 
 import datetime
 from django.utils import timezone
@@ -399,11 +399,9 @@ class ModelTest(TestCase):
                                                                  )
         self.mother_one_pregnancy_one.clean()
 
-        self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,
-                                                                relation_fk=self.mother_in_law)
-
-        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
-        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(non_mother_caregiver_fk=self.non_mother_one)
+        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
+        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
+        self.primary_care_giver_child_three = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
 
         # creat consent item
 
@@ -451,6 +449,10 @@ class ModelTest(TestCase):
                                                               status=ChildName.ChildNameStatusChoice.CURRENT, )
         self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two, name_fk=self.child_two_name,
                                                                   status=ChildName.ChildNameStatusChoice.CURRENT, )
+
+        self.second_caregiver_is_mother_in_law = CaregiverChildRelation.objects.create(child_fk=self.child_two,
+                                                                                       caregiver_fk=self.second_caregiver,
+                                                                                       relation_fk=self.mother_in_law)
 
         #create child address
 
@@ -720,10 +722,10 @@ class CaregiverMotherPregnancyTest(ModelTest):
         right_gest_age = str(( datetime.date.today() - self.mother_one_pregnancy_one.last_menstrual_period).days // 7)
         self.assertEqual(right_gest_age,self.mother_one_pregnancy_one.gestational_age)
 
-class NonMotherCaregiverModelsTest(ModelTest):
+class CaregiverChildRelationModelTest(ModelTest):
     def test_non_mother_caregiver_links_to_caregiver_table(self):
-        non_mother_table_row = NonMotherCaregiver.objects.filter(caregiver_fk=self.second_caregiver).first()
-        self.assertEqual(non_mother_table_row.relation_fk.relation_type,'Mother-in-law')
+        non_pcg_row = CaregiverChildRelation.objects.filter(caregiver_fk=self.second_caregiver).first()
+        self.assertEqual(non_pcg_row.relation_fk.relation_type,'Mother-in-law')
 
 class BioSpecimenCaregiverModelsTest(ModelTest):
     def test_biospecimen_links_to_mother_table(self):
@@ -749,10 +751,10 @@ class BioSpecimenCaregiverModelsTest(ModelTest):
 class PrimaryCaregiverModelsTest(ModelTest):
 
     def test_primary_caregiver_links_to_caregiver_table(self):
-        self.assertEqual(self.primary_care_giver_child_one.mother_fk.caregiver_fk,self.first_caregiver)
+        self.assertEqual(self.primary_care_giver_child_one.caregiver_fk,self.first_caregiver)
 
     def test_primary_caregiver_links_to_non_caregiver_table(self):
-        self.assertEqual(self.primary_care_giver_child_two.non_mother_caregiver_fk.caregiver_fk,self.second_caregiver)
+        self.assertEqual(self.primary_care_giver_child_two.caregiver_fk,self.second_caregiver)
 
 class ConsentItemModelTest(ModelTest):
 
@@ -764,11 +766,11 @@ class ChildModelTest(ModelTest):
 
     def test_child_links_to_only_one_caregiver(self):
         caregiver_one = self.first_caregiver
-        caregiver_one_through_child = Caregiver.objects.get(mother__primarycaregiver__child=self.child_one)
+        caregiver_one_through_child = Caregiver.objects.get(primarycaregiver__child=self.child_one)
         self.assertEqual(caregiver_one,caregiver_one_through_child)
 
     def test_different_child_links_to_non_primary_caregiver(self):
-        caregiver_two_through_child = Caregiver.objects.get(nonmothercaregiver__primarycaregiver__child=self.child_two)
+        caregiver_two_through_child = Caregiver.objects.get(primarycaregiver__child=self.child_two)
         self.assertEqual(self.second_caregiver,caregiver_two_through_child)
 
     def test_is_mother_model_function_works_for_non_mother(self):
@@ -776,28 +778,6 @@ class ChildModelTest(ModelTest):
 
     def test_is_mother_model_function_works_for_mother(self):
         self.assertEqual(self.child_one.is_caregiver_mother(),True)
-
-    def test_primary_caregiver_table_cannot_have_mother_fk_and_non_mother_fk_on_same_row(self):
-        third_caregiver = Caregiver.objects.create(charm_project_identifier='P7003',
-                                                        date_of_birth=datetime.date(1985,7,3),
-                                                        ewcp_participant_identifier='0000',
-                                                        participation_level_identifier='01',
-                                                        specimen_id='7777',
-                                                        echo_pin='333',race_fk=self.black,ethnicity_fk=self.hispanic)
-        fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7004',
-                                                         date_of_birth=datetime.date(1985,7,4),
-                                                         ewcp_participant_identifier='0001',
-                                                         participation_level_identifier='02',
-                                                         specimen_id='6666',
-                                                         echo_pin='444',race_fk=self.black,ethnicity_fk=self.non_hispanic)
-
-        new_mother = Mother.objects.create(caregiver_fk=third_caregiver)
-        new_non_mother = NonMotherCaregiver.objects.create(caregiver_fk=fourth_caregiver,relation_fk=self.mother_in_law)
-
-
-        primary_care_giver_one = PrimaryCaregiver(mother_fk=new_mother,non_mother_caregiver_fk=new_non_mother)
-        with self.assertRaises(ValidationError):
-            primary_care_giver_one.full_clean()
 
 
 class ChildNameModelTest(ModelTest):
@@ -813,7 +793,7 @@ class ChildAddressModelTest(ModelTest):
         self.assertEqual(child_object, self.child_one)
 
     def test_child_address_links_to_second_child(self):
-        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_three,
                                               charm_project_identifier='7002M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,

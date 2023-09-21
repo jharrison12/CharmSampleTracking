@@ -1,11 +1,14 @@
 import logging
 import unittest
 from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName,Address,\
-    CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver, HealthcareFacility,Recruitment,ChildName,ChildAddress,ChildSurvey,\
-    Assent,ChildAssent,AgeCategory,ChildBiospecimen,Race, Ethnicity,Pregnancy
+from dataview.models import Caregiver, Name, CaregiverName, Address, \
+    CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
+    CaregiverPersonalContact, \
+    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, Status, Collection, CaregiverBiospecimen, \
+    Mother, Relation, ConsentItem, \
+    NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
+    ChildSurvey, \
+    Assent, ChildAssent, AgeCategory, ChildBiospecimen, Race, Ethnicity, Pregnancy, CaregiverChildRelation
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -396,10 +399,11 @@ class TestCaseSetup(TestCase):
                                                                  last_menstrual_period=datetime.date(2023, 3, 3),
                                                                  )
         self.mother_one_pregnancy_one.clean()
-        self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
+        #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
-        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
-        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(non_mother_caregiver_fk=self.non_mother_one)
+        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
+        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
+        self.primary_care_giver_child_three = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
 
         #creat consent item
 
@@ -435,6 +439,9 @@ class TestCaseSetup(TestCase):
 
         self.child_name_connection = ChildName.objects.create(child_fk=self.child_one,name_fk=self.child_one_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
         self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two,name_fk=self.child_two_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
+        self.second_caregiver_is_mother_in_law = CaregiverChildRelation.objects.create(child_fk=self.child_two,
+                                                                                       caregiver_fk=self.second_caregiver,
+                                                                                       relation_fk=self.mother_in_law)
 
         #create child address
 
@@ -456,6 +463,8 @@ class TestCaseSetup(TestCase):
                                                            survey_fk=self.other_survey_that_child_takes,
                                                            survey_outcome_fk=self.incomplete_survey_outcome,
                                                            survey_completion_date=datetime.date(2023,9,12))
+
+
 
         #child assent
         self.eight_year_assent = Assent.objects.create(assent_text='Eight Year Survey')
@@ -836,7 +845,7 @@ class ChildInformationPage(TestCaseSetup):
         self.assertContains(response,'One Drive')
 
     def test_child_information_page_shows_address_if_address_associated_with_two_children(self):
-        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_three,
                                            charm_project_identifier='7002M1',
                                            birth_hospital=self.health_care_facility_1,
                                            birth_sex=Child.BirthSexChoices.FEMALE,

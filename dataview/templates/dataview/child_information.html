@@ -14,16 +14,14 @@
     <h2>Caregiver Information</h2>
         <ul>
             <li>Caregiver's Charm ID:
-                {% if child.primary_care_giver_fk.mother_fk.caregiver_fk.charm_project_identifier   %}
-                    <a href={% url "dataview:caregiver_info" child.primary_care_giver_fk.mother_fk.caregiver_fk.charm_project_identifier  %}> {{  child.primary_care_giver_fk.mother_fk.caregiver_fk.charm_project_identifier }}</a></li>
-                {% elif child.primary_care_giver_fk.non_mother_caregiver_fk.caregiver_fk.charm_project_identifier %}
-                    <a href={% url "dataview:caregiver_info" child.primary_care_giver_fk.non_mother_caregiver_fk.caregiver_fk.charm_project_identifier %}> {{ child.primary_care_giver_fk.non_mother_caregiver_fk.caregiver_fk.charm_project_identifier }}</a></li>
+                {% if child.primary_care_giver_fk.caregiver_fk.charm_project_identifier  %}
+                    <a href={% url "dataview:caregiver_info" child.primary_care_giver_fk.caregiver_fk.charm_project_identifier  %}> {{  child.primary_care_giver_fk.caregiver_fk.charm_project_identifier }}</a></li>
                 {%  else %}
                     <li>No PCG!</li>
                 {% endif %}
             <li>Is biological mother?: {{ child.is_caregiver_mother }}</li>
-            {% if not  child.is_caregiver_mother  %}
-            <li>Relation: {{ child.primary_care_giver_fk.non_mother_caregiver_fk.relation_fk }}</li>
+            {% if not child.is_caregiver_mother  %}
+            <li>Relation: {{ caregiver_relation.relation_fk.relation_type }}</li>
             {% endif %}
         </ul>
     <h2>Contact Information</h2>

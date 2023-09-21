@@ -361,28 +361,20 @@ class Relation(models.Model):
     def __str__(self):
         return self.relation_type
 
-class NonMotherCaregiver(models.Model):
-    caregiver_fk = models.OneToOneField(Caregiver,on_delete=models.PROTECT)
-    relation_fk = models.ForeignKey(Relation,on_delete=models.PROTECT)
+class NonPrimaryCaregiver(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    child_fk = models.ForeignKey("Child",on_delete=models.PROTECT)
 
     class Meta:
         constraints=[
-            models.UniqueConstraint(fields=['caregiver_fk','relation_fk'],name="non_mother_caregiver_unqiue_constraint")
+            models.UniqueConstraint(fields=['child_fk','caregiver_fk'],name="non_primary_caregiver_fk")
         ]
 
 class PrimaryCaregiver(models.Model):
-    mother_fk = models.OneToOneField(Mother,on_delete=models.PROTECT,null=True)
-    non_mother_caregiver_fk = models.OneToOneField(NonMotherCaregiver,on_delete=models.PROTECT,null=True)
-    class Meta:
-        constraints = [
-            models.CheckConstraint(check=(
-                                            (Q(mother_fk__isnull=False) | Q(non_mother_caregiver_fk__isnull=False))
-                                             and ~(Q(mother_fk__isnull=False) & Q(non_mother_caregiver_fk__isnull=False)
-                                                    )
-                                         ),
-                name='primary caregiver row has two primary caregivers or none'
-            )
-        ]
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.caregiver_fk.charm_project_identifier} PCG"
 
 
 class Status(models.Model):
@@ -456,7 +448,7 @@ class ConsentItem(models.Model):
         return f"{self.consent_type_fk}: {self.consent_boolean}"
 
 class Child(models.Model):
-    primary_care_giver_fk = models.ForeignKey(PrimaryCaregiver, on_delete=models.PROTECT)
+    primary_care_giver_fk = models.OneToOneField(PrimaryCaregiver, on_delete=models.PROTECT)
     race_fk = models.ForeignKey(Race,on_delete=models.PROTECT, null=True)
     ethnicity_fk = models.ForeignKey(Ethnicity, on_delete=models.PROTECT,null=True)
     charm_project_identifier = models.CharField(max_length=8, unique=True)
@@ -476,9 +468,9 @@ class Child(models.Model):
 
     def is_caregiver_mother(self):
         #pcg = PrimaryCaregiver.objects.get(child__charm_project_identifier=self.charm_project_identifier)
-        if self.primary_care_giver_fk.mother_fk and not self.primary_care_giver_fk.non_mother_caregiver_fk:
+        if Mother.objects.filter(caregiver_fk__primarycaregiver=self.primary_care_giver_fk).exists():
             return True
-        elif self.primary_care_giver_fk.non_mother_caregiver_fk and not self.primary_care_giver_fk.mother_fk:
+        elif not Mother.objects.filter(caregiver_fk__primarycaregiver=self.primary_care_giver_fk).exists():
             return False
         else:
             raise Exception
@@ -596,3 +588,13 @@ class ChildBiospecimen(models.Model):
 
     def __str__(self):
         return f"{self.child_fk.charm_project_identifier} {self.collection_fk}"
+
+class CaregiverChildRelation(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
+    child_fk = models.ForeignKey(Child,on_delete=models.PROTECT)
+    relation_fk = models.ForeignKey(Relation,on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['caregiver_fk','child_fk'],name="caregiver_child_relation_constraint")
+        ]

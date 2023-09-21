@@ -1,10 +1,13 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from dataview.models import Caregiver,Name,CaregiverName,Address,\
-    CaregiverAddress, Email, CaregiverEmail,CaregiverPhone,Phone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,SurveyOutcome,CaregiverSurvey,Incentive,IncentiveType,Status,Collection,CaregiverBiospecimen,Mother,Relation,ConsentItem,\
-    NonMotherCaregiver, ConsentType,Child, PrimaryCaregiver,HealthcareFacility,Recruitment,ChildName, ConsentContract,ConsentVersion,\
-    ChildAddress, ChildSurvey,Assent,ChildAssent,AgeCategory,ChildBiospecimen,Race,Ethnicity,Pregnancy
+from dataview.models import Caregiver, Name, CaregiverName, Address, \
+    CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
+    CaregiverPersonalContact, \
+    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, Status, Collection, CaregiverBiospecimen, \
+    Mother, Relation, ConsentItem, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, \
+    ConsentContract, ConsentVersion, \
+    ChildAddress, ChildSurvey, Assent, ChildAssent, AgeCategory, ChildBiospecimen, Race, Ethnicity, Pregnancy, \
+    CaregiverChildRelation
 import datetime
 import time
 from django.utils import timezone
@@ -398,11 +401,11 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                  last_menstrual_period=datetime.date(2023, 3, 3),
                                                                  )
         self.mother_one_pregnancy_one.clean()
-        self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,
-                                                                relation_fk=self.mother_in_law)
+        # self.non_mother_one = NonMotherCaregiver.objects.create(caregiver_fk=self.second_caregiver,
+        #                                                         relation_fk=self.mother_in_law)
 
-        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(mother_fk=self.mother_one)
-        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(non_mother_caregiver_fk=self.non_mother_one)
+        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
+        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
 
         # creat consent item
 
@@ -450,6 +453,9 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                               status=ChildName.ChildNameStatusChoice.CURRENT, )
         self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two, name_fk=self.child_two_name,
                                                                   status=ChildName.ChildNameStatusChoice.CURRENT, )
+        self.second_caregiver_is_mother_in_law = CaregiverChildRelation.objects.create(child_fk=self.child_two,
+                                                                                       caregiver_fk=self.second_caregiver,
+                                                                                       relation_fk=self.mother_in_law)
 
         #create child address
 

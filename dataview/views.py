@@ -1,10 +1,11 @@
 import logging
 
 from django.shortcuts import render,get_object_or_404,redirect
-from dataview.models import Caregiver,Name,CaregiverName,\
-    Address,Email,CaregiverEmail,Phone,CaregiverPhone,SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Survey,Project,CaregiverSurvey,Incentive,IncentiveType,CaregiverBiospecimen, ConsentItem,Child,ChildName,ChildSurvey,\
-    ChildAssent,ChildBiospecimen,Collection
+from dataview.models import Caregiver, Name, CaregiverName, \
+    Address, Email, CaregiverEmail, Phone, CaregiverPhone, SocialMedia, CaregiverSocialMedia, CaregiverPersonalContact, \
+    Survey, Project, CaregiverSurvey, Incentive, IncentiveType, CaregiverBiospecimen, ConsentItem, Child, ChildName, \
+    ChildSurvey, \
+    ChildAssent, ChildBiospecimen, Collection, CaregiverChildRelation
 from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 
 logging.basicConfig(level=logging.DEBUG)
@@ -109,9 +110,11 @@ def child_information_page(request, child_charm_id):
     child = get_object_or_404(Child, charm_project_identifier=child_charm_id)
     child_name = Name.objects.filter(childname__child_fk=child).filter(childname__status='C').first()
     child_address = Address.objects.filter(childaddress__child_fk=child).first()
+    caregiver_relation = CaregiverChildRelation.objects.filter(child_fk__charm_project_identifier=child_charm_id).filter(caregiver_fk__primarycaregiver__child=child).first()
     return render(request,template_name='dataview/child_information.html',context={'child':child,
                                                                                    'child_name':child_name,
-                                                                                   'child_address':child_address})
+                                                                                   'child_address':child_address,
+                                                                                   'caregiver_relation':caregiver_relation})
 
 def child_survey_page(request,child_charm_id):
     child = get_object_or_404(Child, charm_project_identifier=child_charm_id)
