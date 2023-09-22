@@ -338,7 +338,7 @@ class Pregnancy(models.Model):
     pregnancy_id = models.CharField(max_length=255,unique=True)
     due_date = models.DateField(null=True,blank=True)
     last_menstrual_period = models.DateField(null=True,blank=True)
-    gestational_age = models.CharField(max_length=255)
+    gestational_age_at_birth = models.CharField(max_length=255)
 
     class Meta:
         constraints=[
@@ -360,7 +360,7 @@ class Pregnancy(models.Model):
         #need to use filter for twins.  This ONLY works if twins have the same dob.
         for child in children:
             if child.birth_date:
-                self.gestational_age = self.calculate_gestational_age(child.birth_date)
+                self.gestational_age_at_birth = self.calculate_gestational_age(child.birth_date)
                 break
             else:
                 pass

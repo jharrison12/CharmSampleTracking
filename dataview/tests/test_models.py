@@ -433,14 +433,17 @@ class ModelTest(TestCase):
                                               charm_project_identifier='7000M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.MALE,
-                                              birth_date=datetime.date(2023, 7, 3),
-                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic,pregnancy_fk=self.mother_one_pregnancy_one)
+                                              birth_date=datetime.date(2023, 5, 20),
+                                              child_twin=False, race_fk=self.caucasion, ethnicity_fk=self.hispanic,
+                                              pregnancy_fk=self.mother_one_pregnancy_one)
+        self.mother_one_pregnancy_one.save()
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
                                               charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021, 8, 10),
-                                              child_twin=False, race_fk=self.black,ethnicity_fk=self.non_hispanic,pregnancy_fk=self.mother_one_pregnancy_one)
+                                              child_twin=False, race_fk=self.black, ethnicity_fk=self.non_hispanic,
+                                              pregnancy_fk=self.mother_one_pregnancy_one)
 
         self.child_one_name = Name.objects.create(last_name='Harrison', first_name='Jonathan')
         self.child_two_name = Name.objects.create(last_name='Smith', first_name='Kevin')
@@ -733,7 +736,7 @@ class CaregiverMotherPregnancyTest(ModelTest):
         gest_age = str((date_of_birth - last_menstrual).days//7)
         self.mother_one_pregnancy_one.save()
         self.assertEqual(gest_age,
-                         self.mother_one_pregnancy_one.gestational_age)
+                         self.mother_one_pregnancy_one.gestational_age_at_birth)
 
 class CaregiverChildRelationModelTest(ModelTest):
     def test_non_mother_caregiver_links_to_caregiver_table(self):

@@ -425,9 +425,9 @@ class TestCaseSetup(TestCase):
                                               charm_project_identifier='7000M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.MALE,
-                                              birth_date=datetime.date(2020, 7, 3),
-                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic,
-                                              pregnancy_fk=self.mother_one_pregnancy_one)
+                                              birth_date=datetime.date(2023, 5, 20),
+                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic,pregnancy_fk=self.mother_one_pregnancy_one)
+        self.mother_one_pregnancy_one.save()
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
                                               charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,

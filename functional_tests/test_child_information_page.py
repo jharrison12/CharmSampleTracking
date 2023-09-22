@@ -14,7 +14,7 @@ class ChildInformationPageTest(FunctionalTest):
         self.assertIn('7000M1',body)
         self.assertIn('White',body)
         self.assertIn('Hispanic',body)
-        self.assertIn('July 3, 2020',body)
+        self.assertIn('May 20, 2023',body)
         self.assertIn('Male',body)
         self.assertIn('University of Michigan',body)
         self.assertIn('Is twin?: False',body)
@@ -45,3 +45,4 @@ class ChildInformationPageTest(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
 
         self.assertIn('One Drive',body)
+        self.assertIn('Gestational Age at Birth: 11',body)
