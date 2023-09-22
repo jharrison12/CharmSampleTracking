@@ -1,7 +1,7 @@
-{% extends "dataview/base.html" %}
+{% extends "biospecimen/base.html" %}
 {% block header %}Charm ID : {{ charm_project_identifier }}{% endblock %}
 {% block section %}
-  <form method="POST" action={% url 'dataview:caregiver_biospecimen_entry' charm_project_identifier %}>
+  <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_entry' charm_project_identifier %}>
   {% csrf_token %}
       <h2>Biospecimen Form</h2>
     {{ bio_form.non_field_errors }}

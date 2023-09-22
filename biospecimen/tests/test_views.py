@@ -1,0 +1,120 @@
+import logging
+import unittest
+from django.test import TestCase
+from dataview.models import Caregiver, Name, CaregiverName, Address, \
+    CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
+    CaregiverPersonalContact, \
+    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, Status, Collection, CaregiverBiospecimen, \
+    Mother, Relation, ConsentItem, \
+    NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
+    ChildSurvey, \
+    Assent, ChildAssent, AgeCategory, ChildBiospecimen, Race, Ethnicity, Pregnancy, CaregiverChildRelation
+import datetime
+from django.utils import timezone
+from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm
+from django.utils.html import escape
+from dataview.tests.test_views import TestCaseSetup
+
+class CaregiverBiospecimenPageTest(TestCaseSetup):
+
+    def get_biospecimen_page(self,biospecimen_id):
+        response = self.client.get(f'/biospecimen/caregiver/{biospecimen_id}/')
+        return response
+
+    def test_caregiver_biospecimen_page_returns_correct_template(self):
+        self.assertTemplateUsed(self.get_biospecimen_page('P7000'),'biospecimen/caregiver_biospecimen.html')
+
+    def test_caregiver_biospecimen_page_contains_urine_1(self):
+        self.assertContains(self.get_biospecimen_page('P7000'),'Serum 1: Completed')
+
+    def test_caregiver_b_biospecimen_does_not_appear_in_caregiver_a_page(self):
+        self.assertNotContains(self.get_biospecimen_page('P7001'),'Serum 1: Completed')
+
+    def test_caregiver_a_bio_page_shows_all_urines(self):
+        self.assertContains(self.get_biospecimen_page('P7000'),"Urine 1")
+        self.assertContains(self.get_biospecimen_page('P7000'),"Urine EC")
+
+    def test_caregiver_a_bio_page_shows_hair(self):
+        self.assertContains(self.get_biospecimen_page('P7000'),"Prenatal Hair: Collected")
+
+    def test_caregiver_a_bio_page_shows_toenails(self):
+        self.assertContains(self.get_biospecimen_page('P7000'), "Prenatal Toenail: Collected")
+
+    def test_caregiver_a_bio_page_shows_saliva(self):
+        self.assertContains(self.get_biospecimen_page('P7000'), "Saliva: Collected")
+
+    def test_caregiver_a_bio_page_does_not_show_none_saliva(self):
+        self.assertNotContains(self.get_biospecimen_page('P7000'), "None Saliva")
+
+    def test_caregiver_a_bio_page_does_not_show_none_placenta(self):
+        self.assertNotContains(self.get_biospecimen_page('P7000'), "None Placenta")
+
+    def test_caregiver_a_bio_page_shows_placenta(self):
+        self.assertContains(self.get_biospecimen_page('P7000'), "Placenta: Collected")
+
+
+class CaregiverBioSpecimenEntryPage(TestCaseSetup):
+
+    def get_biospecimen_entry_page(self,biospecimen_id):
+        response = self.client.get(f'/biospecimen/caregiver/{biospecimen_id}/entry/')
+        return response
+
+    def test_using_correct_template(self):
+        self.assertTemplateUsed(self.get_biospecimen_entry_page('P7000'), 'biospecimen/caregiver_biospecimen_entry.html')
+
+    def test_caregiver_bio_entry_page_uses_bio_form(self):
+        self.assertIsInstance(self.get_biospecimen_entry_page('P7000').context['bio_form'], CaregiverBiospecimenForm)
+
+    def test_bio_entry_redirects_after_post(self):
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/entry/', data={'bio_form-collection_fk':self.placenta_two.pk,
+                                                                                       'bio_form-status_fk':self.collected.pk,
+                                                                                       'bio_form-biospecimen_date':datetime.date(2023,8,23),
+                                                                                       #'incentive_fk':  self.incentive_one.pk,
+                                                                                       'bio_form-caregiver_fk': self.first_caregiver.pk,
+                                                                                       'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
+                                                                                       'incentive_form-incentive_date':datetime.date(2023,8,23),
+                                                                                       'incentive_form-incentive_amount':1,
+                                                                                       })
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/")
+
+    def test_unique_validation_errors_are_sent_back_to_entry_page(self):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/entry/', data={'bio_form-collection_fk':self.placenta.pk,
+                                                                                       'bio_form-status_fk':self.collected.pk,
+                                                                                       'bio_form-biospecimen_date':datetime.date(2023,8,23),
+                                                                                       'bio_form-caregiver_fk': self.first_caregiver.pk,
+                                                                                       'incentive_fk':  self.incentive_one.pk,
+                                                                                       'caregiver_fk': self.first_caregiver.pk,
+                                                                                       'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
+                                                                                       'incentive_form-incentive_date': datetime.date(
+                                                                                           2023, 8, 23),
+                                                                                       'incentive_form-incentive_amount': 1,
+                                                                                       })
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
+        expected_error = escape("This type of biospecimen for this charm id already exists")
+        self.assertContains(response, expected_error)
+
+
+    def test_caregiver_bio_entry_page_uses_incentive_form(self):
+        self.assertIsInstance(self.get_biospecimen_entry_page('P7000').context['incentive_form'], IncentiveForm)
+
+    def test_bio_entry_is_connected_to_incentive_submitted_in_form(self):
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/entry/', data={'bio_form-collection_fk':self.placenta_two.pk,
+                                                                                       'bio_form-status_fk':self.collected.pk,
+                                                                                       'bio_form-biospecimen_date':datetime.date(2023,8,23),
+                                                                                       #'incentive_fk':  self.incentive_one.pk,
+                                                                                       'bio_form-caregiver_fk': self.first_caregiver.pk,
+                                                                                       'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
+                                                                                       'incentive_form-incentive_date':datetime.date(2023,8,23),
+                                                                                       'incentive_form-incentive_amount':1,
+                                                                                       })
+
+        placenta_two = CaregiverBiospecimen.objects.filter(collection_fk__collection_type="Placenta").filter(collection_fk__collection_number=2).first()
+
+        correct_incentive = Incentive.objects.filter(incentive_amount=1).first()
+
+        self.assertEqual(placenta_two.incentive_fk,correct_incentive)
