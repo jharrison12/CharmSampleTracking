@@ -348,12 +348,23 @@ class Pregnancy(models.Model):
     def __string__(self):
         return f"{self.pregnancy_id}"
 
-    def calculate_gestational_age(self):
-        gestational_age = datetime.date.today() - self.last_menstrual_period
+    def calculate_gestational_age(self, today_or_dob=datetime.date.today()):
+        gestational_age = today_or_dob - self.last_menstrual_period
         return f"{gestational_age.days//7}"
 
-    def clean(self):
-        self.gestational_age = self.calculate_gestational_age()
+    # def clean(self):
+    #     self.gestational_age = self.calculate_gestational_age()
+
+    def save(self,*args,**kwargs):
+        children = Child.objects.filter(pregnancy_fk__pregnancy_id=self.pregnancy_id)
+        #need to use filter for twins.  This ONLY works if twins have the same dob.
+        for child in children:
+            if child.birth_date:
+                self.gestational_age = self.calculate_gestational_age(child.birth_date)
+                break
+            else:
+                pass
+        super().save(*args,**kwargs)
 
 class Relation(models.Model):
     relation_type = models.CharField(max_length=255,unique=True)
@@ -449,6 +460,7 @@ class ConsentItem(models.Model):
 
 class Child(models.Model):
     primary_care_giver_fk = models.OneToOneField(PrimaryCaregiver, on_delete=models.PROTECT)
+    pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT)
     race_fk = models.ForeignKey(Race,on_delete=models.PROTECT, null=True)
     ethnicity_fk = models.ForeignKey(Ethnicity, on_delete=models.PROTECT,null=True)
     charm_project_identifier = models.CharField(max_length=8, unique=True)

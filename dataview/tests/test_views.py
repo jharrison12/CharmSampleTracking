@@ -398,7 +398,7 @@ class TestCaseSetup(TestCase):
                                                                  due_date=datetime.date(2023, 5, 4),
                                                                  last_menstrual_period=datetime.date(2023, 3, 3),
                                                                  )
-        self.mother_one_pregnancy_one.clean()
+        self.mother_one_pregnancy_one.save()
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
         self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
@@ -426,13 +426,14 @@ class TestCaseSetup(TestCase):
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.MALE,
                                               birth_date=datetime.date(2020, 7, 3),
-                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic)
+                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic,
+                                              pregnancy_fk=self.mother_one_pregnancy_one)
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
                                               charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021, 8, 10),
-                                              child_twin=False, race_fk=self.black,ethnicity_fk=self.non_hispanic)
+                                              child_twin=False, race_fk=self.black,ethnicity_fk=self.non_hispanic,pregnancy_fk=self.mother_one_pregnancy_one)
 
         self.child_one_name = Name.objects.create(last_name='Harrison',first_name='Jonathan')
         self.child_two_name = Name.objects.create(last_name='Smith',first_name='Kevin')
@@ -858,7 +859,7 @@ class ChildInformationPage(TestCaseSetup):
                                            birth_hospital=self.health_care_facility_1,
                                            birth_sex=Child.BirthSexChoices.FEMALE,
                                            birth_date=datetime.date(2021, 8, 10),
-                                           child_twin=False)
+                                           child_twin=False, pregnancy_fk=self.mother_one_pregnancy_one)
         new_child_address = ChildAddress.objects.create(address_fk=self.address, child_fk=child_three)
 
         response = self.client.get(f'/data/child/7000M1/')
