@@ -4,11 +4,12 @@ from django.test import TestCase
 from dataview.models import Caregiver, Name, CaregiverName, Address, \
     CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
     CaregiverPersonalContact, \
-    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, Status, Collection, CaregiverBiospecimen, \
+    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, \
     Mother, Relation, ConsentItem, \
     NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
     ChildSurvey, \
-    Assent, ChildAssent, AgeCategory, ChildBiospecimen, Race, Ethnicity, Pregnancy, CaregiverChildRelation
+    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation
+from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBiospecimen
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm

@@ -4,11 +4,12 @@ from django.test import TestCase
 from dataview.models import Caregiver, Name, CaregiverName, Address, \
     CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
     CaregiverPersonalContact, \
-    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, Status, Collection, CaregiverBiospecimen, \
+    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, \
     Mother, Relation, ConsentItem, \
     NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
     ChildSurvey, \
-    Assent, ChildAssent, AgeCategory, ChildBiospecimen, Race, Ethnicity, Pregnancy, CaregiverChildRelation
+    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation
+from biospecimen.models import Status, Collection, ChildBiospecimen,CaregiverBiospecimen,Processed,Outcome
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -205,9 +206,18 @@ class TestCaseSetup(TestCase):
                                                                   recruitment_date=datetime.date.today())
         # create biospecimen
 
-        self.completed_status = Status.objects.create(status='Completed')
-        self.incomplete = Status.objects.create(status='Incomplete')
-        self.collected = Status.objects.create(status='Collected')
+        self.processed_one = Processed.objects.create(collected_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                  processed_date_time=datetime.datetime(2023,5,5,12,4,0),
+                                                  quantity =2,
+                                                  logged_date_time=datetime.datetime(2023,5,5,12,4,0))
+
+        self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
+        # self.incomplete = Outcome.objects.create(status='Incomplete')
+        # self.collected = Outcome.objects.create(status='Collected')
+
+        self.status_outcome_one = Status.objects.create(outcome_fk=self.completed,processed_fk=self.processed_one)
+
+
         self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
         self.urine_two = Collection.objects.create(collection_type='Urine', collection_number=2)
         self.urine_three = Collection.objects.create(collection_type='Urine', collection_number=3)
@@ -233,8 +243,6 @@ class TestCaseSetup(TestCase):
         self.saliva = Collection.objects.create(collection_type='Saliva')
         self.placenta = Collection.objects.create(collection_type='Placenta')
         self.placenta_two = Collection.objects.create(collection_type='Placenta', collection_number=2)
-
-
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,

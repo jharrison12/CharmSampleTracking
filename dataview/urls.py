@@ -29,5 +29,5 @@ urlpatterns = [
     re_path(r"^child/(?P<child_charm_id>\w+)/$", dataviews.child_information_page,name='child_information_page'),
     re_path(r"^child/(?P<child_charm_id>\w+)/survey/$", dataviews.child_survey_page,name='child_survey_page'),
     re_path(r"^child/(?P<child_charm_id>\w+)/assent/$", dataviews.child_assent_page,name='child_assent_page'),
-    re_path(r"^child/(?P<child_charm_id>\w+)/biospecimen/$", dataviews.child_biospecimen_page,name='child_biospecimen_page')
+
 ]

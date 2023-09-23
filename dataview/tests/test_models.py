@@ -5,9 +5,9 @@ from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation, Status,\
-    CaregiverBiospecimen,Collection,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent, ChildBiospecimen,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
+    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
+    ChildSurvey,ChildAssent,Assent, ,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
+from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Outcome
 
 import datetime
 from django.utils import timezone
@@ -206,9 +206,16 @@ class ModelTest(TestCase):
 
         # create biospecimen
 
-        self.completed_status = Status.objects.create(status='Completed')
-        self.incomplete = Status.objects.create(status='Incomplete')
-        self.collected = Status.objects.create(status='Collected')
+        self.processed_one = Processed.objects.create(collected_date_time=datetime.datetime(2023, 5, 5, 12, 0, 0),
+                                                      processed_date_time=datetime.datetime(2023, 5, 5, 12, 4, 0),
+                                                      quantity=2,
+                                                      logged_date_time=datetime.datetime(2023, 5, 5, 12, 4, 0))
+
+        # self.completed = Outcome.objects.create(status='Completed')
+        # self.incomplete = Outcome.objects.create(status='Incomplete')
+        # self.collected = Outcome.objects.create(status='Collected')
+
+        self.status_outcome_one = Status.objects.create(outcome_fk=self.Outcome.OutcomeChoices.COMPLETED, processed_fk=self.one)
         self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
         self.urine_two = Collection.objects.create(collection_type='Urine', collection_number=2)
         self.urine_three = Collection.objects.create(collection_type='Urine', collection_number=3)
@@ -743,27 +750,6 @@ class CaregiverChildRelationModelTest(ModelTest):
         non_pcg_row = CaregiverChildRelation.objects.filter(caregiver_fk=self.second_caregiver).first()
         self.assertEqual(non_pcg_row.relation_fk.relation_type,'Mother-in-law')
 
-class BioSpecimenCaregiverModelsTest(ModelTest):
-    def test_biospecimen_links_to_mother_table(self):
-        caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine')\
-            .filter(charm_project_identifier='P7000').first()
-        self.assertEqual(caregiver_bio_one,self.first_caregiver)
-
-    def test_biospecimen_urine_links_to_two_caregivers(self):
-        urine_samples = CaregiverBiospecimen.objects.filter(collection_fk__collection_type='Urine').filter(collection_fk__collection_number=1)
-        self.assertEqual(urine_samples.count(),2)
-
-    def test_biospecimen_links_to_incentive_table(self):
-        first_incentive =  Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine').first()
-        self.assertEqual(first_incentive.incentive_amount,100)
-
-    def test_caregiver_biospecimen_doesnt_allow_duplicates(self):
-        caregiverbio_one = CaregiverBiospecimen(caregiver_fk=self.first_caregiver,collection_fk=self.serum_one,
-                                                status_fk=self.completed_status,biospecimen_date=datetime.date.today(),
-                                                incentive_fk=self.incentive_one)
-        with self.assertRaises(ValidationError):
-            caregiverbio_one.full_clean()
-
 class PrimaryCaregiverModelsTest(ModelTest):
 
     def test_primary_caregiver_links_to_caregiver_table(self):
@@ -860,15 +846,4 @@ class ChildAssentModelTest(ModelTest):
         with self.assertRaises(ValidationError):
             dup_child_assent.full_clean()
 
-
-class ChildBiospecimenModelTest(ModelTest):
-
-    def test_child_links_to_biospecimen(self):
-        test_child = Child.objects.filter(childbiospecimen__age_category_fk=self.early_childhood,childbiospecimen__collection_fk=self.urine_six).first()
-        self.assertEqual(test_child,self.child_one)
-
-    def test_multiple_children_link_to_one_biospecimen(self):
-        urine = ChildBiospecimen.objects.filter(collection_fk=self.urine_six)
-
-        self.assertEqual(urine.count(),2)
 

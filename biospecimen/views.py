@@ -1,4 +1,5 @@
-from dataview.models import Caregiver,Name,CaregiverBiospecimen
+from dataview.models import Caregiver,Name, Child
+from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm
 from django.shortcuts import render,get_object_or_404,redirect
 
@@ -51,3 +52,13 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id):
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'bio_form':bio_form,
                                                                                               'incentive_form':incentive_form,
                                                                                               'charm_project_identifier':caregiver_charm_id})
+
+
+def child_biospecimen_page(request,child_charm_id):
+    child = get_object_or_404(Child,charm_project_identifier=child_charm_id)
+    child_collection_query = ChildBiospecimen.objects.values('collection_fk__collection_type')
+    child_collections = list(set(val for dic in child_collection_query for val in dic.values()))
+    child_biospecimens = ChildBiospecimen.objects.filter(child_fk__charm_project_identifier=child_charm_id)
+    return render(request,template_name='dataview/child_biospecimen.html',context={'child':child,
+                                                                                   'child_collections':child_collections,
+                                                                                   'child_biospecimens':child_biospecimens})

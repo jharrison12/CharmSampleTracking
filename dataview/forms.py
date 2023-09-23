@@ -1,5 +1,6 @@
 from django import forms
-from dataview.models import CaregiverBiospecimen, Incentive
+from dataview.models import Incentive
+from biospecimen.models import CaregiverBiospecimen
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 

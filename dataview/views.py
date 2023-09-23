@@ -3,9 +3,10 @@ import logging
 from django.shortcuts import render,get_object_or_404,redirect
 from dataview.models import Caregiver, Name, CaregiverName, \
     Address, Email, CaregiverEmail, Phone, CaregiverPhone, SocialMedia, CaregiverSocialMedia, CaregiverPersonalContact, \
-    Survey, Project, CaregiverSurvey, Incentive, IncentiveType, CaregiverBiospecimen, ConsentItem, Child, ChildName, \
+    Survey, Project, CaregiverSurvey, Incentive, IncentiveType, ConsentItem, Child, ChildName, \
     ChildSurvey, \
-    ChildAssent, ChildBiospecimen, Collection, CaregiverChildRelation, Pregnancy
+    ChildAssent, CaregiverChildRelation, Pregnancy
+
 from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 
 logging.basicConfig(level=logging.DEBUG)
@@ -81,11 +82,3 @@ def child_assent_page(request,child_charm_id):
     return render(request,template_name='dataview/child_assent.html',context={'child':child,
                                                                               'child_assent':child_assent})
 
-def child_biospecimen_page(request,child_charm_id):
-    child = get_object_or_404(Child,charm_project_identifier=child_charm_id)
-    child_collection_query = ChildBiospecimen.objects.values('collection_fk__collection_type')
-    child_collections = list(set(val for dic in child_collection_query for val in dic.values()))
-    child_biospecimens = ChildBiospecimen.objects.filter(child_fk__charm_project_identifier=child_charm_id)
-    return render(request,template_name='dataview/child_biospecimen.html',context={'child':child,
-                                                                                   'child_collections':child_collections,
-                                                                                   'child_biospecimens':child_biospecimens})
