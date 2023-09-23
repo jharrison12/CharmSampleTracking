@@ -8,7 +8,7 @@ from dataview.models import Caregiver, Name, CaregiverName, Address, \
     Mother, Relation, ConsentItem, \
     NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
     ChildSurvey, \
-    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation
+    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation,ConsentContract,ConsentVersion
 from biospecimen.models import Status, Collection, ChildBiospecimen,CaregiverBiospecimen,Processed,Outcome
 import datetime
 from django.utils import timezone
@@ -204,6 +204,20 @@ class TestCaseSetup(TestCase):
                                                                   incentive_fk=self.incentive_one,
                                                                   healthcare_facility_fk=self.health_care_facility_1,
                                                                   recruitment_date=datetime.date.today())
+
+        # Create consent
+        self.consent_version_1 = ConsentVersion.objects.create(consent_version='5.1')
+        self.consent_version_2 = ConsentVersion.objects.create(consent_version='5.2')
+        self.consent_contract_1 = ConsentContract.objects.create(caregiver_fk=self.first_caregiver,
+                                                                 consent_version_fk=self.consent_version_1,
+                                                                 consent_date=datetime.date.today() - datetime.timedelta(
+                                                                     days=1))
+        self.consent_contract_1 = ConsentContract.objects.create(caregiver_fk=self.first_caregiver,
+                                                                 consent_version_fk=self.consent_version_2,
+                                                                 consent_date=datetime.date.today())
+        self.consent_contract_1_cg_2 = ConsentContract.objects.create(caregiver_fk=self.second_caregiver,
+                                                                      consent_version_fk=self.consent_version_1,
+                                                                      consent_date=datetime.date.today())
         # create biospecimen
 
         self.processed_one = Processed.objects.create(collected_date_time=datetime.datetime(2023,5,5,12,0,0),
