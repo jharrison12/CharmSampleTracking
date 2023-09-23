@@ -36,13 +36,13 @@ class CaregiverBiospecimenPageTest(TestCaseSetup):
         self.assertContains(self.get_biospecimen_page('P7000'),"Urine EC")
 
     def test_caregiver_a_bio_page_shows_hair(self):
-        self.assertContains(self.get_biospecimen_page('P7000'),"Prenatal Hair: Collected")
+        self.assertContains(self.get_biospecimen_page('P7000'),"Prenatal Hair: Completed")
 
     def test_caregiver_a_bio_page_shows_toenails(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Prenatal Toenail: Collected")
+        self.assertContains(self.get_biospecimen_page('P7000'), "Prenatal Toenail: Completed")
 
     def test_caregiver_a_bio_page_shows_saliva(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Saliva: Collected")
+        self.assertContains(self.get_biospecimen_page('P7000'), "Saliva: Completed")
 
     def test_caregiver_a_bio_page_does_not_show_none_saliva(self):
         self.assertNotContains(self.get_biospecimen_page('P7000'), "None Saliva")
@@ -51,7 +51,7 @@ class CaregiverBiospecimenPageTest(TestCaseSetup):
         self.assertNotContains(self.get_biospecimen_page('P7000'), "None Placenta")
 
     def test_caregiver_a_bio_page_shows_placenta(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Placenta: Collected")
+        self.assertContains(self.get_biospecimen_page('P7000'), "Placenta: Completed")
 
 
 class CaregiverBioSpecimenEntryPage(TestCaseSetup):
@@ -119,3 +119,25 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         correct_incentive = Incentive.objects.filter(incentive_amount=1).first()
 
         self.assertEqual(placenta_two.incentive_fk,correct_incentive)
+
+
+class ChildBiospecimenPage(TestCaseSetup):
+
+    def test_child_biospecimen_page_uses_correct_template(self):
+        response = self.client.get(f'/biospecimen/child/7000M1/')
+        self.assertTemplateUsed(response,'biospecimen/child_biospecimen.html')
+
+    def test_child_biospecimen_page_has_header(self):
+        response = self.client.get(f'/biospecimen/child/7000M1/')
+        self.assertContains(response,'Child ID: 7000M1')
+
+    def test_child_biospecimen_page_has_urine(self):
+        response = self.client.get(f'/biospecimen/child/7000M1/')
+        self.assertContains(response,'Urine 6: Completed')
+
+    def test_child_biospecimen_contains_all_child_biospecimens(self):
+        response = self.client.get(f'/biospecimen/child/7000M1/')
+        child_bios = ChildBiospecimen.objects.values('collection_fk__collection_type')
+        child_bios_list = list(set(value for dic in child_bios for value in dic.values()))
+        for value in child_bios_list:
+            self.assertContains(response, value)

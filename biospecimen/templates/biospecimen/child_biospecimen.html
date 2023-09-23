@@ -5,7 +5,7 @@
     <h2>{{ bio_collection }}</h2>
     {% for child_bio in child_biospecimens %}
         {% if child_bio.collection_fk.collection_type == bio_collection %}
-            {{ child_bio.collection_fk.collection_type }} {{ child_bio.collection_fk.collection_number|default_if_none:"" }}: {{ child_bio.status_fk }}
+            {{ child_bio.collection_fk.collection_type }} {{ child_bio.collection_fk.collection_number|default_if_none:"" }}: {{ child_bio.status_fk.outcome_fk.get_outcome_display }}
         {% elif child_bio.collection_fk.collection_type != bio_collection %}
         {% else %}
             <p>No biospecimen of this type</p>

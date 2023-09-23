@@ -212,10 +212,12 @@ class TestCaseSetup(TestCase):
                                                   logged_date_time=datetime.datetime(2023,5,5,12,4,0))
 
         self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
-        # self.incomplete = Outcome.objects.create(status='Incomplete')
+        self.incomplete = Outcome.objects.create(status=Outcome.OutcomeChoices.NOT_COLLECTED)
         # self.collected = Outcome.objects.create(status='Collected')
 
-        self.status_outcome_one = Status.objects.create(outcome_fk=self.completed,processed_fk=self.processed_one)
+        self.status_outcome_complete = Status.objects.create(outcome_fk=self.completed,processed_fk=self.processed_one)
+        self.status_outcome_incomplete = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
+        # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
 
         self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
@@ -246,152 +248,152 @@ class TestCaseSetup(TestCase):
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.urine_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_urine_one_caregiver_two = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.second_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.urine_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_urine_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.incomplete,
+            status_fk=self.status_outcome_incomplete,
             collection_fk=self.urine_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_urine_three_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.urine_three,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_urine_ec_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                      status_fk=self.incomplete,
+                                                                                      status_fk=self.status_outcome_incomplete,
                                                                                       collection_fk=self.urine_ec,
                                                                                       incentive_fk=self.incentive_one,
                                                                                       biospecimen_date=datetime.date.today())
 
         self.biospecimen_urine_mc_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                      status_fk=self.incomplete,
+                                                                                      status_fk=self.status_outcome_incomplete,
                                                                                       collection_fk=self.urine_mc,
                                                                                       incentive_fk=self.incentive_one,
                                                                                       biospecimen_date=datetime.date.today())
 
         self.biospecimen_serum_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.serum_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023, 8, 23))
 
         self.biospecimen_serum_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.incomplete,
+            status_fk=self.status_outcome_incomplete,
             collection_fk=self.serum_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_plasma_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.plasma_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.incomplete,
+            status_fk=self.status_outcome_incomplete,
             collection_fk=self.plasma_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.bloodspots_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.incomplete,
+            status_fk=self.status_outcome_incomplete,
             collection_fk=self.bloodspots_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_whole_blood_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.whole_blood_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_whole_blood_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.incomplete,
+            status_fk=self.status_outcome_incomplete,
             collection_fk=self.whole_blood_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_buffy_coat_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.buffy_coat_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_buffy_coat_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.incomplete,
+            status_fk=self.status_outcome_incomplete,
             collection_fk=self.buffy_coat_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_red_blood_cells_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.completed_status,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.red_blood_cells_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_red_blood_cells_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.incomplete,
+            status_fk=self.status_outcome_incomplete,
             collection_fk=self.red_blood_cells_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today())
 
         self.biospecimen_hair_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.collected,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.hair_prenatal,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,23))
 
         self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.collected,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.toenail_prenatal,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26))
 
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.collected,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.saliva,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26))
 
         self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.collected,
+            status_fk=self.status_outcome_complete,
             collection_fk=self.placenta,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26))
@@ -488,7 +490,7 @@ class TestCaseSetup(TestCase):
         # child biospecimen
         self.early_childhood = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
         self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                           status_fk=self.completed_status,
+                                                                           status_fk=self.status_outcome_complete,
                                                                            collection_fk=self.urine_six,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood,
@@ -496,7 +498,7 @@ class TestCaseSetup(TestCase):
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
-                                                                           status_fk=self.completed_status,
+                                                                           status_fk=self.status_outcome_complete,
                                                                            collection_fk=self.urine_one,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood,
@@ -504,7 +506,7 @@ class TestCaseSetup(TestCase):
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
         self.child_one_biospecimen_hair = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                          status_fk=self.completed_status,
+                                                                          status_fk=self.status_outcome_complete,
                                                                           collection_fk=self.hair,
                                                                           incentive_fk=self.incentive_one,
                                                                           age_category_fk=self.early_childhood,
@@ -512,7 +514,7 @@ class TestCaseSetup(TestCase):
                                                                           kit_sent_date=datetime.date(2023, 8, 12))
 
         self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                             status_fk=self.completed_status,
+                                                                             status_fk=self.status_outcome_complete,
                                                                              collection_fk=self.toenail,
                                                                              incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.early_childhood,
@@ -814,23 +816,3 @@ class ChildAssentPage(TestCaseSetup):
         response = self.client.get(f'/data/child/7002M1/')
         self.assertEqual(response.status_code,404)
 
-class ChildBiospecimenPage(TestCaseSetup):
-
-    def test_child_biospecimen_page_uses_correct_template(self):
-        response = self.client.get(f'/data/child/7000M1/biospecimen/')
-        self.assertTemplateUsed(response,'dataview/child_biospecimen.html')
-
-    def test_child_biospecimen_page_has_header(self):
-        response = self.client.get(f"/data/child/7000M1/biospecimen/")
-        self.assertContains(response,'Child ID: 7000M1')
-
-    def test_child_biospecimen_page_has_urine(self):
-        response = self.client.get(f"/data/child/7000M1/biospecimen/")
-        self.assertContains(response,'Urine 6: Completed')
-
-    def test_child_biospecimen_contains_all_child_biospecimens(self):
-        response = self.client.get(f"/data/child/7000M1/biospecimen/")
-        child_bios = ChildBiospecimen.objects.values('collection_fk__collection_type')
-        child_bios_list = list(set(value for dic in child_bios for value in dic.values()))
-        for value in child_bios_list:
-            self.assertContains(response, value)

@@ -6,7 +6,7 @@
             {% for serum in biospecimen_serum|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ serum.collection_fk.collection_type }}{{ serum.collection_fk.collection_number }}">
                     <div class="{{ serum.collection_fk.collection_type }}{{ serum.collection_fk.collection_number }}_status">
-                    {{ serum.collection_fk.collection_type }} {{ serum.collection_fk.collection_number }}: {{ serum.status_fk.status }}
+                    {{ serum.collection_fk.collection_type }} {{ serum.collection_fk.collection_number }}: {{ serum.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ serum.collection_fk.collection_type }}{{ serum.collection_fk.collection_number }}_date">
                     Date: {{ serum.biospecimen_date }}
@@ -19,7 +19,7 @@
             {% for plasma in biospecimen_plasma|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ plasma.collection_fk.collection_type }}{{ plasma.collection_fk.collection_number }}">
                     <div class="{{ plasma.collection_fk.collection_type }}{{ plasma.collection_fk.collection_number }}_status">
-                    {{ plasma.collection_fk.collection_type }} {{ plasma.collection_fk.collection_number }}: {{ plasma.status_fk.status }}
+                    {{ plasma.collection_fk.collection_type }} {{ plasma.collection_fk.collection_number }}: {{ plasma.status_fk.outcome_fk.get_outcome_display  }}
                     </div>
                     <div class="{{ plasma.collection_fk.collection_type }}{{ plasma.collection_fk.collection_number }}_date">
                     Date: {{ plasma.biospecimen_date }}
@@ -32,7 +32,7 @@
             {% for bloodspots in biospecimen_bloodspots|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ bloodspots.collection_fk.collection_type }}{{ bloodspots.collection_fk.collection_number }}">
                     <div class="{{ bloodspots.collection_fk.collection_type }}{{ bloodspots.collection_fk.collection_number }}_status">
-                    {{ bloodspots.collection_fk.collection_type }} {{ bloodspots.collection_fk.collection_number }}: {{ bloodspots.status_fk.status }}
+                    {{ bloodspots.collection_fk.collection_type }} {{ bloodspots.collection_fk.collection_number }}: {{ bloodspots.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ bloodspots.collection_fk.collection_type }}{{ bloodspots.collection_fk.collection_number }}_date">
                     Date: {{ bloodspots.biospecimen_date }}
@@ -45,7 +45,7 @@
             {% for whole_blood in biospecimen_whole_blood|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ whole_blood.collection_fk.collection_type }}{{ whole_blood.collection_fk.collection_number }}">
                     <div class="{{ whole_blood.collection_fk.collection_type }}{{ whole_blood.collection_fk.collection_number }}_status">
-                    {{ whole_blood.collection_fk.collection_type }} {{ whole_blood.collection_fk.collection_number }}: {{ whole_blood.status_fk.status }}
+                    {{ whole_blood.collection_fk.collection_type }} {{ whole_blood.collection_fk.collection_number }}: {{ whole_blood.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ whole_blood.collection_fk.collection_type }}{{ whole_blood.collection_fk.collection_number }}_date">
                     Date: {{ whole_blood.biospecimen_date }}
@@ -58,7 +58,7 @@
             {% for buffy_coat in biospecimen_buffy_coat|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ buffy_coat.collection_fk.collection_type }}{{ buffy_coat.collection_fk.collection_number }}">
                     <div class="{{ buffy_coat.collection_fk.collection_type }}{{ buffy_coat.collection_fk.collection_number }}_status">
-                    {{ buffy_coat.collection_fk.collection_type }} {{ buffy_coat.collection_fk.collection_number }}: {{ buffy_coat.status_fk.status }}
+                    {{ buffy_coat.collection_fk.collection_type }} {{ buffy_coat.collection_fk.collection_number }}: {{ buffy_coat.status_fk.outcome_fk.get_outcome_display  }}
                     </div>
                     <div class="{{ buffy_coat.collection_fk.collection_type }}{{ buffy_coat.collection_fk.collection_number }}_date">
                     Date: {{ buffy_coat.biospecimen_date }}
@@ -71,7 +71,7 @@
             {% for red_blood in biospecimen_red_blood_cells|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ red_blood.collection_fk.collection_type }}{{ red_blood.collection_fk.collection_number }}">
                     <div class="{{ red_blood.collection_fk.collection_type }}{{ red_blood.collection_fk.collection_number }}_status">
-                    {{ red_blood.collection_fk.collection_type }} {{ red_blood.collection_fk.collection_number }}: {{ red_blood.status_fk.status }}
+                    {{ red_blood.collection_fk.collection_type }} {{ red_blood.collection_fk.collection_number }}: {{ red_blood.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ red_blood.collection_fk.collection_type }}{{ red_blood.collection_fk.collection_number }}_date">
                     Date: {{ red_blood.biospecimen_date }}
@@ -84,7 +84,7 @@
             {% for urine in biospecimen_urines|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ urine.collection_fk.collection_type }}{{ urine.collection_fk.collection_number }}">
                     <div class="{{ urine.collection_fk.collection_type }}{{ urine.collection_fk.collection_number }}_status">
-                    {{ urine.collection_fk.collection_type }} {{ urine.collection_fk.collection_number }}: {{ urine.status_fk.status }}
+                    {{ urine.collection_fk.collection_type }} {{ urine.collection_fk.collection_number }}: {{ urine.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ urine.collection_fk.collection_type }}{{ urine.collection_fk.collection_number }}_date">
                     Date: {{ urine.biospecimen_date }}
@@ -97,7 +97,7 @@
             {% for hair in biospecimen_hair|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ hair.collection_fk.collection_type }}{{ hair.collection_fk.collection_number }}">
                     <div class="{{ hair.collection_fk.collection_type }}{{ hair.collection_fk.collection_number }}_status">
-                    {{ hair.collection_fk.collection_number }} {{ hair.collection_fk.collection_type }}: {{ hair.status_fk.status }}
+                    {{ hair.collection_fk.collection_number }} {{ hair.collection_fk.collection_type }}: {{ hair.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ hair.collection_fk.collection_type }}{{ hair.collection_fk.collection_number }}_date">
                     {{ hair.collection_fk.collection_number }} {{ hair.collection_fk.collection_type }} Date: {{ hair.biospecimen_date }}
@@ -113,7 +113,7 @@
             {% for toenail in biospecimen_toenail|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}">
                     <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}_status">
-                    {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }}: {{ toenail.status_fk.status }}
+                    {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }}: {{ toenail.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ toenail.collection_fk.collection_type }}{{ toenail.collection_fk.collection_number }}_date">
                     {{ toenail.collection_fk.collection_number }} {{ toenail.collection_fk.collection_type }} Date: {{ toenail.biospecimen_date }}
@@ -129,7 +129,7 @@
             {% for saliva in biospecimen_saliva|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ saliva.collection_fk.collection_type }}{{ saliva.collection_fk.collection_number }}">
                     <div class="{{ saliva.collection_fk.collection_type }}{{ saliva.collection_fk.collection_number }}_status">
-                    {{ saliva.collection_fk.collection_number|default_if_none:"" }} {{ saliva.collection_fk.collection_type }}: {{ saliva.status_fk.status }}
+                    {{ saliva.collection_fk.collection_number|default_if_none:"" }} {{ saliva.collection_fk.collection_type }}: {{ saliva.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ saliva.collection_fk.collection_type }}{{ saliva.collection_fk.collection_number }}_date">
                     {{ saliva.collection_fk.collection_number|default_if_none:"" }} {{ saliva.collection_fk.collection_type }} Date: {{ saliva.biospecimen_date }}
@@ -142,7 +142,7 @@
             {% for placenta in biospecimen_placenta|dictsort:"collection_fk.collection_number" %}
                 <div class="{{ placenta.collection_fk.collection_type }}{{ placenta.collection_fk.collection_number }}">
                     <div class="{{ placenta.collection_fk.collection_type }}{{ placenta.collection_fk.collection_number }}_status">
-                    {{ placenta.collection_fk.collection_number|default_if_none:"" }} {{ placenta.collection_fk.collection_type }}: {{ placenta.status_fk.status }}
+                    {{ placenta.collection_fk.collection_number|default_if_none:"" }} {{ placenta.collection_fk.collection_type }}: {{ placenta.status_fk.outcome_fk.get_outcome_display }}
                     </div>
                     <div class="{{ placenta.collection_fk.collection_type }}{{ placenta.collection_fk.collection_number }}_date">
                     {{ placenta.collection_fk.collection_number|default_if_none:"" }} {{ placenta.collection_fk.collection_type }} Date: {{ placenta.biospecimen_date }}
