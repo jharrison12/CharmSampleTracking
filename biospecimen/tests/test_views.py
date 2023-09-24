@@ -14,9 +14,9 @@ import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm
 from django.utils.html import escape
-from dataview.tests.test_views import TestCaseSetup
+from dataview.tests.db_setup import DatabaseSetup
 
-class CaregiverBiospecimenPageTest(TestCaseSetup):
+class CaregiverBiospecimenPageTest(DatabaseSetup):
 
     def get_biospecimen_page(self,biospecimen_id):
         response = self.client.get(f'/biospecimen/caregiver/{biospecimen_id}/')
@@ -54,7 +54,7 @@ class CaregiverBiospecimenPageTest(TestCaseSetup):
         self.assertContains(self.get_biospecimen_page('P7000'), "Placenta: Completed")
 
 
-class CaregiverBioSpecimenEntryPage(TestCaseSetup):
+class CaregiverBioSpecimenEntryPage(DatabaseSetup):
 
     def get_biospecimen_entry_page(self,biospecimen_id):
         response = self.client.get(f'/biospecimen/caregiver/{biospecimen_id}/entry/')
@@ -121,7 +121,7 @@ class CaregiverBioSpecimenEntryPage(TestCaseSetup):
         self.assertEqual(placenta_two.incentive_fk,correct_incentive)
 
 
-class ChildBiospecimenPage(TestCaseSetup):
+class ChildBiospecimenPage(DatabaseSetup):
 
     def test_child_biospecimen_page_uses_correct_template(self):
         response = self.client.get(f'/biospecimen/child/7000M1/')
@@ -141,3 +141,9 @@ class ChildBiospecimenPage(TestCaseSetup):
         child_bios_list = list(set(value for dic in child_bios for value in dic.values()))
         for value in child_bios_list:
             self.assertContains(response, value)
+
+class CaregiverSingleBiospecimenPage(DatabaseSetup):
+
+    def test_caregiver_blood_spot_page_uses_correct_template(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/blood_spots/')
+        self.assertContains(response,'ID: 1111BS')

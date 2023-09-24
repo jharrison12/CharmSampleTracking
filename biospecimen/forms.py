@@ -1,9 +1,16 @@
 from django import forms
 from dataview.models import Incentive
-from biospecimen.models import CaregiverBiospecimen
+from biospecimen.models import CaregiverBiospecimen,Processed
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 
+
+
+class ProcessedBiospecimenForm(forms.models.ModelForm):
+
+    class Meta:
+        model = Processed
+        fields = ['collected_date_time','processed_date_time','quantity','logged_date_time']
 
 
 class CaregiverBiospecimenForm(forms.models.ModelForm):

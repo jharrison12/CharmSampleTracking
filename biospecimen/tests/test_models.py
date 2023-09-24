@@ -5,11 +5,11 @@ from django.test import TestCase
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status
 import datetime
 from dataview.models import Caregiver,Incentive,Child
-from dataview.tests.test_models import ModelTest
+from dataview.tests.db_setup import DatabaseSetup
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
-class BioSpecimenCaregiverModelsTest(ModelTest):
+class BioSpecimenCaregiverModelsTest(DatabaseSetup):
     def test_biospecimen_links_to_mother_table(self):
         caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type='Urine')\
             .filter(charm_project_identifier='P7000').first()
@@ -31,7 +31,7 @@ class BioSpecimenCaregiverModelsTest(ModelTest):
             caregiverbio_one.full_clean()
 
 
-class ChildBiospecimenModelTest(ModelTest):
+class ChildBiospecimenModelTest(DatabaseSetup):
 
     def test_child_links_to_biospecimen(self):
         test_child = Child.objects.filter(childbiospecimen__age_category_fk=self.early_childhood,childbiospecimen__collection_fk=self.urine_six).first()
