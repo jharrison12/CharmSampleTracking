@@ -39,5 +39,4 @@ class ChildBiospecimenModelTest(ModelTest):
 
     def test_multiple_children_link_to_one_biospecimen(self):
         urine = ChildBiospecimen.objects.filter(collection_fk=self.urine_six)
-
         self.assertEqual(urine.count(),2)

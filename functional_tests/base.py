@@ -215,11 +215,11 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                       quantity=2,
                                                       logged_date_time=datetime.datetime(2023, 5, 5, 12, 4, 0))
 
-        # self.completed = Outcome.objects.create(status='Completed')
-        # self.incomplete = Outcome.objects.create(status='Incomplete')
-        # self.collected = Outcome.objects.create(status='Collected')
+        self.completed = Outcome.objects.create(status='Completed')
+        self.incomplete = Outcome.objects.create(status='Incomplete')
+        self.collected = Outcome.objects.create(status='Collected')
 
-        self.status_outcome_one = Status.objects.create(outcome_fk=self.Outcome.OutcomeChoices.COMPLETED, processed_fk=self.one)
+        self.status_outcome_one = Status.objects.create(outcome_fk=self.completed, processed_fk=self.processed_one)
         self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
         self.urine_two = Collection.objects.create(collection_type='Urine', collection_number=2)
         self.urine_three = Collection.objects.create(collection_type='Urine', collection_number=3)
@@ -508,7 +508,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
                                                                      status_fk=self.completed_status,
-                                                                     collection_fk=self.urine_one,
+                                                                     collection_fk=self.urine_six,
                                                                      incentive_fk=self.incentive_one,
                                                                      age_category_fk=self.early_childhood,
                                                                      collection_date=datetime.date(2023, 8, 15),

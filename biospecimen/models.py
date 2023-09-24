@@ -29,7 +29,7 @@ class Status(models.Model):
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.status
+        return f"{self.outcome_fk}"
 
 class Collection(models.Model):
     #todo subclass text choices

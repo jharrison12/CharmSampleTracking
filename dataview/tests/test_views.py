@@ -513,7 +513,7 @@ class TestCaseSetup(TestCase):
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
                                                                            status_fk=self.status_outcome_complete,
-                                                                           collection_fk=self.urine_one,
+                                                                           collection_fk=self.urine_six,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood,
                                                                            collection_date=datetime.date(2023, 8, 15),
