@@ -35,6 +35,12 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                                                'caregiver':caregiver,
                                                                                                                'caregiver_name': caregiver_name})
 
+def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,collection_fk__collection_type='Bloodspots')
+    return render(request, template_name='biospecimen/caregiver_biospecimen_blood_spots.html',context={'blood_spots':blood_spots,
+                                                                                                       'caregiver':caregiver})
+
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":

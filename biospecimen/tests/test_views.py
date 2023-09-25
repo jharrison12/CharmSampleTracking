@@ -146,4 +146,8 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
     def test_caregiver_blood_spot_page_uses_correct_template(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/blood_spots/')
+        self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_blood_spots.html')
+
+    def test_caregiver_blood_spot_contains_blood_spot_id(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/blood_spots/')
         self.assertContains(response,'ID: 1111BS')

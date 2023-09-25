@@ -1,0 +1,12 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}Charm ID: {{ caregiver.charm_project_identifier }} Family ID: {{ caregiver.specimen_id }}{% endblock %}
+{% block section %}
+    <button type="button" class="btn btn-primary" >Specimen</button>
+    <div class="row" id="biospecimen_information">
+        <div class="col-sm">ID: {{ blood_spots.biospecimen_id }}</div>
+        <div class="col-sm">Type: {{ blood_spots.collection_fk.collection_type }}</div>
+        <div class="col-sm">Log Status: {{ blood_spots.status_fk.outcome_fk }}</div>
+    </div>
+    <hr/>
+
+{% endblock %}

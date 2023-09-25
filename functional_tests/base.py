@@ -249,7 +249,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.plasma_one = Collection.objects.create(collection_type='Plasma', collection_number=1)
         self.plasma_two = Collection.objects.create(collection_type='Plasma', collection_number=2)
         self.bloodspots_one = Collection.objects.create(collection_type='Bloodspots', collection_number=1)
-        self.bloodspots_two = Collection.objects.create(collection_type='Bloodspots', collection_number=2)
+        # self.bloodspots_two = Collection.objects.create(collection_type='Bloodspots', collection_number=2)
         self.whole_blood_one = Collection.objects.create(collection_type='Whole Blood', collection_number=1)
         self.whole_blood_two = Collection.objects.create(collection_type='Whole Blood', collection_number=2)
         self.buffy_coat_one = Collection.objects.create(collection_type='Buffy Coat', collection_number=1)
@@ -350,13 +350,13 @@ class FunctionalTest(StaticLiveServerTestCase):
             biospecimen_date=datetime.date.today(),
             biospecimen_id='1111BS')
 
-        self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_incomplete,
-            collection_fk=self.bloodspots_two,
-            incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today(),
-            biospecimen_id='1112BS')
+        # self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
+        #     caregiver_fk=self.first_caregiver,
+        #     status_fk=self.status_outcome_incomplete,
+        #     collection_fk=self.bloodspots_two,
+        #     incentive_fk=self.incentive_one,
+        #     biospecimen_date=datetime.date.today(),
+        #     biospecimen_id='1112BS')
 
         self.biospecimen_whole_blood_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,

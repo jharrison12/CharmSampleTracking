@@ -22,5 +22,6 @@ app_name = "biospecimen"
 urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", biospecimen_views.caregiver_biospecimen, name='caregiver_biospecimen'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/entry/$", biospecimen_views.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/blood_spots/$", biospecimen_views.caregiver_biospecimen_blood_spots, name='caregiver_biospecimen_blood_spots'),
     re_path(r"^child/(?P<child_charm_id>\w+)/$", biospecimen_views.child_biospecimen_page,name='child_biospecimen_page')
 ]
