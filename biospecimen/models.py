@@ -18,6 +18,7 @@ class Outcome(models.Model):
 
 class Processed(models.Model):
     #TODO add user
+    outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT)
     collected_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
     processed_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
     quantity = models.IntegerField(default=1)
@@ -25,11 +26,10 @@ class Processed(models.Model):
 
 class Status(models.Model):
     #todo sublcass text choices for status
-    outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT)
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"{self.outcome_fk}"
+        return f"{self.processed_fk}"
 
 class Collection(models.Model):
     #todo subclass text choices

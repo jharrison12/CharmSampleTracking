@@ -2,7 +2,7 @@ import logging
 import sqlite3
 
 from django.test import TestCase
-from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status
+from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome
 import datetime
 from dataview.models import Caregiver,Incentive,Child
 from dataview.tests.db_setup import DatabaseSetup
@@ -30,6 +30,12 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         with self.assertRaises(ValidationError):
             caregiverbio_one.full_clean()
 
+    def test_caregiver_biospecimen_outcome_links_to_processed(self):
+        # blood_spots = Collection.objects.get(collection_type='Bloodspots')
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type='Bloodspots')
+        # processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,status__caregiverbiospecimen__caregiver_fk=caregiver)
+        outcome = Outcome.objects.get(processed__status__caregiverbiospecimen=caregiver)
+        self.assertEqual(outcome.get_outcome_display(),'Completed')
 
 class ChildBiospecimenModelTest(DatabaseSetup):
 

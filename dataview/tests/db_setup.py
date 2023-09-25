@@ -218,17 +218,20 @@ class DatabaseSetup(TestCase):
                                                                       consent_date=datetime.date.today())
         # create biospecimen
 
+
+
+        self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
+        self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
+        # self.collected = Outcome.objects.create(status='Collected')
+
         self.processed_one = Processed.objects.create(collected_date_time=datetime.datetime(2023,5,5,12,0,0),
                                                   processed_date_time=datetime.datetime(2023,5,5,12,4,0),
                                                   quantity =2,
-                                                  logged_date_time=datetime.datetime(2023,5,5,12,4,0))
+                                                  logged_date_time=datetime.datetime(2023,5,5,12,4,0),
+                                                      outcome_fk=self.completed)
 
-        self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
-        self.incomplete = Outcome.objects.create(status=Outcome.OutcomeChoices.NOT_COLLECTED)
-        # self.collected = Outcome.objects.create(status='Collected')
-
-        self.status_outcome_complete = Status.objects.create(outcome_fk=self.completed,processed_fk=self.processed_one)
-        self.status_outcome_incomplete = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
+        self.status_outcome_complete = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
 
