@@ -37,7 +37,11 @@ def caregiver_biospecimen(request,caregiver_charm_id):
 
 def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,collection_fk__collection_type='Bloodspots')
+    try:
+        blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,collection_fk__collection_type='Bloodspots')
+    #TODO what except???
+    except:
+        blood_spots = None
     if request.method=="POST":
         processed_form = ProcessedBiospecimenForm(data=request.POST,prefix="processed_form")
         if processed_form.is_valid():

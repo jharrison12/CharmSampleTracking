@@ -163,3 +163,13 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
         logging.critical(f"processed is {processed_one.count()}")
         self.assertIsInstance(response.context['processed_form'], ProcessedBiospecimenForm)
+
+    def test_caregiver_blood_spot_page_does_not_show_processed_form_if_processed_data(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/blood_spots/')
+        blood_spots = Collection.objects.get(collection_type='Bloodspots')
+        caregiver = Caregiver.objects.get(charm_project_identifier='P7000')
+        processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
+                                                 status__caregiverbiospecimen__caregiver_fk=caregiver)
+
+        logging.critical(f"processed is {processed_one.count()}")
+        self.assertNotContains(response,'<form>',html=True)

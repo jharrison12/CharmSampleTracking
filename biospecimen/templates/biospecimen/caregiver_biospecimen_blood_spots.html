@@ -8,5 +8,10 @@
         <div class="col-sm">Log Status: {{ blood_spots.status_fk.outcome_fk }}</div>
     </div>
     <hr/>
+    {% if blood_spots %}
+        {{ blood_spots.biospecimen_id }}
+    {% else %}
+        {{ processed_form }}
+    {% endif %}
 
 {% endblock %}
