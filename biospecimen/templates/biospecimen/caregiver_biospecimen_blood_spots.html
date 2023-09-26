@@ -5,11 +5,26 @@
     <div class="row" id="biospecimen_information">
         <div class="col-sm">ID: {{ blood_spots.biospecimen_id }}</div>
         <div class="col-sm">Type: {{ blood_spots.collection_fk.collection_type }}</div>
-        <div class="col-sm">Log Status: {{ blood_spots.status_fk.outcome_fk }}</div>
+        {#  Not sure what the below object was in the SRO version of this device    #}
+        <div class="col-sm">Log Status: {{ blood_spots.status_fk.processed_fk.outcome_fk.get_outcome_display }}</div>
     </div>
     <hr/>
     {% if blood_spots %}
-        {{ blood_spots.biospecimen_id }}
+        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Processed</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">{{ blood_spots.status_fk.processed_fk.outcome_fk.get_outcome_display }}</button>
+            </div>
+            <div class="col-8">
+                <div>Collected Date Time:{{ blood_spots.status_fk.processed_fk.collected_date_time }}</div>
+                <div>Quantity: {{ blood_spots.status_fk.processed_fk.quantity }}</div>
+                <div>Logged Date Time:{{ blood_spots.status_fk.processed_fk.logged_date_time }}</div>
+                <div>Processed Date Time:{{ blood_spots.status_fk.processed_fk.processed_date_time }}</div>
+                <div>Logged By:BLANK</div>
+            </div>
+        </div>
     {% else %}
         {{ processed_form }}
     {% endif %}
