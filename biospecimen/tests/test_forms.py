@@ -19,6 +19,11 @@ class ProcessedBioFormTest(TestCase):
         form = ProcessedBiospecimenForm()
         self.assertIn('Processed', form.as_p())
 
+    def test_form_validation_for_blank_items(self):
+        form = ProcessedBiospecimenForm(data={'':''})
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required',form.errors['outcome_fk'][0])
+
 class IncentiveFormTest(TestCase):
 
     def test_form_renders_incentive_text_input(self):

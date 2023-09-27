@@ -1,17 +1,20 @@
+import datetime
+
 from django import forms
 from dataview.models import Incentive
-from biospecimen.models import CaregiverBiospecimen,Processed
+from biospecimen.models import CaregiverBiospecimen,Processed,Status
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 
+CHOICES = [('C','Complete')]
 
 
-class ProcessedBiospecimenForm(forms.models.ModelForm):
-
-    class Meta:
-        model = Processed
-        fields = ['collected_date_time','processed_date_time','quantity','logged_date_time']
-
+class ProcessedBiospecimenForm(forms.Form):
+    outcome_fk = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
+    collected_date_time = forms.DateTimeField(initial=datetime.datetime.now())
+    processed_date_time = forms.DateTimeField()
+    quantity = forms.IntegerField()
+    logged_date_time = forms.DateTimeField()
 
 class CaregiverBiospecimenForm(forms.models.ModelForm):
 

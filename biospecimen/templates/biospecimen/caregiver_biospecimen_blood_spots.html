@@ -26,7 +26,13 @@
             </div>
         </div>
     {% else %}
-        {{ processed_form }}
+        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_blood_spots' caregiver.charm_project_identifier %}>
+            {% csrf_token %}
+            {{ processed_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
     {% endif %}
 
 {% endblock %}

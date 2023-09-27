@@ -1,7 +1,11 @@
+import logging
+
 from dataview.models import Caregiver,Name, Child
-from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen
+from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Collection
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Create your views here.
 def caregiver_biospecimen(request,caregiver_charm_id):
@@ -37,17 +41,33 @@ def caregiver_biospecimen(request,caregiver_charm_id):
 
 def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    try:
-        blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,collection_fk__collection_type='Bloodspots')
-    #TODO what except???
-    except:
-        blood_spots = None
+    collection_type = Collection.objects.get(collection_type='Bloodspots')
     if request.method=="POST":
         processed_form = ProcessedBiospecimenForm(data=request.POST,prefix="processed_form")
         if processed_form.is_valid():
-            processed_form_final = processed_form.save()
+            logging.critical(f"is valid {processed_form.is_valid()}")
+            blood_spots,created = CaregiverBiospecimen.objects.get_or_create(caregiver_fk=caregiver,
+                                                           collection_fk=collection_type)
+            processed_item = Processed.objects.create()
+            status_item = Status.objects.create(processed_fk=processed_item)
+            logging.critical(f'status item {status_item}')
+            blood_spots.status_fk = status_item
+            processed_item.collected_date_time = processed_form.cleaned_data['collected_date_time']
+            processed_item.outcome_fk = Outcome.objects.get(outcome__iexact=processed_form.cleaned_data['outcome_fk'])
+            processed_item.quantity = processed_form.cleaned_data['quantity']
+            processed_item.logged_date_time = processed_form.cleaned_data['logged_date_time']
+            processed_item.save()
+            blood_spots.save()
+            status_item.save()
+            logging.critical("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_blood_spots',caregiver.charm_project_identifier)
     else:
         processed_form = ProcessedBiospecimenForm(prefix="processed_form")
+        try:
+            blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,
+                                                           collection_fk__collection_type='Bloodspots')
+        except:
+            blood_spots = None
     return render(request, template_name='biospecimen/caregiver_biospecimen_blood_spots.html',context={'blood_spots':blood_spots,
                                                                                                        'caregiver':caregiver,
                                                                                                        'processed_form':processed_form})

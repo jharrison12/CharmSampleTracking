@@ -173,3 +173,25 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
         logging.critical(f"processed is {processed_one.count()}")
         self.assertNotContains(response,'<form>',html=True)
+
+    def test_caregiver_blood_spot_page_redirects_after_post(self):
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/blood_spots/',
+                                    data={'processed_form-collected_date_time':datetime.datetime.now(),
+                                          "processed_form-processed_date_time":datetime.datetime.now(),
+                                          "processed_form-quantity":2,
+                                          "processed_form-logged_date_time":datetime.datetime.now(),
+                                          })
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/blood_spots/")
+
+    def test_processed_form_links_to_status_caregiver(self):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/blood_spots/',
+                                    data={'processed_form-collected_date_time':datetime.datetime.now(),
+                                          "processed_form-processed_date_time":datetime.datetime.now(),
+                                          "processed_form-quantity":5,
+                                          "processed_form-logged_date_time":datetime.datetime.now(),
+                                          "processed_form-outcome_fk":'C'
+                                          })
+        caregiver_object = CaregiverBiospecimen.objects.get(status_fk__processed_fk__quantity=5)
+        self.assertEqual(caregiver_object.caregiver_fk.charm_project_identifier,'P7000')

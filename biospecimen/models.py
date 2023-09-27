@@ -18,7 +18,7 @@ class Outcome(models.Model):
 
 class Processed(models.Model):
     #TODO add user
-    outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT)
+    outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT,null=True,blank=True)
     collected_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
     processed_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
     quantity = models.IntegerField(default=1)
@@ -26,7 +26,7 @@ class Processed(models.Model):
 
 class Status(models.Model):
     #todo sublcass text choices for status
-    processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT)
+    processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
 
     def __str__(self):
         return f"{self.processed_fk}"
@@ -47,7 +47,7 @@ class Collection(models.Model):
 
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
-    status_fk = models.ForeignKey(Status, on_delete=models.PROTECT)
+    status_fk = models.ForeignKey(Status, on_delete=models.PROTECT, blank=True,null=True)
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     biospecimen_id = models.CharField(max_length=7, null=False,blank=False)
