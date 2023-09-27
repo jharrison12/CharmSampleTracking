@@ -32,11 +32,28 @@ class DatabaseSetup(TestCase):
                                                         specimen_id='4444', echo_pin='333',
                                                         race_fk=self.caucasion,
                                                         ethnicity_fk=self.hispanic)
+
         self.second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',
                                                          date_of_birth=datetime.date(1985, 7, 4),
                                                          ewcp_participant_identifier='0001',
                                                          participation_level_identifier='02',
                                                          specimen_id='5555', echo_pin='444',
+                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                         )
+
+        self.third_caregiver = Caregiver.objects.create(charm_project_identifier='P7002',
+                                                         date_of_birth=datetime.date(1985, 7, 4),
+                                                         ewcp_participant_identifier='0002',
+                                                         participation_level_identifier='02',
+                                                         specimen_id='6666', echo_pin='555',
+                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                         )
+
+        self.fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7003',
+                                                         date_of_birth=datetime.date(1985, 7, 4),
+                                                         ewcp_participant_identifier='0003',
+                                                         participation_level_identifier='02',
+                                                         specimen_id='7777', echo_pin='666',
                                                          race_fk=self.black, ethnicity_fk=self.non_hispanic
                                                          )
 
@@ -353,6 +370,15 @@ class DatabaseSetup(TestCase):
             biospecimen_date=datetime.date.today(),
         biospecimen_id='1111BS')
 
+        self.biospecimen_bloodspots_caregiver_three = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.third_caregiver,
+            status_fk=self.status_outcome_processed_complete,
+            collection_fk=self.bloodspots_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today(),
+            biospecimen_id='1114BS')
+
+
         # self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
         #     caregiver_fk=self.first_caregiver,
         #     status_fk=self.status_outcome_incomplete,
@@ -434,6 +460,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.placenta,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111PL')
+
 
         #create mother and nonmother caregiver tables
 

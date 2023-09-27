@@ -1,7 +1,7 @@
 import logging
 
 from dataview.models import Caregiver,Name, Child
-from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Collection
+from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Collection,Stored
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
 
@@ -82,6 +82,35 @@ def caregiver_biospecimen_processed_post(request,caregiver_charm_id):
     else:
         raise AssertionError
 
+
+def caregiver_biospecimen_stored_post(request,caregiver_charm_id):
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    collection_type = Collection.objects.get(collection_type='Bloodspots')
+    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,status__caregiverbiospecimen__caregiver_fk_id=caregiver)
+    if request.method == "POST":
+        stored_form = StoredBiospecimenForm(data=request.POST, prefix="stored_form")
+        if stored_form.is_valid():
+            logging.critical(f"is valid {stored_form.is_valid()}")
+            ##TODO add function to receive biospecimen id
+            blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver,
+                                                                              collection_fk=collection_type,
+                                                                              )
+            stored_item = Stored.objects.create()
+            status_item = Status.objects.get(processed_fk=processed_item,caregiverbiospecimen__caregiver_fk=caregiver)
+            status_item.stored_fk = stored_item
+            logging.critical(f'status item {status_item}')
+            blood_spots.status_fk = status_item
+            stored_item.stored_date_time = stored_form.cleaned_data['stored_date_time']
+            stored_item.outcome_fk = Outcome.objects.get(outcome__iexact=stored_form.cleaned_data['outcome_fk'])
+            stored_item.quantity = stored_form.cleaned_data['quantity']
+            stored_item.logged_date_time = stored_form.cleaned_data['logged_date_time']
+            stored_item.save()
+            blood_spots.save()
+            status_item.save()
+            logging.critical("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_blood_spots', caregiver.charm_project_identifier)
+    else:
+        raise AssertionError
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)

@@ -217,7 +217,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
 class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):
 
-    def test_caregiver_blood_spot_page_uses_correct_template(self):
+    def test_caregiver_blood_spot_page_redirects_after_processed_post(self):
         response = self.client.post(f'/biospecimen/caregiver/P7001/processed_post/',
                                     data={'processed_form-collected_date_time': datetime.datetime.now(),
                                           "processed_form-processed_date_time": datetime.datetime.now(),
@@ -226,3 +226,15 @@ class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):
                                           "processed_form-outcome_fk": 'C'
                                           })
         self.assertRedirects(response,f"/biospecimen/caregiver/P7001/blood_spots/")
+
+class CaregiverSingleBiospecimenPageHandlesStoredPost(DatabaseSetup):
+
+    def test_caregiver_blood_spot_redirects_after_stored_post(self):
+        response = self.client.post(f'/biospecimen/caregiver/P7002/stored_post/',
+                                    data={'stored_form-logged_date_time': datetime.datetime.now(),
+                                          "stored_form-stored_date_time": datetime.datetime.now(),
+                                          "stored_form-storage_location": 'hospital',
+                                          "stored_form-quantity":1,
+                                          "stored_form-outcome_fk": 'C'
+                                          })
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7002/blood_spots/")
