@@ -226,6 +226,11 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         logging.critical(f"stored is {stored_one.count()}")
         self.assertIsInstance(response.context['shipped_form'], ShippedBiospecimenForm)
 
+    def test_caregiver_blood_spot_page_shows_shipped_data_if_completed(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/blood_spots/')
+
+        self.assertContains(response, 'Shipped Quantity:')
+
 class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):
 
     def test_caregiver_blood_spot_page_redirects_after_processed_post(self):
@@ -249,3 +254,17 @@ class CaregiverSingleBiospecimenPageHandlesStoredPost(DatabaseSetup):
                                           "stored_form-outcome_fk": 'C'
                                           })
         self.assertRedirects(response,f"/biospecimen/caregiver/P7002/blood_spots/")
+
+class CaregiverSingleBiospecimenPageHandlesShippedPost(DatabaseSetup):
+
+    def test_caregiver_blood_spot_redirects_after_shipped_post(self):
+        response = self.client.post(f'/biospecimen/caregiver/P7003/shipped_post/',
+                                    data={
+                                        'shipped_form-outcome_fk':'C',
+                                        'shipped_form-shipping_number':'7777777',
+                                        'shipped_form-quantity':2,
+                                        'shipped_form-shipped_date_time':datetime.datetime.now(),
+                                        'shipped_form-courier': "FedEx",
+                                        'shipped_form-logged_date_time':datetime.datetime.now(),
+                                          })
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7003/blood_spots/")

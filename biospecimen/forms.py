@@ -14,6 +14,7 @@ class ShippedBiospecimenForm(forms.Form):
     quantity = forms.IntegerField()
     shipped_date_time = forms.DateTimeField(initial=datetime.datetime.now())
     logged_date_time = forms.DateTimeField()
+    courier = forms.CharField()
 
 
 class StoredBiospecimenForm(forms.Form):

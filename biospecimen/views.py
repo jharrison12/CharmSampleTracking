@@ -1,7 +1,7 @@
 import logging
 
 from dataview.models import Caregiver,Name, Child
-from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Collection,Stored
+from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Collection,Stored,Shipped
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
@@ -116,7 +116,39 @@ def caregiver_biospecimen_stored_post(request,caregiver_charm_id):
         raise AssertionError
 
 def caregiver_biospecimen_shipped_post(request,caregiver_charm_id):
-    pass
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    collection_type = Collection.objects.get(collection_type='Bloodspots')
+    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+                                           status__caregiverbiospecimen__caregiver_fk_id=caregiver)
+    stored_item = Stored.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+                                           status__caregiverbiospecimen__caregiver_fk_id=caregiver)
+    if request.method == "POST":
+        shipped_form = ShippedBiospecimenForm(data=request.POST, prefix="shipped_form")
+        if shipped_form.is_valid():
+            logging.critical(f"is valid {shipped_form.is_valid()}")
+            ##TODO add function to receive biospecimen id
+            blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver,
+                                                           collection_fk=collection_type,
+                                                           )
+            shipped = Shipped.objects.create()
+            status_item = Status.objects.get(processed_fk=processed_item, caregiverbiospecimen__caregiver_fk=caregiver,stored_fk=stored_item)
+            status_item.shipped_fk = shipped
+            logging.critical(f'status item {status_item}')
+            blood_spots.status_fk = status_item
+            shipped.shipped_date_time = shipped_form.cleaned_data['shipped_date_time']
+            shipped.outcome_fk = Outcome.objects.get(outcome__iexact=shipped_form.cleaned_data['outcome_fk'])
+            shipped.quantity = shipped_form.cleaned_data['quantity']
+            shipped.logged_date_time = shipped_form.cleaned_data['logged_date_time']
+            shipped.courier = shipped_form.cleaned_data['courier']
+            shipped.shipping_number = shipped_form.cleaned_data['shipping_number']
+            stored_item.save()
+            blood_spots.save()
+            status_item.save()
+            shipped.save()
+            logging.critical("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_blood_spots', caregiver.charm_project_identifier)
+    else:
+        raise AssertionError
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
