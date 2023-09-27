@@ -1,14 +1,11 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from dataview.models import Caregiver, Name, CaregiverName, Address, \
-    CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
-    CaregiverPersonalContact, \
-    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, \
-    Mother, Relation, ConsentItem, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, \
-    ConsentContract, ConsentVersion, \
-    ChildAddress, ChildSurvey, Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, \
-    CaregiverChildRelation
-from biospecimen.models import ChildBiospecimen,Collection,CaregiverBiospecimen,Status,Outcome,Processed
+from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
+    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
+    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
+    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
+    ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
+from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome
 import datetime
 import time
 from django.utils import timezone
@@ -38,11 +35,28 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                         specimen_id='4444', echo_pin='333',
                                                         race_fk=self.caucasion,
                                                         ethnicity_fk=self.hispanic)
+
         self.second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',
                                                          date_of_birth=datetime.date(1985, 7, 4),
                                                          ewcp_participant_identifier='0001',
                                                          participation_level_identifier='02',
                                                          specimen_id='5555', echo_pin='444',
+                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                         )
+
+        self.third_caregiver = Caregiver.objects.create(charm_project_identifier='P7002',
+                                                        date_of_birth=datetime.date(1985, 7, 4),
+                                                        ewcp_participant_identifier='0002',
+                                                        participation_level_identifier='02',
+                                                        specimen_id='6666', echo_pin='555',
+                                                        race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                        )
+
+        self.fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7003',
+                                                         date_of_birth=datetime.date(1985, 7, 4),
+                                                         ewcp_participant_identifier='0003',
+                                                         participation_level_identifier='02',
+                                                         specimen_id='7777', echo_pin='666',
                                                          race_fk=self.black, ethnicity_fk=self.non_hispanic
                                                          )
 
@@ -234,9 +248,16 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                       quantity=2,
                                                       logged_date_time=datetime.datetime(2023, 5, 5, 12, 4, 0),
                                                       outcome_fk=self.completed)
+        self.stored_one = Stored.objects.create(outcome_fk=self.completed,
+                                                stored_date_time=datetime.datetime(2023, 5, 5, 12, 0, 0),
+                                                storage_location='hospital',
+                                                quantity=2,
+                                                logged_date_time=datetime.datetime(2023, 5, 5, 12, 0, 0))
 
-        self.status_outcome_complete = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,
+                                                                    stored_fk=self.stored_one)
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
         self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
@@ -267,7 +288,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.urine_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -275,7 +296,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_urine_one_caregiver_two = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.second_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.urine_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -291,7 +312,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_urine_three_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.urine_three,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -313,7 +334,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_serum_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.serum_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023, 8, 23),
@@ -329,11 +350,11 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_plasma_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.plasma_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-            biospecimen_id='1111PL')
+            biospecimen_id='1111BP')
 
         self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -345,11 +366,19 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_stored_complete,
             collection_fk=self.bloodspots_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
             biospecimen_id='1111BS')
+
+        self.biospecimen_bloodspots_caregiver_three = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.third_caregiver,
+            status_fk=self.status_outcome_processed_complete,
+            collection_fk=self.bloodspots_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today(),
+            biospecimen_id='1114BS')
 
         # self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
         #     caregiver_fk=self.first_caregiver,
@@ -357,11 +386,11 @@ class FunctionalTest(StaticLiveServerTestCase):
         #     collection_fk=self.bloodspots_two,
         #     incentive_fk=self.incentive_one,
         #     biospecimen_date=datetime.date.today(),
-        #     biospecimen_id='1112BS')
+        # biospecimen_id='1112BS')
 
         self.biospecimen_whole_blood_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.whole_blood_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -377,7 +406,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_buffy_coat_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.buffy_coat_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -393,7 +422,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_red_blood_cells_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.red_blood_cells_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(), biospecimen_id='1111RB')
@@ -407,28 +436,28 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.biospecimen_hair_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.hair_prenatal,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023, 8, 23), biospecimen_id='1111HR')
 
         self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.toenail_prenatal,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023, 8, 26), biospecimen_id='1111TN')
 
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.saliva,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023, 8, 26), biospecimen_id='1111SA')
 
         self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_complete,
+            status_fk=self.status_outcome_processed_complete,
             collection_fk=self.placenta,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023, 8, 26), biospecimen_id='1111PL')
@@ -458,7 +487,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_BLOOD)
         self.consent_mother_urine = ConsentType.objects.create(
             consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_URINE)
-        self.consent_mother_address = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.ADDRESS)
+        self.consent_mother_address = ConsentType.objects.create(
+            consent_type_text=ConsentType.ConsentTypeChoices.ADDRESS)
         self.consent_mother_birth_cert = ConsentType.objects.create(
             consent_type_text=ConsentType.ConsentTypeChoices.BIRTH_CERTIFICATE)
 
@@ -468,8 +498,8 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                              caregiver_fk=self.first_caregiver)
         self.consent_mother_urine_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_urine,
                                                                              caregiver_fk=self.first_caregiver)
-        self.consent_mother_address_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_address,
-                                                                               caregiver_fk=self.first_caregiver)
+        self.consent_mother_address_caregiver_one = ConsentItem.objects.create(
+            consent_type_fk=self.consent_mother_address, caregiver_fk=self.first_caregiver)
         self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(
             consent_type_fk=self.consent_mother_birth_cert, caregiver_fk=self.first_caregiver)
 
@@ -510,7 +540,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         # create child survey
 
-        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey', project_fk=self.new_project)
+        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey',
+                                                             project_fk=self.new_project)
         self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',
                                                                    project_fk=self.new_project)
 
@@ -539,7 +570,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         # child biospecimen
         self.early_childhood = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
         self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                           status_fk=self.status_outcome_complete,
+                                                                           status_fk=self.status_outcome_processed_complete,
                                                                            collection_fk=self.urine_six,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood,
@@ -547,7 +578,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
-                                                                           status_fk=self.status_outcome_complete,
+                                                                           status_fk=self.status_outcome_processed_complete,
                                                                            collection_fk=self.urine_six,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood,
@@ -555,7 +586,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
         self.child_one_biospecimen_hair = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                          status_fk=self.status_outcome_complete,
+                                                                          status_fk=self.status_outcome_processed_complete,
                                                                           collection_fk=self.hair,
                                                                           incentive_fk=self.incentive_one,
                                                                           age_category_fk=self.early_childhood,
@@ -563,12 +594,14 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                           kit_sent_date=datetime.date(2023, 8, 12))
 
         self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                             status_fk=self.status_outcome_complete,
+                                                                             status_fk=self.status_outcome_processed_complete,
                                                                              collection_fk=self.toenail,
                                                                              incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.early_childhood,
                                                                              collection_date=datetime.date(2023, 8, 15),
                                                                              kit_sent_date=datetime.date(2023, 8, 12))
-    def tearDown(self):
+
+
+def tearDown(self):
         self.browser.quit()
 

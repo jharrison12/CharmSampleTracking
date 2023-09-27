@@ -36,8 +36,24 @@
         </div>
     {% endif %}
     {% if blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk %}
-        {{ blood_spots.status_fk.stored_fk.outcome_fk }}
+        <h2>Stored:</h2>
+         <div id="blood_spot_stored information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Stored</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">{{ blood_spots.status_fk.stored_fk.outcome_fk.get_outcome_display }}</button>
+            </div>
+            <div class="col-8">
+                <div>Stored Date Time:{{ blood_spots.status_fk.stored_fk.stored_date_time }}</div>
+                <div>Quantity: {{ blood_spots.status_fk.stored_fk.quantity }}</div>
+                <div>Logged Date Time:{{ blood_spots.status_fk.stored_fk.logged_date_time }}</div>
+                <div>Stored Date Time:{{ blood_spots.status_fk.stored_fk.storage_location }}</div>
+                <div>Logged By:BLANK</div>
+            </div>
+        </div>
     {% elif not blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk%}
+        <h2>Stored:</h2>
         <div id="blood_spot_stored" class="row border border-primary p-3 rounded">
         <form method="POST" action={% url 'biospecimen:caregiver_stored_post' caregiver.charm_project_identifier %}>
             {% csrf_token %}
