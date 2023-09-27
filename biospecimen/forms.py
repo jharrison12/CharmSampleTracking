@@ -8,6 +8,14 @@ from django.core.exceptions import NON_FIELD_ERRORS
 
 CHOICES = [('C','Complete')]
 
+class ShippedBiospecimenForm(forms.Form):
+    outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
+    shipping_number = forms.CharField()
+    quantity = forms.IntegerField()
+    shipped_date_time = forms.DateTimeField(initial=datetime.datetime.now())
+    logged_date_time = forms.DateTimeField()
+
+
 class StoredBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
     stored_date_time = forms.DateTimeField(initial=datetime.datetime.now())

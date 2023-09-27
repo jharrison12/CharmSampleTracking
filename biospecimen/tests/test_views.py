@@ -10,10 +10,11 @@ from dataview.models import Caregiver, Name, CaregiverName, Address, \
     NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
     ChildSurvey, \
     Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation
-from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBiospecimen,Processed
+from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBiospecimen,Processed,Stored
 import datetime
 from django.utils import timezone
-from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm
+from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
+    ShippedBiospecimenForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -214,6 +215,16 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
         logging.critical(f"processed is {processed_one.count()}")
         self.assertIsInstance(response.context['stored_form'], StoredBiospecimenForm)
+
+    def test_caregiver_blood_spot_page_uses_shipped_form_if_stored_data(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7003/blood_spots/')
+        blood_spots = Collection.objects.get(collection_type='Bloodspots')
+        caregiver = Caregiver.objects.get(charm_project_identifier='P7003')
+        stored_one = Stored.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
+                                                 status__caregiverbiospecimen__caregiver_fk=caregiver)
+
+        logging.critical(f"stored is {stored_one.count()}")
+        self.assertIsInstance(response.context['shipped_form'], ShippedBiospecimenForm)
 
 class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):
 

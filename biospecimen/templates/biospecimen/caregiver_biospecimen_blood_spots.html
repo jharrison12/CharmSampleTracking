@@ -52,7 +52,7 @@
                 <div>Logged By:BLANK</div>
             </div>
         </div>
-    {% elif not blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk%}
+    {% elif not blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk %}
         <h2>Stored:</h2>
         <div id="blood_spot_stored" class="row border border-primary p-3 rounded">
         <form method="POST" action={% url 'biospecimen:caregiver_stored_post' caregiver.charm_project_identifier %}>
@@ -64,5 +64,14 @@
         {{ blood_spots.status_fk.stored_fk.outcome_fk.get_outcome_display }}
     {% else %}
     {% endif %}
-
+    {% if blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk and not blood_spots.status_fk.shipped_fk %}
+        <h2>Shipped</h2>
+        <div id="blood_spot_shipped" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_shipped_post' caregiver.charm_project_identifier %}>
+            {% csrf_token %}
+            {{ shipped_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
+    {% endif %}
 {% endblock %}

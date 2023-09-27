@@ -2,7 +2,8 @@ import logging
 
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Collection,Stored
-from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm
+from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
+ShippedBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
 
 logging.basicConfig(level=logging.DEBUG)
@@ -43,6 +44,7 @@ def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     processed_form = ProcessedBiospecimenForm(prefix="processed_form")
     stored_form = StoredBiospecimenForm(prefix="stored_form")
+    shipped_form = ShippedBiospecimenForm(prefix="shipped_form")
     try:
         blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,
                                                        collection_fk__collection_type='Bloodspots')
@@ -53,7 +55,8 @@ def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
     return render(request, template_name='biospecimen/caregiver_biospecimen_blood_spots.html',context={'blood_spots':blood_spots,
                                                                                                        'caregiver':caregiver,
                                                                                                        'processed_form':processed_form,
-                                                                                                       'stored_form':stored_form})
+                                                                                                       'stored_form':stored_form,
+                                                                                                       'shipped_form':shipped_form})
 
 def caregiver_biospecimen_processed_post(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
@@ -111,6 +114,9 @@ def caregiver_biospecimen_stored_post(request,caregiver_charm_id):
         return redirect('biospecimen:caregiver_biospecimen_blood_spots', caregiver.charm_project_identifier)
     else:
         raise AssertionError
+
+def caregiver_biospecimen_shipped_post(request,caregiver_charm_id):
+    pass
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)

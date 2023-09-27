@@ -91,9 +91,14 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="blood_spot_stored"]/form/input[6]')
         submit.click()
-        time.sleep(30)
+
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Quantity: 6',body)
+
+        #user now sees shipped form
+
+        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Shipping date time:', form)
 
 
         #user goes to P7000 to see stored data
