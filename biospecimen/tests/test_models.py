@@ -2,7 +2,7 @@ import logging
 import sqlite3
 
 from django.test import TestCase
-from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome
+from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored
 import datetime
 from dataview.models import Caregiver,Incentive,Child
 from dataview.tests.db_setup import DatabaseSetup
@@ -37,6 +37,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_outcome_links_to_stored(self):
         caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type='Bloodspots')
+        stored = Stored.objects.create()
         outcome = Outcome.objects.get(stored__status__caregiverbiospecimen=caregiver)
         self.assertEqual(outcome.get_outcome_display(),'Completed')
 

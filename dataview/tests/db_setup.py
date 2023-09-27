@@ -236,7 +236,7 @@ class DatabaseSetup(TestCase):
                                                 logged_date_time=datetime.datetime(2023,5,5,12,0,0))
 
         self.status_outcome_processed_complete = Status.objects.create(processed_fk=self.processed_one)
-        #self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,stored_fk=self.stored_one)
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
@@ -347,7 +347,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_stored_complete,
             collection_fk=self.bloodspots_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),

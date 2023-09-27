@@ -176,7 +176,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         self.assertNotContains(response,'<form>',html=True)
 
     def test_processed_form_links_to_status_caregiver(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7001/blood_spots/',
+        response = self.client.post(f'/biospecimen/caregiver/P7001/processed_post/',
                                     data={'processed_form-collected_date_time':datetime.datetime.now(),
                                           "processed_form-processed_date_time":datetime.datetime.now(),
                                           "processed_form-quantity":5,
