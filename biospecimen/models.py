@@ -16,6 +16,14 @@ class Outcome(models.Model):
     def __str__(self):
         return self.outcome
 
+class Stored(models.Model):
+    outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT,null=True,blank=True)
+    stored_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    #todo subclass this
+    storage_location = models.CharField(max_length=255)
+    quantity = models.IntegerField(default=1)
+    logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
+
 class Processed(models.Model):
     #TODO add user
     outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT,null=True,blank=True)
@@ -27,6 +35,7 @@ class Processed(models.Model):
 class Status(models.Model):
     #todo sublcass text choices for status
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
+    stored_fk = models.ForeignKey(Stored,on_delete=models.PROTECT,null=True,blank=True)
 
     def __str__(self):
         return f"{self.processed_fk}"

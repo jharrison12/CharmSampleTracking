@@ -35,5 +35,18 @@
         </form>
         </div>
     {% endif %}
+    {% if blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk %}
+        {{ blood_spots.status_fk.stored_fk.outcome_fk }}
+    {% elif not blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk%}
+        <div id="blood_spot_stored" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_processed_post' caregiver.charm_project_identifier %}>
+            {% csrf_token %}
+            {{ stored_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
+        {{ blood_spots.status_fk.stored_fk.outcome_fk.get_outcome_display }}
+    {% else %}
+    {% endif %}
 
 {% endblock %}

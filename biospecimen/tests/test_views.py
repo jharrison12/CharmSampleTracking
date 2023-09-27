@@ -13,7 +13,7 @@ from dataview.models import Caregiver, Name, CaregiverName, Address, \
 from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBiospecimen,Processed
 import datetime
 from django.utils import timezone
-from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm
+from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 

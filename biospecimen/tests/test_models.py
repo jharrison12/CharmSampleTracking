@@ -24,17 +24,20 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         self.assertEqual(first_incentive.incentive_amount,100)
 
     def test_caregiver_biospecimen_doesnt_allow_duplicates(self):
-        caregiverbio_one = CaregiverBiospecimen(caregiver_fk=self.first_caregiver,collection_fk=self.serum_one,
-                                                status_fk=self.status_outcome_complete,biospecimen_date=datetime.date.today(),
+        caregiverbio_one = CaregiverBiospecimen(caregiver_fk=self.first_caregiver, collection_fk=self.serum_one,
+                                                status_fk=self.status_outcome_processed_complete, biospecimen_date=datetime.date.today(),
                                                 incentive_fk=self.incentive_one)
         with self.assertRaises(ValidationError):
             caregiverbio_one.full_clean()
 
     def test_caregiver_biospecimen_outcome_links_to_processed(self):
-        # blood_spots = Collection.objects.get(collection_type='Bloodspots')
         caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type='Bloodspots')
-        # processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,status__caregiverbiospecimen__caregiver_fk=caregiver)
         outcome = Outcome.objects.get(processed__status__caregiverbiospecimen=caregiver)
+        self.assertEqual(outcome.get_outcome_display(),'Completed')
+
+    def test_caregiver_biospecimen_outcome_links_to_stored(self):
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type='Bloodspots')
+        outcome = Outcome.objects.get(stored__status__caregiverbiospecimen=caregiver)
         self.assertEqual(outcome.get_outcome_display(),'Completed')
 
 class ChildBiospecimenModelTest(DatabaseSetup):
