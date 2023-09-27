@@ -1,4 +1,5 @@
 import logging
+import sqlite3
 import unittest
 from django.test import TestCase
 from dataview.models import Caregiver, Name, CaregiverName, Address, \
@@ -195,3 +196,21 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
                                           })
         caregiver_object = CaregiverBiospecimen.objects.get(status_fk__processed_fk__quantity=5)
         self.assertEqual(caregiver_object.caregiver_fk.charm_project_identifier,'P7000')
+
+    def test_processed_form_throws_primary_key_error(self):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/blood_spots/',
+                                    data={'processed_form-collected_date_time':datetime.datetime.now(),
+                                          "processed_form-processed_date_time":datetime.datetime.now(),
+                                          "processed_form-quantity":5,
+                                          "processed_form-logged_date_time":datetime.datetime.now(),
+                                          "processed_form-outcome_fk":'C'
+                                          })
+
+        with self.assertRaises(sqlite3.IntegrityError):
+            response = self.client.post(f'/biospecimen/caregiver/P7000/blood_spots/',
+                                        data={'processed_form-collected_date_time': datetime.datetime.now(),
+                                              "processed_form-processed_date_time": datetime.datetime.now(),
+                                              "processed_form-quantity": 5,
+                                              "processed_form-logged_date_time": datetime.datetime.now(),
+                                              "processed_form-outcome_fk": 'C'
+                                              })

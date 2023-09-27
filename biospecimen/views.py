@@ -46,8 +46,9 @@ def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
         processed_form = ProcessedBiospecimenForm(data=request.POST,prefix="processed_form")
         if processed_form.is_valid():
             logging.critical(f"is valid {processed_form.is_valid()}")
+            ##TODO add function to receive biospecimen id
             blood_spots,created = CaregiverBiospecimen.objects.get_or_create(caregiver_fk=caregiver,
-                                                           collection_fk=collection_type)
+                                                           collection_fk=collection_type,biospecimen_id='TEST')
             processed_item = Processed.objects.create()
             status_item = Status.objects.create(processed_fk=processed_item)
             logging.critical(f'status item {status_item}')

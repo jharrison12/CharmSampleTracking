@@ -9,6 +9,7 @@
         <div class="col-sm">Log Status: {{ blood_spots.status_fk.processed_fk.outcome_fk.get_outcome_display }}</div>
     </div>
     <hr/>
+    <h2>Processed:</h2>
     {% if blood_spots %}
         <div id="blood_spot_information" class="row border border-primary p-3 rounded">
             <div class="col-4">

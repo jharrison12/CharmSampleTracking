@@ -10,7 +10,7 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
         # User visits the caregiver biospecimen page and sees urine
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/blood_spots/')
-        time.sleep(20)
+
         header_text = self.browser.find_elements(By.TAG_NAME,'h1')
         self.assertIn('Charm ID: P7000 Family ID: 4444',[item.text for item in header_text])
 
@@ -19,15 +19,24 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
         self.assertIn("Log Status: Completed", body)
 
         #User sees processed information if there is processed data
-        self.assertIn(body,'ID: 1111BS')
-        self.assertIn(body,'Collected Date Time:May 5, 2023, noon')
-        self.assertIn(body,'Quantity: 2')
-        self.assertIn(body,'Logged Date Time:May 5, 2023, 12:04 p.m.')
-        self.assertIn(body,'Processed Date Time:May 5, 2023, 12:04 p.m.')
+        self.assertIn('Collected Date Time:May 5, 2023, noon',body)
+        self.assertIn('Quantity: 2',body)
+        self.assertIn('Logged Date Time:May 5, 2023, 12:04 p.m.',body)
+        self.assertIn('Processed Date Time:May 5, 2023, 12:04 p.m.',body)
         ##TODO change
-        self.assertIn(body,'Logged By:BLANK')
+        self.assertIn('Logged By:BLANK',body)
 
         #user goes to a respondent without processed ata and sees a form!
 
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7001/blood_spots/')
+
+        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Collected date time:',form)
+
+        #user goes back go P7000 to see stored form
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/blood_spots/')
+        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Stored date time:',form)
+

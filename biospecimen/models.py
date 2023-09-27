@@ -50,7 +50,7 @@ class CaregiverBiospecimen(models.Model):
     status_fk = models.ForeignKey(Status, on_delete=models.PROTECT, blank=True,null=True)
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
-    biospecimen_id = models.CharField(max_length=7, null=False,blank=False)
+    biospecimen_id = models.CharField(max_length=7, null=False,blank=False,unique=True)
     biospecimen_date = models.DateField(blank=False,null=False,default=timezone.now)
 
     class Meta:
