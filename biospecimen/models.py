@@ -2,6 +2,8 @@ from django.db import models
 from dataview.models import Caregiver,Incentive,Child,AgeCategory
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+import logging
+logging.basicConfig(level=logging.CRITICAL)
 
 # Create your models here.
 
@@ -58,6 +60,19 @@ class Status(models.Model):
     stored_fk = models.ForeignKey(Stored,on_delete=models.PROTECT,null=True,blank=True)
     shipped_fk = models.ForeignKey(Shipped,on_delete=models.PROTECT,null=True,blank=True)
     received_fk = models.ForeignKey(Received, on_delete=models.PROTECT, null=True, blank=True)
+
+    def return_most_up_to_date_status(self):
+        if self.received_fk and self.received_fk.outcome_fk.get_outcome_display()=='C':
+            return f"Received: {self.received_fk.outcome_fk.get_outcome_display()}"
+        elif self.shipped_fk and self.shipped_fk.outcome_fk.get_outcome_display()=='C':
+            return f"Shipped: {self.shipped_fk.outcome_fk.get_outcome_display()}"
+        elif self.stored_fk and self.stored_fk.outcome_fk.get_outcome_display()=='C':
+            return f"Stored: {self.shipped_fk.outcome_fk.get_outcome_display()}"
+        elif self.processed_fk and self.processed_fk.outcome_fk.get_outcome_display()=='C':
+            return f"Processed: {self.shipped_fk.outcome_fk.get_outcome_display()}"
+        else:
+            logging.critical(f"{self.received_fk} {self.objects.model}")
+            return None
 
     def __str__(self):
         return f"{self.processed_fk}"
