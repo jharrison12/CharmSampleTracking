@@ -102,5 +102,23 @@
             <input type="submit" value="Submit" />
         </form>
         </div>
+    {% elif blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk and blood_spots.status_fk.shipped_fk and blood_spots.status_fk.received_fk %}
+         <h2>Received:</h2>
+         <div id="blood_spot_received information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Received</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">{{ blood_spots.status_fk.received_fk.outcome_fk.get_outcome_display }}</button>
+            </div>
+            <div class="col-8">
+                <div>Received Date Time:{{ blood_spots.status_fk.received_fk.received_date_time}}</div>
+                <div>Quantity:{{ blood_spots.status_fk.received_fk.quantity }}</div>
+                <div>Logged Date Time:{{ blood_spots.status_fk.received_fk.logged_date_time}}</div>
+                <div>Storage Location:{{ blood_spots.status_fk.received_fk.storage_location }}</div>
+                <div>Logged By:BLANK</div>
+            </div>
+         </div>
+
     {% endif %}
 {% endblock %}

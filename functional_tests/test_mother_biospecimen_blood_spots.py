@@ -172,7 +172,7 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
         self.browser.execute_script("arguments[0].click();", submit)
 
 
-        time.sleep(20)
+
         #user goes to P7000 to see stored data
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Quantity:19',body)

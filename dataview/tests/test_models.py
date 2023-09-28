@@ -19,7 +19,7 @@ class CaregiverModelsTest(DatabaseSetup):
 
     def test_saving_and_retrieving_caregiver(self):
         saved_caregivers = Caregiver.objects.all()
-        self.assertEqual(saved_caregivers.count(), 2)
+        self.assertEqual(saved_caregivers.count(), 5)
 
         first_saved_caregiver = saved_caregivers[0]
         second_saved_caregiver = saved_caregivers[1]

@@ -163,7 +163,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
 
-        logging.critical(f"processed is {processed_one.count()}")
+        logging.debug(f"processed is {processed_one.count()}")
         self.assertIsInstance(response.context['processed_form'], ProcessedBiospecimenForm)
 
     def test_caregiver_blood_spot_page_does_not_show_processed_form_if_processed_data(self):
@@ -173,7 +173,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
 
-        logging.critical(f"processed is {processed_one.count()}")
+        logging.debug(f"processed is {processed_one.count()}")
         self.assertNotContains(response,'<form>',html=True)
 
     def test_processed_form_links_to_status_caregiver(self):
@@ -213,7 +213,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
 
-        logging.critical(f"processed is {processed_one.count()}")
+        logging.debug(f"processed is {processed_one.count()}")
         self.assertIsInstance(response.context['stored_form'], StoredBiospecimenForm)
 
     def test_caregiver_blood_spot_page_uses_shipped_form_if_stored_data(self):
@@ -237,8 +237,13 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         shipped_one = Stored.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
 
-        logging.critical(f"shipped is {shipped_one.count()}")
+        logging.debug(f"shipped is {shipped_one.count()}")
         self.assertIsInstance(response.context['received_form'], ReceivedBiospecimenForm)
+
+    def test_caregiver_blood_spot_page_shows_received_data_if_completed(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/blood_spots/')
+        logging.debug(f"recieved?{response.content}")
+        self.assertContains(response, 'Quantity:19')
 
 class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):
 

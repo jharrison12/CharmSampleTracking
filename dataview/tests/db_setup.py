@@ -270,7 +270,7 @@ class DatabaseSetup(TestCase):
                                                     received_date_time=datetime.datetime(2023,5,5,12,0,0),
                                                     storage_location='MSU',
                                                     logged_date_time=datetime.datetime(2023,5,5,12,0,0),
-                                                    quantity=15)
+                                                    quantity=19)
 
         self.status_outcome_processed_complete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
