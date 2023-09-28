@@ -223,13 +223,22 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         stored_one = Stored.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
 
-        logging.critical(f"stored is {stored_one.count()}")
+        logging.debug(f"stored is {stored_one.count()}")
         self.assertIsInstance(response.context['shipped_form'], ShippedBiospecimenForm)
 
     def test_caregiver_blood_spot_page_shows_shipped_data_if_completed(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/blood_spots/')
+        self.assertContains(response, 'Courier:Fedex')
 
-        self.assertContains(response, 'Shipped Quantity:')
+    def test_caregiver_bloodspot_page_uses_received_form_if_shipped_data(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7004/blood_spots/')
+        blood_spots = Collection.objects.get(collection_type='Bloodspots')
+        caregiver = Caregiver.objects.get(charm_project_identifier='P7004')
+        shipped_one = Stored.objects.filter(status__caregiverbiospecimen__collection_fk=blood_spots,
+                                                 status__caregiverbiospecimen__caregiver_fk=caregiver)
+
+        logging.critical(f"shipped is {shipped_one.count()}")
+        self.assertIsInstance(response.context['received_form'], ReceivedBiospecimenForm)
 
 class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):
 

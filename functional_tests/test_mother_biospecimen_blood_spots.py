@@ -98,7 +98,51 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
         #user now sees shipped form
 
         form = self.browser.find_element(By.TAG_NAME, 'form').text
-        self.assertIn('Shipping date time:', form)
+        self.assertIn('Shipped date time:', form)
+        self.assertIn('Outcome fk:', form)
+        self.assertIn('Shipping number:', form)
 
+        #user submits shipped form
+        # user submits stored form to see stored data
+        outcome_fk = Select(self.browser.find_element(By.ID, "id_shipped_form-outcome_fk"))
+        outcome_fk.select_by_visible_text('Complete')
+
+        stored_date_time = self.browser.find_element(By.ID, "id_shipped_form-shipped_date_time")
+        stored_date_time.clear()
+        stored_date_time.send_keys('2023-09-27 12:52:26')
+
+        storage_location = self.browser.find_element(By.ID, "id_shipped_form-shipping_number")
+        storage_location.clear()
+        storage_location.send_keys('7775557')
+
+        quantity = self.browser.find_element(By.ID, 'id_shipped_form-quantity')
+        quantity.clear()
+        quantity.send_keys('12')
+
+        logged = self.browser.find_element(By.ID, 'id_shipped_form-logged_date_time')
+        logged.clear()
+        logged.send_keys('2023-09-27 12:52:26')
+
+        courier = self.browser.find_element(By.ID, 'id_shipped_form-courier')
+        courier.clear()
+        courier.send_keys('Fedex')
+
+        submit = self.browser.find_element(By.XPATH, '/html/body/div/div[4]/form/input[7]')
+        submit.click()
+
+        #user sees shipped data just submitted.
+
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Quantity: 12',body)
+        self.assertIn('Shipping Number:7775557',body)
+        self.assertIn('Courier:Fedex',body)
+        time.sleep
+        #user now sees received form
+
+        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Received date time:', form)
+        self.assertIn('Outcome fk:', form)
+        self.assertIn('Quantity:', form)
+        self.assertIn('Storage:', form)
 
         #user goes to P7000 to see stored data

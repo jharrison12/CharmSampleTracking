@@ -7,7 +7,8 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
-from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped
+from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
+Received
 
 import datetime
 from django.utils import timezone
@@ -57,6 +58,13 @@ class DatabaseSetup(TestCase):
                                                          race_fk=self.black, ethnicity_fk=self.non_hispanic
                                                          )
 
+        self.fifth_caregiver = Caregiver.objects.create(charm_project_identifier='P7004',
+                                                         date_of_birth=datetime.date(1985, 7, 4),
+                                                         ewcp_participant_identifier='0004',
+                                                         participation_level_identifier='02',
+                                                         specimen_id='8888', echo_pin='777',
+                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                         )
 
         self.first_caregiver_name = Name()
         self.first_caregiver_name.first_name = 'Jane'
@@ -258,12 +266,21 @@ class DatabaseSetup(TestCase):
                                                   shipping_number='7777777',
                                                   quantity=3,
                                                   logged_date_time=datetime.datetime(2023,5,5,12,0,0))
+        self.received_one = Received.objects.create(outcome_fk=self.completed,
+                                                    received_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                    storage_location='MSU',
+                                                    logged_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                    quantity=15)
 
         self.status_outcome_processed_complete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,stored_fk=self.stored_one)
         self.status_outcome_shipped_complete = Status.objects.create(processed_fk=self.processed_one,
                                                                      stored_fk=self.stored_one,shipped_fk=self.shipped_one)
+        self.status_outcome_received_complete = Status.objects.create(processed_fk=self.processed_one,
+                                                                     stored_fk=self.stored_one,
+                                                                      shipped_fk=self.shipped_one,
+                                                                      recieved_fk=self.received_one)
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
 
@@ -296,7 +313,7 @@ class DatabaseSetup(TestCase):
         #Create bloodspot rows for testing of application
         self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_shipped_complete,
+            status_fk=self.status_outcome_received_complete,
             collection_fk=self.bloodspots_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -317,6 +334,14 @@ class DatabaseSetup(TestCase):
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
             biospecimen_id='1115BS')
+
+        self.biospecimen_bloodspots_caregiver_five = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.fifth_caregiver,
+            status_fk=self.status_outcome_shipped_complete,
+            collection_fk=self.bloodspots_one,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=datetime.date.today(),
+            biospecimen_id='1116BS')
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,

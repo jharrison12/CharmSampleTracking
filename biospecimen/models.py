@@ -16,6 +16,15 @@ class Outcome(models.Model):
     def __str__(self):
         return self.outcome
 
+class Received(models.Model):
+    ##todo add user
+    outcome_fk = models.ForeignKey(Outcome, on_delete=models.PROTECT, null=True, blank=True)
+    quantity = models.IntegerField(default=1)
+    #todo sublcass storage
+    storage_location = models.CharField(max_length=255)
+    received_date_time = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    logged_date_time = models.DateTimeField(default=timezone.now, null=True, blank=True)
+
 class Shipped(models.Model):
     ##todo add user
     outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT,null=True,blank=True)
@@ -48,6 +57,7 @@ class Status(models.Model):
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
     stored_fk = models.ForeignKey(Stored,on_delete=models.PROTECT,null=True,blank=True)
     shipped_fk = models.ForeignKey(Shipped,on_delete=models.PROTECT,null=True,blank=True)
+    recieved_fk = models.ForeignKey(Received,on_delete=models.PROTECT,null=True,blank=True)
 
     def __str__(self):
         return f"{self.processed_fk}"

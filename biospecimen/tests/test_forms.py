@@ -1,6 +1,6 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm
+ShippedBiospecimenForm,ReceivedBiospecimenForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -43,6 +43,16 @@ class ShippedBioFormTest(TestCase):
 
     def test_form_validation_for_blank_items(self):
         form = ShippedBiospecimenForm(data={'':''})
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required',form.errors['outcome_fk'][0])
+
+class ReceivedBioFormTest(TestCase):
+    def test_form_renders_shipped_for_input(self):
+        form = ReceivedBiospecimenForm()
+        self.assertIn('Received', form.as_p())
+
+    def test_form_validation_for_blank_items(self):
+        form = ReceivedBiospecimenForm(data={'':''})
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['outcome_fk'][0])
 
