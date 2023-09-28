@@ -1,0 +1,124 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}Charm ID: {{ caregiver.charm_project_identifier }} Family ID: {{ caregiver.specimen_id }}{% endblock %}
+{% block section %}
+    <button type="button" class="btn btn-primary" >Specimen</button>
+    <div class="row" id="biospecimen_information">
+        <div class="col-sm">ID: {{ biospecimen_item.biospecimen_id }}</div>
+        <div class="col-sm">Type: {{ biospecimen_item.collection_fk.collection_type }}</div>
+        {#  Not sure what the below object was in the SRO version of this device    #}
+        <div class="col-sm">Log Status: {{ biospecimen_item.status_fk.processed_fk.outcome_fk.get_outcome_display }}</div>
+    </div>
+    <hr/>
+    <h2>Processed:</h2>
+    {% if biospecimen_item %}
+        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Processed</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">{{ biospecimen_item.status_fk.processed_fk.outcome_fk.get_outcome_display }}</button>
+            </div>
+            <div class="col-8">
+                <div>Collected Date Time:{{ biospecimen_item.status_fk.processed_fk.collected_date_time }}</div>
+                <div>Quantity: {{ biospecimen_item.status_fk.processed_fk.quantity }}</div>
+                <div>Logged Date Time:{{ biospecimen_item.status_fk.processed_fk.logged_date_time }}</div>
+                <div>Processed Date Time:{{ biospecimen_item.status_fk.processed_fk.processed_date_time }}</div>
+                <div>Logged By:BLANK</div>
+            </div>
+        </div>
+    {% else %}
+        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_processed_post' caregiver.charm_project_identifier biospecimen_item %}>
+            {% csrf_token %}
+            {{ processed_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
+    {% endif %}
+    {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk %}
+        <h2>Stored:</h2>
+         <div id="blood_spot_stored information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Stored</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">{{ biospecimen_item.status_fk.stored_fk.outcome_fk.get_outcome_display }}</button>
+            </div>
+            <div class="col-8">
+                <div>Stored Date Time:{{ biospecimen_item.status_fk.stored_fk.stored_date_time }}</div>
+                <div>Quantity: {{ biospecimen_item.status_fk.stored_fk.quantity }}</div>
+                <div>Logged Date Time:{{ biospecimen_item.status_fk.stored_fk.logged_date_time }}</div>
+                <div>Stored Date Time:{{ biospecimen_item.status_fk.stored_fk.storage_location }}</div>
+                <div>Logged By:BLANK</div>
+            </div>
+        </div>
+    {% elif not biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk %}
+        <h2>Stored:</h2>
+        <div id="blood_spot_stored" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_stored_post' caregiver.charm_project_identifier biospecimen_item %}>
+            {% csrf_token %}
+            {{ stored_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
+        {{ biospecimen_item.status_fk.stored_fk.outcome_fk.get_outcome_display }}
+    {% else %}
+    {% endif %}
+    {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and not biospecimen_item.status_fk.shipped_fk %}
+        <h2>Shipped</h2>
+        <div id="blood_spot_shipped" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_shipped_post' caregiver.charm_project_identifier %}>
+            {% csrf_token %}
+            {{ shipped_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
+    {% elif biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk %}
+        <h2>Shipped:</h2>
+         <div id="blood_spot_shipped information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">{{ biospecimen_item.status_fk.shipped_fk.outcome_fk.get_outcome_display }}</button>
+            </div>
+            <div class="col-8">
+                <div>Shipped Date Time:{{ biospecimen_item.status_fk.shipped_fk.shipped_date_time}}</div>
+                <div>Quantity: {{ biospecimen_item.status_fk.shipped_fk.quantity }}</div>
+                <div>Logged Date Time:{{ biospecimen_item.status_fk.shipped_fk.logged_date_time}}</div>
+                <div>Courier:{{ biospecimen_item.status_fk.shipped_fk.courier }}</div>
+                <div>Shipping Number:{{ biospecimen_item.status_fk.shipped_fk.shipping_number }}</div>
+                <div>Logged By:BLANK</div>
+            </div>
+         </div>
+
+    {% endif %}
+    {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk and not biospecimen_item.status_fk.received_fk %}
+            <h2>Received</h2>
+        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_received_post' caregiver.charm_project_identifier biospecimen_item %}>
+            {% csrf_token %}
+            {{ received_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
+    {% elif biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk and biospecimen_item.status_fk.received_fk %}
+         <h2>Received:</h2>
+         <div id="blood_spot_received information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Received</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">{{ biospecimen_item.status_fk.received_fk.outcome_fk.get_outcome_display }}</button>
+            </div>
+            <div class="col-8">
+                <div>Received Date Time:{{ biospecimen_item.status_fk.received_fk.received_date_time}}</div>
+                <div>Quantity:{{ biospecimen_item.status_fk.received_fk.quantity }}</div>
+                <div>Logged Date Time:{{ biospecimen_item.status_fk.received_fk.logged_date_time}}</div>
+                <div>Storage Location:{{ biospecimen_item.status_fk.received_fk.storage_location }}</div>
+                <div>Logged By:BLANK</div>
+            </div>
+         </div>
+
+    {% endif %}
+{% endblock %}
