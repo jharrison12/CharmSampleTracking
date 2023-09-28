@@ -280,7 +280,7 @@ class DatabaseSetup(TestCase):
         self.status_outcome_received_complete = Status.objects.create(processed_fk=self.processed_one,
                                                                      stored_fk=self.stored_one,
                                                                       shipped_fk=self.shipped_one,
-                                                                      recieved_fk=self.received_one)
+                                                                      received_fk=self.received_one)
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
 

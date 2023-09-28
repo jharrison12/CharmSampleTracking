@@ -91,5 +91,16 @@
                 <div>Logged By:BLANK</div>
             </div>
          </div>
+
+    {% endif %}
+    {% if blood_spots.status_fk.stored_fk and blood_spots.status_fk.processed_fk and blood_spots.status_fk.shipped_fk and not blood_spots.status_fk.received_fk %}
+            <h2>Received</h2>
+        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
+        <form method="POST" action={% url 'biospecimen:caregiver_received_post' caregiver.charm_project_identifier %}>
+            {% csrf_token %}
+            {{ received_form }}
+            <input type="submit" value="Submit" />
+        </form>
+        </div>
     {% endif %}
 {% endblock %}

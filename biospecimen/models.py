@@ -57,7 +57,7 @@ class Status(models.Model):
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
     stored_fk = models.ForeignKey(Stored,on_delete=models.PROTECT,null=True,blank=True)
     shipped_fk = models.ForeignKey(Shipped,on_delete=models.PROTECT,null=True,blank=True)
-    recieved_fk = models.ForeignKey(Received,on_delete=models.PROTECT,null=True,blank=True)
+    received_fk = models.ForeignKey(Received, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return f"{self.processed_fk}"

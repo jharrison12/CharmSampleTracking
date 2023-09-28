@@ -14,7 +14,7 @@ from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBios
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-    ShippedBiospecimenForm
+    ShippedBiospecimenForm,ReceivedBiospecimenForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -277,3 +277,16 @@ class CaregiverSingleBiospecimenPageHandlesShippedPost(DatabaseSetup):
                                         'shipped_form-logged_date_time':datetime.datetime.now(),
                                           })
         self.assertRedirects(response,f"/biospecimen/caregiver/P7003/blood_spots/")
+
+class CaregiverSingleBiospecimenPageHandlesReceivedPost(DatabaseSetup):
+
+    def test_caregiver_blood_spot_redirects_after_shipped_post(self):
+        response = self.client.post(f'/biospecimen/caregiver/P7004/received_post/',
+                                    data={
+                                            'received_form-quantity':2,
+                                            'received_form-outcome_fk': 'C',
+                                            'received_form-logged_date_time':timezone.now,
+                                            'received_form-received_date_time':timezone.now,
+                                            'received_form-storage_location':'MSU',
+                                          })
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7004/blood_spots/")

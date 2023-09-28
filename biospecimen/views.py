@@ -1,9 +1,10 @@
 import logging
 
 from dataview.models import Caregiver,Name, Child
-from biospecimen.models import CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Collection,Stored,Shipped
+from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
+    Shipped, Received
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm
+ShippedBiospecimenForm, ReceivedBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
 
 logging.basicConfig(level=logging.DEBUG)
@@ -45,6 +46,7 @@ def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
     processed_form = ProcessedBiospecimenForm(prefix="processed_form")
     stored_form = StoredBiospecimenForm(prefix="stored_form")
     shipped_form = ShippedBiospecimenForm(prefix="shipped_form")
+    received_form = ReceivedBiospecimenForm(prefix="received_form")
     try:
         blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,
                                                        collection_fk__collection_type='Bloodspots')
@@ -56,7 +58,8 @@ def caregiver_biospecimen_blood_spots(request,caregiver_charm_id):
                                                                                                        'caregiver':caregiver,
                                                                                                        'processed_form':processed_form,
                                                                                                        'stored_form':stored_form,
-                                                                                                       'shipped_form':shipped_form})
+                                                                                                       'shipped_form':shipped_form,
+                                                                                                       'received_form':received_form})
 
 def caregiver_biospecimen_processed_post(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
@@ -145,6 +148,44 @@ def caregiver_biospecimen_shipped_post(request,caregiver_charm_id):
             blood_spots.save()
             status_item.save()
             shipped.save()
+            logging.critical("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_blood_spots', caregiver.charm_project_identifier)
+    else:
+        raise AssertionError
+
+def caregiver_biospecimen_received_post(request,caregiver_charm_id):
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    collection_type = Collection.objects.get(collection_type='Bloodspots')
+    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+                                           status__caregiverbiospecimen__caregiver_fk_id=caregiver)
+    stored_item = Stored.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+                                     status__caregiverbiospecimen__caregiver_fk_id=caregiver)
+    shipped_item = Shipped.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+                                     status__caregiverbiospecimen__caregiver_fk_id=caregiver)
+    if request.method == "POST":
+        received_form = ReceivedBiospecimenForm(data=request.POST, prefix="received_form")
+        if received_form.is_valid():
+            logging.critical(f"is valid {received_form.is_valid()}")
+            ##TODO add function to receive biospecimen id
+            blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver,
+                                                           collection_fk=collection_type,
+                                                           )
+            received_item = Received.objects.create()
+            status_item = Status.objects.get(processed_fk=processed_item, caregiverbiospecimen__caregiver_fk=caregiver,
+                                             stored_fk=stored_item)
+            status_item.received_fk = received_item
+            logging.critical(f'status item {status_item}')
+            blood_spots.status_fk = status_item
+            received_item.received_date_time = received_form.cleaned_data['received_date_time']
+            received_item.outcome_fk = Outcome.objects.get(outcome__iexact=received_form.cleaned_data['outcome_fk'])
+            received_item.quantity = received_form.cleaned_data['quantity']
+            received_item.logged_date_time = received_form.cleaned_data['logged_date_time']
+            received_item.storage_location = received_form.cleaned_data['storage_location']
+            stored_item.save()
+            blood_spots.save()
+            status_item.save()
+            shipped_item.save()
+            received_item.save()
             logging.critical("everything saved")
         return redirect('biospecimen:caregiver_biospecimen_blood_spots', caregiver.charm_project_identifier)
     else:
