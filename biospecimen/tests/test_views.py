@@ -206,6 +206,10 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
                                               "processed_form-logged_date_time": datetime.datetime.now(),
                                               "processed_form-outcome_fk": 'C'
                                               })
+    def test_caregiver_bio_iem_shows_processed_form_if_no_processed_data(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7001/bloodspots/1/')
+        self.assertIsInstance(response.context['processed_form'], ProcessedBiospecimenForm)
+
 
     def test_caregiver_blood_spot_page_uses_stored_form_if_processed_data(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
