@@ -154,6 +154,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
     def test_caregiver_blood_spot_contains_blood_spot_id(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/')
+        logging.critical(response.content)
         self.assertContains(response,'ID: 1111BS')
 
     def test_caregiver_blood_spot_page_uses_processed_form_if_no_processed_data(self):
@@ -246,7 +247,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         self.assertContains(response, 'Quantity:19')
 
     def test_blood_plams_page_uses_correct_template(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodplasma/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/plasma/')
         self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_item.html')
 
 class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):

@@ -411,7 +411,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.plasma_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-        biospecimen_id='1111BP')
+        biospecimen_id='1111PL')
 
         self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,

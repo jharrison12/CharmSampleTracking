@@ -10,6 +10,7 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
         # User visits the caregiver biospecimen page and sees urine
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/blood_spots/')
+        time.sleep(60)
 
         header_text = self.browser.find_elements(By.TAG_NAME,'h1')
         self.assertIn('Charm ID: P7000 Family ID: 4444',[item.text for item in header_text])

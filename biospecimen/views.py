@@ -6,6 +6,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
+import random
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -34,11 +35,19 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen):
     stored_form = StoredBiospecimenForm(prefix="stored_form")
     shipped_form = ShippedBiospecimenForm(prefix="shipped_form")
     received_form = ReceivedBiospecimenForm(prefix="received_form")
+    biospecimen = get_object_or_404(Collection,collection_type=biospecimen.capitalize())
+    logging.critical(f'bio is {biospecimen}')
     try:
         biospecimen_item = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,
-                                                       collection_fk__collection_type=biospecimen)
+                                                       collection_fk=biospecimen)
     except:
-        biospecimen_item = None
+        new_status = Status.objects.create()
+        biospecimen_item = CaregiverBiospecimen.objects.create(caregiver_fk=caregiver,
+                                                               status_fk=new_status,
+                                                               collection_fk=biospecimen,
+                                                               #TODO fix this
+                                                               biospecimen_id=random.randint(1000, 9999),
+                                                               )
 
 
     return render(request, template_name='biospecimen/caregiver_biospecimen_item.html', context={'biospecimen_item':biospecimen_item,
