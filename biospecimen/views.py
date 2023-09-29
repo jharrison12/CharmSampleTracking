@@ -29,14 +29,14 @@ def child_biospecimen_page(request,child_charm_id):
                                                                                    'child_collections':child_collections,
                                                                                    'child_biospecimens':child_biospecimens})
 
-def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen):
+def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen,collection_num):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     processed_form = ProcessedBiospecimenForm(prefix="processed_form")
     stored_form = StoredBiospecimenForm(prefix="stored_form")
     shipped_form = ShippedBiospecimenForm(prefix="shipped_form")
     received_form = ReceivedBiospecimenForm(prefix="received_form")
-    biospecimen = get_object_or_404(Collection,collection_type=biospecimen.capitalize())
-    logging.critical(f'bio is {biospecimen}')
+    biospecimen = get_object_or_404(Collection,collection_type=biospecimen.capitalize(),collection_number=collection_num)
+    logging.debug(f'bio is {biospecimen}')
     try:
         biospecimen_item = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,
                                                        collection_fk=biospecimen)
@@ -57,20 +57,20 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen):
                                                                                                        'shipped_form':shipped_form,
                                                                                                        'received_form':received_form})
 
-def caregiver_biospecimen_processed_post(request,caregiver_charm_id,biospecimen):
+def caregiver_biospecimen_processed_post(request,caregiver_charm_id,biospecimen,collection_num):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    collection_type = Collection.objects.get(collection_type=biospecimen.capitalize())
+    collection = Collection.objects.get(collection_type=biospecimen.capitalize(),collection_number=collection_num)
     if request.method == "POST":
         processed_form = ProcessedBiospecimenForm(data=request.POST, prefix="processed_form")
         if processed_form.is_valid():
-            logging.critical(f"is valid {processed_form.is_valid()}")
+            logging.debug(f"is valid {processed_form.is_valid()}")
             ##TODO add function to receive biospecimen id
             blood_spots, created = CaregiverBiospecimen.objects.get_or_create(caregiver_fk=caregiver,
-                                                                              collection_fk=collection_type,
+                                                                              collection_fk=collection,
                                                                               biospecimen_id='TEST')
             processed_item = Processed.objects.create()
             status_item = Status.objects.create(processed_fk=processed_item,stored_fk=None)
-            logging.critical(f'status item {status_item}')
+            logging.debug(f'status item {status_item}')
             blood_spots.status_fk = status_item
             processed_item.collected_date_time = processed_form.cleaned_data['collected_date_time']
             processed_item.outcome_fk = Outcome.objects.get(outcome__iexact=processed_form.cleaned_data['outcome_fk'])
@@ -79,29 +79,31 @@ def caregiver_biospecimen_processed_post(request,caregiver_charm_id,biospecimen)
             processed_item.save()
             blood_spots.save()
             status_item.save()
-            logging.critical("everything saved")
-        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier, biospecimen=biospecimen)
+            logging.debug("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier,
+                                                                  biospecimen=biospecimen,
+                                                                  collection_num=collection_num)
     else:
         raise AssertionError
 
 
-def caregiver_biospecimen_stored_post(request,caregiver_charm_id,biospecimen):
-    logging.critical(f"biospecimen in stored post is {biospecimen}")
+def caregiver_biospecimen_stored_post(request,caregiver_charm_id,biospecimen,collection_num):
+    logging.debug(f"biospecimen in stored post is {biospecimen}")
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    collection_type = Collection.objects.get(collection_type=biospecimen.capitalize())
-    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,status__caregiverbiospecimen__caregiver_fk_id=caregiver)
+    collection = Collection.objects.get(collection_type=biospecimen.capitalize(),collection_number=collection_num)
+    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection,status__caregiverbiospecimen__caregiver_fk_id=caregiver)
     if request.method == "POST":
         stored_form = StoredBiospecimenForm(data=request.POST, prefix="stored_form")
         if stored_form.is_valid():
-            logging.critical(f"is valid {stored_form.is_valid()}")
+            logging.debug(f"is valid {stored_form.is_valid()}")
             ##TODO add function to receive biospecimen id
             blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver,
-                                                                              collection_fk=collection_type,
+                                                                              collection_fk=collection,
                                                                               )
             stored_item = Stored.objects.create()
             status_item = Status.objects.get(processed_fk=processed_item,caregiverbiospecimen__caregiver_fk=caregiver)
             status_item.stored_fk = stored_item
-            logging.critical(f'status item {status_item}')
+            logging.debug(f'status item {status_item}')
             blood_spots.status_fk = status_item
             stored_item.stored_date_time = stored_form.cleaned_data['stored_date_time']
             stored_item.outcome_fk = Outcome.objects.get(outcome__iexact=stored_form.cleaned_data['outcome_fk'])
@@ -110,30 +112,32 @@ def caregiver_biospecimen_stored_post(request,caregiver_charm_id,biospecimen):
             stored_item.save()
             blood_spots.save()
             status_item.save()
-            logging.critical("everything saved")
-        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier, biospecimen=biospecimen)
+            logging.debug("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier,
+                                                                   biospecimen=biospecimen,
+                                                                    collection_num=collection_num)
     else:
         raise AssertionError
 
-def caregiver_biospecimen_shipped_post(request,caregiver_charm_id,biospecimen):
+def caregiver_biospecimen_shipped_post(request,caregiver_charm_id,biospecimen,collection_num):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    collection_type = Collection.objects.get(collection_type=biospecimen.capitalize())
-    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+    collection = Collection.objects.get(collection_type=biospecimen.capitalize(),collection_number=collection_num)
+    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection,
                                            status__caregiverbiospecimen__caregiver_fk_id=caregiver)
-    stored_item = Stored.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+    stored_item = Stored.objects.get(status__caregiverbiospecimen__collection_fk_id=collection,
                                            status__caregiverbiospecimen__caregiver_fk_id=caregiver)
     if request.method == "POST":
         shipped_form = ShippedBiospecimenForm(data=request.POST, prefix="shipped_form")
         if shipped_form.is_valid():
-            logging.critical(f"is valid {shipped_form.is_valid()}")
+            logging.debug(f"is valid {shipped_form.is_valid()}")
             ##TODO add function to receive biospecimen id
             blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver,
-                                                           collection_fk=collection_type,
+                                                           collection_fk=collection,
                                                            )
             shipped = Shipped.objects.create()
             status_item = Status.objects.get(processed_fk=processed_item, caregiverbiospecimen__caregiver_fk=caregiver,stored_fk=stored_item)
             status_item.shipped_fk = shipped
-            logging.critical(f'status item {status_item}')
+            logging.debug(f'status item {status_item}')
             blood_spots.status_fk = status_item
             shipped.shipped_date_time = shipped_form.cleaned_data['shipped_date_time']
             shipped.outcome_fk = Outcome.objects.get(outcome__iexact=shipped_form.cleaned_data['outcome_fk'])
@@ -145,33 +149,35 @@ def caregiver_biospecimen_shipped_post(request,caregiver_charm_id,biospecimen):
             blood_spots.save()
             status_item.save()
             shipped.save()
-            logging.critical("everything saved")
-        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier, biospecimen=biospecimen)
+            logging.debug("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier,
+                        biospecimen=biospecimen,
+                        collection_num=collection_num)
     else:
         raise AssertionError
 
-def caregiver_biospecimen_received_post(request,caregiver_charm_id,biospecimen):
+def caregiver_biospecimen_received_post(request,caregiver_charm_id,biospecimen,collection_num):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    collection_type = Collection.objects.get(collection_type=biospecimen.capitalize())
-    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+    collection = Collection.objects.get(collection_type=biospecimen.capitalize(),collection_number=collection_num)
+    processed_item = Processed.objects.get(status__caregiverbiospecimen__collection_fk_id=collection,
                                            status__caregiverbiospecimen__caregiver_fk_id=caregiver)
-    stored_item = Stored.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+    stored_item = Stored.objects.get(status__caregiverbiospecimen__collection_fk_id=collection,
                                      status__caregiverbiospecimen__caregiver_fk_id=caregiver)
-    shipped_item = Shipped.objects.get(status__caregiverbiospecimen__collection_fk_id=collection_type,
+    shipped_item = Shipped.objects.get(status__caregiverbiospecimen__collection_fk_id=collection,
                                      status__caregiverbiospecimen__caregiver_fk_id=caregiver)
     if request.method == "POST":
         received_form = ReceivedBiospecimenForm(data=request.POST, prefix="received_form")
         if received_form.is_valid():
-            logging.critical(f"is valid {received_form.is_valid()}")
+            logging.debug(f"is valid {received_form.is_valid()}")
             ##TODO add function to receive biospecimen id
             blood_spots = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver,
-                                                           collection_fk=collection_type,
+                                                           collection_fk=collection,
                                                            )
             received_item = Received.objects.create()
             status_item = Status.objects.get(processed_fk=processed_item, caregiverbiospecimen__caregiver_fk=caregiver,
                                              stored_fk=stored_item)
             status_item.received_fk = received_item
-            logging.critical(f'status item {status_item}')
+            logging.debug(f'status item {status_item}')
             blood_spots.status_fk = status_item
             received_item.received_date_time = received_form.cleaned_data['received_date_time']
             received_item.outcome_fk = Outcome.objects.get(outcome__iexact=received_form.cleaned_data['outcome_fk'])
@@ -183,8 +189,10 @@ def caregiver_biospecimen_received_post(request,caregiver_charm_id,biospecimen):
             status_item.save()
             shipped_item.save()
             received_item.save()
-            logging.critical("everything saved")
-        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier, biospecimen=biospecimen)
+            logging.debug("everything saved")
+        return redirect('biospecimen:caregiver_biospecimen_item', caregiver_charm_id=caregiver.charm_project_identifier,
+                        biospecimen=biospecimen,
+                        collection_num=collection_num)
     else:
         raise AssertionError
 

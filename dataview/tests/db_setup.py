@@ -303,11 +303,11 @@ class DatabaseSetup(TestCase):
         self.red_blood_cells_one = Collection.objects.create(collection_type='Red Blood Cells', collection_number=1)
         self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells', collection_number=2)
         self.hair_prenatal = Collection.objects.create(collection_type='Hair', collection_number='Prenatal')
-        self.hair = Collection.objects.create(collection_type='Hair')
+        self.hair = Collection.objects.create(collection_type='Hair',collection_number=1)
         self.toenail_prenatal = Collection.objects.create(collection_type='Toenail', collection_number='Prenatal')
-        self.toenail = Collection.objects.create(collection_type='Toenail')
-        self.saliva = Collection.objects.create(collection_type='Saliva')
-        self.placenta = Collection.objects.create(collection_type='Placenta')
+        self.toenail = Collection.objects.create(collection_type='Toenail',collection_number=1)
+        self.saliva = Collection.objects.create(collection_type='Saliva',collection_number=1)
+        self.placenta_one = Collection.objects.create(collection_type='Placenta',collection_number=1)
         self.placenta_two = Collection.objects.create(collection_type='Placenta', collection_number=2)
 
         #Create bloodspot rows for testing of application
@@ -501,9 +501,9 @@ class DatabaseSetup(TestCase):
         self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_processed_complete,
-            collection_fk=self.placenta,
+            collection_fk=self.placenta_one,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111PL')
+            biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111PC')
 
 
         #create mother and nonmother caregiver tables

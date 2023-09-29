@@ -71,7 +71,7 @@ class Status(models.Model):
         elif self.processed_fk and self.processed_fk.outcome_fk.get_outcome_display()=='C':
             return f"Processed: {self.shipped_fk.outcome_fk.get_outcome_display()}"
         else:
-            logging.critical(f"{self.received_fk} {self.objects.model}")
+            logging.debug(f"{self.received_fk} {self.objects.model}")
             return None
 
     def __str__(self):

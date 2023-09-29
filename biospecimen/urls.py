@@ -22,10 +22,10 @@ app_name = "biospecimen"
 urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", biospecimen_views.caregiver_biospecimen, name='caregiver_biospecimen'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/entry/$", biospecimen_views.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/$", biospecimen_views.caregiver_biospecimen_item, name='caregiver_biospecimen_item'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/processed_post/$", biospecimen_views.caregiver_biospecimen_processed_post, name='caregiver_processed_post'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/stored_post/$", biospecimen_views.caregiver_biospecimen_stored_post, name='caregiver_stored_post'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/shipped_post/$", biospecimen_views.caregiver_biospecimen_shipped_post, name='caregiver_shipped_post'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/received_post/$", biospecimen_views.caregiver_biospecimen_received_post, name='caregiver_received_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/(?P<collection_num>[\w]+)/$", biospecimen_views.caregiver_biospecimen_item, name='caregiver_biospecimen_item'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/(?P<collection_num>[\w]+)/processed_post/$", biospecimen_views.caregiver_biospecimen_processed_post, name='caregiver_processed_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/(?P<collection_num>[\w]+)/stored_post/$", biospecimen_views.caregiver_biospecimen_stored_post, name='caregiver_stored_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/(?P<collection_num>[\w]+)/shipped_post/$", biospecimen_views.caregiver_biospecimen_shipped_post, name='caregiver_shipped_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/(?P<collection_num>[\w]+)/received_post/$", biospecimen_views.caregiver_biospecimen_received_post, name='caregiver_received_post'),
     re_path(r"^child/(?P<child_charm_id>\w+)/$", biospecimen_views.child_biospecimen_page,name='child_biospecimen_page')
 ]
