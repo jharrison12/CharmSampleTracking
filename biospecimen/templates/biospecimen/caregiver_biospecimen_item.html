@@ -10,7 +10,7 @@
     </div>
     <hr/>
     <h2>Processed:</h2>
-    {% if biospecimen_item %}
+    {% if biospecimen_item and biospecimen_item.status_fk.processed_fk %}
         <div id="blood_spot_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}
@@ -26,7 +26,7 @@
                 <div>Logged By:BLANK</div>
             </div>
         </div>
-    {% else %}
+    {% elif biospecimen_item and not biospecimen_item.status_fk.processed_fk %}
         <div id="blood_spot_information" class="row border border-primary p-3 rounded">
         <form method="POST" action={% url 'biospecimen:caregiver_processed_post' caregiver.charm_project_identifier biospecimen_item.collection_fk.collection_type biospecimen_item.collection_fk.collection_number %}>
             {% csrf_token %}
@@ -34,6 +34,8 @@
             <input type="submit" value="Submit" />
         </form>
         </div>
+    {% else %}
+        <div>No biospecimen!</div>
     {% endif %}
     {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk %}
         <h2>Stored:</h2>
