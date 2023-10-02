@@ -26,14 +26,6 @@
                 <div>Logged By:BLANK</div>
             </div>
         </div>
-    {% elif biospecimen_item and not biospecimen_item.status_fk.processed_fk %}
-        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
-        <form method="POST" action={% url 'biospecimen:caregiver_processed_post' caregiver.charm_project_identifier biospecimen_item.collection_fk.collection_type biospecimen_item.collection_fk.collection_number %}>
-            {% csrf_token %}
-            {{ processed_form }}
-            <input type="submit" value="Submit" />
-        </form>
-        </div>
     {% else %}
         <div>No biospecimen!</div>
     {% endif %}
@@ -54,28 +46,9 @@
                 <div>Logged By:BLANK</div>
             </div>
         </div>
-    {% elif not biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk %}
-        <h2>Stored:</h2>
-        <div id="blood_spot_stored" class="row border border-primary p-3 rounded">
-        <form method="POST" action={% url 'biospecimen:caregiver_stored_post' caregiver.charm_project_identifier biospecimen_item.collection_fk.collection_type biospecimen_item.collection_fk.collection_number %}>
-            {% csrf_token %}
-            {{ stored_form }}
-            <input type="submit" value="Submit" />
-        </form>
-        </div>
-        {{ biospecimen_item.status_fk.stored_fk.outcome_fk.get_outcome_display }}
     {% else %}
     {% endif %}
-    {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and not biospecimen_item.status_fk.shipped_fk %}
-        <h2>Shipped</h2>
-        <div id="blood_spot_shipped" class="row border border-primary p-3 rounded">
-        <form method="POST" action={% url 'biospecimen:caregiver_shipped_post' caregiver.charm_project_identifier biospecimen_item.collection_fk.collection_type biospecimen_item.collection_fk.collection_number %}>
-            {% csrf_token %}
-            {{ shipped_form }}
-            <input type="submit" value="Submit" />
-        </form>
-        </div>
-    {% elif biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk %}
+    {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk %}
         <h2>Shipped:</h2>
          <div id="blood_spot_shipped information" class="row border border-primary p-3 rounded">
             <div class="col-4">
@@ -95,16 +68,7 @@
          </div>
 
     {% endif %}
-    {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk and not biospecimen_item.status_fk.received_fk %}
-            <h2>Received</h2>
-        <div id="blood_spot_information" class="row border border-primary p-3 rounded">
-        <form method="POST" action={% url 'biospecimen:caregiver_received_post' caregiver.charm_project_identifier biospecimen_item.collection_fk.collection_type biospecimen_item.collection_fk.collection_number  %}>
-            {% csrf_token %}
-            {{ received_form }}
-            <input type="submit" value="Submit" />
-        </form>
-        </div>
-    {% elif biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk and biospecimen_item.status_fk.received_fk %}
+    {% if biospecimen_item.status_fk.stored_fk and biospecimen_item.status_fk.processed_fk and biospecimen_item.status_fk.shipped_fk and biospecimen_item.status_fk.received_fk %}
          <h2>Received:</h2>
          <div id="blood_spot_received information" class="row border border-primary p-3 rounded">
             <div class="col-4">

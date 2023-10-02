@@ -150,7 +150,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
     def test_caregiver_blood_spot_page_uses_correct_template(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
-        self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_item.html')
+        self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_history.html')
 
     def test_caregiver_blood_spot_contains_blood_spot_id(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
@@ -177,16 +177,6 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         logging.debug(f"processed is {processed_one.count()}")
         self.assertNotContains(response,'<form>',html=True)
 
-    def test_processed_form_links_to_status_caregiver(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7001/bloodspots/1/processed_post/',
-                                    data={'processed_form-collected_date_time':datetime.datetime.now(),
-                                          "processed_form-processed_date_time":datetime.datetime.now(),
-                                          "processed_form-quantity":5,
-                                          "processed_form-logged_date_time":datetime.datetime.now(),
-                                          "processed_form-outcome_fk":'C'
-                                          })
-        caregiver_object = CaregiverBiospecimen.objects.get(status_fk__processed_fk__quantity=5)
-        self.assertEqual(caregiver_object.caregiver_fk.charm_project_identifier,'P7001')
 
     @unittest.skip
     def test_processed_form_throws_primary_key_error(self):
@@ -252,55 +242,8 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
     def test_blood_plams_page_uses_correct_template(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/plasma/1/')
-        self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_item.html')
+        self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_history.html')
 
-class CaregiverSingleBiospecimenPageHandlesProcessedPost(DatabaseSetup):
 
-    def test_caregiver_blood_spot_page_redirects_after_processed_post(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7001/bloodspots/1/processed_post/',
-                                    data={'processed_form-collected_date_time': datetime.datetime.now(),
-                                          "processed_form-processed_date_time": datetime.datetime.now(),
-                                          "processed_form-quantity": 5,
-                                          "processed_form-logged_date_time": datetime.datetime.now(),
-                                          "processed_form-outcome_fk": 'C'
-                                          })
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7001/bloodspots/1/")
 
-class CaregiverSingleBiospecimenPageHandlesStoredPost(DatabaseSetup):
 
-    def test_caregiver_blood_spot_redirects_after_stored_post(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7002/bloodspots/1/stored_post/',
-                                    data={'stored_form-logged_date_time': datetime.datetime.now(),
-                                          "stored_form-stored_date_time": datetime.datetime.now(),
-                                          "stored_form-storage_location": 'hospital',
-                                          "stored_form-quantity":1,
-                                          "stored_form-outcome_fk": 'C'
-                                          })
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7002/bloodspots/1/")
-
-class CaregiverSingleBiospecimenPageHandlesShippedPost(DatabaseSetup):
-
-    def test_caregiver_blood_spot_redirects_after_shipped_post(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7003/bloodspots/1/shipped_post/',
-                                    data={
-                                        'shipped_form-outcome_fk':'C',
-                                        'shipped_form-shipping_number':'7777777',
-                                        'shipped_form-quantity':2,
-                                        'shipped_form-shipped_date_time':datetime.datetime.now(),
-                                        'shipped_form-courier': "FedEx",
-                                        'shipped_form-logged_date_time':datetime.datetime.now(),
-                                          })
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7003/bloodspots/1/")
-
-class CaregiverSingleBiospecimenPageHandlesReceivedPost(DatabaseSetup):
-
-    def test_caregiver_blood_spot_redirects_after_shipped_post(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7004/bloodspots/1/received_post/',
-                                    data={
-                                            'received_form-quantity':2,
-                                            'received_form-outcome_fk': 'C',
-                                            'received_form-logged_date_time':timezone.now,
-                                            'received_form-received_date_time':timezone.now,
-                                            'received_form-storage_location':'MSU',
-                                          })
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7004/bloodspots/1/")
