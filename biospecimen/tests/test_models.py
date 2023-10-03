@@ -3,7 +3,7 @@ import sqlite3
 
 from django.test import TestCase
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored,Shipped,\
-    Received,Collected
+    Received,Collected,Trimester,Perinatal
 import datetime
 from dataview.models import Caregiver,Incentive,Child
 from dataview.tests.db_setup import DatabaseSetup
@@ -54,20 +54,22 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         outcome = Outcome.objects.get(received__status__caregiverbiospecimen=caregiver)
         self.assertEqual(outcome.get_outcome_display(),'Completed')
 
-    def test_caregiver_biospecimen_outcome_links_to_collected(self):
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',trimester_fk__trimester='S')
-        collected = Collected.objects.get(number_of_tubes=5)
-        self.assertEqual()
+    def test_caregiver_biospecimen_links_to_collected(self):
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',trimester_fk__trimester='F')
+        caregiver = Caregiver.objects.get(caregiverbiospecimen__status_fk__collected_fk__number_of_tubes=5)
+        self.assertEqual(caregiver,caregiver_bio.caregiver_fk)
 
-    def test_caregiver_biospecimen_outcome_links_to_trimester(self):
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',trimester_fk__trimester='S')
-        collected = Collected.objects.get(number_of_tubes=5)
-        self.assertEqual()
+    def test_caregiver_biospecimen_links_to_trimester(self):
+        urine_tree = Collection.objects.get(collection_number_fk__collection_number='T',collection_type_fk__collection_type='Urine')
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk=urine_tree)
+        trimester = Trimester.objects.get(trimester='F')
+        self.assertEqual(caregiver.trimester_fk,trimester)
 
     def test_caregiver_biospecimen_outcome_links_to_perinatal(self):
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',trimester_fk__trimester='S')
-        collected = Collected.objects.get(number_of_tubes=5)
-        self.assertEqual()
+        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta',collection_number_fk=None)
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk=placenta)
+        perinatal_event = Perinatal.objects.get(child_fk__charm_project_identifier='7000M1')
+        self.assertEqual(caregiver.perinatal_fk,perinatal_event)
 
 
 class ChildBiospecimenModelTest(DatabaseSetup):

@@ -8,7 +8,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester
+    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal
 
 import datetime
 from django.utils import timezone
@@ -88,6 +88,74 @@ class DatabaseSetup(TestCase):
         CaregiverName.objects.create(caregiver_fk=self.second_caregiver, name_fk=self.second_caregiver_name,
                                      revision_number=1,
                                      eff_start_date=timezone.now(), status='C')
+
+        #create incentive
+        self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
+
+        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
+                                                      incentive_date=datetime.date(2023,8,24), incentive_amount=100)
+
+        #create recruitment
+        self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
+
+        self.caregiver_1_recruitment = Recruitment.objects.create(caregiver_fk=self.first_caregiver,
+                                                                  incentive_fk=self.incentive_one,
+                                                                  healthcare_facility_fk=self.health_care_facility_1,
+                                                                  recruitment_date=datetime.date.today())
+
+        #create mother and nonmother caregiver tables
+
+        self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
+
+        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
+        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
+                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
+                                                                 due_date=datetime.date(2023, 5, 4),
+                                                                 last_menstrual_period=datetime.date(2023, 3, 3),
+                                                                 )
+        self.mother_one_pregnancy_one.save()
+        # create biospecimen
+
+        self.first_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.FIRST,pregnancy_fk=self.mother_one_pregnancy_one)
+
+        self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
+
+        #create primary care_giver
+
+        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
+        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
+        self.primary_care_giver_child_three = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
+
+        # create child
+
+        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
+                                              charm_project_identifier='7000M1',
+                                              birth_hospital=self.health_care_facility_1,
+                                              birth_sex=Child.BirthSexChoices.MALE,
+                                              birth_date=datetime.date(2023, 5, 20),
+                                              child_twin=False, race_fk=self.caucasion, ethnicity_fk=self.hispanic,
+                                              pregnancy_fk=self.mother_one_pregnancy_one)
+        self.mother_one_pregnancy_one.save()
+        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+                                              charm_project_identifier='7001M1',
+                                              birth_hospital=self.health_care_facility_1,
+                                              birth_sex=Child.BirthSexChoices.FEMALE,
+                                              birth_date=datetime.date(2021, 8, 10),
+                                              child_twin=False, race_fk=self.black, ethnicity_fk=self.non_hispanic,
+                                              pregnancy_fk=self.mother_one_pregnancy_one)
+
+        self.child_one_name = Name.objects.create(last_name='Harrison', first_name='Jonathan')
+        self.child_two_name = Name.objects.create(last_name='Smith', first_name='Kevin')
+
+        self.child_name_connection = ChildName.objects.create(child_fk=self.child_one, name_fk=self.child_one_name,
+                                                              status=ChildName.ChildNameStatusChoice.CURRENT, )
+        self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two, name_fk=self.child_two_name,
+                                                                  status=ChildName.ChildNameStatusChoice.CURRENT, )
+        self.second_caregiver_is_mother_in_law = CaregiverChildRelation.objects.create(child_fk=self.child_two,
+                                                                                       caregiver_fk=self.second_caregiver,
+                                                                                       relation_fk=self.mother_in_law)
+
+
 
         # Create address
         self.address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
@@ -194,10 +262,7 @@ class DatabaseSetup(TestCase):
         self.completed_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Completed')
         self.incomplete_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Incomplete')
 
-        self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
-        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
-                                                      incentive_date=datetime.date(2023,8,24), incentive_amount=100)
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
@@ -220,13 +285,7 @@ class DatabaseSetup(TestCase):
                                                                    survey_completion_date=datetime.date(2023,8,30)
                                                                    )
 
-        #create recruitment
-        self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
 
-        self.caregiver_1_recruitment = Recruitment.objects.create(caregiver_fk=self.first_caregiver,
-                                                                  incentive_fk=self.incentive_one,
-                                                                  healthcare_facility_fk=self.health_care_facility_1,
-                                                                  recruitment_date=datetime.date.today())
 
         # Create consent
         self.consent_version_1 = ConsentVersion.objects.create(consent_version='5.1')
@@ -242,22 +301,7 @@ class DatabaseSetup(TestCase):
                                                                       consent_version_fk=self.consent_version_1,
                                                                       consent_date=datetime.date.today())
 
-        #create mother and nonmother caregiver tables
 
-        self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
-
-        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
-        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
-                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
-                                                                 due_date=datetime.date(2023, 5, 4),
-                                                                 last_menstrual_period=datetime.date(2023, 3, 3),
-                                                                 )
-        self.mother_one_pregnancy_one.save()
-        # create biospecimen
-
-        self.first_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.FIRST,pregnancy_fk=self.mother_one_pregnancy_one)
-
-        self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
 
         self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
         self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
@@ -294,6 +338,14 @@ class DatabaseSetup(TestCase):
                                                       in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
                                                       )
 
+        self.collected_two = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,),
+                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,),
+                                                      received_date=datetime.date(2023,5,1),
+                                                      number_of_tubes=0,
+                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+                                                      )
+
         self.status_outcome_processed_complete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,stored_fk=self.stored_one)
@@ -307,6 +359,7 @@ class DatabaseSetup(TestCase):
 
 
         self.status_outcome_collected_complete = Status.objects.create(collected_fk=self.collected_one)
+        self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
         self.urine = CollectionType.objects.create(collection_type='Urine')
@@ -350,8 +403,12 @@ class DatabaseSetup(TestCase):
         self.toenail_earlychildhood = Collection.objects.create(collection_type_fk=self.toenail, collection_number_fk=self.number_early_childhood)
         self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
         self.saliva = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
-        self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta,collection_number_fk=self.number_one)
+        self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
         self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
+
+        #Create perinatal event
+        self.perinatal_one = Perinatal.objects.create(child_fk=self.child_one,pregnancy_fk=self.mother_one_pregnancy_one)
+
 
         #Create Biospeciment for Echo 2 Testing
 
@@ -359,7 +416,16 @@ class DatabaseSetup(TestCase):
             caregiver_fk = self.first_caregiver,
             trimester_fk=self.first_trimester,
             collection_fk=self.urine_three,
-            status_fk=self.status_outcome_collected_complete
+            status_fk=self.status_outcome_collected_complete,
+            biospecimen_id='111URS'
+        )
+
+        self.placenta_perinatal_2_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.first_caregiver,
+            perinatal_fk=self.perinatal_one,
+            collection_fk=self.placenta_one,
+            status_fk=self.status_outcome_collected_placenta,
+            biospecimen_id='111P1'
         )
 
 
@@ -543,20 +609,9 @@ class DatabaseSetup(TestCase):
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111SA')
 
-        self.biospecimen_placenta_caregiver_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
-            collection_fk=self.placenta_one,
-            incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111PC')
-
-
 
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
-        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
-        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
-        self.primary_care_giver_child_three = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
 
         #creat consent item
 
@@ -572,30 +627,6 @@ class DatabaseSetup(TestCase):
         self.consent_mother_address_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_address,caregiver_fk=self.first_caregiver)
         self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_birth_cert,caregiver_fk=self.first_caregiver)
 
-        # create child
-
-        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
-                                              charm_project_identifier='7000M1',
-                                              birth_hospital=self.health_care_facility_1,
-                                              birth_sex=Child.BirthSexChoices.MALE,
-                                              birth_date=datetime.date(2023, 5, 20),
-                                              child_twin=False,race_fk=self.caucasion, ethnicity_fk=self.hispanic,pregnancy_fk=self.mother_one_pregnancy_one)
-        self.mother_one_pregnancy_one.save()
-        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
-                                              charm_project_identifier='7001M1',
-                                              birth_hospital=self.health_care_facility_1,
-                                              birth_sex=Child.BirthSexChoices.FEMALE,
-                                              birth_date=datetime.date(2021, 8, 10),
-                                              child_twin=False, race_fk=self.black,ethnicity_fk=self.non_hispanic,pregnancy_fk=self.mother_one_pregnancy_one)
-
-        self.child_one_name = Name.objects.create(last_name='Harrison',first_name='Jonathan')
-        self.child_two_name = Name.objects.create(last_name='Smith',first_name='Kevin')
-
-        self.child_name_connection = ChildName.objects.create(child_fk=self.child_one,name_fk=self.child_one_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
-        self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two,name_fk=self.child_two_name,status=ChildName.ChildNameStatusChoice.CURRENT,)
-        self.second_caregiver_is_mother_in_law = CaregiverChildRelation.objects.create(child_fk=self.child_two,
-                                                                                       caregiver_fk=self.second_caregiver,
-                                                                                       relation_fk=self.mother_in_law)
 
         #create child address
 

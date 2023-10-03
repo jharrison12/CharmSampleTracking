@@ -37,10 +37,10 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen,collection
     received_form = ReceivedBiospecimenForm(prefix="received_form")
     collection_number = CollectionNumber.objects.get(collection_number=collection_num)
     collection_type = CollectionType.objects.get(collection_type=biospecimen.capitalize())
-    logging.critical(f"biospecimen capitalize {biospecimen.capitalize()}")
+    logging.debug(f"biospecimen capitalize {biospecimen.capitalize()}")
     biospecimen = get_object_or_404(Collection,collection_type_fk=collection_type,
                                     collection_number_fk=collection_number)
-    logging.critical(f'bio is {biospecimen}')
+    logging.debug(f'bio is {biospecimen}')
     try:
         biospecimen_item = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,
                                                        collection_fk=biospecimen)
