@@ -60,9 +60,9 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         self.assertEqual(caregiver,caregiver_bio.caregiver_fk)
 
     def test_caregiver_biospecimen_links_to_trimester(self):
-        urine_tree = Collection.objects.get(collection_number_fk__collection_number='T',collection_type_fk__collection_type='Urine')
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk=urine_tree)
-        trimester = Trimester.objects.get(trimester='F')
+        urine_tree = Collection.objects.get(collection_number_fk__collection_number=None,collection_type_fk__collection_type='Urine')
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk=urine_tree,status_fk__collected_fk=None)
+        trimester = Trimester.objects.get(trimester='S')
         self.assertEqual(caregiver.trimester_fk,trimester)
 
     def test_caregiver_biospecimen_outcome_links_to_perinatal(self):

@@ -117,6 +117,7 @@ class DatabaseSetup(TestCase):
         # create biospecimen
 
         self.first_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.FIRST,pregnancy_fk=self.mother_one_pregnancy_one)
+        self.second_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.SECOND,pregnancy_fk=self.mother_one_pregnancy_one)
 
         self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
 
@@ -360,6 +361,7 @@ class DatabaseSetup(TestCase):
 
         self.status_outcome_collected_complete = Status.objects.create(collected_fk=self.collected_one)
         self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
+        self.status_outcome_blank = Status.objects.create()
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
         self.urine = CollectionType.objects.create(collection_type='Urine')
@@ -381,6 +383,7 @@ class DatabaseSetup(TestCase):
         self.number_middle_childhood= CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.MIDDLE_CHILDHOOD)
 
 
+        self.urine_none = Collection.objects.create(collection_type_fk=self.urine)
         self.urine_one = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_one)
         self.urine_two = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_two)
         self.urine_three = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_three)
@@ -412,12 +415,20 @@ class DatabaseSetup(TestCase):
 
         #Create Biospeciment for Echo 2 Testing
 
-        self.urine_trimester_2_caregiver_one = CaregiverBiospecimen.objects.create(
+        self.urine_trimester_1_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk = self.first_caregiver,
             trimester_fk=self.first_trimester,
-            collection_fk=self.urine_three,
+            collection_fk=self.urine_none,
             status_fk=self.status_outcome_collected_complete,
             biospecimen_id='111URS'
+        )
+
+        self.urine_trimester_2_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.first_caregiver,
+            trimester_fk=self.second_trimester,
+            collection_fk=self.urine_none,
+            status_fk=self.status_outcome_blank,
+            biospecimen_id='112URS'
         )
 
         self.placenta_perinatal_2_caregiver_one = CaregiverBiospecimen.objects.create(

@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 
 CHOICES = [('C','Complete')]
+IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
 
 class ReceivedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
@@ -69,3 +70,12 @@ class IncentiveForm(forms.models.ModelForm):
     class Meta:
         model = Incentive
         fields = ['incentive_type_fk','incentive_date','incentive_amount']
+
+class CollectedBiospecimenForm(forms.Form):
+    collected_date_time = forms.DateTimeField()
+    processed_date_time = forms.DateTimeField()
+    stored_date_time = forms.DateTimeField()
+    placed_in_formalin = forms.DateTimeField()
+    received_date = forms.DateField()
+    number_of_tubes = forms.IntegerField()
+    in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)

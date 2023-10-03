@@ -4,7 +4,7 @@ from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm, ReceivedBiospecimenForm
+ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
 import random
 
@@ -62,22 +62,13 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen,collection
                                                                                                        'received_form':received_form})
 
 
-def caregiver_biospecimen_entry(request,caregiver_charm_id):
+def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    if request.method=="POST":
-        bio_form = CaregiverBiospecimenForm(data=request.POST,prefix='bio_form')
-        incentive_form = IncentiveForm(data=request.POST, prefix='incentive_form')
-        if bio_form.is_valid() and incentive_form.is_valid():
-            incentive = incentive_form.save()
-            bio_form_final = bio_form.save(commit=False)
-            bio_form_final.incentive_fk = incentive
-            bio_form_final.save()
-            return redirect('biospecimen:caregiver_biospecimen',caregiver_charm_id=caregiver_charm_id)
-    else:
-        incentive_form = IncentiveForm(prefix='incentive_form')
-        bio_form = CaregiverBiospecimenForm(initial={"caregiver_fk":caregiver},prefix='bio_form')
-    return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'bio_form':bio_form,
-                                                                                              'incentive_form':incentive_form,
-                                                                                              'charm_project_identifier':caregiver_charm_id})
-
+    collected_form = CollectedBiospecimenForm()
+    return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
+                                                                                                  'caregiver_bio_pk':caregiver_bio_pk,
+                                                                                                  'caregiver_bio': caregiver_bio,
+                                                                                                  'collected_form':collected_form
+                                                                                                  })
 

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm,ReceivedBiospecimenForm
+ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -66,3 +66,15 @@ class IncentiveFormTest(TestCase):
         form = IncentiveForm(data={'':''})
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['incentive_type_fk'][0])
+
+
+class CaregiverCollectedFormTest(TestCase):
+
+    def test_collected_form_renders_collected_text_input(self):
+        form = CollectedBiospecimenForm()
+        self.assertIn('Collected',form.as_p())
+
+    def test_collected_form_validation_for_blank_items(self):
+        form = CollectedBiospecimenForm(data={'':''})
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required',form.errors['collected_date_time'][0])

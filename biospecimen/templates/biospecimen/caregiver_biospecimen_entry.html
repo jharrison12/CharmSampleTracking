@@ -1,53 +1,13 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Charm ID : {{ charm_project_identifier }}{% endblock %}
 {% block section %}
-  <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_entry' charm_project_identifier %}>
+    {% if not caregiver_bio.status_fk.collected_fk %}
+  <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_entry' charm_project_identifier caregiver_bio_pk %}>
   {% csrf_token %}
-      <h2>Biospecimen Form</h2>
-    {{ bio_form.non_field_errors }}
-      <div class="fieldWrapper">
-            {{ bio_form.subject.errors }}
-            <!--<label for="{{ bio_form.caregiver_fk.id_for_label }}">Caregiver:</label>-->
-            {{ bio_form.caregiver_fk }}
-      </div>
-      <div class="fieldWrapper">
-            {{ bio_form.collection_fk.errors }}
-            <label for="{{ bio_form.collection_fk.id_for_label }}">Collection Type:</label>
-            {{ bio_form.collection_fk }}
-      </div>
-      <div class="fieldWrapper">
-            {{ bio_form.status_fk.errors }}
-            <label for="{{ bio_form.status_fk.id_for_label }}">Status:</label>
-            {{ bio_form.status_fk }}
-      </div>
-      <div class="fieldWrapper">
-            {{ bio_form.incentive_fk.errors }}
-{#            <label for="{{ bio_form.incentive_fk.id_for_label }}">Incentive:</label>#}
-            {{ bio_form.incentive_fk }}
-      </div>
-      <div class="fieldWrapper">
-            {{ bio_form.biospecimen_date.errors }}
-            <label for="{{ bio_form.biospecimen_date.id_for_label }}">Date Collected:</label>
-            {{ bio_form.biospecimen_date }}
-      </div>
-      <h2>Incentive Form:</h2>
-      {{ incentive_form.non_field_errors }}
-      <div class="fieldWrapper">
-            {{ incentive_form.incentive_type_fk.errors }}
-            <label for="{{ incentive_form.incentive_type_fk.id_for_label }}">Incentive Type:</label>
-            {{ incentive_form.incentive_type_fk }}
-      </div>
-      <div class="fieldWrapper">
-            {{ incentive_form.incentive_date.errors }}
-            <label for="{{ incentive_form.incentive_date.id_for_label }}">Incentive Date:</label>
-            {{ incentive_form.incentive_date }}
-      </div>
-      <div class="fieldWrapper">
-            {{ incentive_form.incentive_amount.errors }}
-            <label for="{{ incentive_form.incentive_amount.id_for_label }}">Incentive Amount:</label>
-            {{ incentive_form.incentive_amount }}
-      </div>
-
+      <h2>Collected Form</h2>
+    {{ collected_form }}
   <input type="submit" value="Submit" />
   </form>
+    {% else %}
+    {% endif %}
 {% endblock %}
