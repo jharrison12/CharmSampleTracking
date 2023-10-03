@@ -14,7 +14,7 @@ from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBios
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm
+    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -267,7 +267,12 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response,'P7000')
 
-    def test_echo2_bio_page_shows_collected_form_if_no_collected_object(self):
+    def test_echo2_bio_page_shows_collected_urine_form_if_no_collected_object_and_collection_urine(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenForm)
+        self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenUrineForm)
+
+    def test_echo2_bio_page_does_not_show_formalin_if_urine(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertNotContains(response,'formalin')

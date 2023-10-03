@@ -4,7 +4,7 @@ from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenForm
+ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm
 from django.shortcuts import render,get_object_or_404,redirect
 import random
 
@@ -64,8 +64,12 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen,collection
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    collected_form = CollectedBiospecimenForm()
+    if collection_type.collection_type =='Urine':
+        collected_form = CollectedBiospecimenUrineForm()
+    else:
+        collected_form = None
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,

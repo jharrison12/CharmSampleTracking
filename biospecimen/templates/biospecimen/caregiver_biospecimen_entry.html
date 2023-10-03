@@ -1,13 +1,22 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Charm ID : {{ charm_project_identifier }}{% endblock %}
 {% block section %}
+    <div class="row" id="biospecimen_information">
+    <div class="col-sm">ID: {{ caregiver_bio.biospecimen_id }}</div>
+    <div class="col-sm">Type: {{ caregiver_bio.collection_fk.collection_type }}</div>
+    {#  Not sure what the below object was in the SRO version of this device    #}
+    <div class="col-sm">Log Status: {{ biospecimen_item }}</div>
+        <hr/>
+    </div>
     {% if not caregiver_bio.status_fk.collected_fk %}
-  <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_entry' charm_project_identifier caregiver_bio_pk %}>
-  {% csrf_token %}
-      <h2>Collected Form</h2>
-    {{ collected_form }}
-  <input type="submit" value="Submit" />
-  </form>
+        <div id="collected_information" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_entry' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Collected Form</h2>
+            {{ collected_form.as_p }}
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
     {% else %}
     {% endif %}
 {% endblock %}

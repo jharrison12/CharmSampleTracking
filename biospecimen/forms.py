@@ -79,3 +79,9 @@ class CollectedBiospecimenForm(forms.Form):
     received_date = forms.DateField()
     number_of_tubes = forms.IntegerField()
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
+
+class CollectedBiospecimenUrineForm(forms.Form):
+    collected_date_time = forms.DateTimeField()
+    processed_date_time = forms.DateTimeField()
+    stored_date_time = forms.DateTimeField()
+    number_of_tubes = forms.IntegerField()
