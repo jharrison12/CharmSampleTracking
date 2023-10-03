@@ -8,7 +8,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-Received
+    CollectionType,CollectionNumber,Received,Collected,Trimester
 
 import datetime
 from django.utils import timezone
@@ -241,9 +241,23 @@ class DatabaseSetup(TestCase):
         self.consent_contract_1_cg_2 = ConsentContract.objects.create(caregiver_fk=self.second_caregiver,
                                                                       consent_version_fk=self.consent_version_1,
                                                                       consent_date=datetime.date.today())
+
+        #create mother and nonmother caregiver tables
+
+        self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
+
+        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
+        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
+                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
+                                                                 due_date=datetime.date(2023, 5, 4),
+                                                                 last_menstrual_period=datetime.date(2023, 3, 3),
+                                                                 )
+        self.mother_one_pregnancy_one.save()
         # create biospecimen
 
+        self.first_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.FIRST,pregnancy_fk=self.mother_one_pregnancy_one)
 
+        self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
 
         self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
         self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
@@ -272,6 +286,14 @@ class DatabaseSetup(TestCase):
                                                     logged_date_time=datetime.datetime(2023,5,5,12,0,0),
                                                     quantity=19)
 
+        self.collected_one = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,),
+                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,),
+                                                      received_date=datetime.date(2023,5,1),
+                                                      number_of_tubes=5,
+                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+                                                      )
+
         self.status_outcome_processed_complete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,stored_fk=self.stored_one)
@@ -281,34 +303,65 @@ class DatabaseSetup(TestCase):
                                                                      stored_fk=self.stored_one,
                                                                       shipped_fk=self.shipped_one,
                                                                       received_fk=self.received_one)
+
+
+
+        self.status_outcome_collected_complete = Status.objects.create(collected_fk=self.collected_one)
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
+        self.urine = CollectionType.objects.create(collection_type='Urine')
+        self.serum = CollectionType.objects.create(collection_type='Serum')
+        self.plasma = CollectionType.objects.create(collection_type='Plasma')
+        self.bloodspots = CollectionType.objects.create(collection_type='Bloodspots')
+        self.whole_blood = CollectionType.objects.create(collection_type='Whole Blood')
+        self.buffy_coat = CollectionType.objects.create(collection_type='Buffy Coat')
+        self.red_blood_cells = CollectionType.objects.create(collection_type='Red Blood Cells')
+        self.hair = CollectionType.objects.create(collection_type='Hair')
+        self.toenail = CollectionType.objects.create(collection_type='Toenail')
+        self.saliva = CollectionType.objects.create(collection_type='Saliva')
+        self.placenta = CollectionType.objects.create(collection_type='Placenta')
 
-        self.urine_one = Collection.objects.create(collection_type='Urine', collection_number=1)
-        self.urine_two = Collection.objects.create(collection_type='Urine', collection_number=2)
-        self.urine_three = Collection.objects.create(collection_type='Urine', collection_number=3)
-        self.urine_six = Collection.objects.create(collection_type='Urine', collection_number=6)
-        self.urine_ec = Collection.objects.create(collection_type='Urine', collection_number='EC')
-        self.urine_mc = Collection.objects.create(collection_type='Urine', collection_number='MC')
-        self.serum_one = Collection.objects.create(collection_type='Serum', collection_number=1)
-        self.serum_two = Collection.objects.create(collection_type='Serum', collection_number=2)
-        self.plasma_one = Collection.objects.create(collection_type='Plasma', collection_number=1)
-        self.plasma_two = Collection.objects.create(collection_type='Plasma', collection_number=2)
-        self.bloodspots_one = Collection.objects.create(collection_type='Bloodspots', collection_number=1)
-        # self.bloodspots_two = Collection.objects.create(collection_type='Bloodspots', collection_number=2)
-        self.whole_blood_one = Collection.objects.create(collection_type='Whole Blood', collection_number=1)
-        self.whole_blood_two = Collection.objects.create(collection_type='Whole Blood', collection_number=2)
-        self.buffy_coat_one = Collection.objects.create(collection_type='Buffy Coat', collection_number=1)
-        self.buffy_coat_two = Collection.objects.create(collection_type='Buffy Coat', collection_number=2)
-        self.red_blood_cells_one = Collection.objects.create(collection_type='Red Blood Cells', collection_number=1)
-        self.red_blood_cells_two = Collection.objects.create(collection_type='Red Blood Cells', collection_number=2)
-        self.hair_prenatal = Collection.objects.create(collection_type='Hair', collection_number='Prenatal')
-        self.hair = Collection.objects.create(collection_type='Hair',collection_number=1)
-        self.toenail_prenatal = Collection.objects.create(collection_type='Toenail', collection_number='Prenatal')
-        self.toenail = Collection.objects.create(collection_type='Toenail',collection_number=1)
-        self.saliva = Collection.objects.create(collection_type='Saliva',collection_number=1)
-        self.placenta_one = Collection.objects.create(collection_type='Placenta',collection_number=1)
-        self.placenta_two = Collection.objects.create(collection_type='Placenta', collection_number=2)
+        self.number_one = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.FIRST)
+        self.number_two = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.SECOND)
+        self.number_three = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.THIRD)
+        self.number_early_childhood = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.EARLY_CHILDHOOD)
+        self.number_middle_childhood= CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.MIDDLE_CHILDHOOD)
+
+
+        self.urine_one = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_one)
+        self.urine_two = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_two)
+        self.urine_three = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_three)
+        self.urine_early_childhood = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_early_childhood)
+        self.urine_mc = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_middle_childhood)
+        self.serum_one = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_one)
+        self.serum_two = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_two)
+        self.plasma_one = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_one)
+        self.plasma_two = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_two)
+        self.bloodspots_one = Collection.objects.create(collection_type_fk=self.bloodspots, collection_number_fk=self.number_one)
+        # self.bloodspots_two = Collection.objects.create(collection_type_fk='Bloodspots', collection_number_fk=self.number_two)
+        self.whole_blood_one = Collection.objects.create(collection_type_fk=self.whole_blood, collection_number_fk=self.number_one)
+        self.whole_blood_two = Collection.objects.create(collection_type_fk=self.whole_blood, collection_number_fk=self.number_two)
+        self.buffy_coat_one = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_one)
+        self.buffy_coat_two = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_two)
+        self.red_blood_cells_one = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_one)
+        self.red_blood_cells_two = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_two)
+        self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair, collection_number_fk=self.number_early_childhood)
+        self.hair = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_one)
+        self.toenail_earlychildhood = Collection.objects.create(collection_type_fk=self.toenail, collection_number_fk=self.number_early_childhood)
+        self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
+        self.saliva = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+        self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta,collection_number_fk=self.number_one)
+        self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
+
+        #Create Biospeciment for Echo 2 Testing
+
+        self.urine_trimester_2_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.first_caregiver,
+            trimester_fk=self.first_trimester,
+            collection_fk=self.urine_three,
+            status_fk=self.status_outcome_collected_complete
+        )
+
 
         #Create bloodspot rows for testing of application
         self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -367,17 +420,9 @@ class DatabaseSetup(TestCase):
             biospecimen_date=datetime.date.today(),
             biospecimen_id='1113UR')
 
-        self.biospecimen_urine_three_caregiver_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
-            collection_fk=self.urine_three,
-            incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today(),
-             biospecimen_id='1114UR')
-
         self.biospecimen_urine_ec_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                                       status_fk=self.status_outcome_incomplete,
-                                                                                      collection_fk=self.urine_ec,
+                                                                                      collection_fk=self.urine_early_childhood,
                                                                                       incentive_fk=self.incentive_one,
                                                                                       biospecimen_date=datetime.date.today(),
                                                                                       biospecimen_id='1115UR')
@@ -477,17 +522,17 @@ class DatabaseSetup(TestCase):
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),biospecimen_id='1112RB')
 
-        self.biospecimen_hair_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
+        self.biospecimen_hair_early_childhood_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_processed_complete,
-            collection_fk=self.hair_prenatal,
+            collection_fk=self.hair_early_childhood,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,23),biospecimen_id='1111HR')
 
         self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_processed_complete,
-            collection_fk=self.toenail_prenatal,
+            collection_fk=self.toenail_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111TN')
 
@@ -506,17 +551,7 @@ class DatabaseSetup(TestCase):
             biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111PC')
 
 
-        #create mother and nonmother caregiver tables
 
-        self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
-
-        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
-        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
-                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
-                                                                 due_date=datetime.date(2023, 5, 4),
-                                                                 last_menstrual_period=datetime.date(2023, 3, 3),
-                                                                 )
-        self.mother_one_pregnancy_one.save()
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
         self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
@@ -596,20 +631,20 @@ class DatabaseSetup(TestCase):
                                                                   assent_date=datetime.date(2023,9,5),assent_boolean=False)
 
         # child biospecimen
-        self.early_childhood = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
+
         self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                            status_fk=self.status_outcome_processed_complete,
-                                                                           collection_fk=self.urine_six,
+                                                                           collection_fk=self.urine_three,
                                                                            incentive_fk=self.incentive_one,
-                                                                           age_category_fk=self.early_childhood,
+                                                                           age_category_fk=self.early_childhood_age_category,
                                                                            collection_date=datetime.date(2023, 8, 15),
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
                                                                            status_fk=self.status_outcome_processed_complete,
-                                                                           collection_fk=self.urine_six,
+                                                                           collection_fk=self.urine_three,
                                                                            incentive_fk=self.incentive_one,
-                                                                           age_category_fk=self.early_childhood,
+                                                                           age_category_fk=self.early_childhood_age_category,
                                                                            collection_date=datetime.date(2023, 8, 15),
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
@@ -617,14 +652,14 @@ class DatabaseSetup(TestCase):
                                                                           status_fk=self.status_outcome_processed_complete,
                                                                           collection_fk=self.hair,
                                                                           incentive_fk=self.incentive_one,
-                                                                          age_category_fk=self.early_childhood,
+                                                                          age_category_fk=self.early_childhood_age_category,
                                                                           collection_date=datetime.date(2023, 8, 15),
                                                                           kit_sent_date=datetime.date(2023, 8, 12))
 
         self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                              status_fk=self.status_outcome_processed_complete,
-                                                                             collection_fk=self.toenail,
+                                                                             collection_fk=self.toenail_one,
                                                                              incentive_fk=self.incentive_one,
-                                                                             age_category_fk=self.early_childhood,
+                                                                             age_category_fk=self.early_childhood_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15),
                                                                              kit_sent_date=datetime.date(2023, 8, 12))

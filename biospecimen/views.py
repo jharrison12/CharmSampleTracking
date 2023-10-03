@@ -2,7 +2,7 @@ import logging
 
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
-    Shipped, Received
+    Shipped, Received,CollectionNumber,CollectionType
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm
 from django.shortcuts import render,get_object_or_404,redirect
@@ -22,7 +22,7 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                             'caregiver_biospecimens':caregiver_biospecimens})
 def child_biospecimen_page(request,child_charm_id):
     child = get_object_or_404(Child,charm_project_identifier=child_charm_id)
-    child_collection_query = ChildBiospecimen.objects.values('collection_fk__collection_type')
+    child_collection_query = ChildBiospecimen.objects.values('collection_fk__collection_type_fk__collection_type')
     child_collections = list(set(val for dic in child_collection_query for val in dic.values()))
     child_biospecimens = ChildBiospecimen.objects.filter(child_fk__charm_project_identifier=child_charm_id)
     return render(request, template_name='biospecimen/child_biospecimen.html', context={'child':child,
@@ -35,8 +35,11 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen,collection
     stored_form = StoredBiospecimenForm(prefix="stored_form")
     shipped_form = ShippedBiospecimenForm(prefix="shipped_form")
     received_form = ReceivedBiospecimenForm(prefix="received_form")
+    collection_number = CollectionNumber.objects.get(collection_number=collection_num)
+    collection_type = CollectionType.objects.get(collection_type=biospecimen.capitalize())
     logging.critical(f"biospecimen capitalize {biospecimen.capitalize()}")
-    biospecimen = get_object_or_404(Collection,collection_type=biospecimen.capitalize(),collection_number=collection_num)
+    biospecimen = get_object_or_404(Collection,collection_type_fk=collection_type,
+                                    collection_number_fk=collection_number)
     logging.critical(f'bio is {biospecimen}')
     try:
         biospecimen_item = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier=caregiver_charm_id,

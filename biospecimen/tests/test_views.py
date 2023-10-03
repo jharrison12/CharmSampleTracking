@@ -141,7 +141,7 @@ class ChildBiospecimenPage(DatabaseSetup):
 
     def test_child_biospecimen_contains_all_child_biospecimens(self):
         response = self.client.get(f'/biospecimen/child/7000M1/')
-        child_bios = ChildBiospecimen.objects.values('collection_fk__collection_type')
+        child_bios = ChildBiospecimen.objects.values('collection_fk__collection_type_fk__collection_type')
         child_bios_list = list(set(value for dic in child_bios for value in dic.values()))
         for value in child_bios_list:
             self.assertContains(response, value)
@@ -149,17 +149,17 @@ class ChildBiospecimenPage(DatabaseSetup):
 class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
     def test_caregiver_blood_spot_page_uses_correct_template(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/F/')
         self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_history.html')
 
     def test_caregiver_blood_spot_contains_blood_spot_id(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/F/')
         logging.debug(response.content)
         self.assertContains(response,'ID: 1111BS')
 
     def test_caregiver_blood_spot_page_uses_processed_form_if_no_processed_data(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
-        bloodspots = Collection.objects.get(collection_type='Bloodspots')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/F/')
+        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',collection_number_fk__collection_number='F')
         caregiver = Caregiver.objects.get(charm_project_identifier='P7001')
         processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
@@ -168,8 +168,8 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         self.assertIsInstance(response.context['processed_form'], ProcessedBiospecimenForm)
 
     def test_caregiver_blood_spot_page_does_not_show_processed_form_if_processed_data(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
-        bloodspots = Collection.objects.get(collection_type='Bloodspots')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/F/')
+        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',collection_number_fk__collection_number='F')
         caregiver = Caregiver.objects.get(charm_project_identifier='P7000')
         processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
@@ -180,7 +180,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
 
     @unittest.skip
     def test_processed_form_throws_primary_key_error(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7000/bloodspots/1/',
+        response = self.client.post(f'/biospecimen/caregiver/P7000/bloodspots/F/',
                                     data={'processed_form-collected_date_time':datetime.datetime.now(),
                                           "processed_form-processed_date_time":datetime.datetime.now(),
                                           "processed_form-quantity":5,
@@ -189,7 +189,7 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
                                           })
 
         with self.assertRaises(sqlite3.IntegrityError):
-            response = self.client.post(f'/biospecimen/caregiver/P7000/bloodspots/1/',
+            response = self.client.post(f'/biospecimen/caregiver/P7000/bloodspots/F/',
                                         data={'processed_form-collected_date_time': datetime.datetime.now(),
                                               "processed_form-processed_date_time": datetime.datetime.now(),
                                               "processed_form-quantity": 5,
@@ -197,13 +197,13 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
                                               "processed_form-outcome_fk": 'C'
                                               })
     def test_caregiver_bio_iem_shows_processed_form_if_no_processed_data(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7001/bloodspots/1/')
+        response = self.client.get(f'/biospecimen/caregiver/P7001/bloodspots/F/')
         self.assertIsInstance(response.context['processed_form'], ProcessedBiospecimenForm)
 
 
     def test_caregiver_blood_spot_page_uses_stored_form_if_processed_data(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
-        bloodspots = Collection.objects.get(collection_type='Bloodspots')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/F/')
+        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',collection_number_fk__collection_number='F')
         caregiver = Caregiver.objects.get(charm_project_identifier='P7000')
         processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
@@ -212,8 +212,8 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         self.assertIsInstance(response.context['stored_form'], StoredBiospecimenForm)
 
     def test_caregiver_blood_spot_page_uses_shipped_form_if_stored_data(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7003/bloodspots/1/')
-        bloodspots = Collection.objects.get(collection_type='Bloodspots')
+        response = self.client.get(f'/biospecimen/caregiver/P7003/bloodspots/F/')
+        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',collection_number_fk__collection_number='F')
         caregiver = Caregiver.objects.get(charm_project_identifier='P7003')
         stored_one = Stored.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
@@ -222,12 +222,13 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         self.assertIsInstance(response.context['shipped_form'], ShippedBiospecimenForm)
 
     def test_caregiver_blood_spot_page_shows_shipped_data_if_completed(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/F/')
         self.assertContains(response, 'Courier:Fedex')
 
     def test_caregiver_bloodspot_page_uses_received_form_if_shipped_data(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7004/bloodspots/1/')
-        bloodspots = Collection.objects.get(collection_type='Bloodspots')
+        response = self.client.get(f'/biospecimen/caregiver/P7004/bloodspots/F/')
+        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',
+                                            collection_number_fk__collection_number='F')
         caregiver = Caregiver.objects.get(charm_project_identifier='P7004')
         shipped_one = Stored.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
                                                  status__caregiverbiospecimen__caregiver_fk=caregiver)
@@ -236,12 +237,12 @@ class CaregiverSingleBiospecimenPage(DatabaseSetup):
         self.assertIsInstance(response.context['received_form'], ReceivedBiospecimenForm)
 
     def test_caregiver_blood_spot_page_shows_received_data_if_completed(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/1/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/bloodspots/F/')
         logging.debug(f"recieved?{response.content}")
         self.assertContains(response, 'Quantity:19')
 
     def test_blood_plams_page_uses_correct_template(self):
-        response = self.client.get(f'/biospecimen/caregiver/P7000/plasma/1/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/plasma/F/')
         self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_history.html')
 
 

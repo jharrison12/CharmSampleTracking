@@ -4,9 +4,9 @@
     {% for bio_collection in caregiver_collections %}
       <h2>{{ bio_collection }}</h2>
         {% for caregiver_bio in caregiver_biospecimens %}
-            {% if caregiver_bio.collection_fk.collection_type == bio_collection and caregiver_bio.collection_fk.collection_number %}
-                {{ caregiver_bio.collection_fk.collection_type }} {{ caregiver_bio.collection_fk.collection_number|default_if_none:"" }}: {{ caregiver_bio.status_fk.shipped_fk.outcome_fk.get_outcome_display }}
-            {% elif caregiver_bio.collection_fk.collection_type != bio_collection %}
+            {% if caregiver_bio.collection_fk.collection_type_fk.collection_type == bio_collection and caregiver_bio.collection_fk.collection_number_fk.collection_number.collection_number %}
+                {{ caregiver_bio.collection_fk.collection_type_fk.collection_type }} {{ caregiver_bio.collection_fk.collection_number_fk.collection_number.collection_number|default_if_none:"" }}: {{ caregiver_bio.status_fk.shipped_fk.outcome_fk.get_outcome_display }}
+            {% elif caregiver_bio.collection_fk.collection_type_fk.collection_type  != bio_collection %}
             {% else %}
                 <p>No biospecimen of this type</p>
             {% endif %}
