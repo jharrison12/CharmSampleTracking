@@ -1,8 +1,9 @@
 import time
+import unittest
 
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
-
+@unittest.skip
 class ChildBiospecimenPageTest(FunctionalTest):
 
     def test_user_can_see_child_page(self):

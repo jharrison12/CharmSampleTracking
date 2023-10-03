@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 def caregiver_biospecimen(request,caregiver_charm_id):
     #TODO: Fix this so you're iterating over one queryset and not 15
     caregiver = get_object_or_404(Caregiver,charm_project_identifier=caregiver_charm_id)
-    caregiver_collection_query = CaregiverBiospecimen.objects.values('collection_fk__collection_type')
+    caregiver_collection_query = CaregiverBiospecimen.objects.values('collection_fk__collection_type_fk__collection_type')
     caregiver_collections = list(set(val for dic in caregiver_collection_query for val in dic.values()))
     caregiver_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
     return render(request, template_name='biospecimen/caregiver_biospecimen.html', context={'caregiver':caregiver,

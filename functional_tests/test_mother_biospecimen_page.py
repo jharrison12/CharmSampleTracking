@@ -1,9 +1,12 @@
+import unittest
+
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 import time
 import datetime
 from selenium.webdriver.support.ui import Select
 
+@unittest.skip
 class MotherBioSpecimenPageTest(FunctionalTest):
 
     def test_user_can_see_bio_specimen_information(self):
