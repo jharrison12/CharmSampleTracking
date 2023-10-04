@@ -8,7 +8,15 @@
     <div class="col-sm">Log Status: {{ biospecimen_item }}</div>
         <hr/>
     </div>
-    {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk  %}
+    {% if caregiver_bio.status_fk.not_collected_fk%}
+        <div id="collected_information" class="row border border-primary p-3 rounded">
+        Not Collected
+        </div>
+    {% elif caregiver_bio.status_fk.no_consent_fk %}
+        <div id="collected_information" class="row border border-primary p-3 rounded">
+        No Consent
+        </div>
+    {% elif caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk  %}
         <div id="collected_information" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}

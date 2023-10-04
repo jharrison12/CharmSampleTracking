@@ -78,7 +78,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   })
 
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
-    caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk)[0]
+    caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
@@ -87,19 +87,21 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         logging.critical(f"is initial form valid{form.is_valid()}  {form.errors}")
         if form.is_valid():
             logging.critical(f"form after vaid {form.cleaned_data}")
-            new_status = Status.objects.create()
-            caregiver_bio.status_fk=new_status
+            new_status = Status()
+            caregiver_bio.status_fk = new_status
+            new_status.save()
             caregiver_bio.save()
-            logging.critical(f"caregiver bio status {caregiver_bio}")
+            logging.critical(f"caregiver bio status {caregiver_bio.status_fk}")
             if form.cleaned_data['collected_not_collected']=='C':
                 new_collected = Collected.objects.create()
-                caregiver_bio.status_fk.collected_fk = new_collected
+                new_status.collected_fk = new_collected
             elif form.cleaned_data['collected_not_collected']=='N':
                 new_not_collected = NotCollected.objects.create()
-                caregiver_bio.status_fk.not_collected_fk = new_not_collected
+                new_status.not_collected_fk = new_not_collected
             elif form.cleaned_data['collected_not_collected']=='X':
                 new_no_consent = NoConsent.objects.create()
-                caregiver_bio.status_fk.no_consent_fk = new_no_consent
+                new_status.no_consent_fk = new_no_consent
+            new_status.save()
             caregiver_bio.save()
         else:
             raise AssertionError

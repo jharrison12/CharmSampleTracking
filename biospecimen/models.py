@@ -102,8 +102,6 @@ class Status(models.Model):
             logging.debug(f"{self.received_fk} {self.objects.model}")
             return None
 
-    def __str__(self):
-        return f"{self.processed_fk}"
 
 class CollectionType(models.Model):
     collection_type = models.CharField(max_length=255)
