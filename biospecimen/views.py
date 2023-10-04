@@ -2,7 +2,7 @@ import logging
 
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
-    Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected
+    Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm
 from django.shortcuts import render,get_object_or_404,redirect
@@ -82,22 +82,26 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
+        logging.critical(f"post is {request.POST}")
         form = InitialBioForm(data=request.POST, prefix='initial_form')
+        logging.critical(f"is initial form valid{form.is_valid()}  {form.errors}")
         if form.is_valid():
+            logging.critical(f"form after vaid {form.cleaned_data}")
             new_status = Status.objects.create()
             caregiver_bio.status_fk = new_status
             caregiver_bio.save()
-            if form.cleaned_data['id_collected_not_collected']=='C':
+            if form.cleaned_data['collected_not_collected']=='C':
                 new_collected = Collected.objects.create()
                 caregiver_bio.status_fk.collected_fk = new_collected
-            elif form.cleaned_data['id_collected_not_collected']=='N':
+            elif form.cleaned_data['collected_not_collected']=='N':
                 new_not_collected = NotCollected.objects.create()
                 caregiver_bio.status_fk.not_collected_fk = new_not_collected
-            elif form.cleaned_data['id_collected_not_collected']=='X':
+            elif form.cleaned_data['collected_not_collected']=='X':
                 new_no_consent = NoConsent.objects.create()
                 caregiver_bio.status_fk.no_consent_fk = new_no_consent
         else:
             raise AssertionError
+        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
 
@@ -122,7 +126,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        logging.critical(f"{collection_type.collection_type}")
         if collection_type.collection_type=="Urine":
             form = CollectedBiospecimenUrineForm(data=request.POST,prefix='urine_form')
             if form.is_valid():
