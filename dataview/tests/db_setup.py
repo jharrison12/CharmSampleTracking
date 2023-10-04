@@ -347,8 +347,33 @@ class DatabaseSetup(TestCase):
                                                       in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
                                                       )
 
-        self.status_outcome_processed_complete = Status.objects.create(processed_fk=self.processed_one)
-        self.status_outcome_incomplete = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_one = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_two = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_three = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_four = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_five = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_six = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_seven = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_eight = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_nine = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_ten = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_eleven = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_twelve = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_thirteen = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_fourteen = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_processed_complete_fifteen = Status.objects.create(processed_fk=self.processed_one)
+
+        self.status_outcome_incomplete_one = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_two = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_three = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_four = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_five = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_six = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_seven = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_eight = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_nine = Status.objects.create(processed_fk=self.processed_one)
+        self.status_outcome_incomplete_ten = Status.objects.create(processed_fk=self.processed_one)
+
         self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,stored_fk=self.stored_one)
         self.status_outcome_shipped_complete = Status.objects.create(processed_fk=self.processed_one,
                                                                      stored_fk=self.stored_one,shipped_fk=self.shipped_one)
@@ -450,7 +475,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_bloodspots_caregiver_three = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.third_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_one,
             collection_fk=self.bloodspots_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -474,7 +499,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_urine_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_two,
             collection_fk=self.urine_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -482,7 +507,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_urine_one_caregiver_two = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.second_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_three,
             collection_fk=self.urine_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -490,21 +515,21 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_urine_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_incomplete,
+            status_fk=self.status_outcome_incomplete_one,
             collection_fk=self.urine_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
             biospecimen_id='1113UR')
 
         self.biospecimen_urine_ec_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                      status_fk=self.status_outcome_incomplete,
+                                                                                      status_fk=self.status_outcome_incomplete_two,
                                                                                       collection_fk=self.urine_early_childhood,
                                                                                       incentive_fk=self.incentive_one,
                                                                                       biospecimen_date=datetime.date.today(),
                                                                                       biospecimen_id='1115UR')
 
         self.biospecimen_urine_mc_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
-                                                                                      status_fk=self.status_outcome_incomplete,
+                                                                                      status_fk=self.status_outcome_incomplete_three,
                                                                                       collection_fk=self.urine_mc,
                                                                                       incentive_fk=self.incentive_one,
                                                                                       biospecimen_date=datetime.date.today(),
@@ -512,7 +537,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_serum_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_four,
             collection_fk=self.serum_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023, 8, 23),
@@ -520,7 +545,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_serum_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_incomplete,
+            status_fk=self.status_outcome_incomplete_four,
             collection_fk=self.serum_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -528,7 +553,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_plasma_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_five,
             collection_fk=self.plasma_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -536,7 +561,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_incomplete,
+            status_fk=self.status_outcome_incomplete_five,
             collection_fk=self.plasma_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -554,7 +579,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_whole_blood_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_six,
             collection_fk=self.whole_blood_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -562,7 +587,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_whole_blood_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_incomplete,
+            status_fk=self.status_outcome_incomplete_six,
             collection_fk=self.whole_blood_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -570,7 +595,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_buffy_coat_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_seven,
             collection_fk=self.buffy_coat_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
@@ -578,7 +603,7 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_buffy_coat_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_incomplete,
+            status_fk=self.status_outcome_incomplete_seven,
             collection_fk=self.buffy_coat_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),biospecimen_id='1112BC'
@@ -586,35 +611,35 @@ class DatabaseSetup(TestCase):
 
         self.biospecimen_red_blood_cells_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_eight,
             collection_fk=self.red_blood_cells_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),biospecimen_id='1111RB')
 
         self.biospecimen_red_blood_cells_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_incomplete,
+            status_fk=self.status_outcome_incomplete_eight,
             collection_fk=self.red_blood_cells_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),biospecimen_id='1112RB')
 
         self.biospecimen_hair_early_childhood_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_nine,
             collection_fk=self.hair_early_childhood,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,23),biospecimen_id='1111HR')
 
         self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_ten,
             collection_fk=self.toenail_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111TN')
 
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
-            status_fk=self.status_outcome_processed_complete,
+            status_fk=self.status_outcome_processed_complete_eleven,
             collection_fk=self.saliva,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111SA')
@@ -674,7 +699,7 @@ class DatabaseSetup(TestCase):
         # child biospecimen
 
         self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                           status_fk=self.status_outcome_processed_complete,
+                                                                           status_fk=self.status_outcome_processed_complete_nine,
                                                                            collection_fk=self.urine_three,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood_age_category,
@@ -682,7 +707,7 @@ class DatabaseSetup(TestCase):
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
-                                                                           status_fk=self.status_outcome_processed_complete,
+                                                                           status_fk=self.status_outcome_processed_complete_ten,
                                                                            collection_fk=self.urine_three,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood_age_category,
@@ -690,7 +715,7 @@ class DatabaseSetup(TestCase):
                                                                            kit_sent_date=datetime.date(2023, 8, 10))
 
         self.child_one_biospecimen_hair = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                          status_fk=self.status_outcome_processed_complete,
+                                                                          status_fk=self.status_outcome_processed_complete_eleven,
                                                                           collection_fk=self.hair,
                                                                           incentive_fk=self.incentive_one,
                                                                           age_category_fk=self.early_childhood_age_category,
@@ -698,7 +723,7 @@ class DatabaseSetup(TestCase):
                                                                           kit_sent_date=datetime.date(2023, 8, 12))
 
         self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
-                                                                             status_fk=self.status_outcome_processed_complete,
+                                                                             status_fk=self.status_outcome_processed_complete_twelve,
                                                                              collection_fk=self.toenail_one,
                                                                              incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.early_childhood_age_category,

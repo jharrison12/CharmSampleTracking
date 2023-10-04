@@ -78,7 +78,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   })
 
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
-    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk)[0]
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
@@ -88,8 +88,9 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         if form.is_valid():
             logging.critical(f"form after vaid {form.cleaned_data}")
             new_status = Status.objects.create()
-            caregiver_bio.status_fk = new_status
+            caregiver_bio.status_fk=new_status
             caregiver_bio.save()
+            logging.critical(f"caregiver bio status {caregiver_bio}")
             if form.cleaned_data['collected_not_collected']=='C':
                 new_collected = Collected.objects.create()
                 caregiver_bio.status_fk.collected_fk = new_collected
@@ -112,6 +113,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     collected_form = None
+    logging.critical(f"collected fk {caregiver_bio.status_fk.collected_fk}")
     if caregiver_bio.status_fk.collected_fk:
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')

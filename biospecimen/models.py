@@ -154,7 +154,7 @@ class Perinatal(models.Model):
 
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
-    status_fk = models.ForeignKey(Status, on_delete=models.PROTECT, blank=True,null=True)
+    status_fk = models.OneToOneField(Status, on_delete=models.PROTECT, blank=True,null=True)
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     trimester_fk = models.ForeignKey(Trimester,on_delete=models.PROTECT,blank=True,null=True)

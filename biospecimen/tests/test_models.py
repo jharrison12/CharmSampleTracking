@@ -27,7 +27,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_doesnt_allow_duplicates(self):
         caregiverbio_one = CaregiverBiospecimen(caregiver_fk=self.first_caregiver, collection_fk=self.serum_one,
-                                                status_fk=self.status_outcome_processed_complete, biospecimen_date=datetime.date.today(),
+                                                status_fk=self.status_outcome_processed_complete_one, biospecimen_date=datetime.date.today(),
                                                 incentive_fk=self.incentive_one)
         with self.assertRaises(ValidationError):
             caregiverbio_one.full_clean()
