@@ -311,27 +311,27 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
         # self.collected = Outcome.objects.create(status='Collected')
 
-        self.processed_one = Processed.objects.create(collected_date_time=datetime.datetime(2023,5,5,12,0,0),
-                                                  processed_date_time=datetime.datetime(2023,5,5,12,4,0),
+        self.processed_one = Processed.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                  processed_date_time=timezone.datetime(2023,5,5,12,4,0),
                                                   quantity =2,
-                                                  logged_date_time=datetime.datetime(2023,5,5,12,4,0),
+                                                  logged_date_time=timezone.datetime(2023,5,5,12,4,0),
                                                       outcome_fk=self.completed)
         self.stored_one = Stored.objects.create(outcome_fk=self.completed,
-                                                stored_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                stored_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                 storage_location='hospital',
                                                 quantity=2,
-                                                logged_date_time=datetime.datetime(2023,5,5,12,0,0))
+                                                logged_date_time=timezone.datetime(2023,5,5,12,0,0))
 
         self.shipped_one = Shipped.objects.create(outcome_fk=self.completed,
-                                                  shipped_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                  shipped_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                   courier='Fedex',
                                                   shipping_number='7777777',
                                                   quantity=3,
-                                                  logged_date_time=datetime.datetime(2023,5,5,12,0,0))
+                                                  logged_date_time=timezone.datetime(2023,5,5,12,0,0))
         self.received_one = Received.objects.create(outcome_fk=self.completed,
-                                                    received_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                    received_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                     storage_location='MSU',
-                                                    logged_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                    logged_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                     quantity=19)
 
         self.collected_one = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),

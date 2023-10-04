@@ -37,7 +37,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 #ALLOWED_HOSTS = ['*']
 
-
+USE_TZ = True
 # Application definition
 
 INSTALLED_APPS = [

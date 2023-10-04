@@ -2,7 +2,7 @@ import logging
 
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
-    Shipped, Received,CollectionNumber,CollectionType
+    Shipped, Received,CollectionNumber,CollectionType,Collected
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm
 from django.shortcuts import render,get_object_or_404,redirect
@@ -67,12 +67,36 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if collection_type.collection_type =='Urine':
-        collected_form = CollectedBiospecimenUrineForm()
+        collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
     else:
         collected_form = None
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,
-                                                                                                  'collected_form':collected_form
+                                                                                                  'collected_form':collected_form,
+                                                                                                  'collection_type': collection_type.collection_type
                                                                                                   })
+
+def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    if request.method=="POST":
+        logging.critical(f"{collection_type.collection_type}")
+        if collection_type.collection_type=="Urine":
+            form = CollectedBiospecimenUrineForm(data=request.POST,prefix='urine_form')
+            if form.is_valid():
+                collected_urine = Collected()
+                collected_urine.collected_date_time = form.cleaned_data['collected_date_time']
+                collected_urine.processed_date_time = form.cleaned_data['processed_date_time']
+                collected_urine.stored_date_time = form.cleaned_data['stored_date_time']
+                collected_urine.number_of_tubes = form.cleaned_data['number_of_tubes']
+                caregiver_bio.status_fk.collected_fk = collected_urine
+                collected_urine.save()
+                caregiver_bio.save()
+        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+    else:
+        raise AssertionError
+
+
 

@@ -43,12 +43,12 @@ class DatabaseSetup(TestCase):
                                                          )
 
         self.third_caregiver = Caregiver.objects.create(charm_project_identifier='P7002',
-                                                         date_of_birth=datetime.date(1985, 7, 4),
-                                                         ewcp_participant_identifier='0002',
-                                                         participation_level_identifier='02',
-                                                         specimen_id='6666', echo_pin='555',
-                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
-                                                         )
+                                                        date_of_birth=datetime.date(1985, 7, 4),
+                                                        ewcp_participant_identifier='0002',
+                                                        participation_level_identifier='02',
+                                                        specimen_id='6666', echo_pin='555',
+                                                        race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                        )
 
         self.fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7003',
                                                          date_of_birth=datetime.date(1985, 7, 4),
@@ -59,12 +59,12 @@ class DatabaseSetup(TestCase):
                                                          )
 
         self.fifth_caregiver = Caregiver.objects.create(charm_project_identifier='P7004',
-                                                         date_of_birth=datetime.date(1985, 7, 4),
-                                                         ewcp_participant_identifier='0004',
-                                                         participation_level_identifier='02',
-                                                         specimen_id='8888', echo_pin='777',
-                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
-                                                         )
+                                                        date_of_birth=datetime.date(1985, 7, 4),
+                                                        ewcp_participant_identifier='0004',
+                                                        participation_level_identifier='02',
+                                                        specimen_id='8888', echo_pin='777',
+                                                        race_fk=self.black, ethnicity_fk=self.non_hispanic
+                                                        )
 
         self.first_caregiver_name = Name()
         self.first_caregiver_name.first_name = 'Jane'
@@ -205,7 +205,7 @@ class DatabaseSetup(TestCase):
         # Create social media
         twitter = SocialMedia.objects.create(social_media_name='Twitter')
         self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=self.first_caregiver,
-                                            social_media_user_name='@jonathan',social_media_consent=True)
+                                                                                social_media_user_name='@jonathan',social_media_consent=True)
         facebook = SocialMedia.objects.create(social_media_name='Facebook')
         CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
                                             social_media_user_name='jonathan-h', social_media_consent=True)
@@ -280,11 +280,11 @@ class DatabaseSetup(TestCase):
                                                                    )
 
         self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
-                                                                   survey_fk=self.prenatal_1,
-                                                                   survey_outcome_fk=self.completed_survey_outcome,
-                                                                   incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date(2023,8,30)
-                                                                   )
+                                                                     survey_fk=self.prenatal_1,
+                                                                     survey_outcome_fk=self.completed_survey_outcome,
+                                                                     incentive_fk=self.incentive_one,
+                                                                     survey_completion_date=datetime.date(2023,8,30)
+                                                                     )
 
 
 
@@ -308,27 +308,27 @@ class DatabaseSetup(TestCase):
         self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
         # self.collected = Outcome.objects.create(status='Collected')
 
-        self.processed_one = Processed.objects.create(collected_date_time=datetime.datetime(2023,5,5,12,0,0),
-                                                  processed_date_time=datetime.datetime(2023,5,5,12,4,0),
-                                                  quantity =2,
-                                                  logged_date_time=datetime.datetime(2023,5,5,12,4,0),
+        self.processed_one = Processed.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                      processed_date_time=timezone.datetime(2023,5,5,12,4,0),
+                                                      quantity =2,
+                                                      logged_date_time=timezone.datetime(2023,5,5,12,4,0),
                                                       outcome_fk=self.completed)
         self.stored_one = Stored.objects.create(outcome_fk=self.completed,
-                                                stored_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                stored_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                 storage_location='hospital',
                                                 quantity=2,
-                                                logged_date_time=datetime.datetime(2023,5,5,12,0,0))
+                                                logged_date_time=timezone.datetime(2023,5,5,12,0,0))
 
         self.shipped_one = Shipped.objects.create(outcome_fk=self.completed,
-                                                  shipped_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                  shipped_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                   courier='Fedex',
                                                   shipping_number='7777777',
                                                   quantity=3,
-                                                  logged_date_time=datetime.datetime(2023,5,5,12,0,0))
+                                                  logged_date_time=timezone.datetime(2023,5,5,12,0,0))
         self.received_one = Received.objects.create(outcome_fk=self.completed,
-                                                    received_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                    received_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                     storage_location='MSU',
-                                                    logged_date_time=datetime.datetime(2023,5,5,12,0,0),
+                                                    logged_date_time=timezone.datetime(2023,5,5,12,0,0),
                                                     quantity=19)
 
         self.collected_one = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
@@ -353,7 +353,7 @@ class DatabaseSetup(TestCase):
         self.status_outcome_shipped_complete = Status.objects.create(processed_fk=self.processed_one,
                                                                      stored_fk=self.stored_one,shipped_fk=self.shipped_one)
         self.status_outcome_received_complete = Status.objects.create(processed_fk=self.processed_one,
-                                                                     stored_fk=self.stored_one,
+                                                                      stored_fk=self.stored_one,
                                                                       shipped_fk=self.shipped_one,
                                                                       received_fk=self.received_one)
 
@@ -525,7 +525,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.serum_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-        biospecimen_id='1112SR')
+            biospecimen_id='1112SR')
 
         self.biospecimen_plasma_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -533,7 +533,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.plasma_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-        biospecimen_id='1111PL')
+            biospecimen_id='1111PL')
 
         self.biospecimen_plasma_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -541,7 +541,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.plasma_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-        biospecimen_id='1112PL')
+            biospecimen_id='1112PL')
 
 
 
@@ -559,7 +559,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.whole_blood_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-        biospecimen_id='1111WB')
+            biospecimen_id='1111WB')
 
         self.biospecimen_whole_blood_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -567,7 +567,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.whole_blood_two,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-        biospecimen_id='1112WB')
+            biospecimen_id='1112WB')
 
         self.biospecimen_buffy_coat_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -575,7 +575,7 @@ class DatabaseSetup(TestCase):
             collection_fk=self.buffy_coat_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=datetime.date.today(),
-        biospecimen_id='1111BC')
+            biospecimen_id='1111BC')
 
         self.biospecimen_buffy_coat_two_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -651,14 +651,14 @@ class DatabaseSetup(TestCase):
         self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',project_fk=self.new_project)
 
         self.child_one_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
-                                                           survey_fk=self.survey_that_child_takes,
-                                                           survey_outcome_fk=self.completed_survey_outcome,
-                                                           survey_completion_date=datetime.date(2023,9,12))
+                                                               survey_fk=self.survey_that_child_takes,
+                                                               survey_outcome_fk=self.completed_survey_outcome,
+                                                               survey_completion_date=datetime.date(2023,9,12))
 
         self.child_two_survey_one = ChildSurvey.objects.create(child_fk=self.child_two,
-                                                           survey_fk=self.other_survey_that_child_takes,
-                                                           survey_outcome_fk=self.incomplete_survey_outcome,
-                                                           survey_completion_date=datetime.date(2023,9,12))
+                                                               survey_fk=self.other_survey_that_child_takes,
+                                                               survey_outcome_fk=self.incomplete_survey_outcome,
+                                                               survey_completion_date=datetime.date(2023,9,12))
 
 
 
@@ -666,11 +666,11 @@ class DatabaseSetup(TestCase):
         self.eight_year_assent = Assent.objects.create(assent_text='Eight Year Survey')
         self.five_year_assent = Assent.objects.create(assent_text='Five Year Survey')
         self.child_one_eight_year_assent = ChildAssent.objects.create(child_fk=self.child_one,
-                                                                  assent_fk=self.eight_year_assent,
-                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=True)
+                                                                      assent_fk=self.eight_year_assent,
+                                                                      assent_date=datetime.date(2023,9,5),assent_boolean=True)
         self.child_two_five_year_assent = ChildAssent.objects.create(child_fk=self.child_two,
-                                                                  assent_fk=self.five_year_assent,
-                                                                  assent_date=datetime.date(2023,9,5),assent_boolean=False)
+                                                                     assent_fk=self.five_year_assent,
+                                                                     assent_date=datetime.date(2023,9,5),assent_boolean=False)
 
         # child biospecimen
 
@@ -705,3 +705,4 @@ class DatabaseSetup(TestCase):
                                                                              age_category_fk=self.early_childhood_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15),
                                                                              kit_sent_date=datetime.date(2023, 8, 12))
+

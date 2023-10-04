@@ -57,12 +57,12 @@ class Processed(models.Model):
 
 class Collected(models.Model):
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,null=True,blank=True)
-    collected_date_time = models.DateTimeField()
-    processed_date_time = models.DateTimeField()
-    stored_date_time = models.DateTimeField()
+    collected_date_time = models.DateTimeField(null=True,blank=True)
+    processed_date_time = models.DateTimeField(null=True,blank=True)
+    stored_date_time = models.DateTimeField(null=True,blank=True)
     placed_in_formalin_date_time = models.DateTimeField(null=True,blank=True)
-    received_date = models.DateField()
-    number_of_tubes = models.IntegerField()
+    received_date = models.DateField(null=True,blank=True)
+    number_of_tubes = models.IntegerField(null=True,blank=True)
 
     class InpersonRemoteChoices(models.TextChoices):
         IN_PERSON = 'I', _('In Person')

@@ -5,14 +5,14 @@ from dataview.models import Incentive
 from biospecimen.models import CaregiverBiospecimen,Processed,Status
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
-
+from django.utils import timezone
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
 
 class ReceivedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
     quantity = forms.IntegerField()
-    received_date_time = forms.DateTimeField(initial=datetime.datetime.now())
+    received_date_time = forms.DateTimeField(initial=timezone.now())
     logged_date_time = forms.DateTimeField()
     storage_location = forms.CharField()
 
@@ -20,21 +20,21 @@ class ShippedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
     shipping_number = forms.CharField()
     quantity = forms.IntegerField()
-    shipped_date_time = forms.DateTimeField(initial=datetime.datetime.now())
+    shipped_date_time = forms.DateTimeField(initial=timezone.now())
     logged_date_time = forms.DateTimeField()
     courier = forms.CharField()
 
 
 class StoredBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
-    stored_date_time = forms.DateTimeField(initial=datetime.datetime.now())
+    stored_date_time = forms.DateTimeField(initial=timezone.now())
     storage_location = forms.CharField()
     quantity = forms.IntegerField()
     logged_date_time = forms.DateTimeField()
 
 class ProcessedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
-    collected_date_time = forms.DateTimeField(initial=datetime.datetime.now())
+    collected_date_time = forms.DateTimeField(initial=timezone.now())
     processed_date_time = forms.DateTimeField()
     quantity = forms.IntegerField()
     logged_date_time = forms.DateTimeField()
@@ -81,7 +81,14 @@ class CollectedBiospecimenForm(forms.Form):
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
 
 class CollectedBiospecimenUrineForm(forms.Form):
-    collected_date_time = forms.DateTimeField()
+    collected_date_time = forms.DateTimeField(initial=timezone.now())
     processed_date_time = forms.DateTimeField()
     stored_date_time = forms.DateTimeField()
     number_of_tubes = forms.IntegerField()
+
+    class Meta:
+        fields = ['collected_date_time','processed_date_time','stored_date_time','number_of_tubes']
+        widgets = {
+            "collected_date_time": forms.DateTimeInput,
+            "processed_date_time": forms.DateTimeInput
+        }

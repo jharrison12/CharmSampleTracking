@@ -177,25 +177,6 @@ class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
         logging.debug(f"processed is {processed_one.count()}")
         self.assertNotContains(response,'<form>',html=True)
 
-
-    @unittest.skip
-    def test_processed_form_throws_primary_key_error(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7000/bloodspots/F/history/',
-                                    data={'processed_form-collected_date_time':datetime.datetime.now(),
-                                          "processed_form-processed_date_time":datetime.datetime.now(),
-                                          "processed_form-quantity":5,
-                                          "processed_form-logged_date_time":datetime.datetime.now(),
-                                          "processed_form-outcome_fk":'C'
-                                          })
-
-        with self.assertRaises(sqlite3.IntegrityError):
-            response = self.client.post(f'/biospecimen/caregiver/P7000/bloodspots/F/history/',
-                                        data={'processed_form-collected_date_time': datetime.datetime.now(),
-                                              "processed_form-processed_date_time": datetime.datetime.now(),
-                                              "processed_form-quantity": 5,
-                                              "processed_form-logged_date_time": datetime.datetime.now(),
-                                              "processed_form-outcome_fk": 'C'
-                                              })
     def test_caregiver_bio_iem_shows_processed_form_if_no_processed_data(self):
         response = self.client.get(f'/biospecimen/caregiver/P7001/bloodspots/F/history/')
         self.assertIsInstance(response.context['processed_form'], ProcessedBiospecimenForm)
@@ -276,3 +257,18 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertNotContains(response,'formalin')
+
+    def test_echo2_bio_entry_urine_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={"id_urine_form-collected_date_time":timezone.datetime(2023,5,5,5,5,5),
+                                                                                                "id_urine_form-processed_date_time": timezone.datetime(
+                                                                                                    2023, 5, 5, 5, 5,
+                                                                                                    5),
+                                                                                                "id_urine_form-stored_date_time": timezone.datetime(
+                                                                                                    2023, 5, 5, 5, 5,
+                                                                                                    5),
+                                                                                                "id_urine_form-number_of_tubes":5
+                                                                                                })
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+

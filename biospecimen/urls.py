@@ -24,5 +24,6 @@ urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/entry/$", biospecimen_views.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<biospecimen>[\w\ ]+)/(?P<collection_num>[\w]+)/history/$", biospecimen_views.caregiver_biospecimen_item, name='caregiver_biospecimen_item'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/$", biospecimen_views.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/post/$", biospecimen_views.caregiver_biospecimen_post, name='caregiver_biospecimen_post'),
     re_path(r"^child/(?P<child_charm_id>\w+)/$", biospecimen_views.child_biospecimen_page,name='child_biospecimen_page')
 ]
