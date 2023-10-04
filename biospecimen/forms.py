@@ -6,8 +6,10 @@ from biospecimen.models import CaregiverBiospecimen,Processed,Status
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
+
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
+COLLECTED_NOT = [('C','Collected'),('N','Not Collected'),('X','No Consent')]
 
 class ReceivedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
@@ -92,3 +94,6 @@ class CollectedBiospecimenUrineForm(forms.Form):
             "collected_date_time": forms.DateTimeInput,
             "processed_date_time": forms.DateTimeInput
         }
+
+class InitialBioForm(forms.Form):
+    collected_not_collected = forms.ChoiceField(widget=forms.Select,choices=COLLECTED_NOT)
