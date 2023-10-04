@@ -99,21 +99,24 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             elif form.cleaned_data['collected_not_collected']=='X':
                 new_no_consent = NoConsent.objects.create()
                 caregiver_bio.status_fk.no_consent_fk = new_no_consent
+            caregiver_bio.save()
         else:
             raise AssertionError
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
-        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        return redirect("biospecimen:caregiver_biospecimen_initial",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
 
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    if collection_type.collection_type =='Urine':
-        collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
-    else:
-        collected_form = None
+    collected_form = None
+    if caregiver_bio.status_fk.collected_fk:
+        if collection_type.collection_type =='Urine':
+            collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
+        else:
+            collected_form = None
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,

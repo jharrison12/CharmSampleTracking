@@ -264,17 +264,17 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
 
     @unittest.skip
     def test_echo2_bio_page_does_not_show_collected_urine_form_if_no_collected_object_and_collection_urine(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertNotIsInstance(response.context['collected_form'], CollectedBiospecimenUrineForm)
 
     def test_echo2_bio_page_does_not_show_formalin_if_urine(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertNotContains(response,'formalin')
 
     def test_echo2_bio_entry_urine_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={"id_urine_form-collected_date_time":timezone.datetime(2023,5,5,5,5,5),
                                                                                                 "id_urine_form-processed_date_time": timezone.datetime(
                                                                                                     2023, 5, 5, 5, 5,
