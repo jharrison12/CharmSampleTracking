@@ -3,7 +3,7 @@
 {% block section %}
     <div class="row" id="biospecimen_information">
     <div class="col-sm">ID: {{ caregiver_bio.biospecimen_id }}</div>
-    <div class="col-sm">Type: {{ caregiver_bio.collection_fk.collection_type }}</div>
+    <div class="col-sm">Type: {{ caregiver_bio.collection_fk.collection_type_fk.collection_type }}</div>
     {#  Not sure what the below object was in the SRO version of this device    #}
     <div class="col-sm">Log Status: {{ biospecimen_item }}</div>
         <hr/>
@@ -16,7 +16,8 @@
         <div id="collected_information" class="row border border-primary p-3 rounded">
         No Consent
         </div>
-    {% elif caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk  %}
+    {#  Potential bug because collected date time is not required but you have to null it to create it        #}
+    {% elif caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
         <div id="collected_information" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -36,7 +37,7 @@
                 <div>Collected Date Time:{{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
                 <div>Processed Date Time:{{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>
                 <div>Stored Date Time:{{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>
-                <div>Quantity: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>
+                <div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>
                 <div>Logged By:BLANK</div>
             </div>
         </div>

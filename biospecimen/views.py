@@ -116,7 +116,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     collected_form = None
     logging.critical(f"collected fk {caregiver_bio.status_fk.collected_fk}")
-    if caregiver_bio.status_fk.collected_fk:
+    if caregiver_bio.status_fk.collected_fk and caregiver_bio.status_fk.collected_fk.collected_date_time==None:
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         else:
@@ -136,12 +136,11 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
         if collection_type.collection_type=="Urine":
             form = CollectedBiospecimenUrineForm(data=request.POST,prefix='urine_form')
             if form.is_valid():
-                collected_urine = Collected()
+                collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 collected_urine.collected_date_time = form.cleaned_data['collected_date_time']
                 collected_urine.processed_date_time = form.cleaned_data['processed_date_time']
                 collected_urine.stored_date_time = form.cleaned_data['stored_date_time']
                 collected_urine.number_of_tubes = form.cleaned_data['number_of_tubes']
-                caregiver_bio.status_fk.collected_fk = collected_urine
                 collected_urine.save()
                 caregiver_bio.save()
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)

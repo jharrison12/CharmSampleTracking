@@ -4,6 +4,7 @@ from biospecimen.models import CaregiverBiospecimen,Caregiver
 import time
 import datetime
 from selenium.webdriver.support.ui import Select
+from django.utils import timezone
 
 class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
 
@@ -19,7 +20,7 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-
+        time.sleep(30)
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
@@ -35,6 +36,26 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
 
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected Form',form)
+
+        #user submits form and sees data
+        collected = self.browser.find_element(By.ID,"id_urine_form-collected_date_time")
+        collected.clear()
+        collected.send_keys('2023-09-27 12:52:26')
+
+        stored = self.browser.find_element(By.ID,"id_urine_form-stored_date_time")
+        stored.send_keys('2023-09-27 12:52:26')
+
+        processed = self.browser.find_element(By.ID,"id_urine_form-processed_date_time")
+        processed.send_keys('2023-09-27 12:52:26')
+
+        number_of_tubes = self.browser.find_element(By.ID,"id_urine_form-number_of_tubes")
+        number_of_tubes.send_keys(5)
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Number of Tubes: 5', body)
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
