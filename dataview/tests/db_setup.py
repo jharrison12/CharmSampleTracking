@@ -427,7 +427,6 @@ class DatabaseSetup(TestCase):
             caregiver_fk = self.first_caregiver,
             trimester_fk=self.second_trimester,
             collection_fk=self.urine_none,
-            status_fk=self.status_outcome_blank,
             biospecimen_id='112URS'
         )
 

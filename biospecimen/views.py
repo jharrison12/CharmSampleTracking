@@ -2,9 +2,9 @@ import logging
 
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
-    Shipped, Received,CollectionNumber,CollectionType,Collected
+    Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm
+ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm
 from django.shortcuts import render,get_object_or_404,redirect
 import random
 
@@ -60,6 +60,46 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,biospecimen,collection
                                                                                                        'stored_form':stored_form,
                                                                                                        'shipped_form':shipped_form,
                                                                                                        'received_form':received_form})
+
+
+def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    if caregiver_bio.status_fk==None:
+        initial_bio_form = InitialBioForm(prefix="initial_form")
+    else:
+        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+    return render(request, template_name='biospecimen/caregiver_biospecimen_initial.html', context={'charm_project_identifier':caregiver_charm_id,
+                                                                                                  'caregiver_bio_pk':caregiver_bio_pk,
+                                                                                                  'caregiver_bio': caregiver_bio,
+                                                                                                  'initial_bio_form':initial_bio_form,
+                                                                                                  'collection_type': collection_type.collection_type
+                                                                                                  })
+
+def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    if request.method=="POST":
+        form = InitialBioForm(data=request.POST, prefix='initial_form')
+        if form.is_valid():
+            new_status = Status.objects.create()
+            caregiver_bio.status_fk = new_status
+            caregiver_bio.save()
+            if form.cleaned_data['id_collected_not_collected']=='C':
+                new_collected = Collected.objects.create()
+                caregiver_bio.status_fk.collected_fk = new_collected
+            elif form.cleaned_data['id_collected_not_collected']=='N':
+                new_not_collected = NotCollected.objects.create()
+                caregiver_bio.status_fk.not_collected_fk = new_not_collected
+            elif form.cleaned_data['id_collected_not_collected']=='X':
+                new_no_consent = NoConsent.objects.create()
+                caregiver_bio.status_fk.no_consent_fk = new_no_consent
+        else:
+            raise AssertionError
+    else:
+        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
 
 
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):

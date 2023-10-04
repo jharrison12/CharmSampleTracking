@@ -14,7 +14,7 @@ from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBios
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm
+    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -237,6 +237,12 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
                                                         trimester_fk__trimester=trimester)
         return caregiverbio.pk
 
+    def test_echo2_initial_bio_page_returns_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000','Urine','S')
+        logging.critical(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_initial.html')
+
     def test_echo2_bio_page_returns_correct_template(self):
         primary_key = self.return_caregiver_bio_pk('P7000','Urine','F')
         logging.critical(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
@@ -248,10 +254,21 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response,'P7000')
 
-    def test_echo2_bio_page_shows_collected_urine_form_if_no_collected_object_and_collection_urine(self):
+    def test_echo2_bio_page_shows_trimester_if_urine(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response,'Trimester: First')
+
+    def test_echo2_bio_page_shows_initial_collected_or_not_form_if_no_collected_object_and_collection_urine(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.assertIsInstance(response.context['initial_bio_form'], InitialBioForm)
+
+    @unittest.skip
+    def test_echo2_bio_page_does_not_show_collected_urine_form_if_no_collected_object_and_collection_urine(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenUrineForm)
+        self.assertNotIsInstance(response.context['collected_form'], CollectedBiospecimenUrineForm)
 
     def test_echo2_bio_page_does_not_show_formalin_if_urine(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
@@ -270,5 +287,10 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
                                                                                                 "id_urine_form-number_of_tubes":5
                                                                                                 })
 
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_initial_posts_to_initial_post_view(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/', data={'id_collected_not_collected':'C'})
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 

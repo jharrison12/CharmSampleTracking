@@ -3,7 +3,7 @@ import sqlite3
 
 from django.test import TestCase
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored,Shipped,\
-    Received,Collected,Trimester,Perinatal
+    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent
 import datetime
 from dataview.models import Caregiver,Incentive,Child
 from dataview.tests.db_setup import DatabaseSetup
@@ -71,6 +71,25 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         perinatal_event = Perinatal.objects.get(child_fk__charm_project_identifier='7000M1')
         self.assertEqual(caregiver.perinatal_fk,perinatal_event)
 
+    def test_caregiver_biospecimen_outcome_links_to_not_collected(self):
+        not_collected = NotCollected.objects.create()
+        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
+                                                     collection_fk=placenta)
+        status_nc = Status.objects.create(not_collected_fk=not_collected)
+        caregiver_bio.status_fk = status_nc
+        caregiver_bio.save()
+        self.assertEqual(caregiver_bio.status_fk.not_collected_fk,not_collected)
+
+    def test_caregiver_biospecimen_outcome_links_to_no_consent(self):
+        no_consent = NoConsent.objects.create()
+        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
+                                                     collection_fk=placenta)
+        status_no_consent = Status.objects.create(no_consent_fk=no_consent)
+        caregiver_bio.status_fk = status_no_consent
+        caregiver_bio.save()
+        self.assertEqual(caregiver_bio.status_fk.no_consent_fk,no_consent)
 
 class ChildBiospecimenModelTest(DatabaseSetup):
 

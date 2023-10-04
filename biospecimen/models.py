@@ -72,6 +72,13 @@ class Collected(models.Model):
 
     ##todo check for formaline datetime if placenta
 
+class NotCollected(models.Model):
+    not_collected_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
+
+class NoConsent(models.Model):
+    no_consent_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
+
+
 class Status(models.Model):
     #todo sublcass text choices for status
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
@@ -79,6 +86,8 @@ class Status(models.Model):
     shipped_fk = models.ForeignKey(Shipped,on_delete=models.PROTECT,null=True,blank=True)
     received_fk = models.ForeignKey(Received, on_delete=models.PROTECT, null=True, blank=True)
     collected_fk = models.ForeignKey(Collected, on_delete=models.PROTECT, null=True, blank=True)
+    not_collected_fk = models.ForeignKey(NotCollected, on_delete=models.PROTECT, null=True, blank=True)
+    no_consent_fk = models.ForeignKey(NoConsent,on_delete=models.PROTECT,null=True,blank=True)
 
     def return_most_up_to_date_status(self):
         if self.received_fk and self.received_fk.outcome_fk.get_outcome_display()=='C':
