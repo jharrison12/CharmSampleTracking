@@ -14,7 +14,7 @@ from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBios
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm
+    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -292,3 +292,7 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/', data={'initial_form-collected_not_collected':['C']})
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
+    def test_echo2_bio_page_shows_shipped_choice_form_if_collected_not_null(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)

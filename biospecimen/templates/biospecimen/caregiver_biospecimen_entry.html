@@ -43,4 +43,16 @@
         </div>
     {% else %}
     {% endif %}
+    {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and caregiver_bio.status_fk.collected_fk.collected_date_time  %}
+        <div id="shipped_choice" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_shipped_choice_post' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Shipped Choice Form</h2>
+            {{ shipped_choice_form.as_p }}
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
+
+
+    {% endif %}
 {% endblock %}

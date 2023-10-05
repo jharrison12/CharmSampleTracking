@@ -78,6 +78,16 @@ class NotCollected(models.Model):
 class NoConsent(models.Model):
     no_consent_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
+class ShippedWSU(models.Model):
+    shipped_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    number_of_tubes = models.IntegerField(default=1)
+    courier = models.CharField(max_length=255)
+    tracking_number = models.CharField(max_length=255)
+    shipped_by = models.CharField(max_length=255)
+
+class ShippedECHO(models.Model):
+    shipped_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
 class Status(models.Model):
     #todo sublcass text choices for status
@@ -88,6 +98,8 @@ class Status(models.Model):
     collected_fk = models.ForeignKey(Collected, on_delete=models.PROTECT, null=True, blank=True)
     not_collected_fk = models.ForeignKey(NotCollected, on_delete=models.PROTECT, null=True, blank=True)
     no_consent_fk = models.ForeignKey(NoConsent,on_delete=models.PROTECT,null=True,blank=True)
+    shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
+    shipped_echo = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
 
     def return_most_up_to_date_status(self):
         if self.received_fk and self.received_fk.outcome_fk.get_outcome_display()=='C':
