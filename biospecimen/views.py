@@ -4,11 +4,17 @@ from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm
+ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm
 from django.shortcuts import render,get_object_or_404,redirect
 import random
 
 logging.basicConfig(level=logging.DEBUG)
+
+def check_for_object_or_return_none(object_name,filter,parameter):
+    try:
+        return object_name.objects.get(filter=parameter)
+    except object_name.DoesNotExist:
+        return None
 
 # Create your views here.
 def caregiver_biospecimen(request,caregiver_charm_id):
@@ -110,22 +116,29 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    collected_item =  Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    shipp_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     collected_form = None
     shipped_choice = None
+    shipped_wsu_form = None
     logging.critical(f"collected fk {caregiver_bio.status_fk.collected_fk}")
-    if caregiver_bio.status_fk.collected_fk and caregiver_bio.status_fk.collected_fk.collected_date_time==None:
+    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         else:
             collected_form = None
-    if caregiver_bio.status_fk.collected_fk and caregiver_bio.status_fk.collected_fk.collected_date_time:
-        shipped_choice = ShippedChoiceForm()
+    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
+        shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
+    if shipp_to_wsu_item.exists() and shipp_to_wsu_item.filter(shipped_date_time__isnull=True):
+        shipped_wsu_form = ShippedtoWSUForm()
+
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,
                                                                                                   'collected_form':collected_form,
                                                                                                   'collection_type': collection_type.collection_type,
-                                                                                                  'shipped_choice_form': shipped_choice
+                                                                                                  'shipped_choice_form': shipped_choice,
+                                                                                                  'shipped_wsu_form': shipped_wsu_form
                                                                                                   })
 
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
@@ -156,14 +169,16 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     if request.method=="POST":
         logging.critical(f"post is {request.POST}")
         form = ShippedChoiceForm(data=request.POST, prefix='shipped_choice_form')
-        logging.critical(f"is initial form valid{form.is_valid()}  {form.errors}")
+        logging.critical(f"is initial form valid{form.is_valid()}  {form.errors} {form}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
                 shipped_to_wsu = ShippedWSU.objects.create()
                 status.shipped_wsu_fk = shipped_to_wsu
-            if form.cleaned_data['shippd_to_wsu_or_echo']:
+                status.save()
+            if form.cleaned_data['shipped_to_wsu_or_echo']:
                 shipped_to_echo = ShippedECHO.objects.create()
                 status.shipped_echo = shipped_to_echo
+                status.save()
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
         raise AssertionError

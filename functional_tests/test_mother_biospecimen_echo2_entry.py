@@ -31,7 +31,7 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
         collected_not_collected.select_by_visible_text('Collected')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
-
+        time.sleep(30)
         #user sees collected form on next page
 
         form = self.browser.find_element(By.TAG_NAME,'form').text
@@ -62,7 +62,7 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped Choice Form',form)
 
-        shipped_to_wsu = Select(self.browser.find_element(By.ID,'id_shipped_to_wsu_or_echo'))
+        shipped_to_wsu = Select(self.browser.find_element(By.ID,'id_shipped_choice_form-shipped_to_wsu_or_echo'))
         shipped_to_wsu.select_by_visible_text('Shipped to WSU')
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')
         submit.click()

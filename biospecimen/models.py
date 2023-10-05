@@ -99,7 +99,7 @@ class Status(models.Model):
     not_collected_fk = models.ForeignKey(NotCollected, on_delete=models.PROTECT, null=True, blank=True)
     no_consent_fk = models.ForeignKey(NoConsent,on_delete=models.PROTECT,null=True,blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
-    shipped_echo = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
+    shipped_echo_fk = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
 
     def return_most_up_to_date_status(self):
         if self.received_fk and self.received_fk.outcome_fk.get_outcome_display()=='C':

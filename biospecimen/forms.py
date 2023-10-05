@@ -101,3 +101,10 @@ class InitialBioForm(forms.Form):
 
 class ShippedChoiceForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE)
+
+class ShippedtoWSUForm(forms.Form):
+    shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
+    tracking_number = forms.CharField()
+    number_of_tubes = forms.IntegerField()
+    logged_date_time = forms.DateTimeField()
+    courier = forms.CharField()

@@ -43,7 +43,7 @@
         </div>
     {% else %}
     {% endif %}
-    {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and caregiver_bio.status_fk.collected_fk.collected_date_time  %}
+    {% if caregiver_bio.status_fk.collected_fk.collected_date_time and not caregiver_bio.status_fk.shipped_echo_fk and not caregiver_bio.status_fk.shipped_wsu_fk  %}
         <div id="shipped_choice" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_shipped_choice_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -52,7 +52,14 @@
           <input type="submit" value="Submit" />
           </form>
         </div>
-
-
+    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_wsu_fk and not caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time  %}
+        <div id="collected_information" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Shipped to WSU Form</h2>
+            {{ shipped_wsu_form.as_p }}
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
     {% endif %}
 {% endblock %}
