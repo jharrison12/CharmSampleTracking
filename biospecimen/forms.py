@@ -10,6 +10,7 @@ from django.utils import timezone
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
 COLLECTED_NOT = [('C','Collected'),('N','Not Collected'),('X','No Consent')]
+SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 
 class ReceivedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
@@ -97,3 +98,6 @@ class CollectedBiospecimenUrineForm(forms.Form):
 
 class InitialBioForm(forms.Form):
     collected_not_collected = forms.ChoiceField(widget=forms.Select,choices=COLLECTED_NOT)
+
+class ShippedChoiceForm(forms.Form):
+    shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE)

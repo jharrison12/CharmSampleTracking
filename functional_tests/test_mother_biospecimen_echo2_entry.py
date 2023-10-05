@@ -57,6 +57,12 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
 
+        #user sees option to choose shipped to wsu or shipped to echo
+
+        form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Shipped status',form)
+
+
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')

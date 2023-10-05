@@ -1,6 +1,6 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm
+ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -84,3 +84,9 @@ class CaregiverBioInitialStatusForm(TestCase):
     def test_bio_initial_form_has_drop_down_with_collected(self):
         form = InitialBioForm()
         self.assertIn('Collected',form.as_p())
+
+class CaregiverBioShippedChoiceForm(TestCase):
+
+    def test_bio_shipped_chioce_form_has_shipped_to_wsu(self):
+        form = ShippedChoiceForm()
+        self.assertIn('Shipped to WSU',form.as_p())
