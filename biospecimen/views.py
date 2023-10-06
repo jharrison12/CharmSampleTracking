@@ -132,7 +132,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to wsu if statement")
-        shipped_wsu_form = ShippedtoWSUForm()
+        shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
 
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
@@ -187,5 +187,27 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     else:
         raise AssertionError
 
-def caregiver_biospecimen_shipped_wsu(request,caregiver_charm_id,caregiver_bio_pk):
-    pass
+def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+    shipped_wsu_fk = ShippedWSU.objects.get(status=status)
+    logging.critical(f"In wsu post")
+    if request.method == "POST":
+        logging.critical(f"post is {request.POST}")
+        form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
+        logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+        if form.is_valid():
+            shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+            shipped_wsu_fk.tracking_number = form.cleaned_data['tracking_number']
+            shipped_wsu_fk.number_of_tubes = form.cleaned_data['number_of_tubes']
+            shipped_wsu_fk.logged_date_time = form.cleaned_data['logged_date_time']
+            shipped_wsu_fk.courier = form.cleaned_data['courier']
+            shipped_wsu_fk.save()
+            logging.critical(f"shipped wsu saved")
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
+
+    else:
+        raise AssertionError

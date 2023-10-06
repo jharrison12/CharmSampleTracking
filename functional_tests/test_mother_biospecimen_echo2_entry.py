@@ -51,7 +51,7 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
         number_of_tubes = self.browser.find_element(By.ID,"id_urine_form-number_of_tubes")
         number_of_tubes.send_keys(5)
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
@@ -69,6 +69,31 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Shipped to WSU Form',body)
+
+        #user submits shipped to WSu form
+        shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
+        shipped_date_time.clear()
+        shipped_date_time.send_keys('2023-09-27 12:52:26')
+
+        shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
+        shipped_date_time.send_keys('777777')
+
+        number_of_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-number_of_tubes")
+        number_of_tubes.send_keys(5)
+
+        logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
+        logged_date_time.send_keys('2023-09-27 12:52:26')
+
+        courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
+        courier.send_keys('FedEx')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
+        submit.click()
+        time.sleep(5)
+        #user sees shipped WSU data
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Courier: FedEx',body)
+
 
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
@@ -112,7 +137,7 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
         submit.click()
 
         #user sees collected form on next page
-        time.sleep(20)
+
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
         self.assertIn('No Consent', body_text)

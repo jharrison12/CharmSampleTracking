@@ -84,6 +84,7 @@ class ShippedWSU(models.Model):
     courier = models.CharField(max_length=255,null=True,blank=True)
     tracking_number = models.CharField(max_length=255,null=True,blank=True)
     shipped_by = models.CharField(max_length=255,null=True,blank=True)
+    logged_date_time = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
 class ShippedECHO(models.Model):
     shipped_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)

@@ -10,16 +10,16 @@
         <hr/>
     </div>
     {% if caregiver_bio.status_fk.not_collected_fk%}
-        <div id="collected_information" class="row border border-primary p-3 rounded">
+        <div id="not_collected_information" class="row border border-primary p-3 rounded">
         Not Collected
         </div>
     {% elif caregiver_bio.status_fk.no_consent_fk %}
-        <div id="collected_information" class="row border border-primary p-3 rounded">
+        <div id="no_consent_information" class="row border border-primary p-3 rounded">
         No Consent
         </div>
     {#  Potential bug because collected date time is not required but you have to null it to create it        #}
     {% elif caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
-        <div id="collected_information" class="row border border-primary p-3 rounded">
+        <div id="collected_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
               <h2>Collected Form</h2>
@@ -28,7 +28,7 @@
           </form>
         </div>
     {% elif caregiver_bio.status_fk.collected_fk  %}
-              <div id="collected_information" class="row border border-primary p-3 rounded">
+        <div id="collected_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}
                 {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
@@ -54,13 +54,28 @@
           </form>
         </div>
     {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_wsu_fk and not caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time  %}
-        <div id="collected_information" class="row border border-primary p-3 rounded">
-          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu' charm_project_identifier caregiver_bio_pk %}>
+        <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
               <h2>Shipped to WSU Form</h2>
             {{ shipped_wsu_form.as_p }}
           <input type="submit" value="Submit" />
           </form>
+        </div>
+    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_wsu_fk and caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time %}
+        <div id="shipped_to_wsu_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped WSU</button>
+            </div>
+            <div class="col-8">
+                <div>Shipped Date Time:{{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time }}</div>
+                <div>Courier: {{ caregiver_bio.status_fk.shipped_wsu_fk.courier }}</div>
+                <div>Tracking Number:{{ caregiver_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
+                <div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
+                <div>Shipped By: {{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>
+            </div>
         </div>
     {% endif %}
 {% endblock %}

@@ -358,6 +358,11 @@ class DatabaseSetup(TestCase):
                                                       )
 
         self.shipped_wsu_blank = ShippedWSU.objects.create()
+        self.shipped_wsu = ShippedWSU.objects.create(shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                     number_of_tubes=1,
+                                                     courier='FedEx',
+                                                     tracking_number='777777',
+                                                     shipped_by='me')
 
 
         self.status_outcome_processed_complete_one = Status.objects.create(processed_fk=self.processed_one)
@@ -399,6 +404,7 @@ class DatabaseSetup(TestCase):
 
         self.status_outcome_collected_complete = Status.objects.create(collected_fk=self.collected_one)
         self.status_outcome_shipped_wsu_incomplete = Status.objects.create(collected_fk=self.collected_three,shipped_wsu_fk=self.shipped_wsu_blank)
+        self.status_outcome_shipped_wsu_complete = Status.objects.create(collected_fk=self.collected_three,shipped_wsu_fk=self.shipped_wsu)
 
         self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
         self.status_outcome_blank = Status.objects.create()
@@ -476,6 +482,14 @@ class DatabaseSetup(TestCase):
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_wsu_incomplete,
             biospecimen_id='113URS'
+        )
+
+        self.urine_trimester_3_caregiver_two = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.second_caregiver,
+            trimester_fk=self.first_trimester,
+            collection_fk=self.urine_none,
+            status_fk=self.status_outcome_shipped_wsu_complete,
+            biospecimen_id='213URS'
         )
 
         self.placenta_perinatal_2_caregiver_one = CaregiverBiospecimen.objects.create(
