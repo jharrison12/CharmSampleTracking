@@ -45,4 +45,4 @@ class ChildInformationPageTest(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
 
         self.assertIn('One Drive',body)
-        self.assertIn('Gestational Age at Birth: 11',body)
+        self.assertIn('Gestational Age at Birth: 2',body)

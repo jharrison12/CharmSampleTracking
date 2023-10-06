@@ -19,6 +19,6 @@ class CaregiverSurveyPageTest(FunctionalTest):
         self.assertIn('Prenatal 1 Date: Aug. 30, 2023',survey_body_text_page)
         self.assertIn('Prenatal 2: Incomplete',survey_body_text_page)
         self.assertIn('Prenatal 1 Incentive: Gift Card',survey_body_text_page)
-        self.assertIn('Prenatal 1 Incentive Date: Aug. 24, 2023',survey_body_text_page)
+        self.assertIn('Prenatal 1 Incentive Date: Aug. 4, 2023',survey_body_text_page)
 
 

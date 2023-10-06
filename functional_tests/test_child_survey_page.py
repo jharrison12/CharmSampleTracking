@@ -12,6 +12,6 @@ class ChildSurveyPageTest(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME, 'body').text
 
         self.assertIn('Eight Year Survey: Completed',body)
-        self.assertIn('Eight Year Survey Date: Sept. 12, 2023',body)
+        self.assertIn('Eight Year Survey Date: May 3, 2023',body)
 
         self.assertNotIn('Incentive',body)

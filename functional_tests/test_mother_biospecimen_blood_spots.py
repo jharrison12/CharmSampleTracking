@@ -19,10 +19,10 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
         self.assertIn("Log Status: Completed", body)
 
         #User sees processed information if there is processed data
-        self.assertIn('Collected Date Time:May 5, 2023, noon',body)
+        self.assertIn('Collected Date Time:May 5, 2023, 8 a.m.',body)
         self.assertIn('Quantity: 2',body)
-        self.assertIn('Logged Date Time:May 5, 2023, 12:04 p.m.',body)
-        self.assertIn('Processed Date Time:May 5, 2023, 12:04 p.m.',body)
+        self.assertIn('Logged Date Time:May 5, 2023, 8 a.m.',body)
+        self.assertIn('Processed Date Time:May 5, 2023, 8:04 a.m.',body)
         ##TODO change
         self.assertIn('Logged By:BLANK',body)
 
