@@ -10,7 +10,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
     CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU
 
-import datetime
+import datetime, pytz
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
@@ -27,7 +27,7 @@ class DatabaseSetup(TestCase):
         self.hispanic_unknown = Ethnicity.objects.create(ethnicity=Ethnicity.EthnicityChoice.UNKNOWN)
 
         self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
-                                                        date_of_birth=datetime.date(1985, 7, 3),
+                                                        date_of_birth=timezone.datetime(1985, 7, 3).date(),
                                                         ewcp_participant_identifier='0000',
                                                         participation_level_identifier='01',
                                                         specimen_id='4444', echo_pin='333',
@@ -35,7 +35,7 @@ class DatabaseSetup(TestCase):
                                                         ethnicity_fk=self.hispanic)
 
         self.second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',
-                                                         date_of_birth=datetime.date(1985, 7, 4),
+                                                         date_of_birth=timezone.datetime(1985, 7, 4).date(),
                                                          ewcp_participant_identifier='0001',
                                                          participation_level_identifier='02',
                                                          specimen_id='5555', echo_pin='444',
@@ -43,7 +43,7 @@ class DatabaseSetup(TestCase):
                                                          )
 
         self.third_caregiver = Caregiver.objects.create(charm_project_identifier='P7002',
-                                                        date_of_birth=datetime.date(1985, 7, 4),
+                                                        date_of_birth=timezone.datetime(1985, 7, 4).date(),
                                                         ewcp_participant_identifier='0002',
                                                         participation_level_identifier='02',
                                                         specimen_id='6666', echo_pin='555',
@@ -51,7 +51,7 @@ class DatabaseSetup(TestCase):
                                                         )
 
         self.fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7003',
-                                                         date_of_birth=datetime.date(1985, 7, 4),
+                                                         date_of_birth=timezone.datetime(1985, 7, 4).date(),
                                                          ewcp_participant_identifier='0003',
                                                          participation_level_identifier='02',
                                                          specimen_id='7777', echo_pin='666',
@@ -59,7 +59,7 @@ class DatabaseSetup(TestCase):
                                                          )
 
         self.fifth_caregiver = Caregiver.objects.create(charm_project_identifier='P7004',
-                                                        date_of_birth=datetime.date(1985, 7, 4),
+                                                        date_of_birth=timezone.datetime(1985, 7, 4).date(),
                                                         ewcp_participant_identifier='0004',
                                                         participation_level_identifier='02',
                                                         specimen_id='8888', echo_pin='777',
@@ -93,7 +93,7 @@ class DatabaseSetup(TestCase):
         self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
         self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
-                                                      incentive_date=datetime.date(2023,8,24), incentive_amount=100)
+                                                      incentive_date=timezone.datetime(2023, 8, 4).date(), incentive_amount=100)
 
         #create recruitment
         self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
@@ -101,7 +101,7 @@ class DatabaseSetup(TestCase):
         self.caregiver_1_recruitment = Recruitment.objects.create(caregiver_fk=self.first_caregiver,
                                                                   incentive_fk=self.incentive_one,
                                                                   healthcare_facility_fk=self.health_care_facility_1,
-                                                                  recruitment_date=datetime.date.today())
+                                                                  recruitment_date=timezone.datetime(2023, 8, 4).date())
 
         #create mother and nonmother caregiver tables
 
@@ -110,8 +110,8 @@ class DatabaseSetup(TestCase):
         self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
         self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
                                                                  pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
-                                                                 due_date=datetime.date(2023, 5, 4),
-                                                                 last_menstrual_period=datetime.date(2023, 3, 3),
+                                                                 due_date=timezone.datetime(2023, 5, 23).date(),
+                                                                 last_menstrual_period=timezone.datetime(2023, 5, 4).date(),
                                                                  )
         self.mother_one_pregnancy_one.save()
 
@@ -135,7 +135,7 @@ class DatabaseSetup(TestCase):
                                               charm_project_identifier='7000M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.MALE,
-                                              birth_date=datetime.date(2023, 5, 20),
+                                              birth_date=timezone.datetime(2023, 5, 20).date(),
                                               child_twin=False, race_fk=self.caucasion, ethnicity_fk=self.hispanic,
                                               pregnancy_fk=self.mother_one_pregnancy_one)
         self.mother_one_pregnancy_one.save()
@@ -143,7 +143,7 @@ class DatabaseSetup(TestCase):
                                               charm_project_identifier='7001M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
-                                              birth_date=datetime.date(2021, 8, 10),
+                                              birth_date=timezone.datetime(2021, 8, 10),
                                               child_twin=False, race_fk=self.black, ethnicity_fk=self.non_hispanic,
                                               pregnancy_fk=self.mother_one_pregnancy_one)
 
@@ -271,21 +271,21 @@ class DatabaseSetup(TestCase):
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date(2023,8,30)
+                                                                   survey_completion_date=timezone.datetime(2023,8,30).date()
                                                                    )
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=datetime.date(2023,8,30)
+                                                                   survey_completion_date=timezone.datetime(2023,5,3).date()
                                                                    )
 
         self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
                                                                      survey_fk=self.prenatal_1,
                                                                      survey_outcome_fk=self.completed_survey_outcome,
                                                                      incentive_fk=self.incentive_one,
-                                                                     survey_completion_date=datetime.date(2023,8,30)
+                                                                     survey_completion_date=timezone.datetime(2023,5,3).date()
                                                                      )
 
 
@@ -310,49 +310,49 @@ class DatabaseSetup(TestCase):
         self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
         # self.collected = Outcome.objects.create(status='Collected')
 
-        self.processed_one = Processed.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
-                                                      processed_date_time=timezone.datetime(2023,5,5,12,4,0),
+        self.processed_one = Processed.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                      processed_date_time=timezone.datetime(2023,5,5,12,4,0,tzinfo=pytz.UTC),
                                                       quantity =2,
-                                                      logged_date_time=timezone.datetime(2023,5,5,12,4,0),
+                                                      logged_date_time=timezone.datetime(2023,5,5,12,4,0,tzinfo=pytz.UTC),
                                                       outcome_fk=self.completed)
         self.stored_one = Stored.objects.create(outcome_fk=self.completed,
-                                                stored_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                stored_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
                                                 storage_location='hospital',
                                                 quantity=2,
-                                                logged_date_time=timezone.datetime(2023,5,5,12,0,0))
+                                                logged_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
 
         self.shipped_one = Shipped.objects.create(outcome_fk=self.completed,
-                                                  shipped_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                  shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
                                                   courier='Fedex',
                                                   shipping_number='7777777',
                                                   quantity=3,
-                                                  logged_date_time=timezone.datetime(2023,5,5,12,0,0))
+                                                  logged_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
         self.received_one = Received.objects.create(outcome_fk=self.completed,
-                                                    received_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                    received_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
                                                     storage_location='MSU',
-                                                    logged_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                    logged_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
                                                     quantity=19)
 
-        self.collected_one = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
-                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,),
-                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,),
-                                                      received_date=datetime.date(2023,5,1),
+        self.collected_one = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
+                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
+                                                      received_date=timezone.datetime(2023,5,3).date(),
                                                       number_of_tubes=5,
                                                       in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
                                                       )
 
-        self.collected_two = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
-                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,),
-                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,),
-                                                      received_date=datetime.date(2023,5,1),
+        self.collected_two = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
+                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
+                                                      received_date=timezone.datetime(2023,5,6).date(),
                                                       number_of_tubes=0,
                                                       in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
                                                       )
 
-        self.collected_three = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
-                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,),
-                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,),
-                                                      received_date=datetime.date(2023,5,1),
+        self.collected_three = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
+                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
+                                                      received_date=timezone.datetime(2023,5,3).date(),
                                                       number_of_tubes=4,
                                                       in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
                                                       )
@@ -651,21 +651,21 @@ class DatabaseSetup(TestCase):
             status_fk=self.status_outcome_processed_complete_nine,
             collection_fk=self.hair_early_childhood,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date(2023,8,23),biospecimen_id='1111HR')
+            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111HR')
 
         self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_processed_complete_ten,
             collection_fk=self.toenail_one,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111TN')
+            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111TN')
 
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_processed_complete_eleven,
             collection_fk=self.saliva,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date(2023,8,26),biospecimen_id='1111SA')
+            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111SA')
 
 
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
@@ -700,12 +700,12 @@ class DatabaseSetup(TestCase):
         self.child_one_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
                                                                survey_fk=self.survey_that_child_takes,
                                                                survey_outcome_fk=self.completed_survey_outcome,
-                                                               survey_completion_date=datetime.date(2023,9,12))
+                                                               survey_completion_date=timezone.datetime(2023,5,3).date())
 
         self.child_two_survey_one = ChildSurvey.objects.create(child_fk=self.child_two,
                                                                survey_fk=self.other_survey_that_child_takes,
                                                                survey_outcome_fk=self.incomplete_survey_outcome,
-                                                               survey_completion_date=datetime.date(2023,9,12))
+                                                               survey_completion_date=timezone.datetime(2023,5,4).date())
 
 
 
@@ -714,10 +714,10 @@ class DatabaseSetup(TestCase):
         self.five_year_assent = Assent.objects.create(assent_text='Five Year Survey')
         self.child_one_eight_year_assent = ChildAssent.objects.create(child_fk=self.child_one,
                                                                       assent_fk=self.eight_year_assent,
-                                                                      assent_date=datetime.date(2023,9,5),assent_boolean=True)
+                                                                      assent_date=timezone.datetime(2023,5,4).date(),assent_boolean=True)
         self.child_two_five_year_assent = ChildAssent.objects.create(child_fk=self.child_two,
                                                                      assent_fk=self.five_year_assent,
-                                                                     assent_date=datetime.date(2023,9,5),assent_boolean=False)
+                                                                     assent_date=timezone.datetime(2023,5,4).date(),assent_boolean=False)
 
         # child biospecimen
 
