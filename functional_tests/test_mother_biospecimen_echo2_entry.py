@@ -31,7 +31,7 @@ class MotherBioSpecimenEcho2EntryTest(FunctionalTest):
         collected_not_collected.select_by_visible_text('Collected')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
-        time.sleep(30)
+
         #user sees collected form on next page
 
         form = self.browser.find_element(By.TAG_NAME,'form').text

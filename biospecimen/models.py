@@ -79,11 +79,11 @@ class NoConsent(models.Model):
     no_consent_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
 class ShippedWSU(models.Model):
-    shipped_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
-    number_of_tubes = models.IntegerField(default=1)
-    courier = models.CharField(max_length=255)
-    tracking_number = models.CharField(max_length=255)
-    shipped_by = models.CharField(max_length=255)
+    shipped_date_time = models.DateTimeField(null=True,blank=True)
+    number_of_tubes = models.IntegerField(default=1,null=True,blank=True)
+    courier = models.CharField(max_length=255,null=True,blank=True)
+    tracking_number = models.CharField(max_length=255,null=True,blank=True)
+    shipped_by = models.CharField(max_length=255,null=True,blank=True)
 
 class ShippedECHO(models.Model):
     shipped_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)

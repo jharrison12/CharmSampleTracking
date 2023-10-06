@@ -14,7 +14,7 @@ from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBios
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm
+    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -298,11 +298,12 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
     def test_echo2_bio_page_shows_shipped_choice_form_if_collected_not_null_and_shipped_wsu_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'T')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
         new_ship_to_wsu = ShippedWSU()
-        caregiver_bio.status_fk.shipped_wsu_fk = new_ship_to_wsu
+        status_item.shipped_wsu_fk = new_ship_to_wsu
         new_ship_to_wsu.save()
         caregiver_bio.save()
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertIsInstance(response.context['shipped_to_wsu'], ShippedChoiceForm)
+        self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)

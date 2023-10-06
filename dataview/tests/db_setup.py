@@ -8,7 +8,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal
+    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU
 
 import datetime
 from django.utils import timezone
@@ -114,10 +114,12 @@ class DatabaseSetup(TestCase):
                                                                  last_menstrual_period=datetime.date(2023, 3, 3),
                                                                  )
         self.mother_one_pregnancy_one.save()
-        # create biospecimen
+
+        # create trimester
 
         self.first_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.FIRST,pregnancy_fk=self.mother_one_pregnancy_one)
         self.second_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.SECOND,pregnancy_fk=self.mother_one_pregnancy_one)
+        self.third_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.THIRD,pregnancy_fk=self.mother_one_pregnancy_one)
 
         self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
 
@@ -302,7 +304,7 @@ class DatabaseSetup(TestCase):
                                                                       consent_version_fk=self.consent_version_1,
                                                                       consent_date=datetime.date.today())
 
-
+        #create biospecimen
 
         self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
         self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
@@ -347,6 +349,17 @@ class DatabaseSetup(TestCase):
                                                       in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
                                                       )
 
+        self.collected_three = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0),
+                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,),
+                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,),
+                                                      received_date=datetime.date(2023,5,1),
+                                                      number_of_tubes=4,
+                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+                                                      )
+
+        self.shipped_wsu_blank = ShippedWSU.objects.create()
+
+
         self.status_outcome_processed_complete_one = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_processed_complete_two = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_processed_complete_three = Status.objects.create(processed_fk=self.processed_one)
@@ -385,6 +398,8 @@ class DatabaseSetup(TestCase):
 
 
         self.status_outcome_collected_complete = Status.objects.create(collected_fk=self.collected_one)
+        self.status_outcome_shipped_wsu_incomplete = Status.objects.create(collected_fk=self.collected_three,shipped_wsu_fk=self.shipped_wsu_blank)
+
         self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
         self.status_outcome_blank = Status.objects.create()
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
@@ -453,6 +468,14 @@ class DatabaseSetup(TestCase):
             trimester_fk=self.second_trimester,
             collection_fk=self.urine_none,
             biospecimen_id='112URS'
+        )
+
+        self.urine_trimester_3_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.first_caregiver,
+            trimester_fk=self.third_trimester,
+            collection_fk=self.urine_none,
+            status_fk=self.status_outcome_shipped_wsu_incomplete,
+            biospecimen_id='113URS'
         )
 
         self.placenta_perinatal_2_caregiver_one = CaregiverBiospecimen.objects.create(
