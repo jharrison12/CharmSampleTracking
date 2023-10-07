@@ -8,7 +8,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU
+    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO
 
 import datetime, pytz
 from django.utils import timezone
@@ -364,6 +364,8 @@ class DatabaseSetup(TestCase):
                                                      tracking_number='777777',
                                                      shipped_by='me')
 
+        self.shipped_echo = ShippedECHO.objects.create()
+
 
         self.status_outcome_processed_complete_one = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_processed_complete_two = Status.objects.create(processed_fk=self.processed_one)
@@ -405,6 +407,7 @@ class DatabaseSetup(TestCase):
         self.status_outcome_collected_complete = Status.objects.create(collected_fk=self.collected_one)
         self.status_outcome_shipped_wsu_incomplete = Status.objects.create(collected_fk=self.collected_three,shipped_wsu_fk=self.shipped_wsu_blank)
         self.status_outcome_shipped_wsu_complete = Status.objects.create(collected_fk=self.collected_three,shipped_wsu_fk=self.shipped_wsu)
+        self.status_outcome_shipped_echo_complete = Status.objects.create(collected_fk=self.collected_three,shipped_echo_fk=self.shipped_echo)
 
         self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
         self.status_outcome_blank = Status.objects.create()
@@ -489,6 +492,15 @@ class DatabaseSetup(TestCase):
             trimester_fk=self.first_trimester,
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_wsu_complete,
+            biospecimen_id='212URS'
+        )
+
+
+        self.urine_trimester_2_caregiver_two = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.second_caregiver,
+            trimester_fk=self.second_trimester,
+            collection_fk=self.urine_none,
+            status_fk=self.status_outcome_shipped_echo_complete,
             biospecimen_id='213URS'
         )
 

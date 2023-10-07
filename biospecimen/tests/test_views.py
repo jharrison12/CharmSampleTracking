@@ -10,7 +10,7 @@ from dataview.models import Caregiver, Name, CaregiverName, Address, \
     NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
     ChildSurvey, \
     Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation
-from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBiospecimen,Processed,Stored,ShippedWSU
+from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBiospecimen,Processed,Stored,ShippedWSU,ShippedECHO
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
@@ -330,4 +330,11 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response, 'Courier: FedEx')
+
+    def test_echo2_bio_page_shows_shipped_to_echo_data_if_complete(self):
+        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'S')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response, 'Shipped to Echo: Complete')
 
