@@ -3,7 +3,11 @@
 {% block section %}
     <ul>
     {% for bio in list_of_biospecimens %}
-        <li><a href="{% url "biospecimen:caregiver_biospecimen_entry"  bio.caregiver_fk.charm_project_identifier bio.pk%}">{{ bio.biospecimen_id }}</a></li>
+        {% if not bio.status_fk.shipped_echo_fk %}
+            <li><a href="{% url "biospecimen:caregiver_biospecimen_initial"  bio.caregiver_fk.charm_project_identifier bio.pk%}">{{ bio.biospecimen_id }}</a></li>
+        {% else %}
+            <li><a href="{% url "biospecimen:caregiver_biospecimen_entry"  bio.caregiver_fk.charm_project_identifier bio.pk%}">{{ bio.biospecimen_id }}</a></li>
+        {% endif %}
     {% endfor %}
     </ul>
 {% endblock %}
