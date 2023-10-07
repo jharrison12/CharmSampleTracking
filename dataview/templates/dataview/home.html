@@ -1,5 +1,8 @@
 {% extends "dataview/base.html" %}
 {% block section %}
-        <a href={% url "dataview:caregivers" %}>Mother Sample</a>
-        <a href={% url "dataview:child" %}>Child Sample</a>
+    <ul>
+        <li><a href={% url "dataview:caregivers" %}>Mother Sample</a></li>
+        <li><a href={% url "dataview:child" %}>Child Sample</a></li>
+        <li><a href={% url "biospecimen:biospecimen_history" %}>Biospecimen History</a></li>
+    </ul>
 {% endblock %}
