@@ -4,7 +4,7 @@
     <button type="button" class="btn btn-primary" >Specimen</button>
     <div class="row" id="biospecimen_information">
         <div class="col-sm">ID: {{ biospecimen_item.biospecimen_id }}</div>
-        <div class="col-sm">Type: {{ biospecimen_item.collection_fk.collection_type }}</div>
+        <div class="col-sm">Type: {{ biospecimen_item.collection_fk.collection_type_fk.collection_type }}</div>
         {#  Not sure what the below object was in the SRO version of this device    #}
         <div class="col-sm">Log Status: {{ biospecimen_item.status_fk.processed_fk.outcome_fk.get_outcome_display }}</div>
     </div>

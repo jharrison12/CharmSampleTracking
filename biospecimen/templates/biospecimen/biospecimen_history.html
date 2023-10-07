@@ -1,7 +1,9 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Charm ID: {{ caregiver.charm_project_identifier }} Family ID: {{ caregiver.specimen_id }}{% endblock %}
 {% block section %}
+    <ul>
     {% for item in list_of_historic_caregivers %}
-        <a href={% url "biospecimen:caregiver_biospecimen_item" item.caregiver_fk.charm_project_identifier item.pk %}>{{ item.biospecimen_id }}</a>
+        <li><a href={% url "biospecimen:caregiver_biospecimen_item" item.caregiver_fk.charm_project_identifier item.pk %}>{{ item.biospecimen_id }}</a></li>
     {% endfor %}
+    </ul>
 {% endblock %}
