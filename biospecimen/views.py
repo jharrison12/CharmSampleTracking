@@ -9,7 +9,7 @@ ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,In
 from django.shortcuts import render,get_object_or_404,redirect
 import random
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.CRITICAL)
 
 def check_for_object_or_return_none(object_name,filter,parameter):
     try:
@@ -176,9 +176,9 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     if request.method=="POST":
-        logging.debug(f"post is {request.POST}")
+        logging.critical(f"post is {request.POST}")
         form = ShippedChoiceForm(data=request.POST, prefix='shipped_choice_form')
-        logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+        logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
                 shipped_to_wsu = ShippedWSU.objects.create()
@@ -187,8 +187,9 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
                 logging.debug(f'Shipped to wsu saved')
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'E':
                 shipped_to_echo = ShippedECHO.objects.create()
-                status.shipped_echo = shipped_to_echo
+                status.shipped_echo_fk = shipped_to_echo
                 status.save()
+                logging.debug(f'Shipped to echo saved')
         caregiver_bio.save()
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
@@ -200,11 +201,11 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_wsu_fk = ShippedWSU.objects.get(status=status)
-    logging.critical(f"In wsu post")
+    logging.debug(f"In wsu post")
     if request.method == "POST":
-        logging.critical(f"post is {request.POST}")
+        logging.debug(f"post is {request.POST}")
         form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
-        logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+        logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
         if form.is_valid():
             shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
             shipped_wsu_fk.tracking_number = form.cleaned_data['tracking_number']
@@ -212,7 +213,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             shipped_wsu_fk.logged_date_time = form.cleaned_data['logged_date_time']
             shipped_wsu_fk.courier = form.cleaned_data['courier']
             shipped_wsu_fk.save()
-            logging.critical(f"shipped wsu saved")
+            logging.debug(f"shipped wsu saved")
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
 
