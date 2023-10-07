@@ -1,0 +1,9 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}Specimen ID:{% endblock %}
+{% block section %}
+    <ul>
+    {% for bio in list_of_biospecimens %}
+        <li><a href="{% url "biospecimen:caregiver_biospecimen_entry"  bio.caregiver_fk.charm_project_identifier bio.pk%}">{{ bio.biospecimen_id }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

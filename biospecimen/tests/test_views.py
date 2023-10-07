@@ -31,6 +31,12 @@ class BiospecimenHistoryPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/history/')
         self.assertContains(response,'P7000')
 
+class BiospecimenEntryHomePage(DatabaseSetup):
+
+    def test_biospecimen_entry_home_page_returns_correct_template(self):
+        response = self.client.get(f'/biospecimen/entry/')
+        self.assertTemplateUsed(response, 'biospecimen/biospecimen_entry.html')
+
 @unittest.skip
 class CaregiverBiospecimenPageTest(DatabaseSetup):
 

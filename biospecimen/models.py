@@ -1,5 +1,5 @@
 from django.db import models
-from dataview.models import Caregiver,Incentive,Child,AgeCategory,Pregnancy
+from dataview.models import Caregiver,Incentive,Child,AgeCategory,Pregnancy,Project
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import logging
@@ -203,6 +203,7 @@ class CaregiverBiospecimen(models.Model):
     trimester_fk = models.ForeignKey(Trimester,on_delete=models.PROTECT,blank=True,null=True)
     perinatal_fk = models.ForeignKey(Perinatal,on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory,on_delete=models.PROTECT,blank=True,null=True)
+    project_fk = models.ForeignKey(Project,on_delete=models.PROTECT,blank=False,null=False)
     biospecimen_id = models.CharField(max_length=7, null=False,blank=False,unique=True)
     biospecimen_date = models.DateField(blank=False,null=False,default=timezone.now)
 

@@ -26,9 +26,11 @@ def biospecimen_history(request):
 
     items = CaregiverBiospecimen.objects.filter(caregiver_fk__in=list_of_historic_caregivers)
     logging.critical(items)
-
-
     return render(request,template_name='biospecimen/biospecimen_history.html',context={'list_of_historic_caregivers':items})
+
+def biospecimen_entry(request):
+    list_of_echo_2_bio = CaregiverBiospecimen.objects.filter(project_fk__project_name='ECHO2')
+    return render(request,template_name='biospecimen/biospecimen_entry.html',context={'list_of_biospecimens':list_of_echo_2_bio})
 
 # Create your views here.
 def caregiver_biospecimen(request,caregiver_charm_id):
@@ -122,8 +124,6 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
-    logging.debug(f"collected fk {caregiver_bio.status_fk.collected_fk}")
-    logging.debug(f"shipped to wsu {shipped_to_wsu_item.exists()}")
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
