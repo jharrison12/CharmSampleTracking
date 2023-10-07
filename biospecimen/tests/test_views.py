@@ -14,7 +14,8 @@ from biospecimen.models import Collection, Status,ChildBiospecimen,CaregiverBios
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm
+    ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
+    ShippedtoEchoForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -338,3 +339,20 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response, 'Shipped to Echo: Complete')
 
+    def test_echo2_bio_page_shows_shipped_echo_form_if_echo_fk_not_null(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'T')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+        new_ship_to_echo = ShippedECHO()
+        status_item.shipped_echo_fk = new_ship_to_echo
+        new_ship_to_echo.save()
+        caregiver_bio.save()
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        logging.critical(f"shipped to echo {response.context}")
+        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
+
+    def test_echo2_bio_entry_shipped_echo_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'S')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
+                                    data={'shipped_date_time': timezone.datetime(2023, 5, 5, 5, 5,5)})
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")

@@ -1,6 +1,7 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm
+ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
+    ShippedtoEchoForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -97,3 +98,19 @@ class CaregiverShippedtoWSUForm(TestCase):
     def test_bio_shipped_wsu_form_has_shipped_to_wsu(self):
         form = ShippedtoWSUForm()
         self.assertIn('Shipped date and time:',form.as_p())
+
+    def test_collected_form_validation_for_blank_items(self):
+        form = ShippedtoWSUForm(data={'':''})
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required',form.errors['shipped_date_and_time'][0])
+
+class CaregiverShippedtoECHOForm(TestCase):
+
+    def test_bio_shipped_echo_form_has_shipped_datetime(self):
+        form = ShippedtoEchoForm()
+        self.assertIn('Shipped date and time:',form.as_p())
+
+    def test_collected_form_validation_for_blank_items(self):
+        form = ShippedtoEchoForm(data={'':''})
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required',form.errors['shipped_date_and_time'][0])

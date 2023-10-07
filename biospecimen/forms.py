@@ -108,3 +108,6 @@ class ShippedtoWSUForm(forms.Form):
     number_of_tubes = forms.IntegerField()
     logged_date_time = forms.DateTimeField()
     courier = forms.CharField()
+
+class ShippedtoEchoForm(forms.Form):
+    shipped_date_and_time = forms.DateTimeField(initial=timezone.now())

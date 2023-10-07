@@ -87,7 +87,7 @@ class ShippedWSU(models.Model):
     logged_date_time = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
 class ShippedECHO(models.Model):
-    shipped_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    shipped_date_time = models.DateTimeField(null=True,blank=True)
     logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
 class Status(models.Model):
