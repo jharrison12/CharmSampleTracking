@@ -27,6 +27,9 @@ class Received(models.Model):
     received_date_time = models.DateTimeField(default=timezone.now, null=True, blank=True)
     logged_date_time = models.DateTimeField(default=timezone.now, null=True, blank=True)
 
+    def __str__(self):
+        return f"received {self.outcome_fk.get_outcome_display()}"
+
 class Shipped(models.Model):
     ##todo add user
     outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT,null=True,blank=True)
@@ -37,6 +40,9 @@ class Shipped(models.Model):
     shipped_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
     logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
+    def __str__(self):
+        return f"shipped {self.outcome_fk.get_outcome_display()}"
+
 class Stored(models.Model):
     ##TODO add user
     outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT,null=True,blank=True)
@@ -46,6 +52,9 @@ class Stored(models.Model):
     quantity = models.IntegerField(default=1)
     logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
+    def __str__(self):
+        return f"stored {self.outcome_fk.get_outcome_display()}"
+
 class Processed(models.Model):
     #TODO add user
     outcome_fk = models.ForeignKey(Outcome,on_delete=models.PROTECT,null=True,blank=True)
@@ -54,6 +63,8 @@ class Processed(models.Model):
     quantity = models.IntegerField(default=1)
     logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
+    def __str__(self):
+        return f"processed {self.outcome_fk.get_outcome_display()}"
 
 class Collected(models.Model):
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,null=True,blank=True)
@@ -72,11 +83,20 @@ class Collected(models.Model):
 
     ##todo check for formaline datetime if placenta
 
+    def __str__(self):
+        return f"collected {self.status_set}"
+
 class NotCollected(models.Model):
     not_collected_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
+    def __str__(self):
+        return f"collected {self.status_set}"
+
 class NoConsent(models.Model):
     no_consent_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
+
+    def __str__(self):
+        return f"collected {self.status_set}"
 
 class ShippedWSU(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
@@ -86,9 +106,15 @@ class ShippedWSU(models.Model):
     shipped_by = models.CharField(max_length=255,null=True,blank=True)
     logged_date_time = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
+    def __str__(self):
+        return f"collected {self.status_set}"
+
 class ShippedECHO(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
     logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
+
+    def __str__(self):
+        return f"collected {self.status_set}"
 
 class Status(models.Model):
     #todo sublcass text choices for status
@@ -115,6 +141,8 @@ class Status(models.Model):
             logging.debug(f"{self.received_fk} {self.objects.model}")
             return None
 
+    def __str__(self):
+        return f"Status {self.caregiver_fk.charm_project_identifier}"
 
 class CollectionType(models.Model):
     collection_type = models.CharField(max_length=255)
@@ -155,13 +183,17 @@ class Trimester(models.Model):
         THIRD = 'T',_('Third')
     trimester = models.CharField(max_length=1,choices=TrimesterChoices.choices)
 
+    def __str__(self):
+        return f"{self.get_trimester_display()}"
+
 class Perinatal(models.Model):
     #perinatal event like birth
     #i need this table to capture multiple placentas associated with one birth
     pregnancy_fk = models.ForeignKey(Pregnancy,null=False,blank=False,on_delete=models.PROTECT)
     child_fk = models.OneToOneField(Child,on_delete=models.PROTECT)
 
-
+    def __str__(self):
+        return f"{self.pregnancy_fk.pregnancy_id}"
 
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
@@ -181,6 +213,8 @@ class CaregiverBiospecimen(models.Model):
                                     violation_error_message="You can't have a duplicate item")
         ]
 
+    def __str__(self):
+        return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"
 
 class ChildBiospecimen(models.Model):
     child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
