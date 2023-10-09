@@ -415,6 +415,7 @@ class DatabaseSetup(TestCase):
 
         self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
         self.status_outcome_blank = Status.objects.create()
+        self.status_outcome_blank2  = Status.objects.create()
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
         self.urine = CollectionType.objects.create(collection_type='Urine')
@@ -472,8 +473,9 @@ class DatabaseSetup(TestCase):
             caregiver_fk=self.first_caregiver,
             trimester_fk=self.first_trimester,
             collection_fk=self.bloodspots_one,
-            status_fk=,
-            biospecimen_id='1111BLS'
+            status_fk=self.status_outcome_blank2,
+            biospecimen_id='1111BLS',
+            project_fk=self.echo2
         )
 
         self.urine_trimester_1_caregiver_one = CaregiverBiospecimen.objects.create(

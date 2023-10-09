@@ -33,29 +33,31 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
             caregiverbio_one.full_clean()
 
     def test_caregiver_biospecimen_outcome_links_to_processed(self):
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots')
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots',project_fk__project_name__contains='ECHO1')
         outcome = Outcome.objects.get(processed__status__caregiverbiospecimen=caregiver)
         self.assertEqual(outcome.get_outcome_display(),'Completed')
 
     def test_caregiver_biospecimen_outcome_links_to_stored(self):
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots')
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots',project_fk__project_name__contains='ECHO1')
         stored = Stored.objects.create()
         outcome = Outcome.objects.get(stored__status__caregiverbiospecimen=caregiver)
         self.assertEqual(outcome.get_outcome_display(),'Completed')
 
     def test_caregiver_biospecimen_outcome_links_to_shipped(self):
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots')
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots',project_fk__project_name__contains='ECHO1')
 
         outcome = Outcome.objects.get(shipped__status__caregiverbiospecimen=caregiver)
         self.assertEqual(outcome.get_outcome_display(),'Completed')
 
     def test_caregiver_biospecimen_outcome_links_to_received(self):
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots')
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk__collection_type_fk__collection_type='Bloodspots',project_fk__project_name__contains='ECHO1')
         outcome = Outcome.objects.get(received__status__caregiverbiospecimen=caregiver)
         self.assertEqual(outcome.get_outcome_display(),'Completed')
 
     def test_caregiver_biospecimen_links_to_collected(self):
-        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',trimester_fk__trimester='F')
+        caregiver_bio = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier='P7000',
+                                                         trimester_fk__trimester='F',
+                                                         collection_fk__collection_type_fk__collection_type='Bloodspots').first()
         caregiver = Caregiver.objects.get(caregiverbiospecimen__status_fk__collected_fk__number_of_tubes=5)
         self.assertEqual(caregiver,caregiver_bio.caregiver_fk)
 
