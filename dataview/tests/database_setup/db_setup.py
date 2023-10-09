@@ -468,6 +468,14 @@ class DatabaseSetup(TestCase):
 
         #Create Biospeciment for Echo 2 Testing
 
+        self.blood_trimester_1_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            trimester_fk=self.first_trimester,
+            collection_fk=self.bloodspots_one,
+            status_fk=,
+            biospecimen_id='1111BLS'
+        )
+
         self.urine_trimester_1_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk = self.first_caregiver,
             trimester_fk=self.first_trimester,
