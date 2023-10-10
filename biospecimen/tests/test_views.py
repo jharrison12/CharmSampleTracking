@@ -280,7 +280,7 @@ class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{caregiver_bio_pk}/history/')
         self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_history.html')
 
-class CaregiverEcho2BiospecimenPage(DatabaseSetup):
+class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
     def return_caregiver_bio_pk(self,charm_id,collection_type,trimester,project='ECHO2'):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
@@ -409,3 +409,32 @@ class CaregiverEcho2BiospecimenPage(DatabaseSetup):
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
                                     data={'shipped_date_time': timezone.datetime(2023, 5, 5, 5, 5,5)})
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+
+class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
+    def return_caregiver_bio_pk(self,charm_id,collection_type,trimester,project='ECHO2'):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester,project_fk__project_name=project)
+        return caregiverbio.pk
+
+    def test_echo2_initial_bio_blood_page_returns_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000','Whole Blood','F')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.assertTemplateUsed(response,'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_echo2_bio_page_shows_trimester_if_blood(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response,'Trimester: First')
+
+    def test_echo2_bio_page_shows_collected_blood_form_if_blood_and_collected(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        new_status = Status()
+        caregiver_bio.status_fk = new_status
+        new_status.save()
+        caregiver_bio.save()
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response,'<input type="checkbox" name="whole_blood')

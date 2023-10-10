@@ -1,7 +1,7 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm
+    ShippedtoEchoForm,CollectedBloodForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -114,3 +114,29 @@ class CaregiverShippedtoECHOForm(TestCase):
         form = ShippedtoEchoForm(data={'':''})
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['shipped_date_and_time'][0])
+
+class CaregiverBloodCollectedForm(TestCase):
+
+    def test_blood_collected_form_has_datetime_collected(self):
+        form = CollectedBloodForm()
+        self.assertIn('Collected date time:', form.as_p())
+
+    def test_blood_collected_form_has_checkbox_for_whole_blood(self):
+        form =CollectedBloodForm()
+        self.assertIn('<input type="checkbox" name="whole_blood',form.as_p())
+
+    def test_blood_collected_form_has_checkbox_for_plasma(self):
+        form =CollectedBloodForm()
+        self.assertIn('<input type="checkbox" name="plasma',form.as_p())
+
+    def test_blood_collected_form_has_checkbox_for_buffy_coat(self):
+        form =CollectedBloodForm()
+        self.assertIn('<input type="checkbox" name="buffy_coat',form.as_p())
+
+    def test_blood_collected_form_has_checkbox_for_rbc(self):
+        form =CollectedBloodForm()
+        self.assertIn('<input type="checkbox" name="red_blood_count',form.as_p())
+
+    def test_blood_collected_form_has_checkbox_for_serum(self):
+        form = CollectedBloodForm()
+        self.assertIn('<input type="checkbox" name="serum', form.as_p())

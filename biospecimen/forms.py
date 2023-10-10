@@ -111,3 +111,22 @@ class ShippedtoWSUForm(forms.Form):
 
 class ShippedtoEchoForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
+
+
+class CollectedBloodForm(forms.Form):
+    collected_date_time = forms.DateTimeField(initial=timezone.now())
+    processed_date_time = forms.DateTimeField()
+    stored_date_time = forms.DateTimeField()
+    number_of_tubes = forms.IntegerField()
+    whole_blood = forms.BooleanField()
+    plasma = forms.BooleanField()
+    buffy_coat = forms.BooleanField()
+    red_blood_count = forms.BooleanField()
+    serum = forms.BooleanField()
+
+    class Meta:
+        fields = ['collected_date_time','processed_date_time','stored_date_time','number_of_tubes']
+        widgets = {
+            "collected_date_time": forms.DateTimeInput,
+            "processed_date_time": forms.DateTimeInput
+        }

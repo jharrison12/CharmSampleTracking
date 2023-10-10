@@ -189,7 +189,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_no_consent(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
