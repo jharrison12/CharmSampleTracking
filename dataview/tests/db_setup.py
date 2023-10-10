@@ -443,23 +443,34 @@ class DatabaseSetup(TestCase):
         self.urine_three = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_three)
         self.urine_early_childhood = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_early_childhood)
         self.urine_mc = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_middle_childhood)
+
         self.serum_one = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_one)
         self.serum_two = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_two)
+
         self.plasma_one = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_one)
         self.plasma_two = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_two)
+
         self.bloodspots_one = Collection.objects.create(collection_type_fk=self.bloodspots, collection_number_fk=self.number_one)
         # self.bloodspots_two = Collection.objects.create(collection_type_fk='Bloodspots', collection_number_fk=self.number_two)
+
         self.whole_blood_one = Collection.objects.create(collection_type_fk=self.whole_blood, collection_number_fk=self.number_one)
         self.whole_blood_two = Collection.objects.create(collection_type_fk=self.whole_blood, collection_number_fk=self.number_two)
+        self.whole_blood_none = Collection.objects.create(collection_type_fk=self.whole_blood)
+
         self.buffy_coat_one = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_one)
         self.buffy_coat_two = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_two)
+
         self.red_blood_cells_one = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_one)
         self.red_blood_cells_two = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_two)
+
         self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair, collection_number_fk=self.number_early_childhood)
         self.hair = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_one)
+
         self.toenail_earlychildhood = Collection.objects.create(collection_type_fk=self.toenail, collection_number_fk=self.number_early_childhood)
         self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
+
         self.saliva = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
         self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
 
@@ -540,6 +551,17 @@ class DatabaseSetup(TestCase):
             biospecimen_id='111P1',
             project_fk=self.echo1
         )
+
+        self.new_status = Status.objects.create()
+
+        self.whole_blood_caregiver_one_trimester_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.first_caregiver,
+            collection_fk=self.whole_blood_none,
+            biospecimen_id='2111WB',
+            project_fk=self.echo2,
+            trimester_fk=self.first_trimester
+        )
+
 
 
         #Create bloodspot rows for testing of application
@@ -829,4 +851,3 @@ class DatabaseSetup(TestCase):
                                                                              age_category_fk=self.early_childhood_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15),
                                                                              kit_sent_date=datetime.date(2023, 8, 12))
-

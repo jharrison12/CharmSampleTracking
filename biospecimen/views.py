@@ -73,6 +73,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    logging.critical(f"{caregiver_bio.status_fk}")
     if caregiver_bio.status_fk==None:
         initial_bio_form = InitialBioForm(prefix="initial_form")
     else:

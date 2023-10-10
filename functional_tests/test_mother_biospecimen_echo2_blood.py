@@ -1,3 +1,5 @@
+import logging
+
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 from biospecimen.models import CaregiverBiospecimen,Caregiver
@@ -5,19 +7,22 @@ import time
 import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
+logging.basicConfig(level=logging.CRITICAL)
 
 class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
-    def return_caregiver_bio_pk(self,charm_id,collection_type,trimester):
+    def return_caregiver_bio_pk(self,charm_id,collection_type,trimester,project='ECHO2'):
+        logging.critical(f"{charm_id} {collection_type} {trimester}")
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type_fk__collection_type=collection_type,
-                                                        trimester_fk__trimester=trimester)
+                                                        trimester_fk__trimester=trimester,
+                                                        project_fk__project_name=project)
         return caregiverbio.pk
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -25,6 +30,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        time.sleep(40)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
@@ -102,7 +108,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', trimester='F')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -160,7 +166,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 

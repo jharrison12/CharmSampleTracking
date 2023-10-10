@@ -142,7 +142,7 @@ class Status(models.Model):
             return None
 
     def __str__(self):
-        return f"Status {self.caregiver_fk.charm_project_identifier}"
+        return f"Status {self.pk}"
 
 class CollectionType(models.Model):
     collection_type = models.CharField(max_length=255)
