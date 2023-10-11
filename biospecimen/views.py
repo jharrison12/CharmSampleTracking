@@ -11,6 +11,13 @@ import random
 
 logging.basicConfig(level=logging.CRITICAL)
 
+blood_dict = {'Whole Blood':'whole_blood',
+              'Serum':'serum',
+              'Plasma':'plasma',
+              'Red Blood Cells':'red_blood_cells',
+              'Buffy Coat':'buffy_coat'}
+
+
 def check_for_object_or_return_none(object_name,filter,parameter):
     try:
         return object_name.objects.get(filter=parameter)
@@ -170,8 +177,14 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
-        elif collection_type.collection_type in ('Whole Blood','Serum','Plasma', 'Buffy Coat','Red Blood Count'):
+        elif collection_type.collection_type in ('Whole Blood','Serum','Plasma', 'Buffy Coat','Red Blood Cells'):
+
             collected_form = CollectedBloodForm(prefix='blood_form')
+            logging.critical(blood_dict.get(collection_type.collection_type))
+            #disable whatever check box you used to pull the data
+            collected_form.fields[str(blood_dict.get(collection_type.collection_type))].initial = True
+            collected_form.fields[str(blood_dict.get(collection_type.collection_type))].disabled = True
+
         else:
             collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):

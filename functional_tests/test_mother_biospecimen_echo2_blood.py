@@ -61,7 +61,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         #user sees a ton of checkboxes for all the bloods possible
 
         whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form-whole_blood")
-
+        time.sleep(30)
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
