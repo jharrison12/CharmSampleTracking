@@ -241,6 +241,12 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                                               trimester_text=caregiver_bio.trimester_fk.trimester,
                                               form_data=form,
                                               caregiver_bio_primary=caregiver_bio_pk)
+                create_or_update_blood_values(true_or_false=form.cleaned_data['red_blood_cells'],
+                                              collection_type='Red Blood Cells',
+                                              caregiver_object=caregiver,
+                                              trimester_text=caregiver_bio.trimester_fk.trimester,
+                                              form_data=form,
+                                              caregiver_bio_primary=caregiver_bio_pk)
 
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:

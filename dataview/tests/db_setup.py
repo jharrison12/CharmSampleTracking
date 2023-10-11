@@ -465,6 +465,7 @@ class DatabaseSetup(TestCase):
 
         self.red_blood_cells_one = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_one)
         self.red_blood_cells_two = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_two)
+        self.red_blood_cells_none = Collection.objects.create(collection_type_fk=self.red_blood_cells)
 
         self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair, collection_number_fk=self.number_early_childhood)
         self.hair = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_one)

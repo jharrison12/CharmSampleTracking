@@ -121,7 +121,7 @@ class CollectedBloodForm(forms.Form):
     whole_blood = forms.BooleanField(required=False)
     plasma = forms.BooleanField(required=False)
     buffy_coat = forms.BooleanField( required=False)
-    red_blood_count = forms.BooleanField( required=False)
+    red_blood_cells = forms.BooleanField( required=False)
     serum = forms.BooleanField( required=False)
 
     class Meta:

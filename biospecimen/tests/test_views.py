@@ -466,7 +466,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertContains(response, '<input type="checkbox" name="blood_form-whole_blood')
         self.assertContains(response, '<input type="checkbox" name="blood_form-plasma')
         self.assertContains(response, '<input type="checkbox" name="blood_form-buffy_coat')
-        self.assertContains(response, '<input type="checkbox" name="blood_form-red_blood_count')
+        self.assertContains(response, '<input type="checkbox" name="blood_form-red_blood_cells')
 
     def test_echo2_bio_entry_blood_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
@@ -572,7 +572,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={'blood_form-red_blood_count': True,
+                                    data={'blood_form-red_blood_cells': True,
                                           'blood_form-collected_date_time': timezone.datetime(
                                               2023, 5, 5, 5, 5, 5),
                                           'blood_form-processed_date_time': timezone.datetime(
@@ -580,7 +580,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                           'blood_form-stored_date_time': timezone.datetime(
                                               2023, 5, 5, 5, 5, 5),
                                           'blood_form-number_of_tubes': 5})
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Count', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.assertEqual(red_blood_count.status_fk.collected_fk.collected_date_time,
@@ -590,4 +590,4 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertEqual(red_blood_count.status_fk.collected_fk.processed_date_time,
                          datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
         self.assertEqual(red_blood_count.status_fk.collected_fk.number_of_tubes, 5)
-        self.fail()
+

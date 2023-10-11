@@ -135,7 +135,7 @@ class CaregiverBloodCollectedForm(TestCase):
 
     def test_blood_collected_form_has_checkbox_for_rbc(self):
         form =CollectedBloodForm()
-        self.assertIn('<input type="checkbox" name="red_blood_count',form.as_p())
+        self.assertIn('<input type="checkbox" name="red_blood_cells',form.as_p())
 
     def test_blood_collected_form_has_checkbox_for_serum(self):
         form = CollectedBloodForm()
