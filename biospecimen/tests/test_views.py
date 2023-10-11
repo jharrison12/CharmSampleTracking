@@ -461,7 +461,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.critical(f"{response.content.decode()}")
+        logging.debug(f"{response.content.decode()}")
         self.assertContains(response, '<input type="checkbox" name="blood_form-serum')
         self.assertContains(response, '<input type="checkbox" name="blood_form-whole_blood')
         self.assertContains(response, '<input type="checkbox" name="blood_form-plasma')

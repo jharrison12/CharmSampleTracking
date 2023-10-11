@@ -24,7 +24,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
         caregiver_biospecimen = CaregiverBiospecimen.objects.get(pk=caregiver_bio_primary)
         project_object = Project.objects.get(project_name=project)
         collection_object = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=collection_number_object)
-        logging.critical(f"in the create or update function")
+        logging.debug(f"in the create or update function")
         try:
             biospecimen_object = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver_object,
                                              collection_fk=collection_object,
@@ -38,7 +38,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             biospecimen_object.status_fk.collected_fk.save()
             biospecimen_object.status_fk.save()
             biospecimen_object.save()
-            logging.critical(f"Biospecimen object updated")
+            logging.debug(f"Biospecimen object updated")
         except CaregiverBiospecimen.DoesNotExist:
             new_status = Status()
             new_collected = Collected()
@@ -58,7 +58,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             new_status.save()
             new_biospecimen.status_fk = new_status
             new_biospecimen.save()
-            logging.critical(f"Everything created and saved")
+            logging.debug(f"Everything created and saved")
     else:
         pass
 
@@ -197,7 +197,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    logging.critical(f"collection type {collection_type.collection_type} caregiver {caregiver_bio.caregiver_fk.charm_project_identifier}"
+    logging.debug(f"collection type {collection_type.collection_type} caregiver {caregiver_bio.caregiver_fk.charm_project_identifier}"
                      f"")
     if request.method=="POST":
         if collection_type.collection_type == "Urine":
@@ -212,9 +212,9 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine.save()
                 caregiver_bio.save()
         if collection_type.collection_type in ('Whole Blood','Serum','Plasma', 'Buffy Coat','Red Blood Count'):
-            logging.critical(f"in the blood if statement")
+            logging.debug(f"in the blood if statement")
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
-            logging.critical(f"is form valid {form.is_valid()} form errors {form.errors} form {form.data} request.post{request.POST}")
+            logging.debug(f"is form valid {form.is_valid()} form errors {form.errors} form {form.data} request.post{request.POST}")
             if form.is_valid():
                 ##if serum is true check that serum exists if exists update if not create and update
                 create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
