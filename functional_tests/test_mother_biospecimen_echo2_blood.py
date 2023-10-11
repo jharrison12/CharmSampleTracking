@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.CRITICAL)
 class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def return_caregiver_bio_pk(self,charm_id,collection_type,trimester,project='ECHO2'):
-        logging.critical(f"{charm_id} {collection_type} {trimester}")
+        logging.debug(f"{charm_id} {collection_type} {trimester}")
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type_fk__collection_type=collection_type,
@@ -30,7 +30,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        time.sleep(40)
+
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
@@ -60,7 +60,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         #user sees a ton of checkboxes for all the bloods possible
 
-        whole_blood_checkbox = self.bro.find_element(By.ID,"id_blood_form_checkbox-whole_blood")
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form_checkbox-whole_blood")
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()

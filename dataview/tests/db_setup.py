@@ -446,6 +446,7 @@ class DatabaseSetup(TestCase):
 
         self.serum_one = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_one)
         self.serum_two = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_two)
+        self.serum_none = Collection.objects.create(collection_type_fk=self.serum)
 
         self.plasma_one = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_one)
         self.plasma_two = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_two)

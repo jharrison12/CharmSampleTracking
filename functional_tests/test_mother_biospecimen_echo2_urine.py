@@ -143,13 +143,15 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         shipped_to_echo = Select(self.browser.find_element(By.ID,'id_shipped_choice_form-shipped_to_wsu_or_echo'))
         shipped_to_echo.select_by_visible_text('Shipped to Echo')
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')
+
         submit.click()
 
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        needed_div = self.browser.find_element(By.ID,'shipped_to_echo_information').text
-        self.assertIn('Shipped to Echo:',needed_div)
+        needed_div = self.browser.find_element(By.ID,'shipped_to_echo_form').text
+        self.assertIn('Shipped to ECHO Form',needed_div)
 
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):

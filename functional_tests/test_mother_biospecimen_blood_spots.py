@@ -8,16 +8,18 @@ from selenium.webdriver.support.ui import Select
 class MotherBioSpecimenBloodspotsTest(FunctionalTest):
 
 
-    def return_caregiver_bio_pk(self,charm_id,collection_type,collection_num,trimester=None):
+    def return_caregiver_bio_pk(self,charm_id,collection_type,collection_num,trimester=None,project="ECHO1"):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         if trimester is not None:
             caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                             collection_fk__collection_type_fk__collection_type=collection_type,
-                                                            trimester_fk__trimester=trimester)
+                                                            trimester_fk__trimester=trimester,
+                                                            project_fk__project_name=project)
         else:
             caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type_fk__collection_type=collection_type,
-                                                        collection_fk__collection_number_fk__collection_number=collection_num)
+                                                        collection_fk__collection_number_fk__collection_number=collection_num,
+                                                            project_fk__project_name=project)
 
         return caregiverbio.pk
 

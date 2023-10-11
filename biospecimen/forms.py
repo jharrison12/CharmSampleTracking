@@ -118,11 +118,11 @@ class CollectedBloodForm(forms.Form):
     processed_date_time = forms.DateTimeField()
     stored_date_time = forms.DateTimeField()
     number_of_tubes = forms.IntegerField()
-    whole_blood = forms.BooleanField()
-    plasma = forms.BooleanField()
-    buffy_coat = forms.BooleanField()
-    red_blood_count = forms.BooleanField()
-    serum = forms.BooleanField()
+    whole_blood = forms.BooleanField(required=False)
+    plasma = forms.BooleanField(required=False)
+    buffy_coat = forms.BooleanField( required=False)
+    red_blood_count = forms.BooleanField( required=False)
+    serum = forms.BooleanField( required=False)
 
     class Meta:
         fields = ['collected_date_time','processed_date_time','stored_date_time','number_of_tubes']
