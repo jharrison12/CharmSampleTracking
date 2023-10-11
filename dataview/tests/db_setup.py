@@ -461,6 +461,7 @@ class DatabaseSetup(TestCase):
 
         self.buffy_coat_one = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_one)
         self.buffy_coat_two = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_two)
+        self.buffy_coat_none = Collection.objects.create(collection_type_fk=self.buffy_coat)
 
         self.red_blood_cells_one = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_one)
         self.red_blood_cells_two = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_two)

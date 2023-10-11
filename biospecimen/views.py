@@ -217,24 +217,30 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             logging.critical(f"is form valid {form.is_valid()} form errors {form.errors} form {form.data} request.post{request.POST}")
             if form.is_valid():
                 ##if serum is true check that serum exists if exists update if not create and update
-                serum = create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
+                create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
                                                       collection_type='Serum',
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
                                                       caregiver_bio_primary=caregiver_bio_pk)
-                serum = create_or_update_blood_values(true_or_false=form.cleaned_data['plasma'],
+                create_or_update_blood_values(true_or_false=form.cleaned_data['plasma'],
                                                       collection_type='Plasma',
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
                                                       caregiver_bio_primary=caregiver_bio_pk)
-                whole_blood = create_or_update_blood_values(true_or_false=form.cleaned_data['whole_blood'],
+                create_or_update_blood_values(true_or_false=form.cleaned_data['whole_blood'],
                                                       collection_type='Whole Blood',
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
                                                       caregiver_bio_primary=caregiver_bio_pk)
+                create_or_update_blood_values(true_or_false=form.cleaned_data['buffy_coat'],
+                                              collection_type='Buffy Coat',
+                                              caregiver_object=caregiver,
+                                              trimester_text=caregiver_bio.trimester_fk.trimester,
+                                              form_data=form,
+                                              caregiver_bio_primary=caregiver_bio_pk)
 
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:

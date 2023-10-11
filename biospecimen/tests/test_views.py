@@ -544,4 +544,50 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                          datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
         self.assertEqual(whole_blood.status_fk.collected_fk.number_of_tubes,5)
 
+    def test_echo2_bio_entry_blood_updates_buffy_coat_if_checkbox_checked(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-buffy_coat': True,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-number_of_tubes': 5})
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Buffy Coat', 'F')
+        buffy_coat = CaregiverBiospecimen.objects.get(pk=primary_key)
 
+        self.assertEqual(buffy_coat.status_fk.collected_fk.collected_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(buffy_coat.status_fk.collected_fk.stored_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(buffy_coat.status_fk.collected_fk.processed_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(buffy_coat.status_fk.collected_fk.number_of_tubes,5)
+
+        ##need to test that values DONT update if false
+
+    def test_echo2_bio_entry_blood_updates_red_blood_count_if_checkbox_checked(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                                    data={'blood_form-red_blood_count': True,
+                                          'blood_form-collected_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-processed_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-stored_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-number_of_tubes': 5})
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Count', 'F')
+        red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
+
+        self.assertEqual(red_blood_count.status_fk.collected_fk.collected_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(red_blood_count.status_fk.collected_fk.stored_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(red_blood_count.status_fk.collected_fk.processed_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(red_blood_count.status_fk.collected_fk.number_of_tubes, 5)
+        self.fail()
