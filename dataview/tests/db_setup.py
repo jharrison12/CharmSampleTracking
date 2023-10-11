@@ -450,6 +450,7 @@ class DatabaseSetup(TestCase):
 
         self.plasma_one = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_one)
         self.plasma_two = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_two)
+        self.plasma_none = Collection.objects.create(collection_type_fk=self.plasma)
 
         self.bloodspots_one = Collection.objects.create(collection_type_fk=self.bloodspots, collection_number_fk=self.number_one)
         # self.bloodspots_two = Collection.objects.create(collection_type_fk='Bloodspots', collection_number_fk=self.number_two)

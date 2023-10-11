@@ -20,6 +20,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         if staging_server:
             self.live_server_url = 'http://' + staging_server
             return
+
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
         self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
         self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
@@ -80,7 +81,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.first_caregiver_old_name = Name.objects.create(first_name='Sandy', last_name='Cheeks')
 
-        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_name, revision_number=1,
+        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_name,
+                                     revision_number=1,
                                      eff_start_date=timezone.now(), status='C')
 
         CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_old_name,
@@ -91,13 +93,14 @@ class FunctionalTest(StaticLiveServerTestCase):
                                      revision_number=1,
                                      eff_start_date=timezone.now(), status='C')
 
-        #create incentive
+        # create incentive
         self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
         self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
-                                                      incentive_date=timezone.datetime(2023, 8, 4).date(), incentive_amount=100)
+                                                      incentive_date=timezone.datetime(2023, 8, 4).date(),
+                                                      incentive_amount=100)
 
-        #create recruitment
+        # create recruitment
         self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
 
         self.caregiver_1_recruitment = Recruitment.objects.create(caregiver_fk=self.first_caregiver,
@@ -105,7 +108,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                   healthcare_facility_fk=self.health_care_facility_1,
                                                                   recruitment_date=timezone.datetime(2023, 8, 4).date())
 
-        #create mother and nonmother caregiver tables
+        # create mother and nonmother caregiver tables
 
         self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
 
@@ -119,13 +122,17 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         # create trimester
 
-        self.first_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.FIRST,pregnancy_fk=self.mother_one_pregnancy_one)
-        self.second_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.SECOND,pregnancy_fk=self.mother_one_pregnancy_one)
-        self.third_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.THIRD,pregnancy_fk=self.mother_one_pregnancy_one)
+        self.first_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.FIRST,
+                                                        pregnancy_fk=self.mother_one_pregnancy_one)
+        self.second_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.SECOND,
+                                                         pregnancy_fk=self.mother_one_pregnancy_one)
+        self.third_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.THIRD,
+                                                        pregnancy_fk=self.mother_one_pregnancy_one)
 
-        self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
+        self.early_childhood_age_category = AgeCategory.objects.create(
+            age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
 
-        #create primary care_giver
+        # create primary care_giver
 
         self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
         self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
@@ -159,8 +166,6 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.second_caregiver_is_mother_in_law = CaregiverChildRelation.objects.create(child_fk=self.child_two,
                                                                                        caregiver_fk=self.second_caregiver,
                                                                                        relation_fk=self.mother_in_law)
-
-
 
         # Create address
         self.address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
@@ -208,14 +213,16 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         # Create social media
         twitter = SocialMedia.objects.create(social_media_name='Twitter')
-        self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=self.first_caregiver,
-                                                                                social_media_user_name='@jonathan',social_media_consent=True)
+        self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(social_media_fk=twitter,
+                                                                                caregiver_fk=self.first_caregiver,
+                                                                                social_media_user_name='@jonathan',
+                                                                                social_media_consent=True)
         facebook = SocialMedia.objects.create(social_media_name='Facebook')
         CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
                                             social_media_user_name='jonathan-h', social_media_consent=True)
         facebook = SocialMedia.objects.create(social_media_name='Instagram')
         CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
-                                            social_media_user_name='@jonathanscat',social_media_consent=True)
+                                            social_media_user_name='@jonathanscat', social_media_consent=True)
 
         # Create caregiver
         contact_a_email = Email.objects.create(email='b@b.com')
@@ -256,8 +263,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                            phone_fk=contact_c_phone,
                                                                            caregiver_contact_type='PR')
 
-        #Create surveys
-
+        # Create surveys
 
         self.new_project = Project.objects.create(project_name='MARCH')
         self.echo1 = Project.objects.create(project_name='ECHO1')
@@ -269,30 +275,29 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.completed_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Completed')
         self.incomplete_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Incomplete')
 
-
-
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=timezone.datetime(2023,8,30).date()
+                                                                   survey_completion_date=timezone.datetime(2023, 8,
+                                                                                                            30).date()
                                                                    )
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=timezone.datetime(2023,5,3).date()
+                                                                   survey_completion_date=timezone.datetime(2023, 5,
+                                                                                                            3).date()
                                                                    )
 
         self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
                                                                      survey_fk=self.prenatal_1,
                                                                      survey_outcome_fk=self.completed_survey_outcome,
                                                                      incentive_fk=self.incentive_one,
-                                                                     survey_completion_date=timezone.datetime(2023,5,3).date()
+                                                                     survey_completion_date=timezone.datetime(2023, 5,
+                                                                                                              3).date()
                                                                      )
-
-
 
         # Create consent
         self.consent_version_1 = ConsentVersion.objects.create(consent_version='5.1')
@@ -308,69 +313,77 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                       consent_version_fk=self.consent_version_1,
                                                                       consent_date=datetime.date.today())
 
-        #create biospecimen
+        # create biospecimen
 
         self.completed = Outcome.objects.create(outcome=Outcome.OutcomeChoices.COMPLETED)
         self.incomplete = Outcome.objects.create(outcome=Outcome.OutcomeChoices.NOT_COLLECTED)
         # self.collected = Outcome.objects.create(status='Collected')
 
-        self.processed_one = Processed.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
-                                                      processed_date_time=timezone.datetime(2023,5,5,12,4,0,tzinfo=pytz.UTC),
-                                                      quantity =2,
-                                                      logged_date_time=timezone.datetime(2023,5,5,12,4,0,tzinfo=pytz.UTC),
-                                                      outcome_fk=self.completed)
+        self.processed_one = Processed.objects.create(
+            collected_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
+            processed_date_time=timezone.datetime(2023, 5, 5, 12, 4, 0, tzinfo=pytz.UTC),
+            quantity=2,
+            logged_date_time=timezone.datetime(2023, 5, 5, 12, 4, 0, tzinfo=pytz.UTC),
+            outcome_fk=self.completed)
         self.stored_one = Stored.objects.create(outcome_fk=self.completed,
-                                                stored_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                stored_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
                                                 storage_location='hospital',
                                                 quantity=2,
-                                                logged_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
+                                                logged_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC))
 
         self.shipped_one = Shipped.objects.create(outcome_fk=self.completed,
-                                                  shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                  shipped_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0,
+                                                                                      tzinfo=pytz.UTC),
                                                   courier='Fedex',
                                                   shipping_number='7777777',
                                                   quantity=3,
-                                                  logged_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
+                                                  logged_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC))
         self.received_one = Received.objects.create(outcome_fk=self.completed,
-                                                    received_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                    received_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0,
+                                                                                         tzinfo=pytz.UTC),
                                                     storage_location='MSU',
-                                                    logged_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
+                                                    logged_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0,
+                                                                                       tzinfo=pytz.UTC),
                                                     quantity=19)
 
-        self.collected_one = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
-                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
-                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
-                                                      received_date=timezone.datetime(2023,5,3).date(),
-                                                      number_of_tubes=5,
-                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
-                                                      )
+        self.collected_one = Collected.objects.create(
+            collected_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
+            processed_date_time=timezone.datetime(2023, 5, 5, 13, 0, 0, tzinfo=pytz.UTC),
+            stored_date_time=timezone.datetime(2023, 5, 5, 13, 0, 0, tzinfo=pytz.UTC),
+            received_date=timezone.datetime(2023, 5, 3).date(),
+            number_of_tubes=5,
+            in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+            )
 
-        self.collected_two = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
-                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
-                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
-                                                      received_date=timezone.datetime(2023,5,6).date(),
-                                                      number_of_tubes=0,
-                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
-                                                      )
+        self.collected_two = Collected.objects.create(
+            collected_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
+            processed_date_time=timezone.datetime(2023, 5, 5, 13, 0, 0, tzinfo=pytz.UTC),
+            stored_date_time=timezone.datetime(2023, 5, 5, 13, 0, 0, tzinfo=pytz.UTC),
+            received_date=timezone.datetime(2023, 5, 6).date(),
+            number_of_tubes=0,
+            in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+            )
 
-        self.collected_three = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
-                                                      processed_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
-                                                      stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
-                                                      received_date=timezone.datetime(2023,5,3).date(),
-                                                      number_of_tubes=4,
-                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
-                                                      )
+        self.collected_three = Collected.objects.create(
+            collected_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
+            processed_date_time=timezone.datetime(2023, 5, 5, 13, 0, 0, tzinfo=pytz.UTC),
+            stored_date_time=timezone.datetime(2023, 5, 5, 13, 0, 0, tzinfo=pytz.UTC),
+            received_date=timezone.datetime(2023, 5, 3).date(),
+            number_of_tubes=4,
+            in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+            )
 
         self.shipped_wsu_blank = ShippedWSU.objects.create()
-        self.shipped_wsu = ShippedWSU.objects.create(shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
-                                                     number_of_tubes=1,
-                                                     courier='FedEx',
-                                                     tracking_number='777777',
-                                                     shipped_by='me')
+        self.shipped_wsu = ShippedWSU.objects.create(
+            shipped_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
+            number_of_tubes=1,
+            courier='FedEx',
+            tracking_number='777777',
+            shipped_by='me')
 
         self.shipped_echo_incomplete = ShippedECHO.objects.create()
-        self.shipped_echo_complete = ShippedECHO.objects.create(shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
-
+        self.shipped_echo_complete = ShippedECHO.objects.create(
+            shipped_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC))
 
         self.status_outcome_processed_complete_one = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_processed_complete_two = Status.objects.create(processed_fk=self.processed_one)
@@ -399,25 +412,28 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.status_outcome_incomplete_nine = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_incomplete_ten = Status.objects.create(processed_fk=self.processed_one)
 
-        self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,stored_fk=self.stored_one)
+        self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,
+                                                                    stored_fk=self.stored_one)
         self.status_outcome_shipped_complete = Status.objects.create(processed_fk=self.processed_one,
-                                                                     stored_fk=self.stored_one,shipped_fk=self.shipped_one)
+                                                                     stored_fk=self.stored_one, shipped_fk=self.shipped_one)
         self.status_outcome_received_complete = Status.objects.create(processed_fk=self.processed_one,
                                                                       stored_fk=self.stored_one,
                                                                       shipped_fk=self.shipped_one,
                                                                       received_fk=self.received_one)
 
-
-
         self.status_outcome_collected_complete = Status.objects.create(collected_fk=self.collected_one)
-        self.status_outcome_shipped_wsu_incomplete = Status.objects.create(collected_fk=self.collected_three,shipped_wsu_fk=self.shipped_wsu_blank)
-        self.status_outcome_shipped_wsu_complete = Status.objects.create(collected_fk=self.collected_three,shipped_wsu_fk=self.shipped_wsu)
-        self.status_outcome_shipped_echo_incomplete = Status.objects.create(collected_fk=self.collected_three,shipped_echo_fk=self.shipped_echo_incomplete)
-        self.status_outcome_shipped_echo_complete = Status.objects.create(collected_fk=self.collected_three,shipped_echo_fk=self.shipped_echo_complete)
+        self.status_outcome_shipped_wsu_incomplete = Status.objects.create(collected_fk=self.collected_three,
+                                                                           shipped_wsu_fk=self.shipped_wsu_blank)
+        self.status_outcome_shipped_wsu_complete = Status.objects.create(collected_fk=self.collected_three,
+                                                                         shipped_wsu_fk=self.shipped_wsu)
+        self.status_outcome_shipped_echo_incomplete = Status.objects.create(collected_fk=self.collected_three,
+                                                                            shipped_echo_fk=self.shipped_echo_incomplete)
+        self.status_outcome_shipped_echo_complete = Status.objects.create(collected_fk=self.collected_three,
+                                                                          shipped_echo_fk=self.shipped_echo_complete)
 
         self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
         self.status_outcome_blank = Status.objects.create()
-        self.status_outcome_blank2  = Status.objects.create()
+        self.status_outcome_blank2 = Status.objects.create()
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
         self.urine = CollectionType.objects.create(collection_type='Urine')
@@ -434,53 +450,67 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.number_one = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.FIRST)
         self.number_two = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.SECOND)
-        self.number_three = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.THIRD)
-        self.number_early_childhood = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.EARLY_CHILDHOOD)
-        self.number_middle_childhood= CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.MIDDLE_CHILDHOOD)
-
+        self.number_three = CollectionNumber.objects.create(
+            collection_number=CollectionNumber.CollectionNumberChoices.THIRD)
+        self.number_early_childhood = CollectionNumber.objects.create(
+            collection_number=CollectionNumber.CollectionNumberChoices.EARLY_CHILDHOOD)
+        self.number_middle_childhood = CollectionNumber.objects.create(
+            collection_number=CollectionNumber.CollectionNumberChoices.MIDDLE_CHILDHOOD)
 
         self.urine_none = Collection.objects.create(collection_type_fk=self.urine)
         self.urine_one = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_one)
         self.urine_two = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_two)
         self.urine_three = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_three)
-        self.urine_early_childhood = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_early_childhood)
-        self.urine_mc = Collection.objects.create(collection_type_fk=self.urine, collection_number_fk=self.number_middle_childhood)
+        self.urine_early_childhood = Collection.objects.create(collection_type_fk=self.urine,
+                                                               collection_number_fk=self.number_early_childhood)
+        self.urine_mc = Collection.objects.create(collection_type_fk=self.urine,
+                                                  collection_number_fk=self.number_middle_childhood)
 
         self.serum_one = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_one)
         self.serum_two = Collection.objects.create(collection_type_fk=self.serum, collection_number_fk=self.number_two)
+        self.serum_none = Collection.objects.create(collection_type_fk=self.serum)
 
         self.plasma_one = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_one)
         self.plasma_two = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_two)
 
-        self.bloodspots_one = Collection.objects.create(collection_type_fk=self.bloodspots, collection_number_fk=self.number_one)
+        self.bloodspots_one = Collection.objects.create(collection_type_fk=self.bloodspots,
+                                                        collection_number_fk=self.number_one)
         # self.bloodspots_two = Collection.objects.create(collection_type_fk='Bloodspots', collection_number_fk=self.number_two)
 
-        self.whole_blood_one = Collection.objects.create(collection_type_fk=self.whole_blood, collection_number_fk=self.number_one)
-        self.whole_blood_two = Collection.objects.create(collection_type_fk=self.whole_blood, collection_number_fk=self.number_two)
+        self.whole_blood_one = Collection.objects.create(collection_type_fk=self.whole_blood,
+                                                         collection_number_fk=self.number_one)
+        self.whole_blood_two = Collection.objects.create(collection_type_fk=self.whole_blood,
+                                                         collection_number_fk=self.number_two)
         self.whole_blood_none = Collection.objects.create(collection_type_fk=self.whole_blood)
 
-        self.buffy_coat_one = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_one)
-        self.buffy_coat_two = Collection.objects.create(collection_type_fk=self.buffy_coat, collection_number_fk=self.number_two)
+        self.buffy_coat_one = Collection.objects.create(collection_type_fk=self.buffy_coat,
+                                                        collection_number_fk=self.number_one)
+        self.buffy_coat_two = Collection.objects.create(collection_type_fk=self.buffy_coat,
+                                                        collection_number_fk=self.number_two)
 
-        self.red_blood_cells_one = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_one)
-        self.red_blood_cells_two = Collection.objects.create(collection_type_fk=self.red_blood_cells, collection_number_fk=self.number_two)
+        self.red_blood_cells_one = Collection.objects.create(collection_type_fk=self.red_blood_cells,
+                                                             collection_number_fk=self.number_one)
+        self.red_blood_cells_two = Collection.objects.create(collection_type_fk=self.red_blood_cells,
+                                                             collection_number_fk=self.number_two)
 
-        self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair, collection_number_fk=self.number_early_childhood)
-        self.hair = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_one)
+        self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair,
+                                                              collection_number_fk=self.number_early_childhood)
+        self.hair = Collection.objects.create(collection_type_fk=self.hair, collection_number_fk=self.number_one)
 
-        self.toenail_earlychildhood = Collection.objects.create(collection_type_fk=self.toenail, collection_number_fk=self.number_early_childhood)
-        self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
+        self.toenail_earlychildhood = Collection.objects.create(collection_type_fk=self.toenail,
+                                                                collection_number_fk=self.number_early_childhood)
+        self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail, collection_number_fk=self.number_one)
 
-        self.saliva = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+        self.saliva = Collection.objects.create(collection_type_fk=self.saliva, collection_number_fk=self.number_one)
 
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
-        self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
+        self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta,
+                                                      collection_number_fk=self.number_two)
 
-        #Create perinatal event
-        self.perinatal_one = Perinatal.objects.create(child_fk=self.child_one,pregnancy_fk=self.mother_one_pregnancy_one)
+        # Create perinatal event
+        self.perinatal_one = Perinatal.objects.create(child_fk=self.child_one, pregnancy_fk=self.mother_one_pregnancy_one)
 
-
-        #Create Biospeciment for Echo 2 Testing
+        # Create Biospeciment for Echo 2 Testing
 
         self.blood_trimester_1_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -492,7 +522,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
 
         self.urine_trimester_1_caregiver_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.first_caregiver,
+            caregiver_fk=self.first_caregiver,
             trimester_fk=self.first_trimester,
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_collected_complete,
@@ -501,7 +531,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
 
         self.urine_trimester_2_caregiver_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.first_caregiver,
+            caregiver_fk=self.first_caregiver,
             trimester_fk=self.second_trimester,
             collection_fk=self.urine_none,
             biospecimen_id='112URS',
@@ -509,7 +539,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
 
         self.urine_trimester_3_caregiver_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.first_caregiver,
+            caregiver_fk=self.first_caregiver,
             trimester_fk=self.third_trimester,
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_wsu_incomplete,
@@ -518,7 +548,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
 
         self.urine_trimester_3_caregiver_two = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.second_caregiver,
+            caregiver_fk=self.second_caregiver,
             trimester_fk=self.first_trimester,
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_wsu_complete,
@@ -526,9 +556,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             project_fk=self.echo2
         )
 
-
         self.urine_trimester_2_caregiver_two = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.second_caregiver,
+            caregiver_fk=self.second_caregiver,
             trimester_fk=self.second_trimester,
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_echo_incomplete,
@@ -537,7 +566,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
 
         self.urine_trimester_3_caregiver_two = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.second_caregiver,
+            caregiver_fk=self.second_caregiver,
             trimester_fk=self.third_trimester,
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_echo_complete,
@@ -546,7 +575,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
 
         self.placenta_perinatal_2_caregiver_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.first_caregiver,
+            caregiver_fk=self.first_caregiver,
             perinatal_fk=self.perinatal_one,
             collection_fk=self.placenta_one,
             status_fk=self.status_outcome_collected_placenta,
@@ -557,16 +586,14 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.new_status = Status.objects.create()
 
         self.whole_blood_caregiver_one_trimester_one = CaregiverBiospecimen.objects.create(
-            caregiver_fk = self.first_caregiver,
+            caregiver_fk=self.first_caregiver,
             collection_fk=self.whole_blood_none,
             biospecimen_id='2111WB',
             project_fk=self.echo2,
             trimester_fk=self.first_trimester
         )
 
-
-
-        #Create bloodspot rows for testing of application
+        # Create bloodspot rows for testing of application
         self.biospecimen_bloodspots_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_received_complete,
@@ -636,7 +663,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                                       incentive_fk=self.incentive_one,
                                                                                       biospecimen_date=datetime.date.today(),
                                                                                       biospecimen_id='1115UR',
-            project_fk=self.echo1)
+                                                                                      project_fk=self.echo1)
 
         self.biospecimen_urine_mc_caregiver_one = CaregiverBiospecimen.objects.create(caregiver_fk=self.first_caregiver,
                                                                                       status_fk=self.status_outcome_incomplete_three,
@@ -644,7 +671,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                                       incentive_fk=self.incentive_one,
                                                                                       biospecimen_date=datetime.date.today(),
                                                                                       biospecimen_id='1116UR',
-            project_fk=self.echo1)
+                                                                                      project_fk=self.echo1)
 
         self.biospecimen_serum_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
@@ -681,8 +708,6 @@ class FunctionalTest(StaticLiveServerTestCase):
             biospecimen_date=datetime.date.today(),
             biospecimen_id='1112PL',
             project_fk=self.echo1)
-
-
 
         # self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
         #     caregiver_fk=self.first_caregiver,
@@ -724,7 +749,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             status_fk=self.status_outcome_incomplete_seven,
             collection_fk=self.buffy_coat_two,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today(),biospecimen_id='1112BC',
+            biospecimen_date=datetime.date.today(), biospecimen_id='1112BC',
             project_fk=self.echo1
         )
 
@@ -733,7 +758,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             status_fk=self.status_outcome_processed_complete_eight,
             collection_fk=self.red_blood_cells_one,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today(),biospecimen_id='1111RB',
+            biospecimen_date=datetime.date.today(), biospecimen_id='1111RB',
             project_fk=self.echo1)
 
         self.biospecimen_red_blood_cells_two_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -741,7 +766,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             status_fk=self.status_outcome_incomplete_eight,
             collection_fk=self.red_blood_cells_two,
             incentive_fk=self.incentive_one,
-            biospecimen_date=datetime.date.today(),biospecimen_id='1112RB',
+            biospecimen_date=datetime.date.today(), biospecimen_id='1112RB',
             project_fk=self.echo1)
 
         self.biospecimen_hair_early_childhood_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -749,7 +774,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             status_fk=self.status_outcome_processed_complete_nine,
             collection_fk=self.hair_early_childhood,
             incentive_fk=self.incentive_one,
-            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111HR',
+            biospecimen_date=timezone.datetime(2023, 5, 3).date(), biospecimen_id='1111HR',
             project_fk=self.echo1)
 
         self.biospecimen_toenail_prenatal_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -757,7 +782,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             status_fk=self.status_outcome_processed_complete_ten,
             collection_fk=self.toenail_one,
             incentive_fk=self.incentive_one,
-            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111TN',
+            biospecimen_date=timezone.datetime(2023, 5, 3).date(), biospecimen_id='1111TN',
             project_fk=self.echo1)
 
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -765,60 +790,67 @@ class FunctionalTest(StaticLiveServerTestCase):
             status_fk=self.status_outcome_processed_complete_eleven,
             collection_fk=self.saliva,
             incentive_fk=self.incentive_one,
-            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111SA',
+            biospecimen_date=timezone.datetime(2023, 5, 3).date(), biospecimen_id='1111SA',
             project_fk=self.echo1)
 
+        # self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
-        #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
+        # creat consent item
 
-
-        #creat consent item
-
-        self.consent_mother_placenta = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_PLACENTA)
-        self.consent_mother_blood = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_BLOOD)
-        self.consent_mother_urine = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_URINE)
+        self.consent_mother_placenta = ConsentType.objects.create(
+            consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_PLACENTA)
+        self.consent_mother_blood = ConsentType.objects.create(
+            consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_BLOOD)
+        self.consent_mother_urine = ConsentType.objects.create(
+            consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_URINE)
         self.consent_mother_address = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.ADDRESS)
-        self.consent_mother_birth_cert = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.BIRTH_CERTIFICATE)
+        self.consent_mother_birth_cert = ConsentType.objects.create(
+            consent_type_text=ConsentType.ConsentTypeChoices.BIRTH_CERTIFICATE)
 
-        self.consent_mother_placenta_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_placenta,caregiver_fk=self.first_caregiver)
-        self.consent_mother_blood_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_blood,caregiver_fk=self.first_caregiver)
-        self.consent_mother_urine_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_urine,caregiver_fk=self.first_caregiver)
-        self.consent_mother_address_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_address,caregiver_fk=self.first_caregiver)
-        self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_birth_cert,caregiver_fk=self.first_caregiver)
+        self.consent_mother_placenta_caregiver_one = ConsentItem.objects.create(
+            consent_type_fk=self.consent_mother_placenta, caregiver_fk=self.first_caregiver)
+        self.consent_mother_blood_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_blood,
+                                                                             caregiver_fk=self.first_caregiver)
+        self.consent_mother_urine_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_urine,
+                                                                             caregiver_fk=self.first_caregiver)
+        self.consent_mother_address_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_address,
+                                                                               caregiver_fk=self.first_caregiver)
+        self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(
+            consent_type_fk=self.consent_mother_birth_cert, caregiver_fk=self.first_caregiver)
 
-
-        #create child address
+        # create child address
 
         # create child address
 
         self.child_address = ChildAddress.objects.create(child_fk=self.child_one, address_fk=self.address)
 
-        #create child survey
+        # create child survey
 
-        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey',project_fk=self.new_project)
-        self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',project_fk=self.new_project)
+        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey', project_fk=self.new_project)
+        self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',
+                                                                   project_fk=self.new_project)
 
         self.child_one_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
                                                                survey_fk=self.survey_that_child_takes,
                                                                survey_outcome_fk=self.completed_survey_outcome,
-                                                               survey_completion_date=timezone.datetime(2023,5,3).date())
+                                                               survey_completion_date=timezone.datetime(2023, 5, 3).date())
 
         self.child_two_survey_one = ChildSurvey.objects.create(child_fk=self.child_two,
                                                                survey_fk=self.other_survey_that_child_takes,
                                                                survey_outcome_fk=self.incomplete_survey_outcome,
-                                                               survey_completion_date=timezone.datetime(2023,5,4).date())
+                                                               survey_completion_date=timezone.datetime(2023, 5, 4).date())
 
-
-
-        #child assent
+        # child assent
         self.eight_year_assent = Assent.objects.create(assent_text='Eight Year Survey')
         self.five_year_assent = Assent.objects.create(assent_text='Five Year Survey')
         self.child_one_eight_year_assent = ChildAssent.objects.create(child_fk=self.child_one,
                                                                       assent_fk=self.eight_year_assent,
-                                                                      assent_date=timezone.datetime(2023,5,4).date(),assent_boolean=True)
+                                                                      assent_date=timezone.datetime(2023, 5, 4).date(),
+                                                                      assent_boolean=True)
         self.child_two_five_year_assent = ChildAssent.objects.create(child_fk=self.child_two,
                                                                      assent_fk=self.five_year_assent,
-                                                                     assent_date=timezone.datetime(2023,5,4).date(),assent_boolean=False)
+                                                                     assent_date=timezone.datetime(2023, 5, 4).date(),
+                                                                     assent_boolean=False)
 
         # child biospecimen
 

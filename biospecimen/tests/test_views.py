@@ -477,7 +477,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_entry_blood_updates_values_for_serum_if_checkbox_checked(self):
+    def test_echo2_bio_entry_blood_updates_serum_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-serum': True,
@@ -493,3 +493,55 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         self.assertEqual(serum.status_fk.collected_fk.collected_date_time,
                          datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(serum.status_fk.collected_fk.stored_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(serum.status_fk.collected_fk.processed_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(serum.status_fk.collected_fk.number_of_tubes,5)
+
+    def test_echo2_bio_entry_blood_updates_plasma_if_checkbox_checked(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-plasma': True,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-number_of_tubes': 5})
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Plasma', 'F')
+        plasma = CaregiverBiospecimen.objects.get(pk=primary_key)
+
+        self.assertEqual(plasma.status_fk.collected_fk.collected_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(plasma.status_fk.collected_fk.stored_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(plasma.status_fk.collected_fk.processed_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(plasma.status_fk.collected_fk.number_of_tubes,5)
+
+
+    def test_echo2_bio_entry_blood_updates_whole_blood_if_checkbox_checked(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-whole_blood': True,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-number_of_tubes': 5})
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key)
+
+        self.assertEqual(whole_blood.status_fk.collected_fk.collected_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(whole_blood.status_fk.collected_fk.stored_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(whole_blood.status_fk.collected_fk.processed_date_time,
+                         datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc))
+        self.assertEqual(whole_blood.status_fk.collected_fk.number_of_tubes,5)
+
+

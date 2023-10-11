@@ -27,11 +27,17 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
         logging.critical(f"in the create or update function")
         try:
             biospecimen_object = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver_object,
-                                             collection_fk__collection_type_fk__collection_type=collection_type,
-                                             trimester_fk__trimester=trimester,
+                                             collection_fk=collection_object,
+                                             trimester_fk=trimester,
                                              project_fk__project_name=project)
 
-            biospecimen_object.status_fk.collected_fk.collected_date_time = form_data.cleaned_data['id_blood_form-collected_date_time']
+            biospecimen_object.status_fk.collected_fk.collected_date_time = form_data.cleaned_data['collected_date_time']
+            biospecimen_object.status_fk.collected_fk.stored_date_time = form_data.cleaned_data['stored_date_time']
+            biospecimen_object.status_fk.collected_fk.processed_date_time = form_data.cleaned_data['processed_date_time']
+            biospecimen_object.status_fk.collected_fk.number_of_tubes = form_data.cleaned_data['number_of_tubes']
+            biospecimen_object.status_fk.collected_fk.save()
+            biospecimen_object.status_fk.save()
+            biospecimen_object.save()
             logging.critical(f"Biospecimen object updated")
         except CaregiverBiospecimen.DoesNotExist:
             new_status = Status()
@@ -45,6 +51,9 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
                                                 )
             new_status.collected_fk = new_collected
             new_collected.collected_date_time = form_data.cleaned_data['collected_date_time']
+            new_collected.stored_date_time = form_data.cleaned_data['stored_date_time']
+            new_collected.processed_date_time = form_data.cleaned_data['processed_date_time']
+            new_collected.number_of_tubes = form_data.cleaned_data['number_of_tubes']
             new_collected.save()
             new_status.save()
             new_biospecimen.status_fk = new_status
@@ -210,6 +219,18 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 ##if serum is true check that serum exists if exists update if not create and update
                 serum = create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
                                                       collection_type='Serum',
+                                                      caregiver_object=caregiver,
+                                                      trimester_text=caregiver_bio.trimester_fk.trimester,
+                                                      form_data=form,
+                                                      caregiver_bio_primary=caregiver_bio_pk)
+                serum = create_or_update_blood_values(true_or_false=form.cleaned_data['plasma'],
+                                                      collection_type='Plasma',
+                                                      caregiver_object=caregiver,
+                                                      trimester_text=caregiver_bio.trimester_fk.trimester,
+                                                      form_data=form,
+                                                      caregiver_bio_primary=caregiver_bio_pk)
+                whole_blood = create_or_update_blood_values(true_or_false=form.cleaned_data['whole_blood'],
+                                                      collection_type='Whole Blood',
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
