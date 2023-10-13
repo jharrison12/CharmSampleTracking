@@ -459,13 +459,13 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
     def test_echo2_bio_page_shows_trimester_if_blood(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         self.assertContains(response, 'Trimester: First')
 
     def test_echo2_bio_page_shows_collected_blood_form_if_blood_and_collected(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         logging.debug(f"{response.content.decode()}")
         self.assertContains(response, '<input type="checkbox" name="blood_form-serum')
         self.assertContains(response, '<input type="checkbox" name="blood_form-whole_blood')
@@ -480,7 +480,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                     data={"id_blood_form-serum": True,
                                           })
 
-        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/blood/")
 
     def test_echo2_bio_entry_blood_updates_serum_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
@@ -645,7 +645,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                                                                                    2023, 5, 5, 5, 5, 5),
                                                                                                'blood_form-number_of_tubes': 5})
 
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         self.assertContains(response,'Number of Tubes: 5')
 
     def test_echo2_bio_entry_whole_blood_is_checked_and_not_editable(self):

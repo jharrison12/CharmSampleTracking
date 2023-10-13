@@ -17,6 +17,8 @@ blood_dict = {'Whole Blood':'whole_blood',
               'Red Blood Cells':'red_blood_cells',
               'Buffy Coat':'buffy_coat'}
 
+BLOOD_TYPES = ('Whole Blood','Serum','Plasma', 'Buffy Coat','Red Blood Cells')
+
 
 def check_for_object_or_return_none(object_name,filter,parameter):
     try:
@@ -157,9 +159,14 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                 new_status.no_consent_fk = new_no_consent
             new_status.save()
             caregiver_bio.save()
+            if collection_type in BLOOD_TYPES:
+                return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
+            else:
+                return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError
-        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
         return redirect("biospecimen:caregiver_biospecimen_initial",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
 
@@ -177,14 +184,6 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
-        elif collection_type.collection_type in ('Whole Blood','Serum','Plasma', 'Buffy Coat','Red Blood Cells'):
-
-            collected_form = CollectedBloodForm(prefix='blood_form')
-            logging.critical(blood_dict.get(collection_type.collection_type))
-            #disable whatever check box you used to pull the data
-            collected_form.fields[str(blood_dict.get(collection_type.collection_type))].initial = True
-            collected_form.fields[str(blood_dict.get(collection_type.collection_type))].disabled = True
-
         else:
             collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
@@ -206,9 +205,41 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'shipped_echo_form':shipped_echo_form
                                                                                                   })
 
-def caregiver_biospecimen_blood_entry(request,caregiver_charm_id,caregiver_bio_pk):
+def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    collected_form = None
+    shipped_choice = None
+    shipped_wsu_form = None
+    shipped_echo_form = None
+    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
+        collected_form = CollectedBloodForm(prefix='blood_form')
+        logging.critical(blood_dict.get(collection_type.collection_type))
+        # disable whatever check box you used to pull the data
+        collected_form.fields[str(blood_dict.get(collection_type.collection_type))].initial = True
+        collected_form.fields[str(blood_dict.get(collection_type.collection_type))].disabled = True
+    else:
+        collected_form = None
+    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
+        shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
+    if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
+        logging.debug(f"in shipped to wsu if statement")
+        shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
+    if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
+        logging.debug(f"in shipped to echo if statement")
+        shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry_blood.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
+                                                                                                  'caregiver_bio': caregiver_bio,
+                                                                                                        'collected_form': collected_form,
+                                                                                                        'collection_type': collection_type.collection_type,
+                                                                                                        'shipped_choice_form': shipped_choice,
+                                                                                                        'shipped_wsu_form': shipped_wsu_form,
+                                                                                                        'shipped_echo_form': shipped_echo_form
                                                                                                   })
 
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
@@ -229,7 +260,8 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine.number_of_tubes = form.cleaned_data['number_of_tubes']
                 collected_urine.save()
                 caregiver_bio.save()
-        if collection_type.collection_type in ('Whole Blood','Serum','Plasma', 'Buffy Coat','Red Blood Count'):
+            return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        if collection_type.collection_type in BLOOD_TYPES:
             logging.debug(f"in the blood if statement")
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
             logging.debug(f"is form valid {form.is_valid()} form errors {form.errors} form {form.data} request.post{request.POST}")
@@ -265,9 +297,8 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                                               trimester_text=caregiver_bio.trimester_fk.trimester,
                                               form_data=form,
                                               caregiver_bio_primary=caregiver_bio_pk)
-                return redirect("biospecimen:caregiver_biospecimen_blood_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+            return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
 
-        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
         raise AssertionError
 

@@ -1,6 +1,6 @@
 {% extends "biospecimen/caregiver_biospecimen_entry_base.html" %}
 {% block bio_logic %}
-        {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
+    {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
         <div id="collected_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -10,7 +10,7 @@
           </form>
         </div>
     {% elif caregiver_bio.status_fk.collected_fk  %}
-        <div id="collected_information" class="row border border-primary p-3 rounded">
+        <div id="collected_blood_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}
                 {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
