@@ -452,6 +452,11 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
+    def test_echo2_entry_bio_blood_page_returns_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry_blood.html')
+
     def test_echo2_bio_page_shows_trimester_if_blood(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')

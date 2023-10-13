@@ -31,6 +31,7 @@ urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_wsu/post/$",biospecimen_views.caregiver_biospecimen_shipped_wsu_post, name='caregiver_biospecimen_shipped_wsu_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_echo/post/$",biospecimen_views.caregiver_biospecimen_shipped_echo_post, name='caregiver_biospecimen_shipped_echo_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/$", biospecimen_views.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/blood/$", biospecimen_views.caregiver_biospecimen_blood_entry, name='caregiver_biospecimen_blood_entry'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/post/$", biospecimen_views.caregiver_biospecimen_post, name='caregiver_biospecimen_post'),
     re_path(r"^child/(?P<child_charm_id>\w+)/$", biospecimen_views.child_biospecimen_page,name='child_biospecimen_page')
 ]

@@ -206,6 +206,11 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'shipped_echo_form':shipped_echo_form
                                                                                                   })
 
+def caregiver_biospecimen_blood_entry(request,caregiver_charm_id,caregiver_bio_pk):
+    return render(request, template_name='biospecimen/caregiver_biospecimen_entry_blood.html', context={'charm_project_identifier':caregiver_charm_id,
+                                                                                                  'caregiver_bio_pk':caregiver_bio_pk,
+                                                                                                  })
+
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
@@ -260,6 +265,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                                               trimester_text=caregiver_bio.trimester_fk.trimester,
                                               form_data=form,
                                               caregiver_bio_primary=caregiver_bio_pk)
+                return redirect("biospecimen:caregiver_biospecimen_blood_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
 
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:

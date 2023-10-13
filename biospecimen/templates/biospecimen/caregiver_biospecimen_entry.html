@@ -1,24 +1,6 @@
-{% extends "biospecimen/base.html" %}
-{% block header %}Charm ID: {{ charm_project_identifier }}{% endblock %}
-{% block section %}
-    <div class="row" id="biospecimen_information">
-    <div class="col-sm">ID: {{ caregiver_bio.biospecimen_id }}</div>
-    <div class="col-sm">Type: {{ caregiver_bio.collection_fk.collection_type_fk.collection_type }}</div>
-    {#  Not sure what the below object was in the SRO version of this device    #}
-    <div class="col-sm">Log Status: {{ biospecimen_item }}</div>
-    {% if caregiver_bio.trimester_fk %}<div class="col-sm">Trimester: {{ caregiver_bio.trimester_fk.get_trimester_display }}</div>{% endif %}
-        <hr/>
-    </div>
-    {% if caregiver_bio.status_fk.not_collected_fk%}
-        <div id="not_collected_information" class="row border border-primary p-3 rounded">
-        Not Collected
-        </div>
-    {% elif caregiver_bio.status_fk.no_consent_fk %}
-        <div id="no_consent_information" class="row border border-primary p-3 rounded">
-        No Consent
-        </div>
-    {#  Potential bug because collected date time is not required but you have to null it to create it        #}
-    {% elif caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
+{% extends "biospecimen/caregiver_biospecimen_entry_base.html" %}
+{% block bio_logic %}
+    {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
         <div id="collected_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
