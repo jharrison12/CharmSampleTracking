@@ -142,14 +142,17 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         number_of_tubes = self.browser.find_element(By.ID,"id_blood_form-number_of_tubes")
         number_of_tubes.send_keys(5)
 
+        self.browser.find_element(By.ID,"id_blood_form-plasma").click()
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
+        self.assertIn('Plasma', body)
 
         #user sees option to choose shipped to wsu or shipped to echo
-
+        time.sleep(30)
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped Choice Form',form)
 
@@ -192,7 +195,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-        time.sleep(60)
+
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])

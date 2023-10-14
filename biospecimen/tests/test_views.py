@@ -423,7 +423,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
     def test_echo2_bio_entry_shipped_echo_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'S')
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
-                                    data={'shipped_date_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
+                                    data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
 
@@ -446,6 +446,24 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         new_status.collected_fk = collected
         collected.save()
         new_status.save()
+
+    def create_bio_specimen(self,caregiver_id,collection_type,project="ECHO2"):
+        caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_id)
+        collection = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=None)
+        project = Project.objects.get(project_name=project)
+        caregiver_bio = CaregiverBiospecimen()
+        new_status = Status()
+        caregiver_bio.status_fk = new_status
+        caregiver_bio.caregiver_fk = caregiver
+        caregiver_bio.collection_fk = collection
+        caregiver_bio.project_fk = project
+        new_status.save()
+        caregiver_bio.save()
+        collected = Collected()
+        new_status.collected_fk = collected
+        collected.save()
+        new_status.save()
+        return caregiver_bio.pk
 
     def test_echo2_initial_bio_blood_page_returns_correct_template(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
@@ -611,10 +629,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
             primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
 
 
-    def test_echo2_bio_entry_blood_does_not_update_whole_blood_if_checkbox_not_checked(self):
+    def test_echo2_bio_entry_blood_does_not_update_plasma_if_checkbox_not_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-whole_blood': False,
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-plasma': False,
                                                                                                'blood_form-collected_date_time': timezone.datetime(
                                                                                                    2023, 5, 5, 5, 5, 5),
                                                                                                'blood_form-processed_date_time': timezone.datetime(
@@ -622,7 +640,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                                                                                'blood_form-stored_date_time': timezone.datetime(
                                                                                                    2023, 5, 5, 5, 5, 5),
                                                                                                'blood_form-number_of_tubes': 5})
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        primary_key = self.create_bio_specimen(caregiver_id='P7000',collection_type='Plasma')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.assertNotEqual(whole_blood.status_fk.collected_fk.collected_date_time,
