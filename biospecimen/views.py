@@ -214,10 +214,13 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    caregiver_bloods = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__collected_date_time=caregiver_bio.status_fk.collected_fk.collected_date_time,
-                                                           status_fk__collected_fk__stored_date_time=caregiver_bio.status_fk.collected_fk.stored_date_time,
-                                                           status_fk__collected_fk__number_of_tubes=caregiver_bio.status_fk.collected_fk.number_of_tubes,
-                                                           collection_fk__collection_type_fk__collection_type__in=BLOOD_TYPES)
+    try:
+        caregiver_bloods = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__collected_date_time=caregiver_bio.status_fk.collected_fk.collected_date_time,
+                                                               status_fk__collected_fk__stored_date_time=caregiver_bio.status_fk.collected_fk.stored_date_time,
+                                                               status_fk__collected_fk__number_of_tubes=caregiver_bio.status_fk.collected_fk.number_of_tubes,
+                                                               collection_fk__collection_type_fk__collection_type__in=BLOOD_TYPES)
+    except:
+        caregiver_bloods = None
     collected_form = None
     shipped_choice = None
     shipped_wsu_form = None
