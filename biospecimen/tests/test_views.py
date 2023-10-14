@@ -676,3 +676,33 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         self.assertContains(response, '<input type="checkbox" name="blood_form-whole_blood" disabled id="id_blood_form-whole_blood" checked>')
 
+    def test_echo_2_bio_entry_whole_blood_updates_shipped_to_wsu_data_for_associated_bloods(self):
+        primary_key_whole_blood = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/post/',
+                                    data={'blood_form-red_blood_cells': True,
+                                          'blood_form-collected_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-processed_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-stored_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-number_of_tubes': 5})
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
+        red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
+                                    data={'shipped_choice_form-shipped_to_wsu_or_echo':'W'})
+
+
+        response =  self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_wsu/post/',
+                                    data={'shipped_date_and_time': timezone.datetime(
+                                              2023, 12, 5, 5, 5, 5),
+                                             'tracking_number':555,
+                                             'number_of_tubes':5,
+                                              'logged_date_time': timezone.datetime(
+                                                  2023, 12, 5, 5, 5, 5),
+                                              'courier': 'Fedex'})
+
+        self.assertEqual(red_blood_count.status_fk.shipped_wsu_fk.shipped_date_time,whole_blood.status_fk.shipped_wsu_fk.shipped_date_time)
