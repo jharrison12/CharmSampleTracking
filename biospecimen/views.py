@@ -29,11 +29,12 @@ def check_for_object_or_return_none(object_name,filter,parameter):
 def create_or_update_blood_values(true_or_false,collection_type,caregiver_object,trimester_text,
                                   caregiver_bio_primary,form_data,project='ECHO2',collection_number_object=None):
     if true_or_false:
+        logging.critical(f"What is true or false {true_or_false}\n")
         trimester = Trimester.objects.get(trimester=trimester_text)
         caregiver_biospecimen = CaregiverBiospecimen.objects.get(pk=caregiver_bio_primary)
         project_object = Project.objects.get(project_name=project)
         collection_object = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=collection_number_object)
-        logging.debug(f"in the create or update function")
+        logging.critical(f"in the create or update function for {caregiver_biospecimen}\n")
         try:
             biospecimen_object = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver_object,
                                              collection_fk=collection_object,
@@ -47,7 +48,8 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             biospecimen_object.status_fk.collected_fk.save()
             biospecimen_object.status_fk.save()
             biospecimen_object.save()
-            logging.debug(f"Biospecimen object updated")
+            logging.critical(f"Collected date time in update statement {biospecimen_object.status_fk.collected_fk.collected_date_time}\n")
+            logging.critical(f"Biospecimen object updated")
         except CaregiverBiospecimen.DoesNotExist:
             new_status = Status()
             new_collected = Collected()
@@ -67,7 +69,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             new_status.save()
             new_biospecimen.status_fk = new_status
             new_biospecimen.save()
-            logging.debug(f"Everything created and saved")
+            logging.critical(f"Everything created and saved")
     else:
         pass
 
@@ -159,7 +161,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                 new_status.no_consent_fk = new_no_consent
             new_status.save()
             caregiver_bio.save()
-            if collection_type in BLOOD_TYPES:
+            if collection_type.collection_type in BLOOD_TYPES:
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
             else:
@@ -216,13 +218,19 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
-    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
+    logging.critical(f"Caregiver bio is {caregiver_bio}")
+    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
+        logging.critical(f"Does collected_item exist? {collected_item.exists()}\n\n"
+                         f"Is collected date time null {collected_item.filter(collected_date_time__isnull=True).exists()}\n")
+        logging.critical(f"in Collected form if statement")
         collected_form = CollectedBloodForm(prefix='blood_form')
-        logging.critical(blood_dict.get(collection_type.collection_type))
+        logging.debug(blood_dict.get(collection_type.collection_type))
         # disable whatever check box you used to pull the data
         collected_form.fields[str(blood_dict.get(collection_type.collection_type))].initial = True
         collected_form.fields[str(blood_dict.get(collection_type.collection_type))].disabled = True
+        # collected_form.fields[str(blood_dict.get(collection_type.collection_type))].widget.attrs['readonly'] = True
     else:
+        logging.critical(f"Collected form is none")
         collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
         shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
@@ -233,8 +241,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         logging.debug(f"in shipped to echo if statement")
         shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry_blood.html', context={'charm_project_identifier':caregiver_charm_id,
-                                                                                                  'caregiver_bio_pk':caregiver_bio_pk,
-                                                                                                  'caregiver_bio': caregiver_bio,
+                                                                                                        'caregiver_bio_pk':caregiver_bio_pk,
+                                                                                                        'caregiver_bio': caregiver_bio,
                                                                                                         'collected_form': collected_form,
                                                                                                         'collection_type': collection_type.collection_type,
                                                                                                         'shipped_choice_form': shipped_choice,
@@ -261,11 +269,14 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine.save()
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
-        if collection_type.collection_type in BLOOD_TYPES:
-            logging.debug(f"in the blood if statement")
+        elif collection_type.collection_type in BLOOD_TYPES:
+            logging.critical(f"in the blood if statement")
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
-            logging.debug(f"is form valid {form.is_valid()} form errors {form.errors} form {form.data} request.post{request.POST}")
+            logging.critical(f"is form valid {form.is_valid()} \n\nform errors {form.errors} \n\nform {form.data} \n\nrequest.post{request.POST}")
             if form.is_valid():
+                #I'm disabling field that references the collection type of the page
+                #disabled fields are not passed through the post request, so you have to do it manually :/
+                form.cleaned_data[str(blood_dict.get(collection_type.collection_type))] = 'on'
                 ##if serum is true check that serum exists if exists update if not create and update
                 create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
                                                       collection_type='Serum',
@@ -298,7 +309,8 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                                               form_data=form,
                                               caregiver_bio_primary=caregiver_bio_pk)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
-
+        else:
+            raise AssertionError
     else:
         raise AssertionError
 

@@ -117,7 +117,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
-
+        time.sleep(50)
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
         collected_not_collected.select_by_visible_text('Collected')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')

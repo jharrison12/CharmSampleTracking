@@ -21,6 +21,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             self.live_server_url = 'http://' + staging_server
             return
 
+
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
         self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
         self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
@@ -81,8 +82,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.first_caregiver_old_name = Name.objects.create(first_name='Sandy', last_name='Cheeks')
 
-        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_name,
-                                     revision_number=1,
+        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_name, revision_number=1,
                                      eff_start_date=timezone.now(), status='C')
 
         CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_old_name,
@@ -97,8 +97,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
         self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
-                                                      incentive_date=timezone.datetime(2023, 8, 4).date(),
-                                                      incentive_amount=100)
+                                                      incentive_date=timezone.datetime(2023, 8, 4).date(), incentive_amount=100)
 
         # create recruitment
         self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
@@ -265,6 +264,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         # Create surveys
 
+
         self.new_project = Project.objects.create(project_name='MARCH')
         self.echo1 = Project.objects.create(project_name='ECHO1')
         self.echo2 = Project.objects.create(project_name='ECHO2')
@@ -279,24 +279,21 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=timezone.datetime(2023, 8,
-                                                                                                            30).date()
+                                                                   survey_completion_date=timezone.datetime(2023, 8, 30).date()
                                                                    )
 
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
                                                                    incentive_fk=self.incentive_one,
-                                                                   survey_completion_date=timezone.datetime(2023, 5,
-                                                                                                            3).date()
+                                                                   survey_completion_date=timezone.datetime(2023, 5, 3).date()
                                                                    )
 
         self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
                                                                      survey_fk=self.prenatal_1,
                                                                      survey_outcome_fk=self.completed_survey_outcome,
                                                                      incentive_fk=self.incentive_one,
-                                                                     survey_completion_date=timezone.datetime(2023, 5,
-                                                                                                              3).date()
+                                                                     survey_completion_date=timezone.datetime(2023, 5, 3).date()
                                                                      )
 
         # Create consent
@@ -332,18 +329,15 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                 logged_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC))
 
         self.shipped_one = Shipped.objects.create(outcome_fk=self.completed,
-                                                  shipped_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0,
-                                                                                      tzinfo=pytz.UTC),
+                                                  shipped_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
                                                   courier='Fedex',
                                                   shipping_number='7777777',
                                                   quantity=3,
                                                   logged_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC))
         self.received_one = Received.objects.create(outcome_fk=self.completed,
-                                                    received_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0,
-                                                                                         tzinfo=pytz.UTC),
+                                                    received_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
                                                     storage_location='MSU',
-                                                    logged_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0,
-                                                                                       tzinfo=pytz.UTC),
+                                                    logged_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
                                                     quantity=19)
 
         self.collected_one = Collected.objects.create(
@@ -374,12 +368,11 @@ class FunctionalTest(StaticLiveServerTestCase):
             )
 
         self.shipped_wsu_blank = ShippedWSU.objects.create()
-        self.shipped_wsu = ShippedWSU.objects.create(
-            shipped_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
-            number_of_tubes=1,
-            courier='FedEx',
-            tracking_number='777777',
-            shipped_by='me')
+        self.shipped_wsu = ShippedWSU.objects.create(shipped_date_time=timezone.datetime(2023, 5, 5, 12, 0, 0, tzinfo=pytz.UTC),
+                                                     number_of_tubes=1,
+                                                     courier='FedEx',
+                                                     tracking_number='777777',
+                                                     shipped_by='me')
 
         self.shipped_echo_incomplete = ShippedECHO.objects.create()
         self.shipped_echo_complete = ShippedECHO.objects.create(
@@ -412,8 +405,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.status_outcome_incomplete_nine = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_incomplete_ten = Status.objects.create(processed_fk=self.processed_one)
 
-        self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one,
-                                                                    stored_fk=self.stored_one)
+        self.status_outcome_stored_complete = Status.objects.create(processed_fk=self.processed_one, stored_fk=self.stored_one)
         self.status_outcome_shipped_complete = Status.objects.create(processed_fk=self.processed_one,
                                                                      stored_fk=self.stored_one, shipped_fk=self.shipped_one)
         self.status_outcome_received_complete = Status.objects.create(processed_fk=self.processed_one,
@@ -450,8 +442,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.number_one = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.FIRST)
         self.number_two = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.SECOND)
-        self.number_three = CollectionNumber.objects.create(
-            collection_number=CollectionNumber.CollectionNumberChoices.THIRD)
+        self.number_three = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.THIRD)
         self.number_early_childhood = CollectionNumber.objects.create(
             collection_number=CollectionNumber.CollectionNumberChoices.EARLY_CHILDHOOD)
         self.number_middle_childhood = CollectionNumber.objects.create(
@@ -472,6 +463,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.plasma_one = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_one)
         self.plasma_two = Collection.objects.create(collection_type_fk=self.plasma, collection_number_fk=self.number_two)
+        self.plasma_none = Collection.objects.create(collection_type_fk=self.plasma)
 
         self.bloodspots_one = Collection.objects.create(collection_type_fk=self.bloodspots,
                                                         collection_number_fk=self.number_one)
@@ -487,11 +479,13 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                         collection_number_fk=self.number_one)
         self.buffy_coat_two = Collection.objects.create(collection_type_fk=self.buffy_coat,
                                                         collection_number_fk=self.number_two)
+        self.buffy_coat_none = Collection.objects.create(collection_type_fk=self.buffy_coat)
 
         self.red_blood_cells_one = Collection.objects.create(collection_type_fk=self.red_blood_cells,
                                                              collection_number_fk=self.number_one)
         self.red_blood_cells_two = Collection.objects.create(collection_type_fk=self.red_blood_cells,
                                                              collection_number_fk=self.number_two)
+        self.red_blood_cells_none = Collection.objects.create(collection_type_fk=self.red_blood_cells)
 
         self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair,
                                                               collection_number_fk=self.number_early_childhood)
@@ -504,8 +498,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.saliva = Collection.objects.create(collection_type_fk=self.saliva, collection_number_fk=self.number_one)
 
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
-        self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta,
-                                                      collection_number_fk=self.number_two)
+        self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
 
         # Create perinatal event
         self.perinatal_one = Perinatal.objects.create(child_fk=self.child_one, pregnancy_fk=self.mother_one_pregnancy_one)
@@ -795,20 +788,19 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         # self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
+
         # creat consent item
 
         self.consent_mother_placenta = ConsentType.objects.create(
             consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_PLACENTA)
-        self.consent_mother_blood = ConsentType.objects.create(
-            consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_BLOOD)
-        self.consent_mother_urine = ConsentType.objects.create(
-            consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_URINE)
+        self.consent_mother_blood = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_BLOOD)
+        self.consent_mother_urine = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_URINE)
         self.consent_mother_address = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.ADDRESS)
         self.consent_mother_birth_cert = ConsentType.objects.create(
             consent_type_text=ConsentType.ConsentTypeChoices.BIRTH_CERTIFICATE)
 
-        self.consent_mother_placenta_caregiver_one = ConsentItem.objects.create(
-            consent_type_fk=self.consent_mother_placenta, caregiver_fk=self.first_caregiver)
+        self.consent_mother_placenta_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_placenta,
+                                                                                caregiver_fk=self.first_caregiver)
         self.consent_mother_blood_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_blood,
                                                                              caregiver_fk=self.first_caregiver)
         self.consent_mother_urine_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_urine,
@@ -827,8 +819,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         # create child survey
 
         self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey', project_fk=self.new_project)
-        self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',
-                                                                   project_fk=self.new_project)
+        self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey', project_fk=self.new_project)
 
         self.child_one_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
                                                                survey_fk=self.survey_that_child_takes,

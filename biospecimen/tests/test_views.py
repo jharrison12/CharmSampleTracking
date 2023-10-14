@@ -637,6 +637,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-buffy_coat': True,
+                                                                                               'blood_form-whole_blood':True,
                                                                                                'blood_form-collected_date_time': timezone.datetime(
                                                                                                    2023, 5, 5, 5, 5, 5),
                                                                                                'blood_form-processed_date_time': timezone.datetime(
@@ -645,12 +646,15 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                                                                                    2023, 5, 5, 5, 5, 5),
                                                                                                'blood_form-number_of_tubes': 5})
 
+
+
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
+        logging.debug(response.content.decode())
         self.assertContains(response,'Number of Tubes: 5')
 
     def test_echo2_bio_entry_whole_blood_is_checked_and_not_editable(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         self.assertContains(response, '<input type="checkbox" name="blood_form-whole_blood" disabled id="id_blood_form-whole_blood" checked>')
 

@@ -9,7 +9,7 @@
           <input type="submit" value="Submit" />
           </form>
         </div>
-    {% elif caregiver_bio.status_fk.collected_fk  %}
+    {% elif caregiver_bio.status_fk.collected_fk and caregiver_bio.status_fk.collected_fk.collected_date_time %}
         <div id="collected_blood_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}
