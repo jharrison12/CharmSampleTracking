@@ -689,20 +689,24 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                           'blood_form-stored_date_time': timezone.datetime(
                                               2023, 5, 5, 5, 5, 5),
                                           'blood_form-number_of_tubes': 5})
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
-        red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
+
 
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
-                                    data={'shipped_choice_form-shipped_to_wsu_or_echo':'W'})
+                                    data={'shipped_choice_form-shipped_to_wsu_or_echo':['W']})
 
 
         response =  self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_wsu/post/',
-                                    data={'shipped_date_and_time': timezone.datetime(
-                                              2023, 12, 5, 5, 5, 5),
-                                             'tracking_number':555,
-                                             'number_of_tubes':5,
-                                              'logged_date_time': timezone.datetime(
+                                    data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-tracking_number':555,
+                                          'shipped_to_wsu_form-number_of_tubes':5,
+                                          'shipped_to_wsu_form-logged_date_time': timezone.datetime(
                                                   2023, 12, 5, 5, 5, 5),
-                                              'courier': 'Fedex'})
+                                          'shipped_to_wsu_form-courier': 'Fedex'})
+
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
+        red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
+
+
+        logging.critical(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
 
         self.assertEqual(red_blood_count.status_fk.shipped_wsu_fk.shipped_date_time,whole_blood.status_fk.shipped_wsu_fk.shipped_date_time)

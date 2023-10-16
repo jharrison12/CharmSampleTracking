@@ -107,7 +107,7 @@ class ShippedWSU(models.Model):
     logged_date_time = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
     def __str__(self):
-        return f"collected {self.status_set}"
+        return f"shippedwus  {self.pk}"
 
 class ShippedECHO(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
