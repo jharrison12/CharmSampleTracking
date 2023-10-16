@@ -52,7 +52,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             status_fk.save()
             biospecimen_object.save()
             logging.critical(f"Collected date time in update statement {biospecimen_object.status_fk.collected_fk.collected_date_time}\n")
-            logging.critical(f"Biospecimen object updated")
+            logging.critical(f"Biospecimen object updated {biospecimen_object}\n")
         except CaregiverBiospecimen.DoesNotExist:
             new_status = Status()
             new_collected = Collected()
@@ -90,10 +90,10 @@ def return_caregiver_bloods(caregiver_bio):
 def update_shipped_wsu(caregiver_bio_pk,bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-    logging.critical(f"did update shipped wsu find status {status_bio} ")
+    logging.critical(f"did update shipped wsu function for {caregiver_bio} find status {status_bio} ")
     try:
         shipped_to_wsu = ShippedWSU.objects.get(status=status_bio)
-        logging.critical(f"shipped to wsu found {shipped_to_wsu}")
+        logging.critical(f"shipped to wsu found {shipped_to_wsu} status_bio:{status_bio}")
     except ShippedWSU.DoesNotExist:
         logging.critical(f"Shipped to wsu not found")
         shipped_to_wsu = ShippedWSU()
@@ -108,7 +108,8 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form):
     shipped_to_wsu.logged_date_time = bound_form.cleaned_data['logged_date_time']
     shipped_to_wsu.save()
     status_bio.save()
-    logging.critical(f"shipped to wsu function complete {shipped_to_wsu}")
+    caregiver_bio.save()
+    logging.critical(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
 
 #################################################
 # Views
@@ -366,7 +367,7 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     if request.method=="POST":
         logging.debug(f"post is {request.POST}")
         form = ShippedChoiceForm(data=request.POST, prefix='shipped_choice_form')
-        logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+        logging.critical(f"is shipped form valid {form.is_valid()}  {form.errors}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
                 shipped_to_wsu = ShippedWSU.objects.create()
