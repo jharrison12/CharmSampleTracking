@@ -448,6 +448,16 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         new_status.save()
         caregiver_bio.save()
 
+
+    def add_shipped_echo_to_biospecimen(self, biospecimen_pk):
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=biospecimen_pk)
+        new_status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+        new_echo = ShippedECHO()
+        new_status.shipped_echo_fk = new_echo
+        new_echo.save()
+        new_status.save()
+        caregiver_bio.save()
+
     def create_bio_specimen(self,caregiver_id,collection_type,project="ECHO2"):
         caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_id)
         collection = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=None)
@@ -723,3 +733,71 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         caregiver_bio.save()
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
+
+    def test_echo_2_bio_entry_whole_blood_updates_shipped_to_echo_data_for_associated_bloods(self):
+        primary_key_whole_blood = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
+
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/post/',
+                                    data={'blood_form-red_blood_cells': True,
+                                          'blood_form-collected_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-processed_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-stored_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-number_of_tubes': 5})
+
+        logging.critical(f"whole blood status test:  {whole_blood.status_fk}")
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
+                                    data={'shipped_choice_form-shipped_to_wsu_or_echo': ['E']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_echo/post/',
+                                    data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5,
+                                                                                                         5, 5)})
+
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
+        red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
+
+        logging.critical(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
+
+        self.assertEqual(red_blood_count.status_fk.shipped_echo_fk.shipped_date_time,
+                         whole_blood.status_fk.shipped_echo_fk.shipped_date_time)
+
+    def test_echo_2_bio_entry_whole_blood_does_not_update_shipped_to_echo_data_for_bloods_not_checked(self):
+        primary_key_whole_blood = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
+
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/post/',
+                                    data={'blood_form-red_blood_cells': True,
+                                          'blood_form-collected_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-processed_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-stored_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'blood_form-number_of_tubes': 5})
+
+        logging.critical(f"whole blood status test:  {whole_blood.status_fk}")
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
+                                    data={'shipped_choice_form-shipped_to_wsu_or_echo': ['E']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_echo/post/',
+                                    data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5,
+                                                                                                         5, 5)})
+        self.create_bio_specimen(caregiver_id='P7000',collection_type='Plasma')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Plasma',trimester=None)
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
+        self.add_shipped_echo_to_biospecimen(biospecimen_pk=primary_key)
+        plasma = CaregiverBiospecimen.objects.get(pk=primary_key)
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
+
+        logging.critical(f" red blood count {plasma.status_fk} whole blood {whole_blood.status_fk}")
+
+
+        self.assertNotEqual(plasma.status_fk.shipped_echo_fk.shipped_date_time,
+                         whole_blood.status_fk.shipped_echo_fk.shipped_date_time)
+

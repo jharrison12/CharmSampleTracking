@@ -111,6 +111,19 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form):
     caregiver_bio.save()
     logging.critical(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
 
+def update_shipped_echo(caregiver_bio_pk, bound_form):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+    try:
+        shipped_to_echo = ShippedECHO.objects.get(status=status_bio)
+    except ShippedECHO.DoesNotExist:
+        shipped_to_echo = ShippedECHO()
+        status_bio.shipped_echo_fk = shipped_to_echo
+    shipped_to_echo.shipped_date_time = bound_form.cleaned_data['shipped_date_and_time']
+    shipped_to_echo.save()
+    status_bio.save()
+    caregiver_bio.save()
+
 #################################################
 # Views
 ##################################################
@@ -430,19 +443,26 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
     shipped_echo_fk = ShippedECHO.objects.get(status=status)
     logging.debug(f"In echo post")
     if request.method == "POST":
-        logging.debug(f"post is {request.POST}")
-        form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
-        logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
-        if form.is_valid():
-            shipped_echo_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-            shipped_echo_fk.save()
-            logging.debug(f"shipped echo saved")
-            if collection_type.collection_type in BLOOD_TYPES:
-                return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
-                                caregiver_bio_pk=caregiver_bio_pk)
-            else:
-                return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
-                                caregiver_bio_pk=caregiver_bio_pk)
+        if collection_type.collection_type in BLOOD_TYPES:
+            caregiver_bloods = return_caregiver_bloods(caregiver_bio)
+            logging.debug(f"post is {request.POST}")
+            form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
+            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            if form.is_valid():
+                for item in caregiver_bloods:
+                    update_shipped_echo(caregiver_bio_pk=item.pk,bound_form=form)
+            return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+                            caregiver_bio_pk=caregiver_bio_pk)
+        else:
+            logging.debug(f"post is {request.POST}")
+            form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
+            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            if form.is_valid():
+                shipped_echo_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+                shipped_echo_fk.save()
+                logging.debug(f"shipped echo saved")
+            return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                                    caregiver_bio_pk=caregiver_bio_pk)
 
     else:
         raise AssertionError
