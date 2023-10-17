@@ -152,7 +152,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Plasma', body)
 
         #user sees option to choose shipped to wsu or shipped to echo
-        time.sleep(30)
+
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped Choice Form',form)
 
@@ -161,10 +161,20 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')
         submit.click()
 
-
+        # User sees echo form with shipped date time
         body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Shipped to ECHO Form',body)
+
+        #User shipped echo form
+        shipped_echo_date = self.browser.find_element(By.ID,'id_shipped_to_echo_form-shipped_date_and_time')
+        shipped_echo_date.clear()
+        shipped_echo_date.send_keys('2023-09-27 12:52:26')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_form"]/form/input[2]')
+        submit.click()
+
         needed_div = self.browser.find_element(By.ID,'shipped_to_echo_information').text
-        self.assertIn('Shipped to Echo:',needed_div)
+        self.assertIn('Shipped Echo',needed_div)
 
 
     def test_user_can_choose_status_of_blood_information_chooses_not_collected(self):
