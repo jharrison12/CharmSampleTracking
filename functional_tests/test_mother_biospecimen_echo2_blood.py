@@ -61,6 +61,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         #user sees a ton of checkboxes for all the bloods possible
 
         whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form-whole_blood")
+        whole_blood_checkbox.click()
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
@@ -103,15 +104,19 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit.click()
 
         #user sees shipped WSU data
-        body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Courier: FedEx',body)
+        needed_div = self.browser.find_element(By.ID,'shipped_to_wsu_information').text
+        self.assertIn('Courier: FedEx',needed_div)
+
+        #user sees that whole blood check box is clicked
+        self.assertIn("Whole Blood",needed_div)
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_echo(self):
+
         # User visits the caregiver biospecimen page and sees blood
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', trimester='F')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-
+        time.sleep(90)
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])

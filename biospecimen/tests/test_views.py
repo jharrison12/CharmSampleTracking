@@ -726,12 +726,9 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_page_shows_echo_shipped_form_if_collected_not_null_and_shipped_echo_not_null(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'T')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-        new_ship_to_echo = ShippedECHO()
-        status_item.shipped_echo_fk_fk = new_ship_to_echo
-        new_ship_to_echo.save()
-        caregiver_bio.save()
+        self.add_shipped_echo_to_biospecimen(biospecimen_pk=caregiver_bio.pk)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        logging.critical(response.content.decode())
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
     def test_echo_2_bio_entry_whole_blood_updates_shipped_to_echo_data_for_associated_bloods(self):
