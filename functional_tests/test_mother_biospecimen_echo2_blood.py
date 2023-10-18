@@ -106,7 +106,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         #user sees shipped WSU data
         needed_div = self.browser.find_element(By.ID,'shipped_to_wsu_information').text
         self.assertIn('Courier: FedEx',needed_div)
-
+        time.sleep(20)
         #user sees that whole blood check box is clicked
         self.assertIn("Whole Blood",needed_div)
 

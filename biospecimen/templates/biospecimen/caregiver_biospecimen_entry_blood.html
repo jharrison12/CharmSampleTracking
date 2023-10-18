@@ -73,6 +73,14 @@
                 <div>Tracking Number:{{ caregiver_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
                 <div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
                 <div>Shipped By: {{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>
+                {% for blood in caregiver_bloods %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                      <label class="form-check-label" for="flexCheckCheckedDisabled">
+                        {{ blood.collection_fk.collection_type_fk.collection_type }}
+                      </label>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     {% endif %}
