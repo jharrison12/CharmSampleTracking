@@ -34,13 +34,11 @@ class BiospecimenHistoryPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/history/')
         self.assertContains(response, 'P7000')
 
-
 class BiospecimenEntryHomePage(DatabaseSetup):
 
     def test_biospecimen_entry_home_page_returns_correct_template(self):
         response = self.client.get(f'/biospecimen/entry/')
         self.assertTemplateUsed(response, 'biospecimen/biospecimen_entry.html')
-
 
 @unittest.skip
 class CaregiverBiospecimenPageTest(DatabaseSetup):
@@ -79,7 +77,6 @@ class CaregiverBiospecimenPageTest(DatabaseSetup):
 
     def test_caregiver_a_bio_page_shows_placenta(self):
         self.assertContains(self.get_biospecimen_page('P7000'), "Placenta: Completed")
-
 
 @unittest.skip
 class CaregiverBioSpecimenEntryPage(DatabaseSetup):
@@ -150,7 +147,6 @@ class CaregiverBioSpecimenEntryPage(DatabaseSetup):
 
         self.assertEqual(placenta_two.incentive_fk, correct_incentive)
 
-
 class ChildBiospecimenPage(DatabaseSetup):
 
     def test_child_biospecimen_page_uses_correct_template(self):
@@ -172,7 +168,6 @@ class ChildBiospecimenPage(DatabaseSetup):
         child_bios_list = list(set(value for dic in child_bios for value in dic.values()))
         for value in child_bios_list:
             self.assertContains(response, value)
-
 
 class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
 
@@ -293,7 +288,6 @@ class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
                                                         collection_num='F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{caregiver_bio_pk}/history/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_history.html')
-
 
 class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
@@ -425,7 +419,6 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
                                     data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
-
 
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
@@ -798,3 +791,31 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertNotEqual(plasma.status_fk.shipped_echo_fk.shipped_date_time,
                          whole_blood.status_fk.shipped_echo_fk.shipped_date_time)
 
+class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
+
+    def setUp(self):
+        self.client.logout()
+
+    def test_that_login_required_for_biospecimen_history_page(self):
+        response = self.client.get(f'/biospecimen/history/')
+        self.assertTemplateNotUsed(response, 'biospecimen/biospecimen_history.html')
+
+    def test_that_login_required_for_biospecimen_entry_page(self):
+        response = self.client.get(f'/biospecimen/entry/')
+        self.assertTemplateNotUsed(response, 'biospecimen/biospecimen_entry.html')
+
+    def test_that_login_required_for_biospecimen_child_page(self):
+        response = self.client.get(f'/biospecimen/child/7000M1/')
+        self.assertTemplateNotUsed(response, 'biospecimen/child_biospecimen.html')
+
+    def test_that_login_required_for_caregiver_biospecimen_history_page(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/1/history/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_history.html')
+
+    def test_that_login_required_for_biospecimen_initial_page(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_login_required_for_biospecimen_blood_page(self):
+        response = self.client.get(f'/biospecimen/caregiver/P7000/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
