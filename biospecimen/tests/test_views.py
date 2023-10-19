@@ -690,7 +690,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo_2_bio_entry_whole_blood_updates_shipped_to_wsu_data_for_associated_bloods(self):
         primary_key_whole_blood = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
-        logging.critical(f"whole blood status test: {whole_blood.status_fk}")
+        logging.debug(f"whole blood status test: {whole_blood.status_fk}")
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/post/',
                                     data={'blood_form-red_blood_cells': True,
@@ -702,7 +702,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                               2023, 5, 5, 5, 5, 5),
                                           'blood_form-number_of_tubes': 5})
 
-        logging.critical(f"whole blood status test:  {whole_blood.status_fk}")
+        logging.debug(f"whole blood status test:  {whole_blood.status_fk}")
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
                                     data={'shipped_choice_form-shipped_to_wsu_or_echo':['W']})
 
@@ -719,7 +719,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
-        logging.critical(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
+        logging.debug(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
 
         self.assertEqual(red_blood_count.status_fk.shipped_wsu_fk.shipped_date_time,whole_blood.status_fk.shipped_wsu_fk.shipped_date_time)
 
@@ -728,7 +728,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.add_shipped_echo_to_biospecimen(biospecimen_pk=caregiver_bio.pk)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.critical(response.content.decode())
+        logging.debug(response.content.decode())
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
     def test_echo_2_bio_entry_whole_blood_updates_shipped_to_echo_data_for_associated_bloods(self):
@@ -746,7 +746,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                               2023, 5, 5, 5, 5, 5),
                                           'blood_form-number_of_tubes': 5})
 
-        logging.critical(f"whole blood status test:  {whole_blood.status_fk}")
+        logging.debug(f"whole blood status test:  {whole_blood.status_fk}")
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
                                     data={'shipped_choice_form-shipped_to_wsu_or_echo': ['E']})
 
@@ -758,7 +758,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
-        logging.critical(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
+        logging.debug(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
 
         self.assertEqual(red_blood_count.status_fk.shipped_echo_fk.shipped_date_time,
                          whole_blood.status_fk.shipped_echo_fk.shipped_date_time)
@@ -778,7 +778,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                               2023, 5, 5, 5, 5, 5),
                                           'blood_form-number_of_tubes': 5})
 
-        logging.critical(f"whole blood status test:  {whole_blood.status_fk}")
+        logging.debug(f"whole blood status test:  {whole_blood.status_fk}")
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
                                     data={'shipped_choice_form-shipped_to_wsu_or_echo': ['E']})
 
@@ -792,7 +792,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         plasma = CaregiverBiospecimen.objects.get(pk=primary_key)
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
-        logging.critical(f" red blood count {plasma.status_fk} whole blood {whole_blood.status_fk}")
+        logging.debug(f" red blood count {plasma.status_fk} whole blood {whole_blood.status_fk}")
 
 
         self.assertNotEqual(plasma.status_fk.shipped_echo_fk.shipped_date_time,

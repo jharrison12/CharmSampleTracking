@@ -1,5 +1,5 @@
 import logging
-
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404,redirect
 from dataview.models import Caregiver, Name, CaregiverName, \
     Address, Email, CaregiverEmail, Phone, CaregiverPhone, SocialMedia, CaregiverSocialMedia, CaregiverPersonalContact, \
@@ -12,13 +12,16 @@ from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 logging.basicConfig(level=logging.DEBUG)
 
 # Create your views here.
+@login_required
 def home_page(request):
     return render(request=request,template_name='dataview/home.html')
 
+@login_required
 def caregiver(request):
     caregivers = Caregiver.objects.all()
     return render(request=request, template_name='dataview/caregiver.html', context={'mother_or_caregiver':caregivers})
 
+@login_required
 def caregiver_info(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     caregiver_name = Name.objects.filter(caregivername__caregiver_fk__charm_project_identifier=caregiver_charm_id).filter(caregivername__status='C').first()
@@ -44,22 +47,23 @@ def caregiver_info(request,caregiver_charm_id):
                                                                                         'contact_b': contact_b,
                                                                                         'caregiver_pregnancies': caregiver_pregnancy_info
                                                                                         })
-
+@login_required
 def caregiver_survey(request,caregiver_charm_id):
     caregiver_surveys = CaregiverSurvey.objects.filter(caregiver_fk__charm_project_identifier=caregiver_charm_id)
     return render(request,template_name='dataview/caregiver_survey.html',context={'caregiver_surveys':caregiver_surveys,
                                                                                   'charm_id':caregiver_charm_id})
-
+@login_required
 def caregiver_consent_item(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     consent_items = ConsentItem.objects.filter(caregiver_fk=caregiver)
     return render(request,template_name='dataview/caregiver_consent_item.html',context={'consent_items':consent_items,
                                                                                         'caregiver':caregiver})
-
+@login_required
 def child(request):
     children = Child.objects.all()
     return render(request,template_name='dataview/child.html', context={'children':children})
 
+@login_required
 def child_information_page(request, child_charm_id):
     child = get_object_or_404(Child, charm_project_identifier=child_charm_id)
     child_name = Name.objects.filter(childname__child_fk=child).filter(childname__status='C').first()
@@ -69,13 +73,13 @@ def child_information_page(request, child_charm_id):
                                                                                    'child_name':child_name,
                                                                                    'child_address':child_address,
                                                                                    'caregiver_relation':caregiver_relation})
-
+@login_required
 def child_survey_page(request,child_charm_id):
     child = get_object_or_404(Child, charm_project_identifier=child_charm_id)
     child_survey = ChildSurvey.objects.filter(child_fk__charm_project_identifier=child_charm_id)
     return render(request,template_name='dataview/child_survey.html',context={'child':child,
                                                                               'child_survey':child_survey})
-
+@login_required
 def child_assent_page(request,child_charm_id):
     child = get_object_or_404(Child, charm_project_identifier=child_charm_id)
     child_assent = ChildAssent.objects.filter(child_fk__charm_project_identifier=child_charm_id)

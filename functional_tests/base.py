@@ -4,10 +4,11 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
+    ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation, User
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
     CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO
 import datetime,pytz
+from selenium.webdriver.common.by import By
 import time
 from django.utils import timezone
 import os
@@ -20,6 +21,19 @@ class FunctionalTest(StaticLiveServerTestCase):
         if staging_server:
             self.live_server_url = 'http://' + staging_server
             return
+
+        self.credentials = {
+            'username': 'testuser',
+            'password': 'secret'}
+        User.objects.create_user(**self.credentials)
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}/accounts/login/')
+        username = self.browser.find_element(By.ID,'id_username')
+        username.send_keys('testuser')
+        password = self.browser.find_element(By.ID,'id_password')
+        password.send_keys('secret')
+        login = self.browser.find_element(By.ID,'login_button')
+        login.click()
 
 
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)

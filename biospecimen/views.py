@@ -8,6 +8,7 @@ ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,In
     ShippedtoEchoForm,CollectedBloodForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 import random
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -30,12 +31,12 @@ def check_for_object_or_return_none(object_name,filter,parameter):
 def create_or_update_blood_values(true_or_false,collection_type,caregiver_object,trimester_text,
                                   caregiver_bio_primary,form_data,project='ECHO2',collection_number_object=None):
     if true_or_false:
-        logging.critical(f"What is true or false {true_or_false}\n")
+        logging.debug(f"What is true or false {true_or_false}\n")
         trimester = Trimester.objects.get(trimester=trimester_text)
         # caregiver_biospecimen = CaregiverBiospecimen.objects.get(pk=caregiver_bio_primary)
         project_object = Project.objects.get(project_name=project)
         collection_object = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=collection_number_object)
-        # logging.critical(f"in the create or update function for {caregiver_biospecimen}\n")
+        # logging.debug(f"in the create or update function for {caregiver_biospecimen}\n")
         try:
             biospecimen_object = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver_object,
                                              collection_fk=collection_object,
@@ -51,8 +52,8 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             collected_fk.save()
             status_fk.save()
             biospecimen_object.save()
-            logging.critical(f"Collected date time in update statement {biospecimen_object.status_fk.collected_fk.collected_date_time}\n")
-            logging.critical(f"Biospecimen object updated {biospecimen_object}\n")
+            logging.debug(f"Collected date time in update statement {biospecimen_object.status_fk.collected_fk.collected_date_time}\n")
+            logging.debug(f"Biospecimen object updated {biospecimen_object}\n")
         except CaregiverBiospecimen.DoesNotExist:
             new_status = Status()
             new_collected = Collected()
@@ -72,7 +73,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             new_collected.save()
             new_status.save()
             new_biospecimen.save()
-            logging.critical(f"Everything created and saved {new_biospecimen}")
+            logging.debug(f"Everything created and saved {new_biospecimen}")
     else:
         pass
 
@@ -90,17 +91,17 @@ def return_caregiver_bloods(caregiver_bio):
 def update_shipped_wsu(caregiver_bio_pk,bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-    logging.critical(f"did update shipped wsu function for {caregiver_bio} find status {status_bio} ")
+    logging.debug(f"did update shipped wsu function for {caregiver_bio} find status {status_bio} ")
     try:
         shipped_to_wsu = ShippedWSU.objects.get(status=status_bio)
-        logging.critical(f"shipped to wsu found {shipped_to_wsu} status_bio:{status_bio}")
+        logging.debug(f"shipped to wsu found {shipped_to_wsu} status_bio:{status_bio}")
     except ShippedWSU.DoesNotExist:
-        logging.critical(f"Shipped to wsu not found")
+        logging.debug(f"Shipped to wsu not found")
         shipped_to_wsu = ShippedWSU()
         status_bio.shipped_wsu_fk = shipped_to_wsu
         # shipped_to_wsu.save()
         # status_bio.save()
-        logging.critical(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
+        logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
     shipped_to_wsu.shipped_date_time = bound_form.cleaned_data['shipped_date_and_time']
     shipped_to_wsu.tracking_number = bound_form.cleaned_data['tracking_number']
     shipped_to_wsu.number_of_tubes = bound_form.cleaned_data['number_of_tubes']
@@ -109,7 +110,7 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form):
     shipped_to_wsu.save()
     status_bio.save()
     caregiver_bio.save()
-    logging.critical(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
+    logging.debug(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
 
 def update_shipped_echo(caregiver_bio_pk, bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -127,7 +128,7 @@ def update_shipped_echo(caregiver_bio_pk, bound_form):
 #################################################
 # Views
 ##################################################
-
+@login_required
 def biospecimen_history(request):
     list_of_historic_caregivers = Caregiver.objects.filter(
         caregiverbiospecimen__status_fk__processed_fk__isnull=False).filter(
@@ -138,10 +139,12 @@ def biospecimen_history(request):
     items = CaregiverBiospecimen.objects.filter(caregiver_fk__in=list_of_historic_caregivers)
     return render(request,template_name='biospecimen/biospecimen_history.html',context={'list_of_historic_caregivers':items})
 
+@login_required
 def biospecimen_entry(request):
     list_of_echo_2_bio = CaregiverBiospecimen.objects.filter(project_fk__project_name='ECHO2')
     return render(request,template_name='biospecimen/biospecimen_entry.html',context={'list_of_biospecimens':list_of_echo_2_bio})
 
+@login_required
 def caregiver_biospecimen(request,caregiver_charm_id):
     #TODO: Fix this so you're iterating over one queryset and not 15
     caregiver = get_object_or_404(Caregiver,charm_project_identifier=caregiver_charm_id)
@@ -152,6 +155,7 @@ def caregiver_biospecimen(request,caregiver_charm_id):
                                                                                             'caregiver_collections':caregiver_collections,
                                                                                             'caregiver_biospecimens':caregiver_biospecimens})
 
+@login_required
 def child_biospecimen_page(request,child_charm_id):
     child = get_object_or_404(Child,charm_project_identifier=child_charm_id)
     child_collection_query = ChildBiospecimen.objects.values('collection_fk__collection_type_fk__collection_type')
@@ -161,6 +165,7 @@ def child_biospecimen_page(request,child_charm_id):
                                                                                    'child_collections':child_collections,
                                                                                    'child_biospecimens':child_biospecimens})
 
+@login_required
 def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     processed_form = ProcessedBiospecimenForm(prefix="processed_form")
@@ -178,6 +183,7 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                        'shipped_form':shipped_form,
                                                                                                        'received_form':received_form})
 
+@login_required
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
@@ -194,6 +200,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'collection_type': collection_type.collection_type
                                                                                                   })
 
+@login_required
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
@@ -227,6 +234,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
     else:
         return redirect("biospecimen:caregiver_biospecimen_initial",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
 
+@login_required
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
@@ -262,6 +270,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'shipped_echo_form':shipped_echo_form
                                                                                                   })
 
+@login_required
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
@@ -307,6 +316,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'caregiver_bloods': caregiver_bloods
                                                                                                   })
 
+@login_required
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
@@ -327,14 +337,14 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type.collection_type in BLOOD_TYPES:
-            logging.critical(f"in the blood if statement")
+            logging.debug(f"in the blood if statement")
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
-            logging.critical(f"is form valid {form.is_valid()} \n\nform errors {form.errors} \n\nform {form.data} \n\nrequest.post{request.POST}")
+            logging.debug(f"is form valid {form.is_valid()} \n\nform errors {form.errors} \n\nform {form.data} \n\nrequest.post{request.POST}")
             if form.is_valid():
                 #I'm disabling field that references the collection type of the page
                 #disabled fields are not passed through the post request, so you have to do it manually :/
                 form.cleaned_data[str(blood_dict.get(collection_type.collection_type))] = True
-                logging.critical(f"Did form cleaned data update work {form.cleaned_data} ")
+                logging.debug(f"Did form cleaned data update work {form.cleaned_data} ")
                 ##if serum is true check that serum exists if exists update if not create and update
                 create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
                                                       collection_type='Serum',
@@ -380,7 +390,7 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     if request.method=="POST":
         logging.debug(f"post is {request.POST}")
         form = ShippedChoiceForm(data=request.POST, prefix='shipped_choice_form')
-        logging.critical(f"is shipped form valid {form.is_valid()}  {form.errors}")
+        logging.debug(f"is shipped form valid {form.is_valid()}  {form.errors}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
                 shipped_to_wsu = ShippedWSU.objects.create()
@@ -400,22 +410,23 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     else:
         raise AssertionError
 
+@login_required
 def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_wsu_fk = ShippedWSU.objects.get(status=status)
-    logging.critical(f"In wsu post")
+    logging.debug(f"In wsu post")
     if request.method == "POST":
         if collection_type.collection_type in BLOOD_TYPES:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.critical(f"form is valid {form.is_valid()}  form errors {form.errors}")
-            logging.critical(f"caregiver bloods {caregiver_bloods}")
+            logging.debug(f"form is valid {form.is_valid()}  form errors {form.errors}")
+            logging.debug(f"caregiver bloods {caregiver_bloods}")
             if form.is_valid():
                 for item in caregiver_bloods:
-                    logging.critical(f"updating shipped wsu {item.pk}")
+                    logging.debug(f"updating shipped wsu {item.pk}")
                     update_shipped_wsu(caregiver_bio_pk=item.pk,bound_form=form)
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
@@ -435,6 +446,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     else:
         raise AssertionError
 
+@login_required
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
@@ -447,7 +459,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             logging.debug(f"post is {request.POST}")
             form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
-            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 for item in caregiver_bloods:
                     update_shipped_echo(caregiver_bio_pk=item.pk,bound_form=form)
@@ -456,7 +468,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
         else:
             logging.debug(f"post is {request.POST}")
             form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
-            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_echo_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
                 shipped_echo_fk.save()

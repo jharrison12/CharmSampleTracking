@@ -10,6 +10,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
     CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO
 
+from dataview.models import User
 import datetime, pytz
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -18,6 +19,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 class DatabaseSetup(TestCase):
     def setUp(self):
+
+        self.credentials = {
+            'username': 'testuser',
+            'password': 'secret'}
+        User.objects.create_user(**self.credentials)
+        self.client.login(username='testuser',password='secret')
+
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
         self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
         self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
