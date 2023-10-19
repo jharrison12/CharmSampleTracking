@@ -26,3 +26,8 @@ urlpatterns = [
     path('biospecimen/',include(biospecimen_urls)),
     path('admin/', admin.site.urls),
 ]
+
+
+urlpatterns += [
+    path('accounts/', include('django.contrib.auth.urls')),
+]

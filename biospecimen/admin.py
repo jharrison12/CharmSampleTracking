@@ -8,7 +8,11 @@ from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBios
     CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO
 # Register your models here.
 
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from dataview.models import User
 
+admin.site.register(User, UserAdmin)
 admin.site.register(Collection)
 admin.site.register(CollectionNumber)
 admin.site.register(CollectionType)
