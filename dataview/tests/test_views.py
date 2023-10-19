@@ -168,7 +168,6 @@ class CaregiverInformationPageTest(DatabaseSetup):
         response = self.client.get(f'/data/caregiver/P7001/')
         self.assertNotContains(response, 'Pregnancy Information:')
 
-
 class CaregiverSurveyPageTest(DatabaseSetup):
 
     def test_caregiver_survey_page_returns_correct_template(self):
@@ -182,7 +181,6 @@ class CaregiverSurveyPageTest(DatabaseSetup):
     def test_caregiver_survey_page_shows_prenatal2_survey_outcome(self):
         response = self.client.get(f'/data/caregiver/P7000/survey/')
         self.assertContains(response,'Prenatal 2: Incomplete')
-
 
 class CaregiverConsentItemPage(DatabaseSetup):
 
@@ -312,3 +310,43 @@ class ChildAssentPage(DatabaseSetup):
         response = self.client.get(f'/data/child/7002M1/')
         self.assertEqual(response.status_code,404)
 
+class CheckthatLoginRequired(DatabaseSetup):
+
+    def setUp(self):
+        self.client.logout()
+
+    def test_logged_out_user_cant_see_home_page(self):
+        response = self.client.get('/')
+        self.assertTemplateNotUsed(response, 'dataview/home.html')
+
+    def test_logged_out_user_cant_see_caregiver_page(self):
+        response = self.client.get('/data/caregiver/')
+        self.assertTemplateNotUsed(response, 'dataview/caregiver.html')
+
+    def test_logged_out_user_cant_see_caregiver_information_page(self):
+        response = self.client.get('/data/caregiver/P7000/')
+        self.assertTemplateNotUsed(response,'dataview/caregiver_info.html')
+
+    def test_logged_out_user_cant_see_caregiver_survey_page(self):
+        response = self.client.get(f'/data/caregiver/P7000/survey/')
+        self.assertTemplateNotUsed(response, 'dataview/caregiver_survey.html')
+
+    def test_logged_out_user_cant_see_caregiver_consent_item_page(self):
+        response = self.client.get(f'/data/caregiver/P7000/consentitem/')
+        self.assertTemplateNotUsed(response,'dataview/caregiver_consent_item.html')
+
+    def test_logged_out_user_cant_see_child_page(self):
+        response = self.client.get(f'/data/child/')
+        self.assertTemplateNotUsed(response,'dataview/child.html')
+
+    def test_logged_out_user_cant_see_child_information_page(self):
+        response = self.client.get(f'/data/child/7000M1/')
+        self.assertTemplateNotUsed(response,'dataview/child_information.html')
+
+    def test_logged_out_user_cant_see_child_survey_page(self):
+        response = self.client.get(f'/data/child/7000M1/survey/')
+        self.assertTemplateNotUsed(response,'dataview/child_survey.html')
+
+    def test_logged_out_user_cant_see_child_assent_page(self):
+        response = self.client.get(f'/data/child/7000M1/assent/')
+        self.assertTemplateNotUsed(response,'dataview/child_assent.html')
