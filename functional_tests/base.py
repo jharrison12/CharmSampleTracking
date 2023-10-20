@@ -380,12 +380,13 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                       logged_by=self.test_user
                                                       )
 
-        self.shipped_wsu_blank = ShippedWSU.objects.create()
+        self.shipped_wsu_blank = ShippedWSU.objects.create(shipped_by=self.test_user)
         self.shipped_wsu = ShippedWSU.objects.create(shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
                                                      number_of_tubes=1,
                                                      courier='FedEx',
                                                      tracking_number='777777',
-                                                     shipped_by=self.test_user)
+                                                     shipped_by=self.test_user
+                                                     )
 
         self.shipped_echo_incomplete = ShippedECHO.objects.create()
         self.shipped_echo_complete = ShippedECHO.objects.create(shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))

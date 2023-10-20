@@ -89,7 +89,7 @@ def return_caregiver_bloods(caregiver_bio):
     return caregiver_bloods
 
 
-def update_shipped_wsu(caregiver_bio_pk,bound_form):
+def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     logging.debug(f"did update shipped wsu function for {caregiver_bio} find status {status_bio} ")
@@ -108,6 +108,7 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form):
     shipped_to_wsu.number_of_tubes = bound_form.cleaned_data['number_of_tubes']
     shipped_to_wsu.courier = bound_form.cleaned_data['courier']
     shipped_to_wsu.logged_date_time = bound_form.cleaned_data['logged_date_time']
+    shipped_to_wsu.shipped_by = user_logged_in
     shipped_to_wsu.save()
     status_bio.save()
     caregiver_bio.save()
@@ -400,7 +401,7 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
         logging.debug(f"is shipped form valid {form.is_valid()}  {form.errors}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
-                shipped_to_wsu = ShippedWSU.objects.create()
+                shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
                 status.shipped_wsu_fk = shipped_to_wsu
                 status.save()
                 logging.debug(f'Shipped to wsu saved')
@@ -434,7 +435,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             if form.is_valid():
                 for item in caregiver_bloods:
                     logging.debug(f"updating shipped wsu {item.pk}")
-                    update_shipped_wsu(caregiver_bio_pk=item.pk,bound_form=form)
+                    update_shipped_wsu(caregiver_bio_pk=item.pk,bound_form=form,user_logged_in=request.user)
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         else:

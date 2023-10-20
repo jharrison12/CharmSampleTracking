@@ -397,6 +397,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
         new_ship_to_wsu = ShippedWSU()
         status_item.shipped_wsu_fk = new_ship_to_wsu
+        new_ship_to_wsu.shipped_by = User.objects.get(pk=1)
         new_ship_to_wsu.save()
         caregiver_bio.save()
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')

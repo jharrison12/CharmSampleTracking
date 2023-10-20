@@ -5,7 +5,7 @@ from django.test import TestCase
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored,Shipped,\
     Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO
 import datetime
-from dataview.models import Caregiver,Incentive,Child
+from dataview.models import Caregiver,Incentive,Child,User
 from dataview.tests.db_setup import DatabaseSetup
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -94,7 +94,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         self.assertEqual(caregiver_bio.status_fk.no_consent_fk,no_consent)
 
     def test_caregiver_biospecimen_links_to_shippedwsu(self):
-        shipped_wsu = ShippedWSU.objects.create()
+        shipped_wsu = ShippedWSU.objects.create(shipped_by=User.objects.get(pk=1))
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
                                                      collection_fk=placenta)
