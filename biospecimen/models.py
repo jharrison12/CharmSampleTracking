@@ -104,7 +104,7 @@ class ShippedWSU(models.Model):
     number_of_tubes = models.IntegerField(default=1,null=True,blank=True)
     courier = models.CharField(max_length=255,null=True,blank=True)
     tracking_number = models.CharField(max_length=255,null=True,blank=True)
-    shipped_by = models.CharField(max_length=255,null=True,blank=True)
+    shipped_by = models.ForeignKey(User, on_delete=models.PROTECT,null=False,blank=False)
     logged_date_time = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
     def __str__(self):

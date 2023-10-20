@@ -405,9 +405,14 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
     def test_echo2_bio_page_shows_shipped_to_wsu_data_if_complete(self):
         primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'F')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response, 'Courier: FedEx')
+
+    def test_echo2_bio_page_shows_shipped_by_user(self):
+        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'F')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response, 'Shipped By: testuser')
 
     def test_echo2_bio_page_shows_shipped_to_echo_data_if_complete(self):
         primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'T')

@@ -385,7 +385,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                      number_of_tubes=1,
                                                      courier='FedEx',
                                                      tracking_number='777777',
-                                                     shipped_by='me')
+                                                     shipped_by=self.test_user)
 
         self.shipped_echo_incomplete = ShippedECHO.objects.create()
         self.shipped_echo_complete = ShippedECHO.objects.create(shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
@@ -876,6 +876,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                              age_category_fk=self.early_childhood_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15),
                                                                              kit_sent_date=datetime.date(2023, 8, 12))
+
 
 def tearDown(self):
             self.browser.quit()
