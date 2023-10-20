@@ -59,7 +59,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
 
-        self.assertIn('Logged by: testuser',body)
+        self.assertIn('Logged By: testuser',body)
 
         #user sees option to choose shipped to wsu or shipped to echo
 
@@ -97,6 +97,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         #user sees shipped WSU data
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Courier: FedEx',body)
+        self.assertIn('Shipped By: testuser',body)
 
     def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees urine
