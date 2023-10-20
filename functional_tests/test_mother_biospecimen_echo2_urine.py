@@ -54,8 +54,12 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
+        #user sees some of the information just entered
+
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
+
+        self.assertIn('Logged by: testuser',body)
 
         #user sees option to choose shipped to wsu or shipped to echo
 

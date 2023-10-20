@@ -350,6 +350,22 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
+    def test_echo2_bio_entry_urine_shows_user_who_is_logged_in_after_submitted(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                                    data={"id_urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                          "id_urine_form-processed_date_time": timezone.datetime(
+                                              2023, 5, 5, 5, 5,
+                                              5),
+                                          "id_urine_form-stored_date_time": timezone.datetime(
+                                              2023, 5, 5, 5, 5,
+                                              5),
+                                          "id_urine_form-number_of_tubes": 5
+                                          })
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response,'Logged By: testuser')
+
     def test_echo2_bio_initial_posts_to_initial_post_view(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
