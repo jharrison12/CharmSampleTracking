@@ -29,7 +29,7 @@ def check_for_object_or_return_none(object_name,filter,parameter):
         return None
 
 def create_or_update_blood_values(true_or_false,collection_type,caregiver_object,trimester_text,
-                                  caregiver_bio_primary,form_data,project='ECHO2',collection_number_object=None):
+                                  caregiver_bio_primary,form_data,logged_in_user,project='ECHO2',collection_number_object=None,):
     if true_or_false:
         logging.debug(f"What is true or false {true_or_false}\n")
         trimester = Trimester.objects.get(trimester=trimester_text)
@@ -69,6 +69,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             new_collected.stored_date_time = form_data.cleaned_data['stored_date_time']
             new_collected.processed_date_time = form_data.cleaned_data['processed_date_time']
             new_collected.number_of_tubes = form_data.cleaned_data['number_of_tubes']
+            new_collected.logged_by = logged_in_user
             new_biospecimen.status_fk = new_status
             new_collected.save()
             new_status.save()
@@ -213,7 +214,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             new_status.save()
             caregiver_bio.save()
             if form.cleaned_data['collected_not_collected']=='C':
-                new_collected = Collected.objects.create()
+                new_collected = Collected.objects.create(logged_by=request.user)
                 new_status.collected_fk = new_collected
             elif form.cleaned_data['collected_not_collected']=='N':
                 new_not_collected = NotCollected.objects.create()
@@ -333,6 +334,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine.stored_date_time = form.cleaned_data['stored_date_time']
                 collected_urine.stored_date_time = form.cleaned_data['stored_date_time']
                 collected_urine.number_of_tubes = form.cleaned_data['number_of_tubes']
+                collected_urine.logged_by = request.user
                 collected_urine.save()
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
@@ -351,31 +353,36 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
-                                                      caregiver_bio_primary=caregiver_bio_pk)
+                                                      caregiver_bio_primary=caregiver_bio_pk,
+                                                      logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['plasma'],
                                                       collection_type='Plasma',
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
-                                                      caregiver_bio_primary=caregiver_bio_pk)
+                                                      caregiver_bio_primary=caregiver_bio_pk,
+                                              logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['whole_blood'],
                                                       collection_type='Whole Blood',
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
-                                                      caregiver_bio_primary=caregiver_bio_pk)
+                                                      caregiver_bio_primary=caregiver_bio_pk,
+                                              logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['buffy_coat'],
                                               collection_type='Buffy Coat',
                                               caregiver_object=caregiver,
                                               trimester_text=caregiver_bio.trimester_fk.trimester,
                                               form_data=form,
-                                              caregiver_bio_primary=caregiver_bio_pk)
+                                              caregiver_bio_primary=caregiver_bio_pk,
+                                              logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['red_blood_cells'],
                                               collection_type='Red Blood Cells',
                                               caregiver_object=caregiver,
                                               trimester_text=caregiver_bio.trimester_fk.trimester,
                                               form_data=form,
-                                              caregiver_bio_primary=caregiver_bio_pk)
+                                              caregiver_bio_primary=caregiver_bio_pk,
+                                              logged_in_user=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError

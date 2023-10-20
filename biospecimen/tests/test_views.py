@@ -9,7 +9,7 @@ from dataview.models import Caregiver, Name, CaregiverName, Address, \
     Mother, Relation, ConsentItem, \
     NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
     ChildSurvey, \
-    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation
+    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation,User
 from biospecimen.models import Collection, Status, ChildBiospecimen, CaregiverBiospecimen, Processed, Stored, \
     ShippedWSU, ShippedECHO, \
     Collected
@@ -451,7 +451,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         caregiver_bio.status_fk = new_status
         new_status.save()
         caregiver_bio.save()
-        collected = Collected()
+        collected = Collected(logged_by=User.objects.get(pk=1))
         new_status.collected_fk = collected
         collected.save()
         new_status.save()
@@ -479,7 +479,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         caregiver_bio.project_fk = project
         new_status.save()
         caregiver_bio.save()
-        collected = Collected()
+        collected = Collected(logged_by=User.objects.get(pk=1))
         new_status.collected_fk = collected
         collected.save()
         new_status.save()

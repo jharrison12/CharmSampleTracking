@@ -23,7 +23,7 @@ class DatabaseSetup(TestCase):
         self.credentials = {
             'username': 'testuser',
             'password': 'secret'}
-        User.objects.create_user(**self.credentials)
+        self.test_user = User.objects.create_user(**self.credentials)
         self.client.login(username='testuser',password='secret')
 
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
@@ -348,7 +348,8 @@ class DatabaseSetup(TestCase):
                                                       stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
                                                       received_date=timezone.datetime(2023,5,3).date(),
                                                       number_of_tubes=5,
-                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON,
+                                                      logged_by=self.test_user
                                                       )
 
         self.collected_two = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
@@ -356,7 +357,8 @@ class DatabaseSetup(TestCase):
                                                       stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
                                                       received_date=timezone.datetime(2023,5,6).date(),
                                                       number_of_tubes=0,
-                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON,
+                                                      logged_by=self.test_user
                                                       )
 
         self.collected_three = Collected.objects.create(collected_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC),
@@ -364,7 +366,8 @@ class DatabaseSetup(TestCase):
                                                       stored_date_time=timezone.datetime(2023,5,5,13,0,0,tzinfo=pytz.UTC),
                                                       received_date=timezone.datetime(2023,5,3).date(),
                                                       number_of_tubes=4,
-                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON
+                                                      in_person_remote=Collected.InpersonRemoteChoices.IN_PERSON,
+                                                      logged_by=self.test_user
                                                       )
 
         self.shipped_wsu_blank = ShippedWSU.objects.create()

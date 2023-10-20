@@ -1,5 +1,5 @@
 from django.db import models
-from dataview.models import Caregiver,Incentive,Child,AgeCategory,Pregnancy,Project
+from dataview.models import Caregiver,Incentive,Child,AgeCategory,Pregnancy,Project,User
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import logging
@@ -74,6 +74,7 @@ class Collected(models.Model):
     placed_in_formalin_date_time = models.DateTimeField(null=True,blank=True)
     received_date = models.DateField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=False,blank=False)
 
     class InpersonRemoteChoices(models.TextChoices):
         IN_PERSON = 'I', _('In Person')
