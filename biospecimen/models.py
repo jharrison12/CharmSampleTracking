@@ -145,6 +145,9 @@ class Status(models.Model):
     def __str__(self):
         return f"Status {self.pk}"
 
+    class Meta:
+        verbose_name_plural = "status"
+
 class CollectionType(models.Model):
     collection_type = models.CharField(max_length=255)
 
@@ -169,7 +172,7 @@ class Collection(models.Model):
     collection_number_fk = models.ForeignKey(CollectionNumber,on_delete=models.PROTECT,blank=True,null=True)
 
     def __str__(self):
-        return f"{self.collection_type_fk.collection_type} {self.collection_number_fk.collection_number or ''}"
+        return f"{self.collection_type_fk.collection_type} {self.collection_number_fk or ''}"
 
     class Meta:
         constraints=[

@@ -20,3 +20,7 @@ admin.site.register(CollectionType)
 @admin.register(CaregiverBiospecimen)
 class CaregiverBiospecimenAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(Status)
+class Status(admin.ModelAdmin):
+    pass
