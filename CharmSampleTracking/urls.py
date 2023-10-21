@@ -20,6 +20,8 @@ from dataview import views as dataviews
 from dataview import urls as dataview_urls
 from biospecimen import urls as biospecimen_urls
 
+
+# app_name='main'
 urlpatterns = [
     path('', dataviews.home_page, name='home'),
     path('data/',include(dataview_urls)),
