@@ -728,7 +728,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                           'shipped_to_wsu_form-number_of_tubes':5,
                                           'shipped_to_wsu_form-logged_date_time': timezone.datetime(
                                                   2023, 12, 5, 5, 5, 5),
-                                          'shipped_to_wsu_form-courier': 'Fedex'})
+                                          'shipped_to_wsu_form-courier': 'F'})
 
         primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
