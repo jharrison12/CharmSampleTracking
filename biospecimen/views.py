@@ -281,7 +281,6 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     caregiver_bloods = return_caregiver_bloods(caregiver_bio)
-    collected_form = None
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
@@ -394,7 +393,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     if request.method=="POST":
         logging.debug(f"post is {request.POST}")
@@ -423,7 +421,6 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_wsu_fk = ShippedWSU.objects.get(status=status)
     logging.debug(f"In wsu post")
@@ -459,7 +456,6 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_echo_fk = ShippedECHO.objects.get(status=status)
     logging.debug(f"In echo post")
