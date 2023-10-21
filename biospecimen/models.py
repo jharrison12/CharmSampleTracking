@@ -102,10 +102,17 @@ class NoConsent(models.Model):
 class ShippedWSU(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(default=1,null=True,blank=True)
-    courier = models.CharField(max_length=255,null=True,blank=True)
     tracking_number = models.CharField(max_length=255,null=True,blank=True)
     shipped_by = models.ForeignKey(User, on_delete=models.PROTECT,null=False,blank=False)
     logged_date_time = models.DateTimeField(default=timezone.now,blank=True,null=True)
+
+    class CourierChoices(models.TextChoices):
+        FEDEX = 'F', _('FedEx')
+        USPS = 'P', _('USPS')
+        UPS = 'U', _('UPS')
+        DHL = 'D', _('DHL')
+
+    courier = models.CharField(max_length=1,choices=CourierChoices.choices,null=True,blank=True)
 
     def __str__(self):
         return f"shippedwus  {self.pk}"

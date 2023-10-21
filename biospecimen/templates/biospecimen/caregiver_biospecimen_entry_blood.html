@@ -69,7 +69,7 @@
             </div>
             <div class="col-8">
                 <div>Shipped Date Time:{{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time }}</div>
-                <div>Courier: {{ caregiver_bio.status_fk.shipped_wsu_fk.courier }}</div>
+                <div>Courier: {{ caregiver_bio.status_fk.shipped_wsu_fk.get_courier_display }}</div>
                 <div>Tracking Number:{{ caregiver_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
                 <div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
                 <div>Shipped By: {{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>

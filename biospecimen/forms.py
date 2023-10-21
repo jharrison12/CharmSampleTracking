@@ -11,6 +11,7 @@ CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
 COLLECTED_NOT = [('C','Collected'),('N','Not Collected'),('X','No Consent')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
+COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
 
 class ReceivedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
@@ -107,7 +108,7 @@ class ShippedtoWSUForm(forms.Form):
     tracking_number = forms.CharField()
     number_of_tubes = forms.IntegerField()
     logged_date_time = forms.DateTimeField()
-    courier = forms.CharField()
+    courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
 
 class ShippedtoEchoForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
