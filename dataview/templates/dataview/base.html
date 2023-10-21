@@ -20,7 +20,12 @@
       </ul>
 
       <div class="col-md-3 text-end">
-          <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'login' %}">Login</a></button>
+          {% if not request.user.is_authenticated %}
+              <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'login' %}">Login</a></button>
+          {% else %}
+              <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'logout' %}">Logout</a></button>
+          {% endif %}
+
       </div>
     </header>
 </div>
