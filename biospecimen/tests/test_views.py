@@ -813,6 +813,23 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertNotEqual(plasma.status_fk.shipped_echo_fk.shipped_date_time,
                          whole_blood.status_fk.shipped_echo_fk.shipped_date_time)
 
+class ChildBiospecimenPage(DatabaseSetup):
+
+
+    def return_child_bio_pk(self,child_id,collection_type,age):
+        child_object = Child.objects.get(charm_project_identifier=child_id)
+        child_biospecimen = ChildBiospecimen.objects.get(child_fk=child_object,
+                                                         collection_fk__collection_type_fk__collection_type=collection_type,
+                                                         age_category_fk__age_category=age)
+
+        return child_biospecimen.pk
+
+    def test_echo2_initial_child_urine(self):
+        primary_key = self.return_child_bio_pk('7000M1', 'Urine', '0-5 Months')
+        response = self.client.get(f'/biospecimen/child/7000M1/{primary_key}/initial/')
+        self.assertTemplateUsed(response, 'biospecimen/child_biospecimen_initial.html')
+
+
 class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
 
     def setUp(self):
