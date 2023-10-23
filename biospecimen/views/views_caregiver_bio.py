@@ -33,10 +33,8 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
     if true_or_false:
         logging.debug(f"What is true or false {true_or_false}\n")
         trimester = Trimester.objects.get(trimester=trimester_text)
-        # caregiver_biospecimen = CaregiverBiospecimen.objects.get(pk=caregiver_bio_primary)
         project_object = Project.objects.get(project_name=project)
         collection_object = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=collection_number_object)
-        # logging.debug(f"in the create or update function for {caregiver_biospecimen}\n")
         try:
             biospecimen_object = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver_object,
                                              collection_fk=collection_object,
@@ -100,8 +98,6 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in):
         logging.debug(f"Shipped to wsu not found")
         shipped_to_wsu = ShippedWSU()
         status_bio.shipped_wsu_fk = shipped_to_wsu
-        # shipped_to_wsu.save()
-        # status_bio.save()
         logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
     shipped_to_wsu.shipped_date_time = bound_form.cleaned_data['shipped_date_and_time']
     shipped_to_wsu.tracking_number = bound_form.cleaned_data['tracking_number']
@@ -139,12 +135,12 @@ def biospecimen_history(request):
         caregiverbiospecimen__status_fk__shipped_fk__isnull=False)
 
     items = CaregiverBiospecimen.objects.filter(caregiver_fk__in=list_of_historic_caregivers)
-    return render(request,template_name='biospecimen/biospecimen_history.html',context={'list_of_historic_caregivers':items})
+    return render(request, template_name='biospecimen/biospecimen_history.html', context={'list_of_historic_caregivers':items})
 
 @login_required
 def biospecimen_entry(request):
     list_of_echo_2_bio = CaregiverBiospecimen.objects.filter(project_fk__project_name='ECHO2')
-    return render(request,template_name='biospecimen/biospecimen_entry.html',context={'list_of_biospecimens':list_of_echo_2_bio})
+    return render(request, template_name='biospecimen/biospecimen_entry.html', context={'list_of_biospecimens':list_of_echo_2_bio})
 
 @login_required
 def caregiver_biospecimen(request,caregiver_charm_id):
@@ -189,7 +185,6 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     logging.debug(f"{caregiver_bio.status_fk}")
     if caregiver_bio.status_fk==None:
         initial_bio_form = InitialBioForm(prefix="initial_form")
@@ -200,13 +195,12 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'caregiver_bio': caregiver_bio,
                                                                                                   'initial_bio_form':initial_bio_form,
                                                                                                   'collection_type': collection_type.collection_type
-                                                                                                  })
+                                                                                                    })
 
 @login_required
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
         form = InitialBioForm(data=request.POST, prefix='initial_form')
         if form.is_valid():
@@ -240,7 +234,6 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -276,7 +269,6 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -315,7 +307,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'shipped_wsu_form': shipped_wsu_form,
                                                                                                         'shipped_echo_form': shipped_echo_form,
                                                                                                         'caregiver_bloods': caregiver_bloods
-                                                                                                  })
+                                                                                                        })
 
 @login_required
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):

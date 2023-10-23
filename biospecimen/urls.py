@@ -16,22 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path,re_path
-from biospecimen import views as biospecimen_views
+from biospecimen.views import views_caregiver_bio as caregiver_biospecimen
 
 app_name = "biospecimen"
 urlpatterns = [
-    re_path(r"^history/$", biospecimen_views.biospecimen_history, name='biospecimen_history'),
-    re_path(r"^entry/$", biospecimen_views.biospecimen_entry, name='biospecimen_entry'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", biospecimen_views.caregiver_biospecimen, name='caregiver_biospecimen'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/entry/$", biospecimen_views.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/history/$", biospecimen_views.caregiver_biospecimen_item, name='caregiver_biospecimen_item'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/$",biospecimen_views.caregiver_biospecimen_initial, name='caregiver_biospecimen_initial'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/post/$",biospecimen_views.caregiver_biospecimen_initial_post, name='caregiver_biospecimen_initial_post'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_choice/post/$",biospecimen_views.caregiver_shipped_choice_post, name='caregiver_shipped_choice_post'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_wsu/post/$",biospecimen_views.caregiver_biospecimen_shipped_wsu_post, name='caregiver_biospecimen_shipped_wsu_post'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_echo/post/$",biospecimen_views.caregiver_biospecimen_shipped_echo_post, name='caregiver_biospecimen_shipped_echo_post'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/$", biospecimen_views.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/blood/$", biospecimen_views.caregiver_biospecimen_entry_blood, name='caregiver_biospecimen_entry_blood'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/post/$", biospecimen_views.caregiver_biospecimen_post, name='caregiver_biospecimen_post'),
-    re_path(r"^child/(?P<child_charm_id>\w+)/$", biospecimen_views.child_biospecimen_page,name='child_biospecimen_page')
+    re_path(r"^history/$", caregiver_biospecimen.biospecimen_history, name='biospecimen_history'),
+    re_path(r"^entry/$", caregiver_biospecimen.biospecimen_entry, name='biospecimen_entry'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", caregiver_biospecimen.caregiver_biospecimen, name='caregiver_biospecimen'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/entry/$", caregiver_biospecimen.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/history/$", caregiver_biospecimen.caregiver_biospecimen_item, name='caregiver_biospecimen_item'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/$", caregiver_biospecimen.caregiver_biospecimen_initial, name='caregiver_biospecimen_initial'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/post/$", caregiver_biospecimen.caregiver_biospecimen_initial_post, name='caregiver_biospecimen_initial_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_choice/post/$", caregiver_biospecimen.caregiver_shipped_choice_post, name='caregiver_shipped_choice_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_wsu/post/$", caregiver_biospecimen.caregiver_biospecimen_shipped_wsu_post, name='caregiver_biospecimen_shipped_wsu_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_echo/post/$", caregiver_biospecimen.caregiver_biospecimen_shipped_echo_post, name='caregiver_biospecimen_shipped_echo_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/$", caregiver_biospecimen.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/blood/$", caregiver_biospecimen.caregiver_biospecimen_entry_blood, name='caregiver_biospecimen_entry_blood'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/post/$", caregiver_biospecimen.caregiver_biospecimen_post, name='caregiver_biospecimen_post'),
+    re_path(r"^child/(?P<child_charm_id>\w+)/$", caregiver_biospecimen.child_biospecimen_page, name='child_biospecimen_page')
 ]
