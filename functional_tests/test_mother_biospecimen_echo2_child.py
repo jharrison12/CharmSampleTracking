@@ -67,6 +67,7 @@ class ChildBioSpecimenEntry(FunctionalTest):
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
         collected_not_collected.select_by_visible_text('No Consent')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+        time.sleep(10)
         submit.click()
 
         #user sees collected form on next page

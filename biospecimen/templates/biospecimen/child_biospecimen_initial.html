@@ -18,11 +18,11 @@
         </div>
     {% elif child_bio.status_fk and child_bio.status_fk.no_consent_fk %}
         <div id="not_collected_information" class="row border border-primary p-3 rounded">
-        Not Collected
-        </div>
-    {% elif child_bio.status_fk and  caregiver_bio.status_fk.no_consent_fk %}
-        <div id="no_consent_information" class="row border border-primary p-3 rounded">
         No Consent
+        </div>
+    {% elif child_bio.status_fk and  caregiver_bio.status_fk.not_collected_fk %}
+        <div id="no_consent_information" class="row border border-primary p-3 rounded">
+        Not Collected
         </div>
     {#  Potential bug because collected date time is not required but you have to null it to create it        #}
     {% else %}
