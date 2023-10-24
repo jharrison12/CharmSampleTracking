@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include,path,re_path
 from biospecimen.views import views_caregiver_bio as caregiver_biospecimen
+from biospecimen.views import views_child_bio as child_biospecimen
 
 app_name = "biospecimen"
 urlpatterns = [
@@ -33,5 +34,6 @@ urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/$", caregiver_biospecimen.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/blood/$", caregiver_biospecimen.caregiver_biospecimen_entry_blood, name='caregiver_biospecimen_entry_blood'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/post/$", caregiver_biospecimen.caregiver_biospecimen_post, name='caregiver_biospecimen_post'),
-    re_path(r"^child/(?P<child_charm_id>\w+)/$", caregiver_biospecimen.child_biospecimen_page, name='child_biospecimen_page')
+    re_path(r"^child/(?P<child_charm_id>\w+)/$", caregiver_biospecimen.child_biospecimen_page, name='child_biospecimen_page'),
+    re_path(r"^child/(?P<child_charm_id>\w+)/(?P<child_bio_pk>[\d]+)/initial/$", child_biospecimen.child_biospecimen_page_initial, name='child_biospecimen_page_initial')
 ]

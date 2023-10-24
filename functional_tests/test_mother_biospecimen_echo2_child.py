@@ -19,23 +19,24 @@ class ChildBioSpecimenEntry(FunctionalTest):
 
     def test_user_can_choose_status_of_child_urine_information_chooses_kit_sent_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7000M1', 'Urine', '0-5 Months')
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7000M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        time.sleep(90)
 
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7000M1', 'Urine', '0-5 Months')
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7000M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7000M1', 'Urine', '0-5 Months')
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', '0-5 Months')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7000M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
@@ -56,9 +57,9 @@ class ChildBioSpecimenEntry(FunctionalTest):
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_no_consent(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7000M1', 'Urine', '0-5 Months')
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', '0-5 Months')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7000M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')

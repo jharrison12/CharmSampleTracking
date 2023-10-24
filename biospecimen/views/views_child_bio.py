@@ -13,3 +13,8 @@ import random
 
 logging.basicConfig(level=logging.CRITICAL)
 
+def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
+    child_bio = ChildBiospecimen.objects.get(pk=child_bio_pk)
+    return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
+                                                                                              'child_charm_id':child_charm_id,
+                                                                                              'child_bio_pk':child_bio_pk})

@@ -824,10 +824,16 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         return child_biospecimen.pk
 
-    def test_echo2_initial_child_urine(self):
+    def test_echo2_initial_child_returns_correct_template(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.get(f'/biospecimen/child/7000M1/{primary_key}/initial/')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
         self.assertTemplateUsed(response, 'biospecimen/child_biospecimen_initial.html')
+
+    def test_echo2_initial_child_urine_shows_urine(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+        self.assertContains(response,'Urine')
+
 
 
 class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
