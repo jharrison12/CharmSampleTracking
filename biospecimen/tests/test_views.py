@@ -843,7 +843,7 @@ class ChildBiospecimenPage(DatabaseSetup):
     def test_echo2_initial_child_urine_redirects_after_post_kit_sent(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-kit_sent": True,
+                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
                                           })
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
@@ -851,9 +851,17 @@ class ChildBiospecimenPage(DatabaseSetup):
     def test_echo2_initial_child_urine_redirects_after_post_not_collected(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-not_collected": True,
+                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'N',
                                           })
+        logging.critical(response.content.decode())
+        self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
+    def test_echo2_initial_child_urine_redirects_after_no_consent(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'X',
+                                          })
+        logging.critical(response.content.decode())
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
 

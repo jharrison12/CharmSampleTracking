@@ -18,8 +18,10 @@ logging.basicConfig(level=logging.CRITICAL)
 @login_required
 def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     child_bio = ChildBiospecimen.objects.get(pk=child_bio_pk)
+    initial_bio_form = None
     if request.method=="POST":
-        form = InitialBioFormChild(data=request.POST, prefix='initial_form')
+        form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
+        logging.critical(f"is form valid {form.is_valid()} form errors {form.errors}")
         if form.is_valid():
             new_status = Status()
             child_bio.status_fk = new_status
@@ -32,7 +34,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 new_no_consent = NoConsent.objects.create()
                 new_status.no_consent_fk = new_no_consent
             if form.cleaned_data['collected_not_collected_kit_sent']=='K':
-                kit_sent = KitSent
+                kit_sent = KitSent.objects.create()
                 new_status.kit_sent_fk = kit_sent
             new_status.save()
             child_bio.save()
@@ -40,9 +42,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                             child_bio_pk=child_bio_pk)
     else:
         if child_bio.status_fk==None:
-            initial_bio_form = InitialBioFormChild(prefix="initial_form")
-        else:
-            initial_bio_form = None
+            initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
