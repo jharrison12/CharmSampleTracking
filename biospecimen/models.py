@@ -230,7 +230,7 @@ class CaregiverBiospecimen(models.Model):
 
 class ChildBiospecimen(models.Model):
     child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
-    status_fk = models.ForeignKey(Status, on_delete=models.PROTECT)
+    status_fk = models.ForeignKey(Status, on_delete=models.PROTECT, null=True,blank=True)
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory, on_delete=models.PROTECT)

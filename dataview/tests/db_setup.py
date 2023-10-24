@@ -8,7 +8,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO
+    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory
 
 from dataview.models import User
 import datetime, pytz
@@ -25,6 +25,8 @@ class DatabaseSetup(TestCase):
             'password': 'secret'}
         self.test_user = User.objects.create_user(**self.credentials)
         self.client.login(username='testuser',password='secret')
+
+        ##Update Below
 
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
         self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
@@ -130,6 +132,7 @@ class DatabaseSetup(TestCase):
         self.third_trimester = Trimester.objects.create(trimester=Trimester.TrimesterChoices.THIRD,pregnancy_fk=self.mother_one_pregnancy_one)
 
         self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
+        self.zero_to_five_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.ZERO_TO_FIVE)
 
         #create primary care_giver
 
@@ -154,6 +157,15 @@ class DatabaseSetup(TestCase):
                                               birth_date=timezone.datetime(2021, 8, 10),
                                               child_twin=False, race_fk=self.black, ethnicity_fk=self.non_hispanic,
                                               pregnancy_fk=self.mother_one_pregnancy_one)
+
+        self.child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_three,
+                                              charm_project_identifier='7002M1',
+                                              birth_hospital=self.health_care_facility_1,
+                                              birth_sex=Child.BirthSexChoices.FEMALE,
+                                              birth_date=timezone.datetime(2021, 8, 10),
+                                              child_twin=False, race_fk=self.black, ethnicity_fk=self.non_hispanic,
+                                              pregnancy_fk=self.mother_one_pregnancy_one)
+
 
         self.child_one_name = Name.objects.create(last_name='Harrison', first_name='Jonathan')
         self.child_two_name = Name.objects.create(last_name='Smith', first_name='Kevin')
@@ -865,5 +877,13 @@ class DatabaseSetup(TestCase):
                                                                              collection_fk=self.toenail_one,
                                                                              incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.early_childhood_age_category,
+                                                                             collection_date=datetime.date(2023, 8, 15),
+                                                                             kit_sent_date=datetime.date(2023, 8, 12))
+
+
+        self.child_three_urine_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
+                                                                             collection_fk=self.urine_none,
+                                                                             incentive_fk=self.incentive_one,
+                                                                             age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15),
                                                                              kit_sent_date=datetime.date(2023, 8, 12))
