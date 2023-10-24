@@ -43,8 +43,8 @@ class ChildBioSpecimenEntry(FunctionalTest):
         self.assertIn('ID: 7002M1', body_text)
         self.assertIn('Initial Form',body_text)
 
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
-        collected_not_collected.select_by_visible_text('Not Collected')
+        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
+        collected_not_collected.select_by_visible_text('Kit Sent')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
@@ -52,7 +52,7 @@ class ChildBioSpecimenEntry(FunctionalTest):
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
-        self.assertIn('Not Collected', body_text)
+        self.assertIn('Date Kit Sent', body_text)
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_no_consent(self):
         # User visits the caregiver biospecimen page and sees urine
