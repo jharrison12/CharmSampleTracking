@@ -8,7 +8,7 @@ from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddres
     ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory
+    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory,KitSent
 
 from dataview.models import User
 import datetime, pytz
@@ -393,6 +393,8 @@ class DatabaseSetup(TestCase):
         self.shipped_echo_incomplete = ShippedECHO.objects.create()
         self.shipped_echo_complete = ShippedECHO.objects.create(shipped_date_time=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
 
+        self.kit_sent = KitSent.objects.create(kit_sent_date=timezone.datetime(2023,5,5,12,0,0,tzinfo=pytz.UTC))
+
 
         self.status_outcome_processed_complete_one = Status.objects.create(processed_fk=self.processed_one)
         self.status_outcome_processed_complete_two = Status.objects.create(processed_fk=self.processed_one)
@@ -440,6 +442,9 @@ class DatabaseSetup(TestCase):
         self.status_outcome_collected_placenta = Status.objects.create(collected_fk=self.collected_two)
         self.status_outcome_blank = Status.objects.create()
         self.status_outcome_blank2  = Status.objects.create()
+
+        self.status_kit_sent = Status.objects.create(kit_sent_fk=self.kit_sent)
+
         # self.status_outcome_collected = Status.objects.create(outcome_fk=self.incomplete,processed_fk=self.processed_one)
 
         self.urine = CollectionType.objects.create(collection_type='Urine')
@@ -853,38 +858,34 @@ class DatabaseSetup(TestCase):
                                                                            collection_fk=self.urine_three,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood_age_category,
-                                                                           collection_date=datetime.date(2023, 8, 15),
-                                                                           kit_sent_date=datetime.date(2023, 8, 10))
+                                                                           collection_date=datetime.date(2023, 8, 15))
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
                                                                            status_fk=self.status_outcome_processed_complete_ten,
                                                                            collection_fk=self.urine_three,
                                                                            incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood_age_category,
-                                                                           collection_date=datetime.date(2023, 8, 15),
-                                                                           kit_sent_date=datetime.date(2023, 8, 10))
+                                                                           collection_date=datetime.date(2023, 8, 15))
 
         self.child_one_biospecimen_hair = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                           status_fk=self.status_outcome_processed_complete_eleven,
                                                                           collection_fk=self.hair,
                                                                           incentive_fk=self.incentive_one,
                                                                           age_category_fk=self.early_childhood_age_category,
-                                                                          collection_date=datetime.date(2023, 8, 15),
-                                                                          kit_sent_date=datetime.date(2023, 8, 12))
+                                                                          collection_date=datetime.date(2023, 8, 15))
 
         self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                              status_fk=self.status_outcome_processed_complete_twelve,
                                                                              collection_fk=self.toenail_one,
                                                                              incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.early_childhood_age_category,
-                                                                             collection_date=datetime.date(2023, 8, 15),
-                                                                             kit_sent_date=datetime.date(2023, 8, 12))
+                                                                             collection_date=datetime.date(2023, 8, 15))
 
 
         self.child_three_urine_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.urine_none,
                                                                              incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
-                                                                             collection_date=datetime.date(2023, 8, 15),
-                                                                             kit_sent_date=datetime.date(2023, 8, 12))
+                                                                             collection_date=datetime.date(2023, 8, 15)
+                                                                             )
 

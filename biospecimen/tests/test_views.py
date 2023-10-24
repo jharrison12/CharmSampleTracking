@@ -840,10 +840,18 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
         self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormChild)
 
-    def test_echo2_initial_child_urine_redirects_after_post(self):
+    def test_echo2_initial_child_urine_redirects_after_post_kit_sent(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                     data={"initial_bio_form-kit_sent": True,
+                                          })
+
+        self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+    def test_echo2_initial_child_urine_redirects_after_post_not_collected(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"initial_bio_form-not_collected": True,
                                           })
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')

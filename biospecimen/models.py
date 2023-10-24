@@ -124,6 +124,9 @@ class ShippedECHO(models.Model):
     def __str__(self):
         return f"collected {self.status_set}"
 
+class KitSent(models.Model):
+    kit_sent_date = models.DateField(default=timezone.now)
+
 class Status(models.Model):
     #todo sublcass text choices for status
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
@@ -135,6 +138,7 @@ class Status(models.Model):
     no_consent_fk = models.ForeignKey(NoConsent,on_delete=models.PROTECT,null=True,blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_echo_fk = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
+    kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
 
     def return_most_up_to_date_status(self):
         if self.received_fk and self.received_fk.outcome_fk.get_outcome_display()=='C':
@@ -228,6 +232,7 @@ class CaregiverBiospecimen(models.Model):
     def __str__(self):
         return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"
 
+
 class ChildBiospecimen(models.Model):
     child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
     status_fk = models.ForeignKey(Status, on_delete=models.PROTECT, null=True,blank=True)
@@ -235,7 +240,7 @@ class ChildBiospecimen(models.Model):
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory, on_delete=models.PROTECT)
     collection_date = models.DateField(default=timezone.now)
-    kit_sent_date = models.DateField(default=timezone.now,blank=True,null=True)
+
 
     class Meta:
         constraints = [
@@ -244,4 +249,5 @@ class ChildBiospecimen(models.Model):
 
     def __str__(self):
         return f"{self.child_fk.charm_project_identifier} {self.collection_fk}"
+
 

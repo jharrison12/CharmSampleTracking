@@ -3,7 +3,7 @@ import sqlite3
 
 from django.test import TestCase
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored,Shipped,\
-    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO
+    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent
 import datetime
 from dataview.models import Caregiver,Incentive,Child,User
 from dataview.tests.db_setup import DatabaseSetup
@@ -126,3 +126,15 @@ class ChildBiospecimenModelTest(DatabaseSetup):
         urine_collection = Collection.objects.get(collection_type_fk__collection_type='Urine',collection_number_fk__collection_number='T')
         urine = ChildBiospecimen.objects.filter(collection_fk=urine_collection)
         self.assertEqual(urine.count(),2)
+
+class KitSentModelTest(DatabaseSetup):
+
+    def test_child_links_to_kit(self):
+        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type_fk__collection_type='Urine',child_fk__charm_project_identifier='7002M1')
+        kit_sent = KitSent.objects.create(kit_sent_date=timezone.datetime(2023,5,5,12,0,0,))
+        status_kit_sent = Status.objects.create(kit_sent_fk=kit_sent)
+        child_urine_one_z_to_f.status_fk=status_kit_sent
+        child_urine_one_z_to_f.save()
+        self.assertEqual(child_urine_one_z_to_f.status_fk.kit_sent_fk.kit_sent_date, timezone.datetime(2023,5,5,12,0,0,))
+
+
