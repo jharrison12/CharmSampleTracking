@@ -282,8 +282,9 @@ class ChildAddressDatabaseSetup(DatabaseSetup):
         self.assertEqual(child_object, self.child_one)
 
     def test_child_address_links_to_second_child(self):
-        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_three,
-                                              charm_project_identifier='7002M1',
+        new_primary_caregiver = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
+        child_three = Child.objects.create(primary_care_giver_fk=new_primary_caregiver,
+                                              charm_project_identifier='7003M1',
                                               birth_hospital=self.health_care_facility_1,
                                               birth_sex=Child.BirthSexChoices.FEMALE,
                                               birth_date=datetime.date(2021, 8, 10),

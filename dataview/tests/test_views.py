@@ -235,7 +235,7 @@ class ChildInformationPage(DatabaseSetup):
         self.assertContains(response,'<a href=/data/caregiver/P7001/> P7001</a>')
 
     def test_child_information_page_wrong_id_shows_404(self):
-        response = self.client.get(f'/data/child/7002M1/')
+        response = self.client.get(f'/data/child/7003M1/')
         self.assertEqual(response.status_code,404)
 
     def test_child_information_page_shows_relation_if_not_mother(self):
@@ -251,15 +251,16 @@ class ChildInformationPage(DatabaseSetup):
         self.assertContains(response,'One Drive')
 
     def test_child_information_page_shows_address_if_address_associated_with_two_children(self):
-        child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_three,
-                                           charm_project_identifier='7002M1',
+        new_primary = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
+        child_three = Child.objects.create(primary_care_giver_fk=new_primary,
+                                           charm_project_identifier='7003M1',
                                            birth_hospital=self.health_care_facility_1,
                                            birth_sex=Child.BirthSexChoices.FEMALE,
                                            birth_date=datetime.date(2021, 8, 10),
                                            child_twin=False, pregnancy_fk=self.mother_one_pregnancy_one)
         new_child_address = ChildAddress.objects.create(address_fk=self.address, child_fk=child_three)
 
-        response = self.client.get(f'/data/child/7000M1/')
+        response = self.client.get(f'/data/child/7003M1/')
         self.assertContains(response,'One Drive')
 
 class ChildSurveyPage(DatabaseSetup):
@@ -307,7 +308,7 @@ class ChildAssentPage(DatabaseSetup):
         self.assertNotContains(response, 'Eight Year Survey')
 
     def test_child_assent_page_wrong_id_shows_404(self):
-        response = self.client.get(f'/data/child/7002M1/')
+        response = self.client.get(f'/data/child/7003M1/')
         self.assertEqual(response.status_code,404)
 
 class CheckthatLoginRequired(DatabaseSetup):

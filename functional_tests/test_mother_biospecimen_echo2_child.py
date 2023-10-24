@@ -32,7 +32,7 @@ class ChildBioSpecimenEntry(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
 
-    def test_user_can_choose_status_of_urine_information_chooses_kit_sent_not_collected(self):
+    def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
@@ -54,7 +54,7 @@ class ChildBioSpecimenEntry(FunctionalTest):
         self.assertNotIn('<form>', body_text)
         self.assertIn('Date Kit Sent', body_text)
 
-    def test_user_can_choose_status_of_urine_information_chooses_kit_sent_no_consent(self):
+    def test_user_can_choose_status_of_urine_information_chooses_no_consent(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
