@@ -15,6 +15,11 @@ logging.basicConfig(level=logging.CRITICAL)
 
 def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     child_bio = ChildBiospecimen.objects.get(pk=child_bio_pk)
+    if child_bio.status_fk==None:
+        initial_bio_form = InitialBioForm(prefix="initial_form")
+    else:
+        return redirect("biospecimen:child_biospecimen_initial",caregiver_charm_id=child_charm_id,caregiver_bio_pk=child_bio_pk)
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
-                                                                                              'child_bio_pk':child_bio_pk})
+                                                                                              'child_bio_pk':child_bio_pk,
+                                                                                              'initial_bio_form':initial_bio_form})

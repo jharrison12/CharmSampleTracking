@@ -22,7 +22,7 @@ class ChildBioSpecimenEntry(FunctionalTest):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
-        time.sleep(90)
+
 
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_collected_shipped_echo(self):
@@ -34,14 +34,13 @@ class ChildBioSpecimenEntry(FunctionalTest):
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7002M1', 'Urine', '0-5 Months')
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
         #user sees initial form and submits collected
-        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('ID: 7002M1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
@@ -57,14 +56,12 @@ class ChildBioSpecimenEntry(FunctionalTest):
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_no_consent(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7002M1', 'Urine', '0-5 Months')
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
-
         #user sees initial form and submits collected
-        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('ID: 7002M1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
