@@ -50,7 +50,8 @@ class ChildBioSpecimenEntry(FunctionalTest):
         kit_sent_date = self.browser.find_element(By.ID,"id_kit_sent_form-kit_sent_date")
         kit_sent_date.clear()
         kit_sent_date.send_keys('2023-09-27')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+        time.sleep(30)
+        submit = self.browser.find_element(By.XPATH,'//*[@id="initial_information"]/form/input[2]')
         submit.click()
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text

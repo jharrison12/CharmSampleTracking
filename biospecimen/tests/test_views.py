@@ -899,7 +899,24 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
-        self.assertIsInstance(response.context['collected_urine_form'], CollectedChildUrineForm)
+        self.assertIsInstance(response.context['collected_child_urine_form'], CollectedChildUrineForm)
+
+    def test_echo2_initial_child_urine_redirects_after_collected_form_submitted(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
+                                          "initial_bio_form_button": 'initial_bio_form_button'
+                                          })
+
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"collected_child_urine_form-in_person_remote": 'I',
+                                          "collected_child_urine_form-date_received":'2023-09-03',
+                                          "collected_child_urine_form-number_of_tubes":'4',
+                                          "collected_child_urine_form-incentive_date":'2023-09-03',
+                                          "collected_form_button": 'collected_form_button'
+                                          })
+
+        self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
 
 class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):

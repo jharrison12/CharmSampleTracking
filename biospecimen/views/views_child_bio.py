@@ -6,7 +6,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     KitSent
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -20,6 +20,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     child_bio = ChildBiospecimen.objects.get(pk=child_bio_pk)
     initial_bio_form = None
     kit_sent_form = None
+    collected_child_urine_form = None
     logging.critical(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
         form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
@@ -51,13 +52,33 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             child_bio.save()
             return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
+
+    elif request.method=="POST" and 'collected_form_button' in request.POST:
+        form = CollectedChildUrineForm(data=request.POST,prefix='collected_child_urine_form')
+        if form.is_valid():
+            collected = Collected()
+            child_bio.status_fk.collected_fk = collected
+            collected.received_date = form.cleaned_data['date_received']
+            collected.number_of_tubes = form.cleaned_data['number_of_tubes']
+            ##todo this will need to be the incentive model!!!
+            collected.incentive_date = form.cleaned_data['number_of_tubes']
+            collected.in_person_remote = form.cleaned_data['in_person_remote']
+            collected.logged_by = request.user
+            collected.save()
+            child_bio.status_fk.save()
+            child_bio.save()
+            return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+                        child_bio_pk=child_bio_pk)
     else:
         if child_bio.status_fk==None:
             initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and not child_bio.status_fk.kit_sent_fk.kit_sent_date:
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
+        elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date:
+            collected_child_urine_form = CollectedChildUrineForm(prefix="collected_child_urine_form")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
                                                                                               'initial_bio_form':initial_bio_form,
-                                                                                              'kit_sent_form':kit_sent_form})
+                                                                                              'kit_sent_form':kit_sent_form,
+                                                                                              'collected_child_urine_form':collected_child_urine_form})
