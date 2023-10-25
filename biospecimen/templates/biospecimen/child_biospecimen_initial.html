@@ -13,14 +13,14 @@
           {% csrf_token %}
               <h2>Initial Form</h2>
             {{ initial_bio_form.as_p }}
-          <input type="submit" value="Submit" />
+          <input type="submit" value="Submit" name="initial_bio_form_button"/>
           </form>
         </div>
     {% elif child_bio.status_fk and child_bio.status_fk.no_consent_fk %}
         <div id="not_collected_information" class="row border border-primary p-3 rounded">
         No Consent
         </div>
-    {% elif child_bio.status_fk and  caregiver_bio.status_fk.not_collected_fk %}
+    {% elif child_bio.status_fk and  child_bio.status_fk.not_collected_fk %}
         <div id="no_consent_information" class="row border border-primary p-3 rounded">
         Not Collected
         </div>
@@ -34,10 +34,20 @@
           {% csrf_token %}
               <h2>Kit Sent Form</h2>
             {{ kit_sent_form.as_p }}
-          <input type="submit" value="Submit" />
+          <input type="submit" value="Submit" name="kit_sent_form_button"/>
           </form>
         </div>
     {% else %}
-        WHY NO KIT SENT
+        <div id="kit_sent_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Kit Sent</button>
+            </div>
+            <div class="col-8">
+                <div>Kit Sent Date:{{ child_bio.status_fk.kit_sent_fk.kit_sent_date }}</div>
+            </div>
+        </div>
+
     {% endif %}
 {% endblock %}
