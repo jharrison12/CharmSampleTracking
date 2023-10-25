@@ -47,7 +47,7 @@ class ChildBioSpecimenEntry(FunctionalTest):
         collected_not_collected.select_by_visible_text('Kit Sent')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
-
+        time.sleep(20)
         #user sees collected form on next page
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text

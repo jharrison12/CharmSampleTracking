@@ -125,7 +125,7 @@ class ShippedECHO(models.Model):
         return f"collected {self.status_set}"
 
 class KitSent(models.Model):
-    kit_sent_date = models.DateField(default=timezone.now)
+    kit_sent_date = models.DateField(null=True,blank=True)
 
 class Status(models.Model):
     #todo sublcass text choices for status

@@ -26,6 +26,18 @@
         </div>
     {#  Potential bug because collected date time is not required but you have to null it to create it        #}
     {% else %}
-        ERROR
+
+    {% endif %}
+    {% if kit_sent_form %}
+        <div id="collected_information" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
+          {% csrf_token %}
+              <h2>Kit Sent Form</h2>
+            {{ kit_sent_form.as_p }}
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
+    {% else %}
+        WHY NO KIT SENT
     {% endif %}
 {% endblock %}

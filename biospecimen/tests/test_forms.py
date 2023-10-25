@@ -1,7 +1,7 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -67,6 +67,12 @@ class IncentiveFormTest(TestCase):
         form = IncentiveForm(data={'':''})
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['incentive_type_fk'][0])
+
+
+class KitSentFormTest(TestCase):
+    def test_form_renders_date_kit_sent_text_input(self):
+        form = KitSentForm()
+        self.assertIn('Kit sent date',form.as_p())
 
 
 class CaregiverCollectedFormTest(TestCase):

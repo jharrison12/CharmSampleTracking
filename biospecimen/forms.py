@@ -136,3 +136,6 @@ class CollectedBloodForm(forms.Form):
             "collected_date_time": forms.DateTimeInput,
             "processed_date_time": forms.DateTimeInput
         }
+
+class KitSentForm(forms.Form):
+    kit_sent_date = forms.DateField(initial=timezone.now())

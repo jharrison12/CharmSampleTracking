@@ -18,7 +18,7 @@ from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, \
-    ShippedtoEchoForm,InitialBioFormChild
+    ShippedtoEchoForm,InitialBioFormChild,KitSentForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 from django.template.loader import render_to_string
@@ -863,6 +863,14 @@ class ChildBiospecimenPage(DatabaseSetup):
                                           })
         logging.critical(response.content.decode())
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+    def test_echo2_initial_child_urine_shows_kit_sent_form(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'X',
+                                          })
+
+        self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
 
 
 class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
