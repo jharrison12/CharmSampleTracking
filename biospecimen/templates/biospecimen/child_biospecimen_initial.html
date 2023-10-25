@@ -28,7 +28,7 @@
     {% else %}
 
     {% endif %}
-    {% if kit_sent_form %}
+    {% if kit_sent_form and child_bio.status_fk.kit_sent_fk %}
         <div id="collected_information" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
           {% csrf_token %}
@@ -37,7 +37,7 @@
           <input type="submit" value="Submit" name="kit_sent_form_button"/>
           </form>
         </div>
-    {% else %}
+    {% elif child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date  %}
         <div id="kit_sent_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}

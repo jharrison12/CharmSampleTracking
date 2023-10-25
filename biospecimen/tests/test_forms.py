@@ -1,7 +1,7 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -74,6 +74,10 @@ class KitSentFormTest(TestCase):
         form = KitSentForm()
         self.assertIn('Kit sent date',form.as_p())
 
+class CollectedChildFormTest(TestCase):
+    def test_form_renders_date_kit_sent_text_input(self):
+        form = CollectedChildUrineForm()
+        self.assertIn('Number of tubes',form.as_p())
 
 class CaregiverCollectedFormTest(TestCase):
 

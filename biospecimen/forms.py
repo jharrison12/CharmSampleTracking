@@ -139,3 +139,10 @@ class CollectedBloodForm(forms.Form):
 
 class KitSentForm(forms.Form):
     kit_sent_date = forms.DateField(initial=timezone.now())
+
+class CollectedChildUrineForm(forms.Form):
+    in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
+    date_received = forms.DateField(initial=timezone.now())
+    number_of_tubes = forms.IntegerField()
+    #todo connect this with incentive
+    incentive_date = forms.DateField(initial=timezone.now())
