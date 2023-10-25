@@ -49,7 +49,6 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             child_bio.status_fk.kit_sent_fk.save()
             child_bio.status_fk.save()
             child_bio.save()
-            logging.critical(f"Everything is saved")
             return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     else:
