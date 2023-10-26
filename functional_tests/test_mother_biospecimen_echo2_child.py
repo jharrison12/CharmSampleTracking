@@ -16,6 +16,9 @@ class ChildBioSpecimenEntry(FunctionalTest):
 
         return child_biospecimen.pk
 
+    def webpage_text(self):
+        return self.browser.find_element(By.TAG_NAME,'body').text
+
 
     def test_user_can_choose_status_of_child_urine_information_chooses_kit_sent_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees urine
@@ -50,7 +53,7 @@ class ChildBioSpecimenEntry(FunctionalTest):
         kit_sent_date = self.browser.find_element(By.ID,"id_kit_sent_form-kit_sent_date")
         kit_sent_date.clear()
         kit_sent_date.send_keys('2023-09-27')
-        time.sleep(30)
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="initial_information"]/form/input[2]')
         submit.click()
 
@@ -62,6 +65,29 @@ class ChildBioSpecimenEntry(FunctionalTest):
         collected_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected',collected_form)
 
+        in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_urine_form-in_person_remote'))
+        in_person_remote.select_by_visible_text('In Person')
+
+        date_received = self.browser.find_element(By.ID,'id_collected_child_urine_form-date_received')
+        date_received.clear()
+        date_received.send_keys('2023-09-27')
+
+        number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_urine_form-number_of_tubes')
+        number_of_tubes.send_keys(5)
+
+        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_urine_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-09-27')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        #USer now sees the collected information and the shipped to echo ro shipped to wsu form
+        time.sleep(30)
+        body_text = self.webpage_text()
+        self.assertIn('In Person or Remote:',body_text)
+
+        self.assertIn('Shipped to WSU', body_text)
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
