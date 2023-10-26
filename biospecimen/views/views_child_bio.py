@@ -21,6 +21,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     initial_bio_form = None
     kit_sent_form = None
     collected_child_urine_form = None
+    shipped_choice_form = None
     logging.critical(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
         form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
@@ -69,16 +70,38 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             child_bio.save()
             return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
+    elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
+        form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
+        if form.is_valid():
+            if form.cleaned_data['shipped_to_wsu_or_echo']=='W':
+                shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
+                child_bio.status_fk.shipped_wsu_fk = shipped_to_wsu
+                child_bio.status_fk.shipped_wsu_fk.save()
+                child_bio.status_fk.save()
+                child_bio.save()
+                logging.debug(f'Shipped to wsu saved')
+            elif form.cleaned_data['shipped_to_wsu_or_echo']=='E':
+                shipped_to_echo = ShippedECHO.objects.create()
+                child_bio.status_fk.shipped_echo_fk = shipped_to_echo
+                child_bio.status_fk.shipped_echo_fk.save()
+                child_bio.status_fk.save()
+                child_bio.save()
+                logging.debug(f'Shipped to echo saved')
+            else:
+                raise AssertionError
     else:
         if child_bio.status_fk==None:
             initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and not child_bio.status_fk.kit_sent_fk.kit_sent_date:
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
-        elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date:
+        elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date and not child_bio.status_fk.collected_fk:
             collected_child_urine_form = CollectedChildUrineForm(prefix="collected_child_urine_form")
+        elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date:
+            shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
                                                                                               'initial_bio_form':initial_bio_form,
                                                                                               'kit_sent_form':kit_sent_form,
-                                                                                              'collected_child_urine_form':collected_child_urine_form})
+                                                                                              'collected_child_urine_form':collected_child_urine_form,
+                                                                                              'shipped_choice_form':shipped_choice_form})

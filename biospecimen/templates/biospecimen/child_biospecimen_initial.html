@@ -74,4 +74,14 @@
             </div>
         </div>
     {% endif %}
+    {% if shipped_choice_form %}
+        <div id="shippped_choice_form_div" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
+          {% csrf_token %}
+              <h2>Shipped Choice Form</h2>
+            {{ shipped_choice_form.as_p }}
+          <input type="submit" value="Submit" name="shipped_choice_form_button"/>
+          </form>
+        </div>
+    {% endif %}
 {% endblock %}
