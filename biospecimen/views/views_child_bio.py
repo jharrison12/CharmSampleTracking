@@ -23,6 +23,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     collected_child_urine_form = None
     shipped_choice_form = None
     shipped_to_echo_form = None
+    shipped_to_wsu_form = None
     logging.critical(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
         form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
@@ -103,6 +104,18 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             child_bio.status_fk.shipped_echo_fk.save()
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
+    elif request.method=="POST" and 'shipped_to_wsu_form_button' in request.POST:
+        form = ShippedtoWSUForm(data=request.POST, prefix='child_shipped_to_wsu_form')
+        logging.critical(f"is shipped choice valid {form.is_valid()} {form.errors}")
+        if form.is_valid():
+            child_bio.status_fk.shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+            child_bio.status_fk.shipped_wsu_fk.number_of_tubes= form.cleaned_data['number_of_tubes']
+            child_bio.status_fk.shipped_wsu_fk.courier = form.cleaned_data['courier']
+            child_bio.status_fk.shipped_wsu_fk.tracking_number = form.cleaned_data['tracking_number']
+            child_bio.status_fk.shipped_wsu_fk.shipped_by = request.user
+            child_bio.status_fk.shipped_wsu_fk.save()
+        return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+                        child_bio_pk=child_bio_pk)
     else:
         if child_bio.status_fk==None:
             initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")
@@ -114,6 +127,10 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:
             shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
+        elif child_bio.status_fk.shipped_wsu_fk and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
+            shipped_to_wsu_form = ShippedtoWSUForm(prefix="child_shipped_to_wsu_form")
+        else:
+            pass
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
@@ -121,4 +138,5 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'kit_sent_form':kit_sent_form,
                                                                                               'collected_child_urine_form':collected_child_urine_form,
                                                                                               'shipped_choice_form':shipped_choice_form,
-                                                                                              'shipped_to_echo_form': shipped_to_echo_form})
+                                                                                              'shipped_to_echo_form': shipped_to_echo_form,
+                                                                                              'shipped_to_wsu_form':shipped_to_wsu_form})

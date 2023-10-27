@@ -26,6 +26,95 @@ class ChildBioSpecimenEntry(FunctionalTest):
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
+        # user sees initial form and submits collected
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('Initial Form', body_text)
+
+        collected_not_collected = Select(
+            self.browser.find_element(By.ID, 'id_initial_bio_form-collected_not_collected_kit_sent'))
+        collected_not_collected.select_by_visible_text('Kit Sent')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        # user sees collected form on next page
+
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertNotIn('<form>', body_text)
+        self.assertIn('Kit sent date:', body_text)
+
+        kit_sent_date = self.browser.find_element(By.ID, "id_kit_sent_form-kit_sent_date")
+        kit_sent_date.clear()
+        kit_sent_date.send_keys('2023-09-27')
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="initial_information"]/form/input[2]')
+        submit.click()
+
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Sept. 27, 2023', body_text)
+
+        # user now sees the collected form
+
+        collected_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Collected', collected_form)
+
+        in_person_remote = Select(self.browser.find_element(By.ID, 'id_collected_child_urine_form-in_person_remote'))
+        in_person_remote.select_by_visible_text('In Person')
+
+        date_received = self.browser.find_element(By.ID, 'id_collected_child_urine_form-date_received')
+        date_received.clear()
+        date_received.send_keys('2023-09-27')
+
+        number_of_tubes = self.browser.find_element(By.ID, 'id_collected_child_urine_form-number_of_tubes')
+        number_of_tubes.send_keys(5)
+
+        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_urine_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-09-27')
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        # USer now sees the collected information and the shipped to echo ro shipped to wsu form
+
+        body_text = self.webpage_text()
+        self.assertIn('In Person or Remote: In Person', body_text)
+
+        shipped_choice_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Shipped to WSU', shipped_choice_form)
+
+        shipped_choice = Select(self.browser.find_element(By.ID, 'id_child_shipped_choice_form-shipped_to_wsu_or_echo'))
+        shipped_choice.select_by_visible_text('Shipped to WSU')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_choice_form_div"]/form/input[2]')
+        submit.click()
+
+        # User sees shipped to echo form and submits a date time
+        wsu_shipped_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Shipped to WSU', wsu_shipped_form)
+
+        shipped_date_time = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-shipped_date_and_time')
+        shipped_date_time.clear()
+        shipped_date_time.send_keys('2023-09-27 12:52:26')
+
+        tracking_number = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-tracking_number')
+        tracking_number.send_keys(55555)
+
+        number_of_tubes = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-number_of_tubes')
+        number_of_tubes.clear()
+        number_of_tubes.send_keys(5)
+
+        logged_date_time = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-logged_date_time')
+        logged_date_time.clear()
+        logged_date_time.send_keys('2023-09-27 12:52:26')
+
+        courier = Select(self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-courier'))
+        courier.select_by_visible_text('FedEx')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_div"]/form/input[2]')
+        submit.click()
+
+        body_text = self.webpage_text()
+        self.assertIn('Courier: FedEx',body_text)
 
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_collected_shipped_echo(self):

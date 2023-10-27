@@ -105,4 +105,30 @@
             </div>
         </div>
     {% endif %}
+    {% if shipped_to_wsu_form and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time %}
+        <div id="shipped_to_echo_div" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
+          {% csrf_token %}
+              <h2>Shipped to WSU Form</h2>
+            {{ shipped_to_wsu_form.as_p }}
+          <input type="submit" value="Submit" name="shipped_to_wsu_form_button"/>
+          </form>
+        </div>
+    {% elif child_bio.status_fk.shipped_wsu_fk.shipped_date_time  %}
+        <div id="shipped_to_wsu_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped to WSU:</button>
+            </div>
+            <div class="col-8">
+                <div>Shipped to WSU Date: {{ child_bio.status_fk.shipped_wsu_fk.shipped_date_time }}</div>
+                <div>Shipped Byd: {{ child_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>
+                <div>Tracking Number: {{ child_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
+                <div>Courier: {{ child_bio.status_fk.shipped_wsu_fk.get_courier_display }}</div>
+                <div>Number of Tubes: {{ child_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
+                <div>Logged Date: {{ child_bio.status_fk.shipped_wsu_fk.logged_date_time }}</div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
