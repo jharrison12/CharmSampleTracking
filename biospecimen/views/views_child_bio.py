@@ -96,6 +96,13 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 raise AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
+    elif request.method=="POST" and 'shipped_to_echo_form_button' in request.POST:
+        form = ShippedtoEchoForm(data=request.POST, prefix='child_shipped_to_echo_form')
+        if form.is_valid():
+            child_bio.status_fk.shipped_echo_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+            child_bio.status_fk.shipped_echo_fk.save()
+        return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+                        child_bio_pk=child_bio_pk)
     else:
         if child_bio.status_fk==None:
             initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")

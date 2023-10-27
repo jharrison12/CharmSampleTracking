@@ -95,10 +95,20 @@ class ChildBioSpecimenEntry(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice_form_div"]/form/input[2]')
         submit.click()
 
-        #User sees shipped to echo form
+        #User sees shipped to echo form and submits a date time
         echo_shipped_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped to Echo',echo_shipped_form)
 
+
+        echo_shipped_date = self.browser.find_element(By.ID, 'id_child_shipped_to_echo_form-shipped_date_and_time')
+        echo_shipped_date.clear()
+        echo_shipped_date.send_keys('2023-09-27 12:52:26')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_div"]/form/input[2]')
+        submit.click()
+
+        body_text = self.webpage_text()
+        self.assertIn('Shipped to Echo Date: Sept. 27, 2023',body_text)
 
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
