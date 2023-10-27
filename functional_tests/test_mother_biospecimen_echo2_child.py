@@ -83,11 +83,23 @@ class ChildBioSpecimenEntry(FunctionalTest):
         submit.click()
 
         #USer now sees the collected information and the shipped to echo ro shipped to wsu form
-        time.sleep(30)
-        body_text = self.webpage_text()
-        self.assertIn('In Person or Remote:',body_text)
 
-        self.assertIn('Shipped to WSU', body_text)
+        body_text = self.webpage_text()
+        self.assertIn('In Person or Remote: In Person',body_text)
+
+        shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Shipped to WSU',shipped_choice_form)
+
+        shipped_choice = Select(self.browser.find_element(By.ID,'id_child_shipped_choice_form-shipped_to_wsu_or_echo'))
+        shipped_choice.select_by_visible_text('Shipped to Echo')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice_form_div"]/form/input[2]')
+        submit.click()
+
+        #User sees shipped to echo form
+        echo_shipped_form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Shipped to Echo',echo_shipped_form)
+
+
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine

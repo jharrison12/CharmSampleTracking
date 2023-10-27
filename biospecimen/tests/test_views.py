@@ -909,6 +909,11 @@ class ChildBiospecimenPage(DatabaseSetup):
                                           })
 
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
+                                          'kit_sent_form_button':'kit_sent_form_button'
+                                          })
+
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                     data={"collected_child_urine_form-in_person_remote": 'I',
                                           "collected_child_urine_form-date_received":'2023-09-03',
                                           "collected_child_urine_form-number_of_tubes":'4',
@@ -926,6 +931,11 @@ class ChildBiospecimenPage(DatabaseSetup):
                                           })
 
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
+                                          'kit_sent_form_button':'kit_sent_form_button'
+                                          })
+
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                     data={"collected_child_urine_form-in_person_remote": 'I',
                                           "collected_child_urine_form-date_received":'2023-09-03',
                                           "collected_child_urine_form-number_of_tubes":'4',
@@ -935,8 +945,63 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
-        self.assertIsInstance(response.context['child_shipped_choice_form'], ShippedChoiceForm)
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
+    def test_echo2_initial_child_urine_redirects_after_shipped_choice_form(self):
+            primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                        data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
+                                              "initial_bio_form_button": 'initial_bio_form_button'
+                                              })
+
+            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                        data={"kit_sent_form-kit_sent_date": '2023-09-03',
+                                              'kit_sent_form_button': 'kit_sent_form_button'
+                                              })
+
+            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                        data={"collected_child_urine_form-in_person_remote": 'I',
+                                              "collected_child_urine_form-date_received": '2023-09-03',
+                                              "collected_child_urine_form-number_of_tubes": '4',
+                                              "collected_child_urine_form-incentive_date": '2023-09-03',
+                                              "collected_form_button": 'collected_form_button'
+                                              })
+
+            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                        data={'shipped_choice_form-shipped_to_wsu_or_echo': ['E'],
+                                              'shipped_choice_form_button':'shipped_choice_form_button'})
+
+            self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+
+    def test_echo2_initial_child_urine_shows_shipped_to_echo_form_after_submission(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
+                                          "initial_bio_form_button": 'initial_bio_form_button'
+                                          })
+
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
+                                          'kit_sent_form_button':'kit_sent_form_button'
+                                          })
+
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"collected_child_urine_form-in_person_remote": 'I',
+                                          "collected_child_urine_form-date_received":'2023-09-03',
+                                          "collected_child_urine_form-number_of_tubes":'4',
+                                          "collected_child_urine_form-incentive_date":'2023-09-03',
+                                          "collected_form_button": 'collected_form_button'
+                                          })
+
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={'child_shipped_choice_form-shipped_to_wsu_or_echo': 'E',
+                                          'shipped_choice_form_button': ['Submit']})
+
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+
+        self.assertIsInstance(response.context['shipped_to_echo_form'], ShippedtoEchoForm)
 
 class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
 
