@@ -815,6 +815,35 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
 class ChildBiospecimenPage(DatabaseSetup):
 
+    def send_kit(self,primary_key,kit_sent):
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"initial_bio_form-collected_not_collected_kit_sent": f'{kit_sent}',
+                                          "initial_bio_form_button": ['Submit']
+                                          })
+        return response
+
+    def send_kit_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
+                                          'kit_sent_form_button':['Submit']
+                                          })
+        return response
+
+    def send_collected_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={"collected_child_urine_form-in_person_remote": 'I',
+                                          "collected_child_urine_form-date_received":'2023-09-03',
+                                          "collected_child_urine_form-number_of_tubes":'4',
+                                          "collected_child_urine_form-incentive_date":'2023-09-03',
+                                          "collected_form_button": ['Submit']
+                                          })
+        return response
+
+    def send_wsu_or_echo(self,primary_key,e_or_w):
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={'child_shipped_choice_form-shipped_to_wsu_or_echo': [f'{e_or_w}'],
+                                          'shipped_choice_form_button': ['Submit']})
+        return response
 
     def return_child_bio_pk(self,child_id,collection_type,age):
         child_object = Child.objects.get(charm_project_identifier=child_id)
@@ -841,162 +870,75 @@ class ChildBiospecimenPage(DatabaseSetup):
 
     def test_echo2_initial_child_urine_redirects_after_post_kit_sent(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": 'initial_bio_form_button'
-                                          })
+        response = self.send_kit(primary_key,'K')
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
     def test_echo2_initial_child_urine_redirects_after_post_not_collected(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'N',
-                                          "initial_bio_form_button":'initial_bio_form_button'
-                                          })
-        logging.critical(response.content.decode())
+        response = self.send_kit(primary_key,'N')
+
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
     def test_echo2_initial_child_urine_redirects_after_no_consent(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'X',
-                                          "initial_bio_form_button": 'initial_bio_form_button'
-                                          })
+        response = self.send_kit(primary_key,'X')
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
     def test_echo2_initial_child_urine_shows_kit_sent_form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": 'initial_bio_form_button'
-                                          })
+        response = self.send_kit(primary_key,'K')
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
         self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
 
     def test_echo2_initial_child_urine_redirects_after_kit_sent_form_submitted(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": 'initial_bio_form_button'
-                                          })
+        response = self.send_kit(primary_key,'K')
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
     def test_echo2_initial_child_urine_shows_collected__form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": 'initial_bio_form_button'
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                          'kit_sent_form_button':'kit_sent_form_button'
-                                          })
-
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
         self.assertIsInstance(response.context['collected_child_urine_form'], CollectedChildUrineForm)
 
     def test_echo2_initial_child_urine_redirects_after_collected_form_submitted(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": 'initial_bio_form_button'
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                          'kit_sent_form_button':'kit_sent_form_button'
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"collected_child_urine_form-in_person_remote": 'I',
-                                          "collected_child_urine_form-date_received":'2023-09-03',
-                                          "collected_child_urine_form-number_of_tubes":'4',
-                                          "collected_child_urine_form-incentive_date":'2023-09-03',
-                                          "collected_form_button": 'collected_form_button'
-                                          })
-
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
+        response = self.send_collected_form(primary_key)
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
     def test_echo2_initial_child_urine_shows_wsu_or_echo_after_submission(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                          'kit_sent_form_button': ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"collected_child_urine_form-in_person_remote": 'I',
-                                          "collected_child_urine_form-date_received": '2023-09-03',
-                                          "collected_child_urine_form-number_of_tubes": '4',
-                                          "collected_child_urine_form-incentive_date": '2023-09-03',
-                                          "collected_form_button": ['Submit']
-                                          })
-
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
+        response = self.send_collected_form(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
     def test_echo2_initial_child_urine_redirects_after_shipped_choice_form_echo(self):
             primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                              "initial_bio_form_button": ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                              'kit_sent_form_button': ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"collected_child_urine_form-in_person_remote": 'I',
-                                              "collected_child_urine_form-date_received": '2023-09-03',
-                                              "collected_child_urine_form-number_of_tubes": '4',
-                                              "collected_child_urine_form-incentive_date": '2023-09-03',
-                                              "collected_form_button": ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={'child_shipped_choice_form-shipped_to_wsu_or_echo': ['E'],
-                                              'shipped_choice_form_button': ['Submit']})
+            self.send_kit(primary_key, 'K')
+            response = self.send_kit_form(primary_key)
+            response = self.send_collected_form(primary_key)
+            response = self.send_wsu_or_echo(primary_key,'E')
 
             self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
 
     def test_echo2_initial_child_urine_shows_shipped_to_echo_form_after_submission(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                          'kit_sent_form_button': ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"collected_child_urine_form-in_person_remote": 'I',
-                                          "collected_child_urine_form-date_received": '2023-09-03',
-                                          "collected_child_urine_form-number_of_tubes": '4',
-                                          "collected_child_urine_form-incentive_date": '2023-09-03',
-                                          "collected_form_button": ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={'child_shipped_choice_form-shipped_to_wsu_or_echo': ['E'],
-                                          'shipped_choice_form_button': ['Submit']})
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
+        response = self.send_collected_form(primary_key)
+        response = self.send_wsu_or_echo(primary_key, 'E')
 
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
@@ -1005,27 +947,10 @@ class ChildBiospecimenPage(DatabaseSetup):
 
     def test_echo2_initial_child_urine_redirects_after_shipped_echo_form(self):
             primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                              "initial_bio_form_button": ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                              'kit_sent_form_button': ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"collected_child_urine_form-in_person_remote": 'I',
-                                              "collected_child_urine_form-date_received": '2023-09-03',
-                                              "collected_child_urine_form-number_of_tubes": '4',
-                                              "collected_child_urine_form-incentive_date": '2023-09-03',
-                                              "collected_form_button": ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={'child_shipped_choice_form-shipped_to_wsu_or_echo': ['E'],
-                                              'shipped_choice_form_button': ['Submit']})
+            self.send_kit(primary_key, 'K')
+            response = self.send_kit_form(primary_key)
+            response = self.send_collected_form(primary_key)
+            response = self.send_wsu_or_echo(primary_key,'E')
 
             response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                         data={'child_shipped_to_echo_form-shipped_date_and_time': '2023-09-27 12:52:26',
@@ -1035,57 +960,20 @@ class ChildBiospecimenPage(DatabaseSetup):
 
     def test_echo2_initial_child_urine_redirects_after_shipped_choice_form_wsu(self):
             primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                              "initial_bio_form_button": ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                              'kit_sent_form_button': ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={"collected_child_urine_form-in_person_remote": 'I',
-                                              "collected_child_urine_form-date_received": '2023-09-03',
-                                              "collected_child_urine_form-number_of_tubes": '4',
-                                              "collected_child_urine_form-incentive_date": '2023-09-03',
-                                              "collected_form_button": ['Submit']
-                                              })
-
-            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                        data={'child_shipped_choice_form-shipped_to_wsu_or_echo': ['W'],
-                                              'shipped_choice_form_button': ['Submit']})
+            self.send_kit(primary_key, 'K')
+            response = self.send_kit_form(primary_key)
+            response = self.send_collected_form(primary_key)
+            response = self.send_wsu_or_echo(primary_key,'W')
 
             self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
     def test_echo2_initial_child_urine_shows_shipped_to_echo_form_after_submission(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"initial_bio_form-collected_not_collected_kit_sent": 'K',
-                                          "initial_bio_form_button": ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"kit_sent_form-kit_sent_date": '2023-09-03',
-                                          'kit_sent_form_button': ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"collected_child_urine_form-in_person_remote": 'I',
-                                          "collected_child_urine_form-date_received": '2023-09-03',
-                                          "collected_child_urine_form-number_of_tubes": '4',
-                                          "collected_child_urine_form-incentive_date": '2023-09-03',
-                                          "collected_form_button": ['Submit']
-                                          })
-
-        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={'child_shipped_choice_form-shipped_to_wsu_or_echo': ['W'],
-                                          'shipped_choice_form_button': ['Submit']})
-
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
+        response = self.send_collected_form(primary_key)
+        response = self.send_wsu_or_echo(primary_key, 'W')
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
-
-
         self.assertIsInstance(response.context['shipped_to_wsu_form'], ShippedtoWSUForm)
 
 

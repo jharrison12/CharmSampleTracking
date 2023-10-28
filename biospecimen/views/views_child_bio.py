@@ -24,7 +24,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     shipped_choice_form = None
     shipped_to_echo_form = None
     shipped_to_wsu_form = None
-    logging.critical(f"request.post {request.POST}")
+    logging.debug(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
         form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
         if form.is_valid():
@@ -47,7 +47,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                             child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'kit_sent_form_button' in request.POST:
         form = KitSentForm(data=request.POST, prefix="kit_sent_form")
-        logging.critical(f"Is kit sent form valid {form.is_valid()}")
+        logging.debug(f"Is kit sent form valid {form.is_valid()}")
         if form.is_valid():
             child_bio.status_fk.kit_sent_fk.kit_sent_date = form.cleaned_data['kit_sent_date']
             child_bio.status_fk.kit_sent_fk.save()
@@ -58,7 +58,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
 
     elif request.method=="POST" and 'collected_form_button' in request.POST:
         form = CollectedChildUrineForm(data=request.POST,prefix='collected_child_urine_form')
-        logging.critical(f"Is collected urine form valid {form.is_valid()}")
+        logging.debug(f"Is collected urine form valid {form.is_valid()}")
         if form.is_valid():
             collected = Collected()
             child_bio.status_fk.collected_fk = collected
@@ -77,7 +77,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
         form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
-        logging.critical(f"is shipped choice valid {form.is_valid()} {form.errors}")
+        logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo']=='W':
                 shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
@@ -85,14 +85,14 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 child_bio.status_fk.shipped_wsu_fk.save()
                 child_bio.status_fk.save()
                 child_bio.save()
-                logging.critical(f'Shipped to wsu saved')
+                logging.debug(f'Shipped to wsu saved')
             elif form.cleaned_data['shipped_to_wsu_or_echo']=='E':
                 shipped_to_echo = ShippedECHO.objects.create()
                 child_bio.status_fk.shipped_echo_fk = shipped_to_echo
                 child_bio.status_fk.shipped_echo_fk.save()
                 child_bio.status_fk.save()
                 child_bio.save()
-                logging.critical(f'Shipped to echo saved')
+                logging.debug(f'Shipped to echo saved')
             else:
                 raise AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
@@ -106,7 +106,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_to_wsu_form_button' in request.POST:
         form = ShippedtoWSUForm(data=request.POST, prefix='child_shipped_to_wsu_form')
-        logging.critical(f"is shipped choice valid {form.is_valid()} {form.errors}")
+        logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors}")
         if form.is_valid():
             child_bio.status_fk.shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
             child_bio.status_fk.shipped_wsu_fk.number_of_tubes= form.cleaned_data['number_of_tubes']
