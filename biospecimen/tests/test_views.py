@@ -186,6 +186,14 @@ class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
 
         return caregiverbio.pk
 
+    def return_processed(self,charm_id):
+        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',
+                                            collection_number_fk__collection_number='F')
+        caregiver = Caregiver.objects.get(charm_project_identifier=f'{charm_id}')
+        processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
+                                                 status__caregiverbiospecimen__caregiver_fk=caregiver)
+        return processed_one
+
     def test_caregiver_blood_spot_page_uses_correct_template(self):
         caregiver_bio_pk = self.return_caregiver_bio_pk(charm_id='P7000', collection_type='Bloodspots',
                                                         collection_num='F')
@@ -203,26 +211,14 @@ class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
         caregiver_bio_pk = self.return_caregiver_bio_pk(charm_id='P7000', collection_type='Bloodspots',
                                                         collection_num='F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{caregiver_bio_pk}/history/')
-        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',
-                                            collection_number_fk__collection_number='F')
-        caregiver = Caregiver.objects.get(charm_project_identifier='P7001')
-        processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
-                                                 status__caregiverbiospecimen__caregiver_fk=caregiver)
-
-        logging.debug(f"processed is {processed_one.count()}")
+        processed_one = self.return_processed('P7000')
         self.assertIsInstance(response.context['processed_form'], ProcessedBiospecimenForm)
 
     def test_caregiver_blood_spot_page_does_not_show_processed_form_if_processed_data(self):
         caregiver_bio_pk = self.return_caregiver_bio_pk(charm_id='P7000', collection_type='Bloodspots',
                                                         collection_num='F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{caregiver_bio_pk}/history/')
-        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',
-                                            collection_number_fk__collection_number='F')
-        caregiver = Caregiver.objects.get(charm_project_identifier='P7000')
-        processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
-                                                 status__caregiverbiospecimen__caregiver_fk=caregiver)
-
-        logging.debug(f"processed is {processed_one.count()}")
+        processed_one = self.return_processed('P7000')
         self.assertNotContains(response, '<form>', html=True)
 
     def test_caregiver_bio_iem_shows_processed_form_if_no_processed_data(self):
@@ -235,13 +231,7 @@ class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
         caregiver_bio_pk = self.return_caregiver_bio_pk(charm_id='P7000', collection_type='Bloodspots',
                                                         collection_num='F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{caregiver_bio_pk}/history/')
-        bloodspots = Collection.objects.get(collection_type_fk__collection_type='Bloodspots',
-                                            collection_number_fk__collection_number='F')
-        caregiver = Caregiver.objects.get(charm_project_identifier='P7000')
-        processed_one = Processed.objects.filter(status__caregiverbiospecimen__collection_fk=bloodspots,
-                                                 status__caregiverbiospecimen__caregiver_fk=caregiver)
-
-        logging.debug(f"processed is {processed_one.count()}")
+        processed_one = self.return_processed('P7000')
         self.assertIsInstance(response.context['stored_form'], StoredBiospecimenForm)
 
     def test_caregiver_blood_spot_page_uses_shipped_form_if_stored_data(self):
