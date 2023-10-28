@@ -2,26 +2,17 @@ import logging
 import sqlite3
 import unittest
 from django.test import TestCase
-from dataview.models import Caregiver, Name, CaregiverName, Address, \
-    CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
-    CaregiverPersonalContact, \
-    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, \
-    Mother, Relation, ConsentItem, \
-    NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
-    ChildSurvey, \
-    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation,User
+from dataview.models import Caregiver, Project,Incentive,  Child,User
 from biospecimen.models import Collection, Status, ChildBiospecimen, CaregiverBiospecimen, Processed, Stored, \
-    ShippedWSU, ShippedECHO, \
-    Collected
+    ShippedWSU, ShippedECHO, Collected
 import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
-    ShippedtoWSUForm, \
-    ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm
+    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
-from django.template.loader import render_to_string
+
 
 
 class BiospecimenHistoryPage(DatabaseSetup):
@@ -481,6 +472,16 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         new_status.save()
         return caregiver_bio.pk
 
+    def post_blood_form(self,primary_key,type,false_or_true):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={f'blood_form-{type}': false_or_true,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-number_of_tubes': 5})
+
     def test_echo2_initial_bio_blood_page_returns_correct_template(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
@@ -519,14 +520,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_entry_blood_updates_serum_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-serum': True,
-                                                                                               'blood_form-collected_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-processed_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-stored_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key,'serum',True)
         primary_key = self.return_caregiver_bio_pk('P7000', 'Serum', 'F')
         serum = CaregiverBiospecimen.objects.get(pk=primary_key)
 
@@ -541,14 +535,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_entry_blood_updates_plasma_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-plasma': True,
-                                                                                               'blood_form-collected_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-processed_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-stored_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key,'plasma',True)
         primary_key = self.return_caregiver_bio_pk('P7000', 'Plasma', 'F')
         plasma = CaregiverBiospecimen.objects.get(pk=primary_key)
 
@@ -564,14 +551,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_entry_blood_updates_whole_blood_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-whole_blood': True,
-                                                                                               'blood_form-collected_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-processed_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-stored_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key,'whole_blood',True)
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key)
 
@@ -586,14 +566,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_entry_blood_updates_buffy_coat_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-buffy_coat': True,
-                                                                                               'blood_form-collected_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-processed_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-stored_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key,'buffy_coat',True)
         primary_key = self.return_caregiver_bio_pk('P7000', 'Buffy Coat', 'F')
         buffy_coat = CaregiverBiospecimen.objects.get(pk=primary_key)
 
@@ -608,15 +581,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_entry_blood_updates_red_blood_count_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={'blood_form-red_blood_cells': True,
-                                          'blood_form-collected_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-processed_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-stored_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key,'red_blood_cells',True)
         primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
 
@@ -632,15 +597,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_entry_blood_does_not_create_red_blood_count_if_checkbox_not_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={'blood_form-red_blood_cells': False,
-                                          'blood_form-collected_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-processed_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-stored_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key,'red_blood_cells',False)
         with self.assertRaises(CaregiverBiospecimen.DoesNotExist):
             primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
 
@@ -648,14 +605,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def test_echo2_bio_entry_blood_does_not_update_plasma_if_checkbox_not_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/', data={'blood_form-plasma': False,
-                                                                                               'blood_form-collected_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-processed_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-stored_date_time': timezone.datetime(
-                                                                                                   2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key,'plasma',False)
         primary_key = self.create_bio_specimen(caregiver_id='P7000',collection_type='Plasma')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key)
 
@@ -697,20 +647,11 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
         logging.debug(f"whole blood status test: {whole_blood.status_fk}")
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/post/',
-                                    data={'blood_form-red_blood_cells': True,
-                                          'blood_form-collected_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-processed_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-stored_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key_whole_blood,'red_blood_cells',True)
 
         logging.debug(f"whole blood status test:  {whole_blood.status_fk}")
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
                                     data={'shipped_choice_form-shipped_to_wsu_or_echo':['W']})
-
 
         response =  self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_wsu/post/',
                                     data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
@@ -741,15 +682,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/post/',
-                                    data={'blood_form-red_blood_cells': True,
-                                          'blood_form-collected_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-processed_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-stored_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key_whole_blood,'red_blood_cells',True)
 
         logging.debug(f"whole blood status test:  {whole_blood.status_fk}")
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
@@ -773,15 +706,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/post/',
-                                    data={'blood_form-red_blood_cells': True,
-                                          'blood_form-collected_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-processed_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-stored_date_time': timezone.datetime(
-                                              2023, 5, 5, 5, 5, 5),
-                                          'blood_form-number_of_tubes': 5})
+        self.post_blood_form(primary_key_whole_blood,'red_blood_cells',True)
 
         logging.debug(f"whole blood status test:  {whole_blood.status_fk}")
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
