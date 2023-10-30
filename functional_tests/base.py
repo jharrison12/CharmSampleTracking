@@ -511,6 +511,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
 
         self.saliva = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+        # self.saliva_none = Collection.objects.create(collection_type_fk=self.saliva)
 
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
         self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
@@ -806,6 +807,16 @@ class FunctionalTest(StaticLiveServerTestCase):
             incentive_fk=self.incentive_one,
             biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111SA',
             project_fk=self.echo1)
+
+
+        self.biospecimen_hair_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=None,
+            collection_fk=self.hair,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111HA',
+            project_fk=self.echo2,
+            age_category_fk=self.zero_to_five_age_category)
 
 
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)

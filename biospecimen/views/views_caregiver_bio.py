@@ -5,7 +5,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm
+    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -244,6 +244,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
+        elif collection_type.collection_type in ('Hair','Saliva'):
+            collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
         else:
             collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):

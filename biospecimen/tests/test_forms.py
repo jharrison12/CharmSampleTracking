@@ -1,7 +1,7 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm,CollectedBiospecimenHairSalivaForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -87,6 +87,17 @@ class CaregiverCollectedFormTest(TestCase):
 
     def test_collected_form_validation_for_blank_items(self):
         form = CollectedBiospecimenForm(data={'':''})
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required',form.errors['collected_date_time'][0])
+
+class CaregiverCollectedSalivaHairFormTest(TestCase):
+
+    def test_collected_form_renders_collected_text_input(self):
+        form = CollectedBiospecimenHairSalivaForm()
+        self.assertIn('Collected',form.as_p())
+
+    def test_collected_form_validation_for_blank_items(self):
+        form = CollectedBiospecimenHairSalivaForm(data={'':''})
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['collected_date_time'][0])
 

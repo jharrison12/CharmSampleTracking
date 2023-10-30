@@ -920,3 +920,7 @@ class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
     def test_that_login_required_for_biospecimen_blood_page(self):
         response = self.client.get(f'/biospecimen/caregiver/P7000/1/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_login_required_for_biospecimen_child_entry_page(self):
+        response = self.client.get(f'/biospecimen/child/7000M1/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
