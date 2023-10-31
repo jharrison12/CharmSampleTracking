@@ -94,12 +94,12 @@ class CaregiverCollectedSalivaHairFormTest(TestCase):
 
     def test_collected_form_renders_collected_text_input(self):
         form = CollectedBiospecimenHairSalivaForm()
-        self.assertIn('Collected',form.as_p())
+        self.assertIn('Date collected',form.as_p())
 
     def test_collected_form_validation_for_blank_items(self):
         form = CollectedBiospecimenHairSalivaForm(data={'':''})
         self.assertFalse(form.is_valid())
-        self.assertIn('This field is required',form.errors['collected_date_time'][0])
+        self.assertIn('This field is required',form.errors['date_collected'][0])
 
 class CaregiverBioInitialStatusForm(TestCase):
 

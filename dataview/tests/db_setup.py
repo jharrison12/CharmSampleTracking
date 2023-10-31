@@ -28,6 +28,8 @@ class DatabaseSetup(TestCase):
 
         ##Update Below
 
+
+
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
         self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
         self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
@@ -497,12 +499,14 @@ class DatabaseSetup(TestCase):
         self.red_blood_cells_none = Collection.objects.create(collection_type_fk=self.red_blood_cells)
 
         self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair, collection_number_fk=self.number_early_childhood)
-        self.hair = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_one)
+        self.hair_number_one = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_one)
+        self.hair_none = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_three)
 
         self.toenail_earlychildhood = Collection.objects.create(collection_type_fk=self.toenail, collection_number_fk=self.number_early_childhood)
         self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
 
         self.saliva = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+        # self.saliva_none = Collection.objects.create(collection_type_fk=self.saliva)
 
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
         self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
@@ -800,6 +804,16 @@ class DatabaseSetup(TestCase):
             project_fk=self.echo1)
 
 
+        self.biospecimen_hair_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=None,
+            collection_fk=self.hair_none,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111HA',
+            project_fk=self.echo2,
+            age_category_fk=self.zero_to_five_age_category)
+
+
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
 
@@ -869,7 +883,7 @@ class DatabaseSetup(TestCase):
 
         self.child_one_biospecimen_hair = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                           status_fk=self.status_outcome_processed_complete_eleven,
-                                                                          collection_fk=self.hair,
+                                                                          collection_fk=self.hair_number_one,
                                                                           incentive_fk=self.incentive_one,
                                                                           age_category_fk=self.early_childhood_age_category,
                                                                           collection_date=datetime.date(2023, 8, 15))
@@ -888,4 +902,5 @@ class DatabaseSetup(TestCase):
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15)
                                                                              )
+
 

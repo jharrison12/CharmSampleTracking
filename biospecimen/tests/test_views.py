@@ -9,7 +9,7 @@ import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
-    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm
+    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm, CollectedBiospecimenHairSalivaForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -272,12 +272,13 @@ class CaregiverSingleBiospecimenHistoryPage(DatabaseSetup):
 
 class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
-    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type_fk__collection_type=collection_type,
                                                         trimester_fk__trimester=trimester,
-                                                        project_fk__project_name=project)
+                                                        project_fk__project_name=project,
+                                                        age_category_fk__age_category=age_category)
         return caregiverbio.pk
 
     def test_echo2_initial_bio_page_returns_correct_template(self):
@@ -422,6 +423,17 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
                                     data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_shows_collected_form_if_hair_or_salvia(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.critical(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected': ['C']})
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+
+        self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenHairSalivaForm)
 
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
