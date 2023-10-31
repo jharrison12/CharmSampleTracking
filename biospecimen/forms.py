@@ -110,7 +110,7 @@ class ShippedChoiceForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE)
 
 class ShippedChoiceHairSalivaForm(forms.Form):
-    shipped_to_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE_ECHO)
+    shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE_ECHO)
 
 class ShippedtoWSUForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())

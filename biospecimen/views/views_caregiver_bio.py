@@ -250,7 +250,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
         if collection_type.collection_type in ('Hair','Saliva'):
-            shipped_choice = ShippedChoiceHairSalivaForm(prefix='shipped_chioce_hair_saliva')
+            shipped_choice = ShippedChoiceHairSalivaForm(prefix='shipped_choice_form')
         else:
             shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
@@ -405,9 +405,9 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     if request.method=="POST":
-        logging.debug(f"post is {request.POST}")
+        logging.critical(f"post is {request.POST}")
         form = ShippedChoiceForm(data=request.POST, prefix='shipped_choice_form')
-        logging.debug(f"is shipped form valid {form.is_valid()}  {form.errors}")
+        logging.critical(f"is shipped form valid {form.is_valid()}  {form.errors}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
                 shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
