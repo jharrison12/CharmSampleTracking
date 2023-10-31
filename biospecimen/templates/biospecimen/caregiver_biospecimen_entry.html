@@ -17,10 +17,11 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Collected</button>
             </div>
             <div class="col-8">
-                <div>Collected Date Time:{{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
-                <div>Processed Date Time:{{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>
-                <div>Stored Date Time:{{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>
-                <div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>
+                <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
+                {% if collection_type not in  'Hair,Saliva' %}<div>Processed Date Time: {{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>{% endif %}
+                {% if collection_type not in  'Hair,Saliva' %}<div>Stored Date Time: {{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>{% endif %}
+                {% if collection_type not in  'Hair,Saliva' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>{% endif %}
+                {% if collection_type in 'Hair,Saliva' %}<div>In Person/Remote: {{ caregiver_bio.status_fk.collected_fk.get_in_person_remote_display }}</div>{% endif %}
                 <div>Logged By: {{ caregiver_bio.status_fk.collected_fk.logged_by.username }}</div>
             </div>
         </div>

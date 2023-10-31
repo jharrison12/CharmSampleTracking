@@ -332,6 +332,19 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine.save()
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        elif collection_type.collection_type in ('Hair','Urine'):
+            form = CollectedBiospecimenHairSalivaForm(data=request.POST, prefix='hair_saliva_form')
+            if form.is_valid():
+                hair_or_saliva = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
+                hair_or_saliva.collected_date_time = form.cleaned_data['date_collected']
+                hair_or_saliva.in_person_remote = form.cleaned_data['in_person_remote']
+                ##TODO link up incentive date
+                #hair_or_saliva.incentive_fk
+                hair_or_saliva.logged_by = request.user
+                hair_or_saliva.save()
+                caregiver_bio.save()
+            return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type.collection_type in BLOOD_TYPES:
             logging.debug(f"in the blood if statement")
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')

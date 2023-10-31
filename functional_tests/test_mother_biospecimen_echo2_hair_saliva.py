@@ -50,26 +50,27 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         collected.send_keys('2023-09-27')
 
         incentive_date = self.browser.find_element(By.ID,"id_hair_saliva_form-incentive_date")
+        incentive_date.clear()
         incentive_date.send_keys('2023-09-27')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Collected Date: Sept. 27, 2023', body)
+        self.assertIn('Collected Date Time: Sept. 27, 2023', body)
 
         #user sees option to choose shipped to wsu or shipped to echo
 
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped Choice Form',form)
 
+        self.assertNotIn('Shipped to WSU',form)
         shipped_to_echo = Select(self.browser.find_element(By.ID,'id_shipped_choice_form-shipped_to_wsu_or_echo'))
         shipped_to_echo.select_by_visible_text('Shipped to Echo')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')
 
         submit.click()
-
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         needed_div = self.browser.find_element(By.ID,'shipped_to_echo_form').text
