@@ -1,7 +1,8 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm,CollectedBiospecimenHairSalivaForm
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm,CollectedBiospecimenHairSalivaForm,\
+ShippedChoiceHairSalivaForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -101,12 +102,17 @@ class CaregiverCollectedSalivaHairFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['date_collected'][0])
 
+class CaregiverShippedChoiceHairSaliva(TestCase):
+
+    def test_bio_shipped_chioce_form_has_shipped_to_wsu(self):
+        form = ShippedChoiceHairSalivaForm()
+        self.assertNotIn('Shipped to WSU',form.as_p())
+
 class CaregiverBioInitialStatusForm(TestCase):
 
     def test_bio_initial_form_has_drop_down_with_collected(self):
         form = InitialBioFormChild()
         self.assertIn('Kit Sent',form.as_p())
-
 
 class CaregiverBioInitialStatusForm(TestCase):
 

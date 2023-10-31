@@ -52,7 +52,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         incentive_date = self.browser.find_element(By.ID,"id_hair_saliva_form-incentive_date")
         incentive_date.clear()
         incentive_date.send_keys('2023-09-27')
-
+        time.sleep(50)
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
@@ -65,7 +65,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.assertIn('Shipped Choice Form',form)
 
         self.assertNotIn('Shipped to WSU',form)
-        shipped_to_echo = Select(self.browser.find_element(By.ID,'id_shipped_choice_form-shipped_to_wsu_or_echo'))
+        shipped_to_echo = Select(self.browser.find_element(By.ID,'id_shipped_chioce_hair_saliva-shipped_to_echo'))
         shipped_to_echo.select_by_visible_text('Shipped to Echo')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')

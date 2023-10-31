@@ -12,6 +12,7 @@ IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
 COLLECTED_NOT = [('C','Collected'),('N','Not Collected'),('X','No Consent')]
 KIT_SENT_NOT = [('K','Kit Sent'),('N','Not Collected'),('X','No Consent')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
+SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
 
 class ReceivedBiospecimenForm(forms.Form):
@@ -107,6 +108,9 @@ class InitialBioFormChild(forms.Form):
 
 class ShippedChoiceForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE)
+
+class ShippedChoiceHairSalivaForm(forms.Form):
+    shipped_to_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE_ECHO)
 
 class ShippedtoWSUForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())

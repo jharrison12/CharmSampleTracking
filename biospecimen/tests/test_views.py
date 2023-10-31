@@ -9,7 +9,8 @@ import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
-    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm, CollectedBiospecimenHairSalivaForm
+    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm, CollectedBiospecimenHairSalivaForm,\
+    ShippedChoiceHairSalivaForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -434,6 +435,23 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
 
         self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenHairSalivaForm)
+
+    def test_echo2_bio_page_shows_shipped_echo_form_if_hair_or_salvia(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.critical(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected': ['C']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                                    data={'hair_saliva_form-in_person_remote': 'I',
+                                          'hair_saliva_form-date_collected':'2023-09-27',
+                                          'hair_saliva_form-incentive_date':'2023-09-27'})
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceHairSalivaForm)
+
 
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
