@@ -58,17 +58,17 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
         collected_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Collected', collected_form)
 
-        in_person_remote = Select(self.browser.find_element(By.ID, 'id_collected_child_urine_stool_form-in_person_remote'))
+        in_person_remote = Select(self.browser.find_element(By.ID, 'id_collected_child_form-in_person_remote'))
         in_person_remote.select_by_visible_text('In Person')
 
-        date_received = self.browser.find_element(By.ID, 'id_collected_child_urine_stool_form-date_received')
+        date_received = self.browser.find_element(By.ID, 'id_collected_child_form-date_received')
         date_received.clear()
         date_received.send_keys('2023-09-27')
 
-        number_of_tubes = self.browser.find_element(By.ID, 'id_collected_child_urine_stool_form-number_of_tubes')
+        number_of_tubes = self.browser.find_element(By.ID, 'id_collected_child_form-number_of_tubes')
         number_of_tubes.send_keys(5)
 
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_urine_stool_form-incentive_date')
+        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-09-27')
 
@@ -154,17 +154,17 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
         collected_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected',collected_form)
 
-        in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_urine_stool_form-in_person_remote'))
+        in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_form-in_person_remote'))
         in_person_remote.select_by_visible_text('In Person')
 
-        date_received = self.browser.find_element(By.ID,'id_collected_child_urine_stool_form-date_received')
+        date_received = self.browser.find_element(By.ID,'id_collected_child_form-date_received')
         date_received.clear()
         date_received.send_keys('2023-09-27')
 
-        number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_urine_stool_form-number_of_tubes')
+        number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_form-number_of_tubes')
         number_of_tubes.send_keys(5)
 
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_urine_stool_form-incentive_date')
+        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-09-27')
 

@@ -6,7 +6,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     KitSent
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -21,7 +21,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     collection_type = child_bio.collection_fk.collection_type_fk.collection_type
     initial_bio_form = None
     kit_sent_form = None
-    collected_child_urine_stool_form = None
+    collected_child_form = None
     shipped_choice_form = None
     shipped_to_echo_form = None
     shipped_to_wsu_form = None
@@ -58,22 +58,22 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
 
     elif request.method=="POST" and 'collected_form_button' in request.POST:
-        form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_urine_stool_form')
-        logging.debug(f"Is collected urine form valid {form.is_valid()}")
+        form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_form')
+        logging.critical(f"Is collected urine form valid {form.is_valid()} form errors {form.errors}")
         if form.is_valid():
             collected = Collected()
             child_bio.status_fk.collected_fk = collected
             collected.received_date = form.cleaned_data['date_received']
             collected.number_of_tubes = form.cleaned_data['number_of_tubes']
             ##todo this will need to be the incentive model!!!
-            collected.incentive_date = form.cleaned_data['number_of_tubes']
+            collected.incentive_date = form.cleaned_data['incentive_date']
             collected.in_person_remote = form.cleaned_data['in_person_remote']
             collected.logged_by = request.user
             collected.save()
             child_bio.status_fk.save()
             child_bio.save()
         else:
-            raise form.errors
+            form.errors
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
@@ -124,7 +124,9 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date and not child_bio.status_fk.collected_fk:
             if collection_type in ('Urine','Stool'):
-                collected_child_urine_stool_form = CollectedChildUrineStoolForm(prefix="collected_child_urine_stool_form")
+                collected_child_form = CollectedChildUrineStoolForm(prefix="collected_child_form")
+            elif collection_type in ('Bloodspots'):
+                collected_child_form = CollectedChildBloodSpotForm(prefix="collected_child_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:
@@ -138,7 +140,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'child_bio_pk':child_bio_pk,
                                                                                               'initial_bio_form':initial_bio_form,
                                                                                               'kit_sent_form':kit_sent_form,
-                                                                                              'collected_child_urine_stool_form':collected_child_urine_stool_form,
+                                                                                              'collected_child_form':collected_child_form,
                                                                                               'shipped_choice_form':shipped_choice_form,
                                                                                               'shipped_to_echo_form': shipped_to_echo_form,
                                                                                               'shipped_to_wsu_form':shipped_to_wsu_form})

@@ -151,6 +151,13 @@ class CollectedChildUrineStoolForm(forms.Form):
     #todo connect this with incentive
     incentive_date = forms.DateField(initial=timezone.now())
 
+class CollectedChildBloodSpotForm(forms.Form):
+    in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
+    date_received = forms.DateField(initial=timezone.now())
+    number_of_cards = forms.IntegerField()
+    #todo connect this with incentive
+    incentive_date = forms.DateField(initial=timezone.now())
+
 class CollectedBiospecimenHairSalivaForm(forms.Form):
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
     date_collected =forms.DateField(initial=timezone.now())

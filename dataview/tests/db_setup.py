@@ -511,6 +511,7 @@ class DatabaseSetup(TestCase):
         self.stool_one = Collection.objects.create(collection_type_fk=self.stool,collection_number_fk=self.number_one)
 
 
+
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
         self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
 
@@ -912,5 +913,14 @@ class DatabaseSetup(TestCase):
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
+
+        self.child_three_bloodspots_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
+                                                                             collection_fk=self.bloodspots_one,
+                                                                             incentive_fk=self.incentive_one,
+                                                                             age_category_fk=self.zero_to_five_age_category,
+                                                                             collection_date=datetime.date(2023, 8, 10)
+                                                                             )
+
+
 
 

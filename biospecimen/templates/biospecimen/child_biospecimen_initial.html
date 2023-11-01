@@ -49,12 +49,12 @@
             </div>
         </div>
     {% endif %}
-    {% if collected_child_urine_stool_form and not child_bio.status_fk.collected_fk %}
+    {% if collected_child_form and not child_bio.status_fk.collected_fk %}
         <div id="collected_information" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
           {% csrf_token %}
               <h2>Collected Form</h2>
-            {{ collected_child_urine_stool_form.as_p }}
+            {{ collected_child_form.as_p }}
           <input type="submit" value="Submit" name="collected_form_button"/>
           </form>
         </div>

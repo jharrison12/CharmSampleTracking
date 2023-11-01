@@ -10,7 +10,7 @@ from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
-    ShippedChoiceHairSalivaForm
+    ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -776,10 +776,10 @@ class ChildBiospecimenPage(DatabaseSetup):
 
     def send_collected_form(self,primary_key):
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={"collected_child_urine_stool_form-in_person_remote": 'I',
-                                          "collected_child_urine_stool_form-date_received":'2023-09-03',
-                                          "collected_child_urine_stool_form-number_of_tubes":'4',
-                                          "collected_child_urine_stool_form-incentive_date":'2023-09-03',
+                                    data={"collected_child_form-in_person_remote": 'I',
+                                          "collected_child_form-date_received":'2023-09-03',
+                                          "collected_child_form-number_of_tubes":'4',
+                                          "collected_child_form-incentive_date":'2023-09-03',
                                           "collected_form_button": ['Submit']
                                           })
         return response
@@ -850,7 +850,28 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.send_kit_form(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
-        self.assertIsInstance(response.context['collected_child_urine_stool_form'], CollectedChildUrineStoolForm)
+        self.assertIsInstance(response.context['collected_child_form'], CollectedChildUrineStoolForm)
+
+    def test_echo2_initial_child_bloodspots_shows_collected__form(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['collected_child_form'], CollectedChildBloodSpotForm)
+
+    def test_echo2_initial_child_bloodspots_redirects_after_kit_sent_form_submitted(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
+        response = self.send_kit(primary_key,'K')
+
+        self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+    def test_echo2_initial_child_bloodspots_redirects_after_collected_form_submitted(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
+        response = self.send_collected_form(primary_key)
+        self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
     def test_echo2_initial_child_urine_redirects_after_collected_form_submitted(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
