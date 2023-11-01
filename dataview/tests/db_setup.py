@@ -460,6 +460,7 @@ class DatabaseSetup(TestCase):
         self.toenail = CollectionType.objects.create(collection_type='Toenail')
         self.saliva = CollectionType.objects.create(collection_type='Saliva')
         self.placenta = CollectionType.objects.create(collection_type='Placenta')
+        self.stool = CollectionType.objects.create(collection_type='Stool')
 
         self.number_one = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.FIRST)
         self.number_two = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.SECOND)
@@ -500,13 +501,15 @@ class DatabaseSetup(TestCase):
 
         self.hair_early_childhood = Collection.objects.create(collection_type_fk=self.hair, collection_number_fk=self.number_early_childhood)
         self.hair_number_one = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_one)
-        self.hair_none = Collection.objects.create(collection_type_fk=self.hair,collection_number_fk=self.number_three)
+        self.hair_none = Collection.objects.create(collection_type_fk=self.hair)
 
         self.toenail_earlychildhood = Collection.objects.create(collection_type_fk=self.toenail, collection_number_fk=self.number_early_childhood)
         self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
 
-        self.saliva = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
-        # self.saliva_none = Collection.objects.create(collection_type_fk=self.saliva)
+        self.saliva_one = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+
+        self.stool_one = Collection.objects.create(collection_type_fk=self.stool,collection_number_fk=self.number_one)
+
 
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
         self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
@@ -798,7 +801,7 @@ class DatabaseSetup(TestCase):
         self.biospecimen_salvia_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_processed_complete_eleven,
-            collection_fk=self.saliva,
+            collection_fk=self.saliva_one,
             incentive_fk=self.incentive_one,
             biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111SA',
             project_fk=self.echo1)
@@ -901,6 +904,13 @@ class DatabaseSetup(TestCase):
                                                                              incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15)
+                                                                             )
+
+        self.child_three_stool_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
+                                                                             collection_fk=self.stool_one,
+                                                                             incentive_fk=self.incentive_one,
+                                                                             age_category_fk=self.zero_to_five_age_category,
+                                                                             collection_date=datetime.date(2023, 8, 10)
                                                                              )
 
 
