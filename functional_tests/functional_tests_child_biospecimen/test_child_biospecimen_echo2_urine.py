@@ -6,7 +6,7 @@ import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
 
-class ChildBioSpecimenEntry(FunctionalTest):
+class ChildBioSpecimenEntryUrine(FunctionalTest):
 
     def return_child_bio_pk(self,child_id,collection_type,age):
         child_object = Child.objects.get(charm_project_identifier=child_id)

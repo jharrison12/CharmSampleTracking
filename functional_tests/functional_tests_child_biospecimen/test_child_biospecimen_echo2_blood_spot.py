@@ -6,7 +6,7 @@ import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
 
-class ChildBioSpecimenEntry(FunctionalTest):
+class ChildBioSpecimenEntryBloodSpot(FunctionalTest):
 
     def return_child_bio_pk(self,child_id,collection_type,age):
         child_object = Child.objects.get(charm_project_identifier=child_id)
@@ -20,9 +20,9 @@ class ChildBioSpecimenEntry(FunctionalTest):
         return self.browser.find_element(By.TAG_NAME,'body').text
 
 
-    def test_user_can_choose_status_of_child_urine_information_chooses_kit_sent_shipped_wsu(self):
-        # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+    def test_user_can_choose_status_of_child_blood_spots_information_chooses_kit_sent_shipped_wsu(self):
+        # User visits the caregiver biospecimen page and sees blood_spots
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
@@ -58,17 +58,17 @@ class ChildBioSpecimenEntry(FunctionalTest):
         collected_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Collected', collected_form)
 
-        in_person_remote = Select(self.browser.find_element(By.ID, 'id_collected_child_urine_form-in_person_remote'))
+        in_person_remote = Select(self.browser.find_element(By.ID, 'id_collected_child_blood_spots_form-in_person_remote'))
         in_person_remote.select_by_visible_text('In Person')
 
-        date_received = self.browser.find_element(By.ID, 'id_collected_child_urine_form-date_received')
+        date_received = self.browser.find_element(By.ID, 'id_collected_child_blood_spots_form-date_received')
         date_received.clear()
         date_received.send_keys('2023-09-27')
 
-        number_of_tubes = self.browser.find_element(By.ID, 'id_collected_child_urine_form-number_of_tubes')
+        number_of_tubes = self.browser.find_element(By.ID, 'id_collected_child_blood_spots_form-number_of_tubes')
         number_of_tubes.send_keys(5)
 
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_urine_form-incentive_date')
+        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_blood_spots_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-09-27')
 
@@ -117,9 +117,9 @@ class ChildBioSpecimenEntry(FunctionalTest):
         self.assertIn('Courier: FedEx',body_text)
 
 
-    def test_user_can_choose_status_of_urine_information_chooses_kit_sent_collected_shipped_echo(self):
-        # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+    def test_user_can_choose_status_of_blood_spots_information_chooses_kit_sent_collected_shipped_echo(self):
+        # User visits the caregiver biospecimen page and sees blood_spots
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
@@ -154,17 +154,17 @@ class ChildBioSpecimenEntry(FunctionalTest):
         collected_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected',collected_form)
 
-        in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_urine_form-in_person_remote'))
+        in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_blood_spots_form-in_person_remote'))
         in_person_remote.select_by_visible_text('In Person')
 
-        date_received = self.browser.find_element(By.ID,'id_collected_child_urine_form-date_received')
+        date_received = self.browser.find_element(By.ID,'id_collected_child_blood_spots_form-date_received')
         date_received.clear()
         date_received.send_keys('2023-09-27')
 
-        number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_urine_form-number_of_tubes')
+        number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_blood_spots_form-number_of_tubes')
         number_of_tubes.send_keys(5)
 
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_urine_form-incentive_date')
+        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_blood_spots_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-09-27')
 
@@ -200,9 +200,9 @@ class ChildBioSpecimenEntry(FunctionalTest):
         self.assertIn('Shipped to Echo Date: Sept. 27, 2023',body_text)
 
 
-    def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
-        # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+    def test_user_can_choose_status_of_blood_spots_information_chooses_not_collected(self):
+        # User visits the caregiver biospecimen page and sees blood_spots
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
         #user sees initial form and submits collected
@@ -223,9 +223,9 @@ class ChildBioSpecimenEntry(FunctionalTest):
         self.assertIn('Not Collected', body_text)
 
 
-    def test_user_can_choose_status_of_urine_information_chooses_no_consent(self):
-        # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+    def test_user_can_choose_status_of_blood_spots_information_chooses_no_consent(self):
+        # User visits the caregiver biospecimen page and sees blood_spots
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
         #user sees initial form and submits collected
