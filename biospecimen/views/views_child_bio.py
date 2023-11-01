@@ -6,7 +6,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     KitSent
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineForm
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -18,9 +18,10 @@ logging.basicConfig(level=logging.CRITICAL)
 @login_required
 def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     child_bio = ChildBiospecimen.objects.get(pk=child_bio_pk)
+    collection_type = child_bio.collection_fk.collection_type_fk.collection_type
     initial_bio_form = None
     kit_sent_form = None
-    collected_child_urine_form = None
+    collected_child_urine_stool_form = None
     shipped_choice_form = None
     shipped_to_echo_form = None
     shipped_to_wsu_form = None
@@ -57,7 +58,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
 
     elif request.method=="POST" and 'collected_form_button' in request.POST:
-        form = CollectedChildUrineForm(data=request.POST,prefix='collected_child_urine_form')
+        form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_urine_stool_form')
         logging.debug(f"Is collected urine form valid {form.is_valid()}")
         if form.is_valid():
             collected = Collected()
@@ -122,7 +123,8 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and not child_bio.status_fk.kit_sent_fk.kit_sent_date:
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date and not child_bio.status_fk.collected_fk:
-            collected_child_urine_form = CollectedChildUrineForm(prefix="collected_child_urine_form")
+            if collection_type in ('Urine','Stool'):
+                collected_child_urine_stool_form = CollectedChildUrineStoolForm(prefix="collected_child_urine_stool_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:
@@ -136,7 +138,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'child_bio_pk':child_bio_pk,
                                                                                               'initial_bio_form':initial_bio_form,
                                                                                               'kit_sent_form':kit_sent_form,
-                                                                                              'collected_child_urine_form':collected_child_urine_form,
+                                                                                              'collected_child_urine_stool_form':collected_child_urine_stool_form,
                                                                                               'shipped_choice_form':shipped_choice_form,
                                                                                               'shipped_to_echo_form': shipped_to_echo_form,
                                                                                               'shipped_to_wsu_form':shipped_to_wsu_form})
