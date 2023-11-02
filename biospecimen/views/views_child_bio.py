@@ -176,4 +176,4 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'shipped_choice_form':shipped_choice_form,
                                                                                               'shipped_to_echo_form': shipped_to_echo_form,
                                                                                               'shipped_to_wsu_form':shipped_to_wsu_form,
-                                                                                              'urine_saliva': ['Urine','Saliva']})
+                                                                                              'urine_stool': ['Urine','Stool']})
