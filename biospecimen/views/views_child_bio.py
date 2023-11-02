@@ -7,7 +7,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
-CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild
+CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,CollectedChildToothForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -103,6 +103,19 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 collected.save()
                 child_bio.status_fk.save()
                 child_bio.save()
+        elif collection_type=='Tooth' and child_bio.age_category_fk.age_category=='ST':
+            form = CollectedChildToothForm(data=request.POST, prefix='collected_child_form')
+            logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
+            if form.is_valid():
+                collected = Collected()
+                child_bio.status_fk.collected_fk = collected
+                collected.collected_date_time = form.cleaned_data['date_collected']
+                ##todo this will need to be the incentive model!!!
+                collected.incentive_date = form.cleaned_data['incentive_date']
+                collected.logged_by = request.user
+                collected.save()
+                child_bio.status_fk.save()
+                child_bio.save()
         else:
             AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
@@ -147,7 +160,10 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
     else:
         if child_bio.status_fk==None:
-            initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")
+            if collection_type=='Tooth':
+                initial_bio_form = InitialBioFormChildTooth(prefix="initial_bio_form")
+            else:
+                initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and not child_bio.status_fk.kit_sent_fk.kit_sent_date:
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date and not child_bio.status_fk.collected_fk:
@@ -159,6 +175,10 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             elif child_bio.age_category_fk.age_category=='TT':
                 if collection_type in ('Bloodspots','Hair'):
                     collected_child_form = CollectedChildBloodSpotHairFormOneYear(prefix="collected_child_form")
+            elif child_bio.age_category_fk.age_category=='ST':
+                #I am keeping this logic in case they want to add more biospecimens
+                if collection_type=='Tooth':
+                    collected_child_form = CollectedChildToothForm(prefix="collected_child_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:

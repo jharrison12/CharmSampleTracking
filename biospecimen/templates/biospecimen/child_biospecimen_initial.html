@@ -58,7 +58,7 @@
           <input type="submit" value="Submit" name="collected_form_button"/>
           </form>
         </div>
-    {% elif child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date %}
+    {% elif child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time %}
         <div id="collected_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}
@@ -66,12 +66,17 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Collected</button>
             </div>
             <div class="col-8">
-                <div>Date Received:{{ child_bio.status_fk.collected_fk.received_date }}</div>
-                <div>In Person or Remote: {{ child_bio.status_fk.collected_fk.get_in_person_remote_display  }}</div>
+                {% if child_bio.collection_fk.collection_type_fk.collection_type == 'Tooth' %}
+                    <div>Date Collected:{{ child_bio.status_fk.collected_fk.collected_date_time }}</div>
+                {% endif %}
                 {% if child_bio.collection_fk.collection_type_fk.collection_type in urine_stool  %}
                     <div>Number of Tubes: {{ child_bio.status_fk.collected_fk.number_of_tubes }}</div>
                 {% elif child_bio.collection_fk.collection_type_fk.collection_type == 'Bloodspots' and child_bio.age_category_fk.age_category == 'ZF' %}
                     <div>Number of Cards: {{ child_bio.status_fk.collected_fk.number_of_cards }}</div>
+                {% endif %}
+                {% if child_bio.collection_fk.collection_type_fk.collection_type != 'Tooth' %}
+                <div>Date Received:{{ child_bio.status_fk.collected_fk.received_date }}</div>
+                <div>In Person or Remote: {{ child_bio.status_fk.collected_fk.get_in_person_remote_display  }}</div>
                 {% endif %}
                 <div>Incentive Date: {{ child_bio.status_fk.collected_fk.incentive_fk.incentive_date }}</div>
                 <div>Logged By: {{ child_bio.status_fk.collected_fk.logged_by.username }}</div>

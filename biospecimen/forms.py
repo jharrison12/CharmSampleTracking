@@ -9,8 +9,9 @@ from django.utils import timezone
 
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
-COLLECTED_NOT = [('C','Collected'),('N','Not Collected'),('X','No Consent')]
-KIT_SENT_NOT = [('K','Kit Sent'),('N','Not Collected'),('X','No Consent')]
+COLLECTED_NOT_COLLECTED_NO_CONSENT = [('C', 'Collected'), ('N', 'Not Collected'), ('X', 'No Consent')]
+KIT_SENT_NOT_COLLECTED_NO_CONSENT = [('K', 'Kit Sent'), ('N', 'Not Collected'), ('X', 'No Consent')]
+KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
@@ -100,11 +101,13 @@ class CollectedBiospecimenUrineForm(forms.Form):
         }
 
 class InitialBioForm(forms.Form):
-    collected_not_collected = forms.ChoiceField(widget=forms.Select,choices=COLLECTED_NOT)
+    collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED_NO_CONSENT)
 
 class InitialBioFormChild(forms.Form):
-    collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select,choices=KIT_SENT_NOT)
+    collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED_NO_CONSENT)
 
+class InitialBioFormChildTooth(forms.Form):
+    collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED)
 
 class ShippedChoiceForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE)
@@ -169,5 +172,10 @@ class CollectedBiospecimenHairSalivaForm(forms.Form):
 class CollectedChildBloodSpotHairFormOneYear(forms.Form):
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
     date_received =forms.DateField(initial=timezone.now())
+    #todo connect this with incentive
+    incentive_date = forms.DateField(initial=timezone.now())
+
+class CollectedChildToothForm(forms.Form):
+    date_collected =forms.DateField(initial=timezone.now())
     #todo connect this with incentive
     incentive_date = forms.DateField(initial=timezone.now())

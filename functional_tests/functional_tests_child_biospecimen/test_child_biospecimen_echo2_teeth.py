@@ -57,13 +57,12 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         collected_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected',collected_form)
         self.assertNotIn('number of cards',collected_form.lower())
+        self.assertNotIn('in person remote',collected_form.lower())
 
-        in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_form-in_person_remote'))
-        in_person_remote.select_by_visible_text('In Person')
 
-        date_received = self.browser.find_element(By.ID,'id_collected_child_form-date_received')
-        date_received.clear()
-        date_received.send_keys('2023-09-27')
+        date_collected = self.browser.find_element(By.ID,'id_collected_child_form-date_collected')
+        date_collected.clear()
+        date_collected.send_keys('2023-09-27')
 
         incentive_date = self.browser.find_element(By.ID, 'id_collected_child_form-incentive_date')
         incentive_date.clear()
@@ -73,9 +72,6 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         submit.click()
 
         #USer now sees the collected information and the shipped to echo ro shipped to wsu form
-
-        body_text = self.webpage_text()
-        self.assertIn('In Person or Remote: In Person',body_text)
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertNotIn('Shipped to WSU',shipped_choice_form)
