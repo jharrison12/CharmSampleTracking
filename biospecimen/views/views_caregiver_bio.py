@@ -405,9 +405,9 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     if request.method=="POST":
-        logging.critical(f"post is {request.POST}")
+        logging.debug(f"post is {request.POST}")
         form = ShippedChoiceForm(data=request.POST, prefix='shipped_choice_form')
-        logging.critical(f"is shipped form valid {form.is_valid()}  {form.errors}")
+        logging.debug(f"is shipped form valid {form.is_valid()}  {form.errors}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
                 shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)

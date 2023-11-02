@@ -22,7 +22,7 @@ class ChildBioSpecimenEntryBloodSpot(FunctionalTest):
 
     def test_user_can_choose_status_of_child_blood_spots_information_chooses_kit_sent_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 
@@ -76,9 +76,9 @@ class ChildBioSpecimenEntryBloodSpot(FunctionalTest):
         submit.click()
 
         # USer now sees the collected information and the shipped to echo ro shipped to wsu form
-
         body_text = self.webpage_text()
         self.assertIn('In Person or Remote: In Person', body_text)
+        self.assertIn('Number of Cards: 4', body_text)
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Shipped to WSU', shipped_choice_form)

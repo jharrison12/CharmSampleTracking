@@ -58,22 +58,38 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
 
     elif request.method=="POST" and 'collected_form_button' in request.POST:
-        form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_form')
-        logging.critical(f"Is collected urine form valid {form.is_valid()} form errors {form.errors}")
-        if form.is_valid():
-            collected = Collected()
-            child_bio.status_fk.collected_fk = collected
-            collected.received_date = form.cleaned_data['date_received']
-            collected.number_of_tubes = form.cleaned_data['number_of_tubes']
-            ##todo this will need to be the incentive model!!!
-            collected.incentive_date = form.cleaned_data['incentive_date']
-            collected.in_person_remote = form.cleaned_data['in_person_remote']
-            collected.logged_by = request.user
-            collected.save()
-            child_bio.status_fk.save()
-            child_bio.save()
+        if collection_type in ('Urine','Stool'):
+            form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_form')
+            logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
+            if form.is_valid():
+                collected = Collected()
+                child_bio.status_fk.collected_fk = collected
+                collected.received_date = form.cleaned_data['date_received']
+                collected.number_of_tubes = form.cleaned_data['number_of_tubes']
+                ##todo this will need to be the incentive model!!!
+                collected.incentive_date = form.cleaned_data['incentive_date']
+                collected.in_person_remote = form.cleaned_data['in_person_remote']
+                collected.logged_by = request.user
+                collected.save()
+                child_bio.status_fk.save()
+                child_bio.save()
+        elif collection_type in ('Bloodspots'):
+            form = CollectedChildBloodSpotForm(data=request.POST, prefix='collected_child_form')
+            logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
+            if form.is_valid():
+                collected = Collected()
+                child_bio.status_fk.collected_fk = collected
+                collected.received_date = form.cleaned_data['date_received']
+                collected.number_of_cards = form.cleaned_data['number_of_cards']
+                ##todo this will need to be the incentive model!!!
+                collected.incentive_date = form.cleaned_data['incentive_date']
+                collected.in_person_remote = form.cleaned_data['in_person_remote']
+                collected.logged_by = request.user
+                collected.save()
+                child_bio.status_fk.save()
+                child_bio.save()
         else:
-            form.errors
+            AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
@@ -143,4 +159,5 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'collected_child_form':collected_child_form,
                                                                                               'shipped_choice_form':shipped_choice_form,
                                                                                               'shipped_to_echo_form': shipped_to_echo_form,
-                                                                                              'shipped_to_wsu_form':shipped_to_wsu_form})
+                                                                                              'shipped_to_wsu_form':shipped_to_wsu_form,
+                                                                                              'urine_saliva': ['Urine','Saliva']})

@@ -79,6 +79,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
 
         body_text = self.webpage_text()
         self.assertIn('In Person or Remote: In Person', body_text)
+        self.assertIn('Number of Tubes: 5', body_text)
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Shipped to WSU', shipped_choice_form)

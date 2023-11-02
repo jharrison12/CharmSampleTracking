@@ -74,6 +74,7 @@ class Collected(models.Model):
     placed_in_formalin_date_time = models.DateTimeField(null=True,blank=True)
     received_date = models.DateField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True)
+    number_of_cards = models.IntegerField(null=True,blank=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=False,blank=False)
 
     class InpersonRemoteChoices(models.TextChoices):
