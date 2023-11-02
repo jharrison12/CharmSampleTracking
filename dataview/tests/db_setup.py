@@ -930,6 +930,12 @@ class DatabaseSetup(TestCase):
                                                                              )
 
 
+        self.child_three_hair_12_to_13_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
+                                                                             collection_fk=self.hair_number_one,
+                                                                             incentive_fk=self.incentive_one,
+                                                                             age_category_fk=self.twelve_to_thirteen_months,
+                                                                             collection_date=datetime.date(2023, 8, 10)
+                                                                             )
 
 
 

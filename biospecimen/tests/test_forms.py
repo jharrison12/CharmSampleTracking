@@ -2,7 +2,7 @@ from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
-ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotFormOneYear,ShippedtoWSUFormChild
+ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -104,12 +104,12 @@ class ShippedtoWSUChildFormTest(TestCase):
 class CollectedChildBloodSpotOneYearFormTest(TestCase):
 
     def test_form_does_not_contain_number_of_tubes(self):
-        form = CollectedChildBloodSpotFormOneYear()
+        form = CollectedChildBloodSpotHairFormOneYear()
         print(type(form))
         self.assertNotIn('Number of tubes',form.as_p())
 
     def test_form_does_containt_number_of_cards(self):
-        form = CollectedChildBloodSpotFormOneYear()
+        form = CollectedChildBloodSpotHairFormOneYear()
         self.assertNotIn('Number of cards',form.as_p())
 
 class CaregiverCollectedFormTest(TestCase):

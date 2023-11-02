@@ -7,7 +7,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
-CollectedChildBloodSpotFormOneYear,ShippedtoWSUFormChild
+CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -89,8 +89,8 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 collected.save()
                 child_bio.status_fk.save()
                 child_bio.save()
-        elif collection_type in ('Bloodspots') and child_bio.age_category_fk.age_category=='TT':
-            form = CollectedChildBloodSpotFormOneYear(data=request.POST, prefix='collected_child_form')
+        elif collection_type in ('Bloodspots','Hair') and child_bio.age_category_fk.age_category=='TT':
+            form = CollectedChildBloodSpotHairFormOneYear(data=request.POST, prefix='collected_child_form')
             logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
                 collected = Collected()
@@ -157,8 +157,8 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 elif collection_type in ('Bloodspots'):
                     collected_child_form = CollectedChildBloodSpotForm(prefix="collected_child_form")
             elif child_bio.age_category_fk.age_category=='TT':
-                if collection_type=='Bloodspots':
-                    collected_child_form = CollectedChildBloodSpotFormOneYear(prefix="collected_child_form")
+                if collection_type in ('Bloodspots','Hair'):
+                    collected_child_form = CollectedChildBloodSpotHairFormOneYear(prefix="collected_child_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:

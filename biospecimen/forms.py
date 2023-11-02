@@ -166,7 +166,7 @@ class CollectedBiospecimenHairSalivaForm(forms.Form):
     #todo connect this with incentive
     incentive_date = forms.DateField(initial=timezone.now())
 
-class CollectedChildBloodSpotFormOneYear(forms.Form):
+class CollectedChildBloodSpotHairFormOneYear(forms.Form):
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
     date_received =forms.DateField(initial=timezone.now())
     #todo connect this with incentive

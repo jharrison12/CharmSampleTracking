@@ -10,7 +10,7 @@ from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
-    ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotFormOneYear,ShippedtoWSUFormChild
+    ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -875,7 +875,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         self.send_kit_form(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
-        self.assertIsInstance(response.context['collected_child_form'], CollectedChildBloodSpotFormOneYear)
+        self.assertIsInstance(response.context['collected_child_form'], CollectedChildBloodSpotHairFormOneYear)
 
     def test_echo2_initial_child_bloodspots_redirects_after_kit_sent_form_submitted(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
