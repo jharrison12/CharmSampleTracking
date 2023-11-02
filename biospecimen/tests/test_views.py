@@ -10,7 +10,7 @@ from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
-    ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm
+    ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotFormOneYear,ShippedtoWSUFormChild
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -864,13 +864,27 @@ class ChildBiospecimenPage(DatabaseSetup):
     def test_echo2_initial_child_bloodspots_shows_collected__form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
         self.send_kit(primary_key,'K')
-        response = self.send_kit_form(primary_key)
+        self.send_kit_form(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
         self.assertIsInstance(response.context['collected_child_form'], CollectedChildBloodSpotForm)
 
+    def test_echo2_initial_child_bloodspots_12_to_13_shows_collected_form(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'TT')
+        self.send_kit(primary_key,'K')
+        self.send_kit_form(primary_key)
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['collected_child_form'], CollectedChildBloodSpotFormOneYear)
+
     def test_echo2_initial_child_bloodspots_redirects_after_kit_sent_form_submitted(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
+        response = self.send_kit(primary_key,'K')
+
+        self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+    def test_echo2_initial_child_bloodspots_12_to_13_redirects_after_kit_sent_form_submitted(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'TT')
         response = self.send_kit(primary_key,'K')
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
@@ -949,7 +963,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.send_collected_form(primary_key,'Urine')
         response = self.send_wsu_or_echo(primary_key, 'W')
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
-        self.assertIsInstance(response.context['shipped_to_wsu_form'], ShippedtoWSUForm)
+        self.assertIsInstance(response.context['shipped_to_wsu_form'], ShippedtoWSUFormChild)
 
 
 class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):

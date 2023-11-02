@@ -119,9 +119,11 @@ class ShippedtoWSUForm(forms.Form):
     logged_date_time = forms.DateTimeField()
     courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
 
-class ShippedtoEchoForm(forms.Form):
+class ShippedtoWSUFormChild(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
 
+class ShippedtoEchoForm(forms.Form):
+    shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
 
 class CollectedBloodForm(forms.Form):
     collected_date_time = forms.DateTimeField(initial=timezone.now())
@@ -161,5 +163,11 @@ class CollectedChildBloodSpotForm(forms.Form):
 class CollectedBiospecimenHairSalivaForm(forms.Form):
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
     date_collected =forms.DateField(initial=timezone.now())
+    #todo connect this with incentive
+    incentive_date = forms.DateField(initial=timezone.now())
+
+class CollectedChildBloodSpotFormOneYear(forms.Form):
+    in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
+    date_received =forms.DateField(initial=timezone.now())
     #todo connect this with incentive
     incentive_date = forms.DateField(initial=timezone.now())

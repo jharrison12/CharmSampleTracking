@@ -308,30 +308,19 @@ class ChildBioSpecimenEntryBloodSpot(FunctionalTest):
         # User sees shipped to echo form and submits a date time
         wsu_shipped_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Shipped to WSU', wsu_shipped_form)
-
-        shipped_date_time = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-shipped_date_and_time')
-        shipped_date_time.clear()
-        shipped_date_time.send_keys('2023-09-27 12:52:26')
-
-        tracking_number = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-tracking_number')
-        tracking_number.send_keys(55555)
-
-        number_of_tubes = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-number_of_tubes')
-        number_of_tubes.clear()
-        number_of_tubes.send_keys(5)
-
-        logged_date_time = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-logged_date_time')
-        logged_date_time.clear()
-        logged_date_time.send_keys('2023-09-27 12:52:26')
-
-        courier = Select(self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-courier'))
-        courier.select_by_visible_text('FedEx')
+        self.assertNotIn('tracking number', wsu_shipped_form.lower())
+        self.assertNotIn('number of tubes', wsu_shipped_form.lower())
+        self.assertNotIn('courier', wsu_shipped_form.lower())
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_div"]/form/input[2]')
         submit.click()
 
         body_text = self.webpage_text()
-        self.assertIn('Courier: FedEx',body_text)
+        self.assertIn('shipped to wsu', body_text.lower())
+        self.assertNotIn('tracking number', body_text.lower())
+        self.assertNotIn('number of tubes', body_text.lower())
+        self.assertNotIn('courier', body_text.lower())
+
 
 
     def test_user_can_choose_status_of_blood_spots_twelve_to_thirteen_months_cooses_kit_sent_collected_shipped_echo(self):

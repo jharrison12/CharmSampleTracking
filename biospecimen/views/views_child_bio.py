@@ -6,7 +6,8 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     KitSent
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
+CollectedChildBloodSpotFormOneYear,ShippedtoWSUFormChild
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -58,7 +59,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
 
     elif request.method=="POST" and 'collected_form_button' in request.POST:
-        if collection_type in ('Urine','Stool'):
+        if collection_type in ('Urine','Stool') and child_bio.age_category_fk.age_category=='ZF':
             form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_form')
             logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
@@ -73,7 +74,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 collected.save()
                 child_bio.status_fk.save()
                 child_bio.save()
-        elif collection_type in ('Bloodspots'):
+        elif collection_type in ('Bloodspots') and child_bio.age_category_fk.age_category=='ZF':
             form = CollectedChildBloodSpotForm(data=request.POST, prefix='collected_child_form')
             logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
@@ -81,6 +82,20 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 child_bio.status_fk.collected_fk = collected
                 collected.received_date = form.cleaned_data['date_received']
                 collected.number_of_cards = form.cleaned_data['number_of_cards']
+                ##todo this will need to be the incentive model!!!
+                collected.incentive_date = form.cleaned_data['incentive_date']
+                collected.in_person_remote = form.cleaned_data['in_person_remote']
+                collected.logged_by = request.user
+                collected.save()
+                child_bio.status_fk.save()
+                child_bio.save()
+        elif collection_type in ('Bloodspots') and child_bio.age_category_fk.age_category=='TT':
+            form = CollectedChildBloodSpotFormOneYear(data=request.POST, prefix='collected_child_form')
+            logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
+            if form.is_valid():
+                collected = Collected()
+                child_bio.status_fk.collected_fk = collected
+                collected.received_date = form.cleaned_data['date_received']
                 ##todo this will need to be the incentive model!!!
                 collected.incentive_date = form.cleaned_data['incentive_date']
                 collected.in_person_remote = form.cleaned_data['in_person_remote']
@@ -122,13 +137,10 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_to_wsu_form_button' in request.POST:
-        form = ShippedtoWSUForm(data=request.POST, prefix='child_shipped_to_wsu_form')
+        form = ShippedtoWSUFormChild(data=request.POST, prefix='child_shipped_to_wsu_form')
         logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors}")
         if form.is_valid():
             child_bio.status_fk.shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-            child_bio.status_fk.shipped_wsu_fk.number_of_tubes= form.cleaned_data['number_of_tubes']
-            child_bio.status_fk.shipped_wsu_fk.courier = form.cleaned_data['courier']
-            child_bio.status_fk.shipped_wsu_fk.tracking_number = form.cleaned_data['tracking_number']
             child_bio.status_fk.shipped_wsu_fk.shipped_by = request.user
             child_bio.status_fk.shipped_wsu_fk.save()
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
@@ -139,16 +151,20 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and not child_bio.status_fk.kit_sent_fk.kit_sent_date:
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date and not child_bio.status_fk.collected_fk:
-            if collection_type in ('Urine','Stool'):
-                collected_child_form = CollectedChildUrineStoolForm(prefix="collected_child_form")
-            elif collection_type in ('Bloodspots'):
-                collected_child_form = CollectedChildBloodSpotForm(prefix="collected_child_form")
+            if child_bio.age_category_fk.age_category=='ZF':
+                if collection_type in ('Urine','Stool'):
+                    collected_child_form = CollectedChildUrineStoolForm(prefix="collected_child_form")
+                elif collection_type in ('Bloodspots'):
+                    collected_child_form = CollectedChildBloodSpotForm(prefix="collected_child_form")
+            elif child_bio.age_category_fk.age_category=='TT':
+                if collection_type=='Bloodspots':
+                    collected_child_form = CollectedChildBloodSpotFormOneYear(prefix="collected_child_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:
             shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
         elif child_bio.status_fk.shipped_wsu_fk and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
-            shipped_to_wsu_form = ShippedtoWSUForm(prefix="child_shipped_to_wsu_form")
+            shipped_to_wsu_form = ShippedtoWSUFormChild(prefix="child_shipped_to_wsu_form")
         else:
             pass
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,

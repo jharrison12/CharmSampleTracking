@@ -2,7 +2,7 @@ from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
-ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm
+ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotFormOneYear,ShippedtoWSUFormChild
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -85,12 +85,32 @@ class CollectedChildBloodSpotFormTest(TestCase):
 
     def test_form_does_not_contain_number_of_tubes(self):
         form = CollectedChildBloodSpotForm()
-        print(type(form))
         self.assertNotIn('Number of tubes',form.as_p())
 
     def test_form_does_containt_number_of_cards(self):
         form = CollectedChildBloodSpotForm()
         self.assertIn('Number of cards',form.as_p())
+
+class ShippedtoWSUChildFormTest(TestCase):
+
+    def test_form_does_not_contain_number_of_tubes(self):
+        form = ShippedtoWSUFormChild()
+        self.assertNotIn('Number of tubes',form.as_p())
+
+    def test_form_does_containt_number_of_cards(self):
+        form = ShippedtoWSUFormChild()
+        self.assertNotIn('Number of cards',form.as_p())
+
+class CollectedChildBloodSpotOneYearFormTest(TestCase):
+
+    def test_form_does_not_contain_number_of_tubes(self):
+        form = CollectedChildBloodSpotFormOneYear()
+        print(type(form))
+        self.assertNotIn('Number of tubes',form.as_p())
+
+    def test_form_does_containt_number_of_cards(self):
+        form = CollectedChildBloodSpotFormOneYear()
+        self.assertNotIn('Number of cards',form.as_p())
 
 class CaregiverCollectedFormTest(TestCase):
 
