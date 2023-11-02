@@ -552,6 +552,7 @@ class AgeCategory(models.Model):
         MIDDLE_CHILDHOOD = 'MC', _('Middle Childhood')
         LATE_CHILDHOOD = 'LC', _('Late Childhood')
         ZERO_TO_FIVE = 'ZF', _('Zero to Five Months')
+        TWELVE_TO_THIRTEEN_MONTHS = 'TT', _('Twelve to Thirteen Months')
 
     age_category = models.CharField(max_length=2,choices=AgeCategoryChoice.choices)
 

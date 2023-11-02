@@ -135,6 +135,7 @@ class DatabaseSetup(TestCase):
 
         self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
         self.zero_to_five_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.ZERO_TO_FIVE)
+        self.twelve_to_thirteen_months = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.TWELVE_TO_THIRTEEN_MONTHS)
 
         #create primary care_giver
 
@@ -920,6 +921,14 @@ class DatabaseSetup(TestCase):
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
+
+        self.child_three_bloodspots_12_to_13_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
+                                                                             collection_fk=self.bloodspots_one,
+                                                                             incentive_fk=self.incentive_one,
+                                                                             age_category_fk=self.twelve_to_thirteen_months,
+                                                                             collection_date=datetime.date(2023, 8, 10)
+                                                                             )
+
 
 
 
