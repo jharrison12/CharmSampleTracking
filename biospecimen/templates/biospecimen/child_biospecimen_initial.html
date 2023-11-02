@@ -127,11 +127,6 @@
             </div>
             <div class="col-8">
                 <div>Shipped to WSU Date: {{ child_bio.status_fk.shipped_wsu_fk.shipped_date_time }}</div>
-                <div>Shipped Byd: {{ child_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>
-                <div>Tracking Number: {{ child_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
-                <div>Courier: {{ child_bio.status_fk.shipped_wsu_fk.get_courier_display }}</div>
-                <div>Number of Tubes: {{ child_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
-                <div>Logged Date: {{ child_bio.status_fk.shipped_wsu_fk.logged_date_time }}</div>
             </div>
         </div>
     {% endif %}

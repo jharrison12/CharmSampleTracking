@@ -104,7 +104,11 @@ class ChildBioSpecimenEntryBloodSpot(FunctionalTest):
         submit.click()
 
         body_text = self.webpage_text()
-        self.assertIn('Courier: FedEx',body_text)
+        self.assertIn('Shipped to WSU Date: Sept. 27, 2023',body_text)
+        self.assertIn('shipped to wsu', body_text.lower())
+        self.assertNotIn('tracking number', body_text.lower())
+        self.assertNotIn('number of tubes', body_text.lower())
+        self.assertNotIn('courier', body_text.lower())
 
 
     def test_user_can_choose_status_of_blood_spots_information_chooses_kit_sent_collected_shipped_echo(self):
@@ -312,11 +316,15 @@ class ChildBioSpecimenEntryBloodSpot(FunctionalTest):
         self.assertNotIn('number of tubes', wsu_shipped_form.lower())
         self.assertNotIn('courier', wsu_shipped_form.lower())
 
+        shipped_date = self.browser.find_element(By.ID, 'id_child_shipped_to_wsu_form-shipped_date_and_time')
+        shipped_date.clear()
+        shipped_date.send_keys('2023-09-27 12:52:26')
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_div"]/form/input[2]')
         submit.click()
 
         body_text = self.webpage_text()
-        self.assertIn('shipped to wsu', body_text.lower())
+        self.assertIn('shipped to wsu date: sept. 27, 2023, 12:52 p.m.', body_text.lower())
         self.assertNotIn('tracking number', body_text.lower())
         self.assertNotIn('number of tubes', body_text.lower())
         self.assertNotIn('courier', body_text.lower())
