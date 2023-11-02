@@ -136,6 +136,7 @@ class DatabaseSetup(TestCase):
         self.early_childhood_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.EARLY_CHILDHOOD)
         self.zero_to_five_age_category = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.ZERO_TO_FIVE)
         self.twelve_to_thirteen_months = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.TWELVE_TO_THIRTEEN_MONTHS)
+        self.six_to_ten_years = AgeCategory.objects.create(age_category=AgeCategory.AgeCategoryChoice.SIX_TO_TEN_YEARS)
 
         #create primary care_giver
 
@@ -462,6 +463,7 @@ class DatabaseSetup(TestCase):
         self.saliva = CollectionType.objects.create(collection_type='Saliva')
         self.placenta = CollectionType.objects.create(collection_type='Placenta')
         self.stool = CollectionType.objects.create(collection_type='Stool')
+        self.tooth = CollectionType.objects.create(collection_type='Tooth')
 
         self.number_one = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.FIRST)
         self.number_two = CollectionNumber.objects.create(collection_number=CollectionNumber.CollectionNumberChoices.SECOND)
@@ -511,7 +513,8 @@ class DatabaseSetup(TestCase):
 
         self.stool_one = Collection.objects.create(collection_type_fk=self.stool,collection_number_fk=self.number_one)
 
-
+        self.tooth_one = Collection.objects.create(collection_type_fk=self.tooth,collection_number_fk=self.number_one)
+        self.tooth_two = Collection.objects.create(collection_type_fk=self.tooth,collection_number_fk=self.number_two)
 
         self.placenta_one = Collection.objects.create(collection_type_fk=self.placenta)
         self.placenta_two = Collection.objects.create(collection_type_fk=self.placenta, collection_number_fk=self.number_two)
@@ -937,5 +940,12 @@ class DatabaseSetup(TestCase):
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
 
+
+        self.child_three_teeth_six_ten_years = ChildBiospecimen.objects.create(child_fk=self.child_three,
+                                                                             collection_fk=self.tooth_one,
+                                                                             incentive_fk=self.incentive_one,
+                                                                             age_category_fk=self.six_to_ten_years,
+                                                                             collection_date=datetime.date(2023, 8, 10)
+                                                                             )
 
 
