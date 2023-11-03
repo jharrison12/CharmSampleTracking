@@ -56,6 +56,8 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
 
         collected_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected',collected_form)
+        self.assertIn('In Person',collected_form)
+        self.assertIn('Incentive',collected_form)
         self.assertNotIn('number of cards',collected_form.lower())
 
         in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_form-in_person_remote'))
@@ -76,6 +78,7 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
 
         body_text = self.webpage_text()
         self.assertIn('In Person or Remote: In Person',body_text)
+        self.assertIn('Date Received: Sept.',body_text)
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertNotIn('Shipped to WSU',shipped_choice_form)
