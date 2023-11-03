@@ -112,7 +112,7 @@ class InitialBioFormChildTooth(forms.Form):
 class ShippedChoiceForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE)
 
-class ShippedChoiceHairSalivaForm(forms.Form):
+class ShippedChoiceEchoForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE_ECHO)
 
 class ShippedtoWSUForm(forms.Form):

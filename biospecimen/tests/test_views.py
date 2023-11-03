@@ -10,7 +10,7 @@ from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
-    ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
+    ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
     CollectedChildToothForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
@@ -451,7 +451,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
 
-        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceHairSalivaForm)
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceEchoForm)
 
 
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
@@ -776,7 +776,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         return response
 
     def send_collected_form(self,primary_key,collection_type):
-        if collection_type in ('Urine','Saliva'):
+        if collection_type in ('Urine','Stool'):
             response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                         data={"collected_child_form-in_person_remote": 'I',
                                               "collected_child_form-date_received":'2023-09-03',
@@ -933,6 +933,42 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
+
+    def test_echo2_initial_child_bloodspot_3_months_shows_wsu_or_echo_after_submission(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
+        self.send_kit(primary_key,'K')
+        response = self.send_kit_form(primary_key)
+        response = self.send_collected_form(primary_key,'Bloodspots')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
+
+    def test_echo2_initial_child_stool_3_months_shows_wsu_or_echo_after_submission(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+        self.send_kit(primary_key,'K')
+        self.send_kit_form(primary_key)
+        self.send_collected_form(primary_key,'Stool')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
+
+    def test_echo2_initial_child_bloodspots_12_months_shows_echo_after_submission(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'TT')
+        self.send_kit(primary_key,'K')
+        self.send_kit_form(primary_key)
+        self.send_collected_form(primary_key,'Bloodspots')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+        logging.critical(response.content.decode())
+        self.assertNotContains(response,'Shipped to WSU')
+
+    def test_echo2_initial_child_bloodspot_12_months_shows_echo_form_after_submission(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'TT')
+        self.send_kit(primary_key,'K')
+        self.send_kit_form(primary_key)
+        self.send_collected_form(primary_key,'Stool')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceEchoForm)
 
     def test_echo2_initial_child_urine_redirects_after_shipped_choice_form_echo(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')

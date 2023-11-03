@@ -20,7 +20,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         return self.browser.find_element(By.TAG_NAME,'body').text
 
 
-    def test_user_can_choose_status_of_blood_spots_twelve_to_thirteen_months_cooses_kit_sent_collected_shipped_echo(self):
+    def test_user_can_choose_status_of_tooth_twelve_to_thirteen_months_cooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees blood_spots
         primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')
         self.browser.get(self.live_server_url)

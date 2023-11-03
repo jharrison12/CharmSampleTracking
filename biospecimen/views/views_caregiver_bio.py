@@ -5,7 +5,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceHairSalivaForm
+    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -250,7 +250,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
         if collection_type.collection_type in ('Hair','Saliva'):
-            shipped_choice = ShippedChoiceHairSalivaForm(prefix='shipped_choice_form')
+            shipped_choice = ShippedChoiceEchoForm(prefix='shipped_choice_form')
         else:
             shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):

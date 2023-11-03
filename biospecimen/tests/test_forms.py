@@ -2,7 +2,7 @@ from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
-ShippedChoiceHairSalivaForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild
+ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -137,7 +137,7 @@ class CaregiverCollectedSalivaHairFormTest(TestCase):
 class CaregiverShippedChoiceHairSaliva(TestCase):
 
     def test_bio_shipped_chioce_form_has_shipped_to_wsu(self):
-        form = ShippedChoiceHairSalivaForm()
+        form = ShippedChoiceEchoForm()
         self.assertNotIn('Shipped to WSU',form.as_p())
 
 class CaregiverBioInitialStatusForm(TestCase):

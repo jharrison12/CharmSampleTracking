@@ -7,7 +7,8 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
-CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,CollectedChildToothForm
+CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,CollectedChildToothForm,\
+    ShippedChoiceEchoForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -121,25 +122,39 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
-        form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
-        logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors}")
-        if form.is_valid():
-            if form.cleaned_data['shipped_to_wsu_or_echo']=='W':
-                shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
-                child_bio.status_fk.shipped_wsu_fk = shipped_to_wsu
-                child_bio.status_fk.shipped_wsu_fk.save()
-                child_bio.status_fk.save()
-                child_bio.save()
-                logging.debug(f'Shipped to wsu saved')
-            elif form.cleaned_data['shipped_to_wsu_or_echo']=='E':
-                shipped_to_echo = ShippedECHO.objects.create()
-                child_bio.status_fk.shipped_echo_fk = shipped_to_echo
-                child_bio.status_fk.shipped_echo_fk.save()
-                child_bio.status_fk.save()
-                child_bio.save()
-                logging.debug(f'Shipped to echo saved')
-            else:
-                raise AssertionError
+        if child_bio.age_category_fk.age_category=='ZF':
+            form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
+            logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors}")
+            if form.is_valid():
+                if form.cleaned_data['shipped_to_wsu_or_echo']=='W':
+                    shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
+                    child_bio.status_fk.shipped_wsu_fk = shipped_to_wsu
+                    child_bio.status_fk.shipped_wsu_fk.save()
+                    child_bio.status_fk.save()
+                    child_bio.save()
+                    logging.debug(f'Shipped to wsu saved')
+                elif form.cleaned_data['shipped_to_wsu_or_echo']=='E':
+                    shipped_to_echo = ShippedECHO.objects.create()
+                    child_bio.status_fk.shipped_echo_fk = shipped_to_echo
+                    child_bio.status_fk.shipped_echo_fk.save()
+                    child_bio.status_fk.save()
+                    child_bio.save()
+                    logging.debug(f'Shipped to echo saved')
+                else:
+                    raise AssertionError
+        else:
+            form = ShippedChoiceEchoForm(data=request.POST, prefix='child_shipped_choice_form')
+            logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors}")
+            if form.is_valid():
+                if form.cleaned_data['shipped_to_wsu_or_echo'] == 'E':
+                    shipped_to_echo = ShippedECHO.objects.create()
+                    child_bio.status_fk.shipped_echo_fk = shipped_to_echo
+                    child_bio.status_fk.shipped_echo_fk.save()
+                    child_bio.status_fk.save()
+                    child_bio.save()
+                    logging.debug(f'Shipped to echo saved')
+                else:
+                    raise AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_to_echo_form_button' in request.POST:
@@ -180,7 +195,10 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 if collection_type=='Tooth':
                     collected_child_form = CollectedChildToothForm(prefix="collected_child_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
-            shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
+            if child_bio.age_category_fk.age_category=='ZF':
+                shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
+            else:
+                shipped_choice_form = ShippedChoiceEchoForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:
             shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
         elif child_bio.status_fk.shipped_wsu_fk and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
