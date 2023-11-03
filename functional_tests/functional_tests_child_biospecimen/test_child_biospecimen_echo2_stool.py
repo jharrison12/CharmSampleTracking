@@ -80,7 +80,7 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
         body_text = self.webpage_text()
         self.assertIn('In Person or Remote: In Person', body_text)
         self.assertIn('number of tubes: 5', body_text.lower())
-        self.assertIn('date received:sept. 27, 2023', body_text.lower())
+        self.assertIn('date received: sept. 27, 2023', body_text.lower())
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Shipped to WSU', shipped_choice_form)

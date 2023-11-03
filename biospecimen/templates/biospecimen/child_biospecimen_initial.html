@@ -67,7 +67,7 @@
             </div>
             <div class="col-8">
                 {% if child_bio.collection_fk.collection_type_fk.collection_type == 'Tooth' %}
-                    <div>Date Collected:{{ child_bio.status_fk.collected_fk.collected_date_time }}</div>
+                    <div>Date Collected: {{ child_bio.status_fk.collected_fk.collected_date_time }}</div>
                 {% endif %}
                 {% if child_bio.collection_fk.collection_type_fk.collection_type in urine_stool  %}
                     <div>Number of Tubes: {{ child_bio.status_fk.collected_fk.number_of_tubes }}</div>
@@ -75,7 +75,7 @@
                     <div>Number of Cards: {{ child_bio.status_fk.collected_fk.number_of_cards }}</div>
                 {% endif %}
                 {% if child_bio.collection_fk.collection_type_fk.collection_type != 'Tooth' %}
-                <div>Date Received:{{ child_bio.status_fk.collected_fk.received_date }}</div>
+                <div>Date Received: {{ child_bio.status_fk.collected_fk.received_date }}</div>
                 <div>In Person or Remote: {{ child_bio.status_fk.collected_fk.get_in_person_remote_display  }}</div>
                 {% endif %}
                 <div>Incentive Date: {{ child_bio.status_fk.collected_fk.incentive_fk.incentive_date }}</div>
