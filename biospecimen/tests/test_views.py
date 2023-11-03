@@ -828,7 +828,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
         self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormChild)
 
-    def test_echo2_initial_child_urine_shows_correct_form(self):
+    def test_echo2_initial_child_tooth_shows_correct_form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
         self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormChildTooth)
@@ -871,7 +871,7 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
-    def test_echo2_initial_child_urine_shows_collected__form(self):
+    def test_echo2_initial_child_urine_shows_collected_form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.send_kit(primary_key,'K')
         response = self.send_kit_form(primary_key)
@@ -879,7 +879,7 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         self.assertIsInstance(response.context['collected_child_form'], CollectedChildUrineStoolForm)
 
-    def test_echo2_initial_child_bloodspots_shows_collected__form(self):
+    def test_echo2_initial_child_bloodspots_shows_collected_form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Bloodspots', 'ZF')
         self.send_kit(primary_key,'K')
         self.send_kit_form(primary_key)
@@ -1027,7 +1027,7 @@ class ChildBiospecimenPage(DatabaseSetup):
 
             self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
-    def test_echo2_initial_child_urine_shows_shipped_to_echo_form_after_submission(self):
+    def test_echo2_initial_child_urine_shows_shipped_to_wsu_form_after_submission(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.send_kit(primary_key,'K')
         response = self.send_kit_form(primary_key)
