@@ -194,7 +194,9 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 #I am keeping this logic in case they want to add more biospecimens
                 if collection_type=='Tooth':
                     collected_child_form = CollectedChildToothForm(prefix="collected_child_form")
-        elif child_bio.status_fk and child_bio.status_fk.collected_fk and child_bio.status_fk.collected_fk.received_date and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
+        elif child_bio.status_fk and child_bio.status_fk.collected_fk\
+            and (child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time)\
+                and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             if child_bio.age_category_fk.age_category=='ZF':
                 shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
             else:

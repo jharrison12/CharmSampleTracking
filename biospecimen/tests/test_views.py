@@ -792,6 +792,11 @@ class ChildBiospecimenPage(DatabaseSetup):
                                               "collected_child_form-incentive_date":'2023-09-03',
                                               "collected_form_button": ['Submit']
                                               })
+        elif collection_type==('Tooth'):
+            response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                        data={"collected_child_form-date_collected":'2023-09-03',
+                                              "collected_child_form-incentive_date":'2023-09-03',
+                                              "collected_form_button": ['Submit']})
         return response
 
     def send_wsu_or_echo(self,primary_key,e_or_w):
@@ -970,6 +975,15 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceEchoForm)
 
+    def test_echo2_initial_child_tooth_6_year_shows_echo_form_after_submission(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')
+        self.send_kit(primary_key,'K')
+        self.send_kit_form(primary_key)
+        self.send_collected_form(primary_key,'Tooth')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceEchoForm)
+
     def test_echo2_initial_child_urine_redirects_after_shipped_choice_form_echo(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.send_kit(primary_key, 'K')
@@ -978,7 +992,6 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.send_wsu_or_echo(primary_key,'E')
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
-
 
     def test_echo2_initial_child_urine_shows_shipped_to_echo_form_after_submission(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
