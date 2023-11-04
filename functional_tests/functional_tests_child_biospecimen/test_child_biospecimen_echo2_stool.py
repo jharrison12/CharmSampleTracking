@@ -102,7 +102,7 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
         submit.click()
 
         body_text = self.webpage_text()
-        self.assertIn('Date Received:Sept. 27, 2023',body_text)
+        self.assertIn('Date Received: Sept. 27, 2023',body_text)
 
 
     def test_user_can_choose_status_of_stool_information_chooses_kit_sent_collected_shipped_echo(self):

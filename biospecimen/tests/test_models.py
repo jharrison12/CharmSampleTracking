@@ -104,7 +104,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         self.assertEqual(caregiver_bio.status_fk.shipped_wsu_fk,shipped_wsu)
 
 
-    def test_caregiver_biospecimen_links_to_shipped_eccho(self):
+    def test_caregiver_biospecimen_links_to_shipped_echo(self):
         shipped_echo = ShippedECHO.objects.create()
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',

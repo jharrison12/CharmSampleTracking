@@ -963,7 +963,6 @@ class ChildBiospecimenPage(DatabaseSetup):
         self.send_kit_form(primary_key)
         self.send_collected_form(primary_key,'Bloodspots')
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
-        logging.critical(response.content.decode())
         self.assertNotContains(response,'Shipped to WSU')
 
     def test_echo2_initial_child_bloodspot_12_months_shows_echo_form_after_submission(self):
