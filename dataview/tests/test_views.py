@@ -1,15 +1,7 @@
 import logging
 import unittest
 from django.test import TestCase
-from dataview.models import Caregiver, Name, CaregiverName, Address, \
-    CaregiverAddress, Email, CaregiverEmail, CaregiverPhone, Phone, SocialMedia, CaregiverSocialMedia, \
-    CaregiverPersonalContact, \
-    Project, Survey, SurveyOutcome, CaregiverSurvey, Incentive, IncentiveType, \
-    Mother, Relation, ConsentItem, \
-    NonPrimaryCaregiver, ConsentType, Child, PrimaryCaregiver, HealthcareFacility, Recruitment, ChildName, ChildAddress, \
-    ChildSurvey, \
-    Assent, ChildAssent, AgeCategory, Race, Ethnicity, Pregnancy, CaregiverChildRelation,ConsentContract,ConsentVersion
-from biospecimen.models import Status, Collection, ChildBiospecimen,CaregiverBiospecimen,Processed,Outcome
+from dataview.models import Child, PrimaryCaregiver,ChildAddress
 import datetime
 from django.utils import timezone
 from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
@@ -24,6 +16,12 @@ class HomePageTest(DatabaseSetup):
     def test_home_page_returns_correct_html(self):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'dataview/home.html')
+
+class ReportsPageTest(DatabaseSetup):
+
+    def test_home_page_returns_correct_html(self):
+        response = self.client.get('/reports/')
+        self.assertTemplateUsed(response, 'reports/home.html')
 
 class CaregiverPageTest(DatabaseSetup):
 
