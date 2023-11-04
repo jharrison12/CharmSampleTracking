@@ -17,11 +17,6 @@ class HomePageTest(DatabaseSetup):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'dataview/home.html')
 
-class ReportsPageTest(DatabaseSetup):
-
-    def test_home_page_returns_correct_html(self):
-        response = self.client.get('/reports/')
-        self.assertTemplateUsed(response, 'reports/home.html')
 
 class CaregiverPageTest(DatabaseSetup):
 

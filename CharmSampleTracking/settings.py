@@ -43,6 +43,7 @@ USE_TZ = True
 INSTALLED_APPS = [
     'dataview',
     'biospecimen',
+    'reports',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
