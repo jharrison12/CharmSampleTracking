@@ -8,3 +8,7 @@ logging.basicConfig(level=logging.DEBUG)
 @login_required
 def home_page(request):
     return render(request=request,template_name='reports/home.html')
+
+@login_required
+def caregiver_report(request):
+    return render(request=request,template_name='reports/caregiver_report.html')

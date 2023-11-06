@@ -22,4 +22,5 @@ from reports import views as reports
 app_name = "reports"
 urlpatterns = [
     re_path(r"^$", reports.home_page, name='reports_home'),
+    re_path(r"^caregiver_report/$", reports.caregiver_report, name='caregiver_report'),
 ]
