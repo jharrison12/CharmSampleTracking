@@ -72,6 +72,10 @@ class CaregiverName(models.Model):
     def __str__(self):
         return f"{self.name_fk}"
 
+    def return_most_recent_name(self):
+        if self.status=='C':
+            return self.name_fk.last_name, self.name_fk.first_name
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['name_fk','status','caregiver_fk'], name=f"caregiver_name_unique_constraint")

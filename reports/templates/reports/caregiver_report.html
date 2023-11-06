@@ -1,5 +1,26 @@
 {% extends "dataview/base.html" %}
 {% block header %}Caregiver Report:{% endblock %}
 {% block section %}
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Charm ID</th>
+      <th scope="col">Specimen ID</th>
+      <th scope="col">First</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for caregiver in caregivers %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ caregiver.charm_project_identifier }}</td>
+        <td>{{ caregiver.specimen_id }}</td>
+        <td>{{ caregiver.caregivername_set.values }}</td>
+      </tr>
+  {% endfor %}
+
+  </tbody>
+</table>
 
 {% endblock %}

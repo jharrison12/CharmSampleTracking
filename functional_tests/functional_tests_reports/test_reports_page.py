@@ -19,11 +19,13 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports',text)
-        self.browser.get(f'{self.browser.current_url}reports/caregiver_report/')
+        self.browser.get(f'{self.browser.current_url}caregiver_report/')
 
         text = self.webpage_text()
-
+        time.sleep(50)
         self.assertIn('P7000',text)
+        self.assertIn('P7001',text)
+
 
 
 
