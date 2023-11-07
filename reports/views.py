@@ -12,6 +12,6 @@ def home_page(request):
 
 @login_required
 def caregiver_report(request):
-    caregivers = Caregiver.objects.filter().prefetch_related("caregivername_set__name_fk__caregivername_set")
-    caregivers
+    caregivers = Caregiver.objects.filter()
+    caregivers = CaregiverName.objects.filter(status='C').prefetch_related("caregiver_fk").prefetch_related("caregiver_fk__caregiveraddresshistory_set__caregiver_address_fk")
     return render(request=request,template_name='reports/caregiver_report.html',context={'caregivers':caregivers})

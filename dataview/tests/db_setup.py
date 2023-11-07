@@ -191,8 +191,7 @@ class DatabaseSetup(TestCase):
 
         self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
                                                                    address_fk=self.address)
-        self.caregiver_1_address_move = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
-                                                                        address_fk=self.address_move)
+        self.caregiver_1_address_move = AddressMove.objects.create(address_fk=self.address_move,address_move_date=timezone.datetime(2021, 8, 10))
 
         self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
         self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver,

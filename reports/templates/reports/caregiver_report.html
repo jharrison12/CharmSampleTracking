@@ -1,6 +1,7 @@
 {% extends "dataview/base.html" %}
 {% block header %}Caregiver Report:{% endblock %}
 {% block section %}
+    <div class="table-responsive">
 <table class="table table-hover">
   <thead>
     <tr>
@@ -8,19 +9,27 @@
       <th scope="col">Charm ID</th>
       <th scope="col">Specimen ID</th>
       <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Date of Birth</th>
+      <th scope="col">Race</th>
+      <th scope="col">Ethnicity</th>
     </tr>
   </thead>
   <tbody>
   {% for caregiver in caregivers %}
       <tr>
         <th scope="row">{{ forloop.counter }}</th>
-        <td>{{ caregiver.charm_project_identifier }}</td>
-        <td>{{ caregiver.specimen_id }}</td>
-        <td>{{ caregiver.caregivername_set.values }}</td>
+        <td>{{ caregiver.caregiver_fk.charm_project_identifier }}</td>
+        <td>{{ caregiver.caregiver_fk.specimen_id }}</td>
+        <td>{{ caregiver.name_fk.first_name }}</td>
+        <td>{{ caregiver.name_fk.last_name }}</td>
+        <td>{{ caregiver.caregiver_fk.date_of_birth }}</td>
+        <td>{{ caregiver.caregiver_fk.race_fk.get_race_display }}</td>
+        <td>{{ caregiver.caregiver_fk.ethnicity_fk.get_ethnicity_display }}</td>
       </tr>
   {% endfor %}
 
   </tbody>
 </table>
-
+    </div>
 {% endblock %}

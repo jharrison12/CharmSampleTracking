@@ -1,5 +1,7 @@
 {% extends "dataview/base.html" %}
 {% block header %}Reports:{% endblock %}
 {% block section %}
-    'Caregiver Report'
+    <ul>
+        <li><a href="{% url "reports:caregiver_report" %}">Caregiver Report</a></li>
+    </ul>
 {% endblock %}

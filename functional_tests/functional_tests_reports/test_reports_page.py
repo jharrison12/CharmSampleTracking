@@ -25,6 +25,10 @@ class ReportsPageTest(FunctionalTest):
         time.sleep(50)
         self.assertIn('P7000',text)
         self.assertIn('P7001',text)
+        self.assertIn('Jane',text)
+        self.assertIn('Doe',text)
+        self.assertIn('July 3, 1985',text)
+        self.assertIn('Hispanic',text)
 
 
 
