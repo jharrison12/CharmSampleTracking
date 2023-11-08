@@ -100,6 +100,14 @@ class Address(models.Model):
 class CaregiverAddress(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
+    revision_number = models.IntegerField(null=False,default=1)
+    class CaregiverAddressStatusChoice(models.TextChoices):
+        CURRENT = 'C', _('Current')
+        ARCHIVED = 'A', _('Archived')
+        FUTURE = 'F', _('Future')
+    status = models.CharField(default=CaregiverAddressStatusChoice.CURRENT,choices=CaregiverAddressStatusChoice.choices,max_length=1)
+    eff_start_date = models.DateTimeField(default=datetime.datetime.today())
+    eff_end_date = models.DateTimeField(default=datetime.datetime(2999, 12, 31, 0, 0, 0, 127325, tzinfo=pytz.UTC))
 
     def __str__(self):
         return f"{self.address_fk}"
@@ -109,30 +117,6 @@ class CaregiverAddress(models.Model):
             models.UniqueConstraint(fields=['caregiver_fk','address_fk'],name="caregiver_address_constraint")
         ]
 
-class AddressMove(models.Model):
-    address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
-    address_move_date = models.DateField(blank=False,null=False)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['address_fk','address_move_date'],name="address_move_unique_constraint")
-        ]
-
-class CaregiverAddressHistory(models.Model):
-    caregiver_address_fk = models.ForeignKey(CaregiverAddress,on_delete=models.PROTECT)
-    caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
-    address_fk = models.ForeignKey(Address,on_delete=models.PROTECT)
-    revision_number = models.IntegerField()
-    revision_date = models.DateField(default=timezone.now)
-
-    def __str__(self):
-        return f"{self.address_fk}"
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['caregiver_address_fk','caregiver_fk','address_fk','revision_number'],
-                                    name="caregiver_address_history_unique_constraint")
-        ]
 
 class Email(models.Model):
     email = models.EmailField(null=True,unique=True)

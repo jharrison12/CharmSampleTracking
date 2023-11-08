@@ -3,9 +3,9 @@ import sqlite3
 
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
-    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
+    Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
+    ConsentContract,CaregiverSocialMediaHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
     CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory,KitSent
@@ -191,7 +191,7 @@ class DatabaseSetup(TestCase):
 
         self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
                                                                    address_fk=self.address)
-        self.caregiver_1_address_move = AddressMove.objects.create(address_fk=self.address_move,address_move_date=timezone.datetime(2021, 8, 10))
+
 
         self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
         self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver,

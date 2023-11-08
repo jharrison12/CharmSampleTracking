@@ -3,9 +3,9 @@ import sqlite3
 
 from django.test import TestCase
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
-    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
+    Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
+    ConsentContract,CaregiverSocialMediaHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Outcome
 from dataview.tests.db_setup import DatabaseSetup
@@ -80,22 +80,8 @@ class CaregiverAddressModelsTest(DatabaseSetup):
 
         self.assertEqual(self.first_caregiver,caregiver_address_test)
 
-    def test_caregiver_address_move_works(self):
-        one_caregiver_address = AddressMove.objects.create(address_fk=self.address_move,address_move_date=datetime.date.today())
 
-        caregiver_address_test_move =Caregiver.objects.filter(caregiveraddress__address_fk__addressmove=one_caregiver_address).first()
 
-        self.assertEqual(self.first_caregiver,caregiver_address_test_move)
-
-class CaregiverAddressHistoryModelsTest(DatabaseSetup):
-    def test_insert_into_address_history_works(self):
-        first_row_of_address_history = CaregiverAddressHistory.objects.create(caregiver_address_fk=self.caregiver_1_address,
-                                                                              caregiver_fk=self.caregiver_1_address.caregiver_fk,
-                                                                              address_fk=self.caregiver_1_address.address_fk,
-                                                                              revision_number=1,
-                                                                              revision_date=datetime.date.today())
-
-        self.assertEqual(first_row_of_address_history.address_fk.address_line_1,'One Drive')
 
 class CaregiverEmailModelsTest(DatabaseSetup):
 

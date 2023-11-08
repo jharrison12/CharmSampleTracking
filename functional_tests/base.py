@@ -1,9 +1,9 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
-    AddressMove,Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
+    Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,CaregiverAddressHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
+    ConsentContract,CaregiverSocialMediaHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
     ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation, User
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
     CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,KitSent
@@ -34,7 +34,6 @@ class FunctionalTest(StaticLiveServerTestCase):
         password.send_keys('secret')
         login = self.browser.find_element(By.ID,'login_button')
         login.click()
-
 
 
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
@@ -198,8 +197,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
                                                                    address_fk=self.address)
-        self.caregiver_1_address_move = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
-                                                                        address_fk=self.address_move)
+
 
         self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
         self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver,
@@ -954,6 +952,8 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                              age_category_fk=self.six_to_ten_years,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
+
+
 
 
 
