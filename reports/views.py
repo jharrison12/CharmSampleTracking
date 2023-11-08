@@ -13,7 +13,7 @@ def home_page(request):
 
 @login_required
 def caregiver_report(request):
-    caregivers = CaregiverName.objects.filter(status='C').prefetch_related("caregiver_fk").prefetch_related("caregiver_fk__caregiveraddress_set__address_fk").filter(status='C')
+    caregivers = CaregiverName.objects.filter(status='C').prefetch_related("caregiver_fk").prefetch_related("caregiver_fk__caregiveraddress_set").filter(status='C')
     return render(request=request,template_name='reports/caregiver_report.html',context={'caregivers':caregivers})
 
 @login_required

@@ -196,12 +196,14 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                    city='Lansing', state='MI', zip_code='38000')
 
         self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
-                                                                   address_fk=self.address)
+                                                                   address_fk=self.address,
+                                                                   status='C')
 
 
         self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
         self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver,
-                                                                   address_fk=self.address2)
+                                                                   address_fk=self.address2,
+                                                                   status='C')
 
         # Create email
         email = Email.objects.create(email='jharrison12@gmail.com')
@@ -952,9 +954,6 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                              age_category_fk=self.six_to_ten_years,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
-
-
-
 
 
 

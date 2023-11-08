@@ -13,6 +13,7 @@
       <th scope="col">Date of Birth</th>
       <th scope="col">Race</th>
       <th scope="col">Ethnicity</th>
+      <th scope="col">Address</th>
     </tr>
   </thead>
   <tbody>
@@ -26,6 +27,7 @@
         <td>{{ caregiver.caregiver_fk.date_of_birth }}</td>
         <td>{{ caregiver.caregiver_fk.race_fk.get_race_display }}</td>
         <td>{{ caregiver.caregiver_fk.ethnicity_fk.get_ethnicity_display }}</td>
+        <td>{{ caregiver }}</td>
       </tr>
   {% endfor %}
 
