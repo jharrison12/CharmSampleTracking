@@ -1,8 +1,9 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404,redirect
-from dataview.models import Caregiver,CaregiverName,Name
+from dataview.models import Caregiver,CaregiverName,Name,CaregiverAddress
 from biospecimen.models import CaregiverBiospecimen
+from django.db.models import Prefetch
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -13,7 +14,9 @@ def home_page(request):
 
 @login_required
 def caregiver_report(request):
-    caregivers = CaregiverName.objects.filter(status='C').prefetch_related("caregiver_fk").prefetch_related("caregiver_fk__caregiveraddress_set").filter(status='C')
+    caregivers = CaregiverName.objects.filter(status='C').select_related("caregiver_fk")
+    caregivers.prefetch_related(Prefetch('caregiveraddress',queryset=CaregiverAddress.objects.filter(status='C')))
+    caregivers.prefetch_related('caregiver_fk__caregiveraddress_set__address_fk')
     return render(request=request,template_name='reports/caregiver_report.html',context={'caregivers':caregivers})
 
 @login_required

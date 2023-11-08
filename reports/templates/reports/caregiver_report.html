@@ -27,7 +27,7 @@
         <td>{{ caregiver.caregiver_fk.date_of_birth }}</td>
         <td>{{ caregiver.caregiver_fk.race_fk.get_race_display }}</td>
         <td>{{ caregiver.caregiver_fk.ethnicity_fk.get_ethnicity_display }}</td>
-        <td>{{ caregiver }}</td>
+        <td>{{ caregiver.caregiver_fk.caregiveraddress_set.values_list }}</td>
       </tr>
   {% endfor %}
 
