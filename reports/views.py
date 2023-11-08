@@ -7,6 +7,11 @@ from django.db.models import Prefetch
 
 logging.basicConfig(level=logging.DEBUG)
 
+MOTHER_BIOS = [
+    {'collection_type':'Saliva','age_category':'ZF'},
+    {'collection_type':'Hair','age_category':'ZF'}
+]
+
 # Create your views here.
 @login_required
 def home_page(request):
@@ -22,4 +27,5 @@ def caregiver_report(request):
 @login_required
 def biospecimen_report(request):
     caregiver_biospecimens = CaregiverBiospecimen.objects.all().prefetch_related('caregiver_fk')
-    return render(request=request,template_name='reports/biospecimen_report.html',context={'caregiver_biospecimens':caregiver_biospecimens})
+    return render(request=request,template_name='reports/biospecimen_report.html',context={'caregiver_biospecimens':caregiver_biospecimens,
+                                                                                           'caregiver_biospecimen_list':MOTHER_BIOS})

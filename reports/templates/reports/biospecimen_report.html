@@ -8,6 +8,9 @@
               <th scope="col">#</th>
               <th scope="col">Charm ID</th>
               <th scope="col">Specimen ID</th>
+              {% for biospecimen in caregiver_biospecimen_list %}
+                    <th scope="col">{{ biospecimen.collection_type }} {{ biospecimen.age_category }}</th>
+              {% endfor %}
             </tr>
           </thead>
           <tbody>
