@@ -29,6 +29,8 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('Doe',text)
         self.assertIn('July 3, 1985',text)
         self.assertIn('Hispanic',text)
+        self.assertIn('One Drive',text)
+
 
 
     def test_user_can_see_biospecimen_report(self):
