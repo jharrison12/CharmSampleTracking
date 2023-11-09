@@ -3,7 +3,7 @@ import logging
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
-    KitSent
+    KitSent,Declined
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
@@ -39,8 +39,8 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 new_not_collected = NotCollected.objects.create()
                 new_status.not_collected_fk = new_not_collected
             elif form.cleaned_data['collected_not_collected_kit_sent']=='X':
-                new_no_consent = NoConsent.objects.create()
-                new_status.no_consent_fk = new_no_consent
+                new_declined = Declined.objects.create()
+                new_status.declined_fk = new_declined
             if form.cleaned_data['collected_not_collected_kit_sent']=='K':
                 kit_sent = KitSent.objects.create()
                 new_status.kit_sent_fk = kit_sent

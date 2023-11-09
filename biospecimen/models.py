@@ -128,6 +128,9 @@ class ShippedECHO(models.Model):
 class KitSent(models.Model):
     kit_sent_date = models.DateField(null=True,blank=True)
 
+class Declined(models.Model):
+    declined_date = models.DateField(default=timezone.now)
+
 class Status(models.Model):
     #todo sublcass text choices for status
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
@@ -140,6 +143,7 @@ class Status(models.Model):
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_echo_fk = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
+    declined_fk = models.ForeignKey(Declined,on_delete=models.PROTECT,blank=True,null=True)
 
     def return_most_up_to_date_status(self):
         if self.received_fk and self.received_fk.outcome_fk.get_outcome_display()=='C':

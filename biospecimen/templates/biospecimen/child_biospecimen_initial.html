@@ -17,9 +17,9 @@
           <input type="submit" value="Submit" name="initial_bio_form_button"/>
           </form>
         </div>
-    {% elif child_bio.status_fk and child_bio.status_fk.no_consent_fk %}
+    {% elif child_bio.status_fk and child_bio.status_fk.declined_fk %}
         <div id="not_collected_information" class="row border border-primary p-3 rounded">
-        No Consent
+        Declined
         </div>
     {% elif child_bio.status_fk and  child_bio.status_fk.not_collected_fk %}
         <div id="no_consent_information" class="row border border-primary p-3 rounded">
@@ -79,7 +79,6 @@
                 <div>Date Received: {{ child_bio.status_fk.collected_fk.received_date }}</div>
                 <div>In Person or Remote: {{ child_bio.status_fk.collected_fk.get_in_person_remote_display  }}</div>
                 {% endif %}
-                <div>Incentive Date: {{ child_bio.status_fk.collected_fk.incentive_fk.incentive_date }}</div>
                 <div>Logged By: {{ child_bio.status_fk.collected_fk.logged_by.username }}</div>
             </div>
         </div>
