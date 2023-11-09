@@ -61,6 +61,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
 
         collected_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Collected', collected_form)
+        self.assertNotIn('Incentive date', collected_form)
 
         in_person_remote = Select(self.browser.find_element(By.ID, 'id_collected_child_form-in_person_remote'))
         in_person_remote.select_by_visible_text('In Person')
@@ -71,10 +72,6 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
 
         number_of_tubes = self.browser.find_element(By.ID, 'id_collected_child_form-number_of_tubes')
         number_of_tubes.send_keys(5)
-
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-27')
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
         submit.click()
@@ -134,6 +131,9 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         kit_sent_date.clear()
         kit_sent_date.send_keys('2023-09-27')
 
+        biospecimen_id = self.browser.find_element(By.ID,'id_kit_sent_form-echo_biospecimen_id')
+        biospecimen_id.send_keys('5555555')
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="initial_information"]/form/input[2]')
         submit.click()
 
@@ -144,6 +144,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
 
         collected_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected',collected_form)
+        self.assertNotIn('Incentive date',collected_form)
 
         in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_form-in_person_remote'))
         in_person_remote.select_by_visible_text('In Person')
@@ -154,10 +155,6 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
 
         number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_form-number_of_tubes')
         number_of_tubes.send_keys(5)
-
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-27')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()

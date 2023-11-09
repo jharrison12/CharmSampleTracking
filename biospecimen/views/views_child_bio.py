@@ -69,8 +69,6 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 child_bio.status_fk.collected_fk = collected
                 collected.received_date = form.cleaned_data['date_received']
                 collected.number_of_tubes = form.cleaned_data['number_of_tubes']
-                ##todo this will need to be the incentive model!!!
-                collected.incentive_date = form.cleaned_data['incentive_date']
                 collected.in_person_remote = form.cleaned_data['in_person_remote']
                 collected.logged_by = request.user
                 collected.save()
