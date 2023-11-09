@@ -1,7 +1,8 @@
 {% extends "dataview/base.html" %}
 {% block section %}
     <div class="row" id="biospecimen_information">
-    <div class="col-sm">ID: {{ child_bio.child_fk.charm_project_identifier }}</div>
+    <div class="col-sm">Charm ID: {{ child_bio.child_fk.charm_project_identifier }}</div>
+    <div class="col-sm">Biospecimen ID: {{ child_bio.biospecimen_id|default:"" }}</div>
     <div class="col-sm">Type: {{ child_bio.collection_fk.collection_type_fk.collection_type }}</div>
     {#  Not sure what the below object was in the SRO version of this device    #}
     <div class="col-sm">Log Status: {{ childbio }}</div>

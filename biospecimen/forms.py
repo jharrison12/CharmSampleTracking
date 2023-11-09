@@ -148,6 +148,7 @@ class CollectedBloodForm(forms.Form):
 
 class KitSentForm(forms.Form):
     kit_sent_date = forms.DateField(initial=timezone.now())
+    echo_biospecimen_id = forms.CharField()
 
 class CollectedChildUrineStoolForm(forms.Form):
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)

@@ -47,11 +47,15 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         kit_sent_date.clear()
         kit_sent_date.send_keys('2023-09-27')
 
+        biospecimen_id = self.browser.find_element(By.ID,'id_kit_sent_form-echo_biospecimen_id')
+        biospecimen_id.send_keys('5555555')
+
         submit = self.browser.find_element(By.XPATH, '//*[@id="initial_information"]/form/input[2]')
         submit.click()
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Sept. 27, 2023', body_text)
+        self.assertIn('5555555', body_text)
 
         # user now sees the collected form
 

@@ -53,6 +53,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         logging.debug(f"Is kit sent form valid {form.is_valid()}")
         if form.is_valid():
             child_bio.status_fk.kit_sent_fk.kit_sent_date = form.cleaned_data['kit_sent_date']
+            child_bio.biospecimen_id = form.cleaned_data['echo_biospecimen_id']
             child_bio.status_fk.kit_sent_fk.save()
             child_bio.status_fk.save()
             child_bio.save()

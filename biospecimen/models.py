@@ -151,7 +151,6 @@ class Status(models.Model):
         elif self.processed_fk and self.processed_fk.outcome_fk.get_outcome_display()=='C':
             return f"Processed: {self.shipped_fk.outcome_fk.get_outcome_display()}"
         else:
-            logging.debug(f"{self.received_fk} {self.objects.model}")
             return None
 
     def __str__(self):
@@ -241,7 +240,7 @@ class ChildBiospecimen(models.Model):
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory, on_delete=models.PROTECT)
     collection_date = models.DateField(default=timezone.now)
-
+    biospecimen_id = models.CharField(max_length=7, null=True,blank=False,unique=True)
 
     class Meta:
         constraints = [
