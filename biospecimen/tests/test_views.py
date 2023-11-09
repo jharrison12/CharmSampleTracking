@@ -11,7 +11,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Processed
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
     ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
-    CollectedChildToothForm
+    CollectedChildToothForm,DeclinedForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -846,11 +846,25 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
-    def test_echo2_initial_child_urine_redirects_after_no_consent(self):
+    def test_echo2_initial_child_urine_redirects_after_no_declined(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         response = self.send_kit(primary_key,'X')
 
         self.assertRedirects(response, f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+    def test_echo2_initial_child_urine_shows_declined_if_declined(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.send_kit(primary_key,'X')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertContains(response,'Declined')
+
+    def test_echo2_initial_child_urine_shows_declined_form_if_declined(self):
+        primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
+        response = self.send_kit(primary_key,'X')
+        response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['declined_form'], DeclinedForm)
 
     def test_echo2_initial_child_urine_shows_kit_sent_form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')

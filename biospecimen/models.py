@@ -129,7 +129,7 @@ class KitSent(models.Model):
     kit_sent_date = models.DateField(null=True,blank=True)
 
 class Declined(models.Model):
-    declined_date = models.DateField(default=timezone.now)
+    declined_date = models.DateField(null=True,blank=True)
 
 class Status(models.Model):
     #todo sublcass text choices for status

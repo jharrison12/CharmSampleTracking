@@ -2,7 +2,7 @@ import datetime
 
 from django import forms
 from dataview.models import Incentive
-from biospecimen.models import CaregiverBiospecimen,Processed,Status
+from biospecimen.models import CaregiverBiospecimen,Processed,Status,Declined
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
@@ -178,3 +178,8 @@ class CollectedChildToothForm(forms.Form):
     date_collected =forms.DateField(initial=timezone.now())
     #todo connect this with incentive
     incentive_date = forms.DateField(initial=timezone.now())
+
+class DeclinedForm(forms.ModelForm):
+    class Meta:
+        model = Declined
+        fields = ['declined_date']

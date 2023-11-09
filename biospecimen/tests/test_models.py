@@ -119,10 +119,10 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
                                                      collection_fk=placenta)
-        status_shipped_wsu = Status.objects.create(declined_fk=declined)
-        caregiver_bio.status_fk = status_shipped_wsu
+        status_declined = Status.objects.create(declined_fk=declined)
+        caregiver_bio.status_fk = status_declined
         caregiver_bio.save()
-        self.assertEqual(caregiver_bio.status_fk.shipped_wsu_fk,shipped_wsu)
+        self.assertEqual(caregiver_bio.status_fk.declined_fk,declined)
 
 
 class ChildBiospecimenModelTest(DatabaseSetup):
