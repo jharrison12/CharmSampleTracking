@@ -110,7 +110,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
-
+        time.sleep(500)
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('ID: 7002M1', body_text)

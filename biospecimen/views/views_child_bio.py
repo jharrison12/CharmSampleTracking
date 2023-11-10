@@ -124,17 +124,12 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'incentive_form_button' in request.POST:
-        logging.critical(f"POST {request.POST}")
         form = IncentiveForm(data=request.POST, prefix="child_incentive_form")
-        logging.critical(f"Is incentive form valid {form.is_valid()} {form.errors} {form}")
         if form.is_valid():
             incentive_one = form.save()
-            incentive =Incentive.objects.get(pk=incentive_one.pk)
-            logging.critical(f"{incentive_one.pk} incentive_date? {incentive.incentive_date}")
             child_bio.incentive_fk = incentive_one
             child_bio.incentive_fk.save()
             child_bio.save()
-            logging.critical(f"is the incentive one save as the incentive fk {child_bio.incentive_fk.incentive_date}")
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
@@ -227,6 +222,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             and (child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time)\
                 and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             if child_bio.age_category_fk.age_category=='ZF':
+                logging.critical(f"In shipped choice form")
                 shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
             else:
                 shipped_choice_form = ShippedChoiceEchoForm(prefix="child_shipped_choice_form")
@@ -238,7 +234,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             declined_form = DeclinedForm(prefix="declined_form",initial={'declined_date':timezone.now().date()})
         else:
             pass
-    logging.critical(f"Incentive form? {incentive_form}  incentive_fk {child_bio.incentive_fk or ''}")
+    logging.critical(f"RIGHT BEFORE RETURN")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
