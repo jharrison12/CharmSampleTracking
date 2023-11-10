@@ -902,35 +902,30 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                              status_fk=self.status_outcome_processed_complete_twelve,
                                                                              collection_fk=self.toenail_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.early_childhood_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15))
 
 
         self.child_three_urine_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.urine_none,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15)
                                                                              )
 
         self.child_three_stool_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.stool_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
 
         self.child_three_bloodspots_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.bloodspots_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
 
         self.child_three_bloodspots_12_to_13_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.bloodspots_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.twelve_to_thirteen_months,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
@@ -938,7 +933,6 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.child_three_hair_12_to_13_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.hair_number_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.twelve_to_thirteen_months,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
@@ -946,7 +940,6 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.child_three_teeth_six_ten_years = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.tooth_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.six_to_ten_years,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )

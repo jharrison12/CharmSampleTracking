@@ -152,7 +152,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         date_received = self.browser.find_element(By.ID,'id_collected_child_form-date_received')
         date_received.clear()
         date_received.send_keys('2023-09-27')
-        time.sleep(50)
+
         number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_form-number_of_tubes')
         number_of_tubes.send_keys(5)
 
