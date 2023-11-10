@@ -12,6 +12,7 @@ CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChild
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 import random
 
 
@@ -159,9 +160,9 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                             child_bio_pk=child_bio_pk)
     elif request.method == "POST" and 'declined_form_button' in request.POST:
             form = DeclinedForm(data=request.POST,prefix='declined_form')
-            logging.critical(f"is declined valid {form.is_valid()} {form.errors}")
+            logging.critical(f"is declined valid {form.is_valid()} {form.errors} {form}")
             if form.is_valid():
-                child_bio.status_fk.declined_fk.declined_date = form['declined_date']
+                child_bio.status_fk.declined_fk.declined_date = form.cleaned_data['declined_date']
                 child_bio.status_fk.declined_fk.save()
                 child_bio.status_fk.save()
                 child_bio.save()
@@ -217,7 +218,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         elif child_bio.status_fk.shipped_wsu_fk and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
             shipped_to_wsu_form = ShippedtoWSUFormChild(prefix="child_shipped_to_wsu_form")
         elif child_bio.status_fk.declined_fk:
-            declined_form = DeclinedForm(prefix="declined_form")
+            declined_form = DeclinedForm(prefix="declined_form",initial={'declined_date':timezone.now().date()})
         else:
             pass
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,

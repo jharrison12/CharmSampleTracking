@@ -76,7 +76,7 @@ class IncentiveForm(forms.models.ModelForm):
 
     class Meta:
         model = Incentive
-        fields = ['incentive_type_fk','incentive_date','incentive_amount']
+        fields = ['incentive_date',]
 
 class CollectedBiospecimenForm(forms.Form):
     collected_date_time = forms.DateTimeField()

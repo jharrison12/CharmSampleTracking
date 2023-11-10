@@ -164,6 +164,12 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         body_text = self.webpage_text()
         self.assertIn('In Person or Remote: In Person',body_text)
 
+        incentive_form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Incentive',incentive_form)
+
+
+
+
         shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped to WSU',shipped_choice_form)
 
@@ -217,7 +223,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
         #user sees initial form and submits collected
-        time.sleep(30)
+
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('ID: 7002M1', body_text)
         self.assertIn('Initial Form',body_text)
@@ -232,15 +238,15 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         #user sees collected form on next page
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('<form>', body_text)
+
         self.assertIn('Declined', body_text)
 
         declined_date = self.browser.find_element(By.ID,'id_declined_form-declined_date')
         declined_date.clear()
-        declined_date.send_keys('2023-09-27')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+        declined_date.send_keys('2023-09-28')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="declined_information"]/form/input[2]')
 
         submit.click()
 
         body_text = self.webpage_text()
-        self.assertIn('Sept. 27, 2023',body_text)
+        self.assertIn('Sept. 28, 2023',body_text)
