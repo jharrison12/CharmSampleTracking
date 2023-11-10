@@ -152,7 +152,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         date_received = self.browser.find_element(By.ID,'id_collected_child_form-date_received')
         date_received.clear()
         date_received.send_keys('2023-09-27')
-
+        time.sleep(50)
         number_of_tubes = self.browser.find_element(By.ID,'id_collected_child_form-number_of_tubes')
         number_of_tubes.send_keys(5)
 
@@ -167,8 +167,14 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         incentive_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Incentive',incentive_form)
 
+        incentive_date = self.browser.find_element(By.ID,'id_child_incentive_form-incentive_date')
+        incentive_date.send_keys('2023-09-30')
 
+        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_form_div"]/form/input[2]')
+        submit.click()
 
+        text = self.webpage_text()
+        self.assertIn('Sept. 30, 2023',text)
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped to WSU',shipped_choice_form)

@@ -3,7 +3,7 @@ import logging
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
-    KitSent,Declined
+    KitSent,Declined,Incentive
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
@@ -29,6 +29,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     shipped_to_echo_form = None
     shipped_to_wsu_form = None
     declined_form = None
+    incentive_form = None
     logging.debug(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
         form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
@@ -122,6 +123,17 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
+    elif request.method=="POST" and 'incentive_form_button' in request.POST:
+        form = IncentiveForm(data=request.POST, prefix="incentive_form")
+        logging.critical(f"Is incentive form valid {form.is_valid()} {form.errors} {form}")
+        if form.is_valid():
+            incentive_one = Incentive.objects.create()
+            child_bio.incentive_fk = incentive_one
+            child_bio.incentive_fk.incentive_date = form.cleaned_data['incentive_date']
+            child_bio.incentive_fk.save()
+            child_bio.save()
+        return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+                        child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
         if child_bio.age_category_fk.age_category=='ZF':
             form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
@@ -206,6 +218,9 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 #I am keeping this logic in case they want to add more biospecimens
                 if collection_type=='Tooth':
                     collected_child_form = CollectedChildToothForm(prefix="collected_child_form")
+
+        elif child_bio.status_fk and child_bio.incentive_fk and not child_bio.incentive_fk.incentive_date:
+            incentive_form = IncentiveForm(prefix="child_incentive_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk\
             and (child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time)\
                 and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
@@ -231,4 +246,5 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'shipped_to_echo_form': shipped_to_echo_form,
                                                                                               'shipped_to_wsu_form':shipped_to_wsu_form,
                                                                                               'declined_form':declined_form,
+                                                                                              'incentive_form': incentive_form,
                                                                                               'urine_stool': ['Urine','Stool']})

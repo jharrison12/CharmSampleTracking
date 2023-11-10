@@ -248,8 +248,8 @@ class IncentiveType(models.Model):
         return self.incentive_type_text
 
 class Incentive(models.Model):
-    incentive_type_fk = models.ForeignKey(IncentiveType,on_delete=models.PROTECT)
-    incentive_date = models.DateField(blank=False,null=False,default=timezone.now)
+    incentive_type_fk = models.ForeignKey(IncentiveType,on_delete=models.PROTECT,null=True,blank=True)
+    incentive_date = models.DateField(blank=True,null=True)
     incentive_amount =models.IntegerField(null=True)
 
     def __str__(self):
