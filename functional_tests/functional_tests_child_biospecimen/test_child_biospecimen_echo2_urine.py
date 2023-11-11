@@ -80,7 +80,18 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
 
         body_text = self.webpage_text()
         self.assertIn('In Person or Remote: In Person', body_text)
-        self.assertIn('Number of Tubes: 5', body_text)
+
+        incentive_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Incentive', incentive_form)
+
+        incentive_date = self.browser.find_element(By.ID, 'id_child_incentive_form-incentive_date')
+        incentive_date.send_keys('2023-09-30')
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="incentive_form_div"]/form/input[2]')
+        submit.click()
+
+        text = self.webpage_text()
+        self.assertIn('Sept. 30, 2023', text)
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Shipped to WSU', shipped_choice_form)
@@ -110,7 +121,7 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
-        time.sleep(500)
+
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('ID: 7002M1', body_text)
