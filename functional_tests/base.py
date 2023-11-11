@@ -111,6 +111,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
         self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100)
+        self.incentive_two = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100,incentive_date=timezone.datetime(2023, 8, 4).date())
 
         #create recruitment
         self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
@@ -302,21 +303,21 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
-                                                                   incentive_fk=self.incentive_one,
+                                                                   incentive_fk=self.incentive_two,
                                                                    survey_completion_date=timezone.datetime(2023,8,30).date()
                                                                    )
 
-        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
+        self.caregiver_prenatal_2 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
-                                                                   incentive_fk=self.incentive_one,
+                                                                   incentive_fk=self.incentive_two,
                                                                    survey_completion_date=timezone.datetime(2023,5,3).date()
                                                                    )
 
         self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
                                                                      survey_fk=self.prenatal_1,
                                                                      survey_outcome_fk=self.completed_survey_outcome,
-                                                                     incentive_fk=self.incentive_one,
+                                                                     incentive_fk=self.incentive_two,
                                                                      survey_completion_date=timezone.datetime(2023,5,3).date()
                                                                      )
 

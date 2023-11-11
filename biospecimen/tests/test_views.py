@@ -797,6 +797,13 @@ class ChildBiospecimenPage(DatabaseSetup):
                                               "collected_form_button": ['Submit']})
         return response
 
+    def send_incentive_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
+                                    data={'child_incentive_form-incentive_date': '2023-09-03',
+                                          'incentive_form_button': ['Submit']})
+        logging.critical(response.content.decode())
+        return response
+
     def send_wsu_or_echo(self,primary_key,e_or_w):
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                     data={'child_shipped_choice_form-shipped_to_wsu_or_echo': [f'{e_or_w}'],
@@ -999,6 +1006,8 @@ class ChildBiospecimenPage(DatabaseSetup):
         self.send_kit(primary_key,'K')
         self.send_kit_form(primary_key,bio_id='5555555')
         self.send_collected_form(primary_key,'Stool')
+        self.send_incentive_form(primary_key)
+
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
 
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceEchoForm)

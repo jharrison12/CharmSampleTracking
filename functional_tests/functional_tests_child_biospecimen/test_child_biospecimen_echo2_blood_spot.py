@@ -149,11 +149,15 @@ class ChildBioSpecimenEntryBloodSpotZerotoFiveMonths(FunctionalTest):
         kit_sent_date.clear()
         kit_sent_date.send_keys('2023-09-27')
 
+        biospecimen_id = self.browser.find_element(By.ID,'id_kit_sent_form-echo_biospecimen_id')
+        biospecimen_id.send_keys('5555555')
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="initial_information"]/form/input[2]')
         submit.click()
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Sept. 27, 2023',body_text)
+        self.assertIn('5555555', body_text)
 
         #user now sees the collected form
 
@@ -170,18 +174,26 @@ class ChildBioSpecimenEntryBloodSpotZerotoFiveMonths(FunctionalTest):
         number_of_cards = self.browser.find_element(By.ID,'id_collected_child_form-number_of_cards')
         number_of_cards.send_keys(5)
 
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-27')
-
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
         #USer now sees the collected information and the shipped to echo ro shipped to wsu form
 
         body_text = self.webpage_text()
-        self.assertIn('In Person or Remote: In Person',body_text)
+        self.assertIn('In Person or Remote: In Person', body_text)
         self.assertIn('number of cards',body_text.lower())
+
+        incentive_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Incentive', incentive_form)
+
+        incentive_date = self.browser.find_element(By.ID, 'id_child_incentive_form-incentive_date')
+        incentive_date.send_keys('2023-09-30')
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="incentive_form_div"]/form/input[2]')
+        submit.click()
+
+        text = self.webpage_text()
+        self.assertIn('Sept. 30, 2023', text)
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped to WSU',shipped_choice_form)
@@ -280,7 +292,7 @@ class ChildBioSpecimenEntryBloodSpotTwelvetoTwentyThreeMonths(FunctionalTest):
 
         collected_not_collected = Select(
             self.browser.find_element(By.ID, 'id_initial_bio_form-collected_not_collected_kit_sent'))
-        collected_not_collected.select_by_visible_text('No Consent')
+        collected_not_collected.select_by_visible_text('Not Collected')
         submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
 
         submit.click()
@@ -289,7 +301,7 @@ class ChildBioSpecimenEntryBloodSpotTwelvetoTwentyThreeMonths(FunctionalTest):
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertNotIn('<form>', body_text)
-        self.assertIn('No Consent', body_text)
+        self.assertIn('Not Collected', body_text)
 
     def test_user_can_choose_status_of_blood_spots_twelve_to_thirteen_months_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood_spots
@@ -340,11 +352,15 @@ class ChildBioSpecimenEntryBloodSpotTwelvetoTwentyThreeMonths(FunctionalTest):
         kit_sent_date.clear()
         kit_sent_date.send_keys('2023-09-27')
 
+        biospecimen_id = self.browser.find_element(By.ID,'id_kit_sent_form-echo_biospecimen_id')
+        biospecimen_id.send_keys('5554444')
+
         submit = self.browser.find_element(By.XPATH, '//*[@id="initial_information"]/form/input[2]')
         submit.click()
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Sept. 27, 2023',body_text)
+        self.assertIn('5554444', body_text)
 
         #user now sees the collected form
 
@@ -359,10 +375,6 @@ class ChildBioSpecimenEntryBloodSpotTwelvetoTwentyThreeMonths(FunctionalTest):
         date_received.clear()
         date_received.send_keys('2023-09-27')
 
-        incentive_date = self.browser.find_element(By.ID, 'id_collected_child_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-27')
-
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
@@ -370,6 +382,22 @@ class ChildBioSpecimenEntryBloodSpotTwelvetoTwentyThreeMonths(FunctionalTest):
 
         body_text = self.webpage_text()
         self.assertIn('In Person or Remote: In Person',body_text)
+
+        #User sees incentive form
+
+        incentive_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Incentive', incentive_form)
+
+        incentive_date = self.browser.find_element(By.ID, 'id_child_incentive_form-incentive_date')
+        incentive_date.send_keys('2023-09-30')
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="incentive_form_div"]/form/input[2]')
+        submit.click()
+
+        text = self.webpage_text()
+        self.assertIn('Sept. 30, 2023', text)
+
+        #User sees shipped choice form
 
         shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertNotIn('Shipped to WSU',shipped_choice_form)
