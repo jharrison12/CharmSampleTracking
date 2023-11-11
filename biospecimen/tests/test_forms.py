@@ -69,7 +69,6 @@ class IncentiveFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['incentive_type_fk'][0])
 
-
 class KitSentFormTest(TestCase):
     def test_form_renders_date_kit_sent_text_input(self):
         form = KitSentForm()
