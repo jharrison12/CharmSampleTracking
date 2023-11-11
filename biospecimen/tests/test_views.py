@@ -782,7 +782,6 @@ class ChildBiospecimenPage(DatabaseSetup):
                                         data={"collected_child_form-in_person_remote": 'I',
                                               "collected_child_form-date_received":'2023-09-03',
                                               "collected_child_form-number_of_tubes":'4',
-                                              "collected_child_form-incentive_date":'2023-09-03',
                                               "collected_form_button": ['Submit']
                                               })
         elif collection_type==('Bloodspots'):
@@ -790,13 +789,11 @@ class ChildBiospecimenPage(DatabaseSetup):
                                         data={"collected_child_form-in_person_remote": 'I',
                                               "collected_child_form-date_received":'2023-09-03',
                                               "collected_child_form-number_of_cards":'4',
-                                              "collected_child_form-incentive_date":'2023-09-03',
                                               "collected_form_button": ['Submit']
                                               })
         elif collection_type==('Tooth'):
             response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                         data={"collected_child_form-date_collected":'2023-09-03',
-                                              "collected_child_form-incentive_date":'2023-09-03',
                                               "collected_form_button": ['Submit']})
         return response
 
@@ -962,13 +959,13 @@ class ChildBiospecimenPage(DatabaseSetup):
 
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
-    def test_echo2_initial_child_urine_shows_icentive_form_after_collection_submission(self):
+    def test_echo2_initial_child_urine_shows_incentive_form_after_collection_submission(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         self.send_kit(primary_key,'K')
         response = self.send_kit_form(primary_key,bio_id='5555555')
         response = self.send_collected_form(primary_key,'Urine')
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
-
+        logging.critical({response.content.decode()})
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
 
     def test_echo2_initial_child_bloodspot_3_months_shows_wsu_or_echo_after_submission(self):

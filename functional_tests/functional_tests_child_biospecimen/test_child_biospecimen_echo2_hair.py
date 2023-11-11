@@ -114,7 +114,7 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
-        collected_not_collected.select_by_visible_text('No Consent')
+        collected_not_collected.select_by_visible_text('Not Collected')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
 
         submit.click()
@@ -123,7 +123,7 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
-        self.assertIn('No Consent', body_text)
+        self.assertIn('Not Collected', body_text)
 
     def test_user_can_choose_status_of_hair_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood_spots
