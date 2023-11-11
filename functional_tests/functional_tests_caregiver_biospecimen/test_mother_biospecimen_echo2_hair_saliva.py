@@ -49,10 +49,6 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         collected.clear()
         collected.send_keys('2023-09-27')
 
-        incentive_date = self.browser.find_element(By.ID,"id_hair_saliva_form-incentive_date")
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-27')
-
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 

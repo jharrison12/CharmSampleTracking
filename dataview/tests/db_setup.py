@@ -29,7 +29,6 @@ class DatabaseSetup(TestCase):
         ##Update Below
 
 
-
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
         self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
         self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
@@ -104,8 +103,8 @@ class DatabaseSetup(TestCase):
         #create incentive
         self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
-        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,
-                                                      incentive_date=timezone.datetime(2023, 8, 4).date(), incentive_amount=100)
+        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100)
+        self.incentive_two = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100,incentive_date=timezone.datetime(2023, 8, 4).date())
 
         #create recruitment
         self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
@@ -297,21 +296,21 @@ class DatabaseSetup(TestCase):
         self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_1,
                                                                    survey_outcome_fk=self.completed_survey_outcome,
-                                                                   incentive_fk=self.incentive_one,
+                                                                   incentive_fk=self.incentive_two,
                                                                    survey_completion_date=timezone.datetime(2023,8,30).date()
                                                                    )
 
-        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
+        self.caregiver_prenatal_2 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
                                                                    survey_fk=self.prenatal_2,
                                                                    survey_outcome_fk=self.incomplete_survey_outcome,
-                                                                   incentive_fk=self.incentive_one,
+                                                                   incentive_fk=self.incentive_two,
                                                                    survey_completion_date=timezone.datetime(2023,5,3).date()
                                                                    )
 
         self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
                                                                      survey_fk=self.prenatal_1,
                                                                      survey_outcome_fk=self.completed_survey_outcome,
-                                                                     incentive_fk=self.incentive_one,
+                                                                     incentive_fk=self.incentive_two,
                                                                      survey_completion_date=timezone.datetime(2023,5,3).date()
                                                                      )
 
@@ -879,56 +878,48 @@ class DatabaseSetup(TestCase):
         self.child_one_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                            status_fk=self.status_outcome_processed_complete_nine,
                                                                            collection_fk=self.urine_three,
-                                                                           incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood_age_category,
                                                                            collection_date=datetime.date(2023, 8, 15))
 
         self.child_two_biospecimen_urine = ChildBiospecimen.objects.create(child_fk=self.child_two,
                                                                            status_fk=self.status_outcome_processed_complete_ten,
                                                                            collection_fk=self.urine_three,
-                                                                           incentive_fk=self.incentive_one,
                                                                            age_category_fk=self.early_childhood_age_category,
                                                                            collection_date=datetime.date(2023, 8, 15))
 
         self.child_one_biospecimen_hair = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                           status_fk=self.status_outcome_processed_complete_eleven,
                                                                           collection_fk=self.hair_number_one,
-                                                                          incentive_fk=self.incentive_one,
                                                                           age_category_fk=self.early_childhood_age_category,
                                                                           collection_date=datetime.date(2023, 8, 15))
 
         self.child_one_biospecimen_toenail = ChildBiospecimen.objects.create(child_fk=self.child_one,
                                                                              status_fk=self.status_outcome_processed_complete_twelve,
                                                                              collection_fk=self.toenail_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.early_childhood_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15))
 
 
         self.child_three_urine_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.urine_none,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 15)
                                                                              )
 
         self.child_three_stool_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.stool_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
 
         self.child_three_bloodspots_zero_to_five_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.bloodspots_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.zero_to_five_age_category,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
 
         self.child_three_bloodspots_12_to_13_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.bloodspots_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.twelve_to_thirteen_months,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
@@ -936,7 +927,6 @@ class DatabaseSetup(TestCase):
 
         self.child_three_hair_12_to_13_months = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.hair_number_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.twelve_to_thirteen_months,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
@@ -944,7 +934,6 @@ class DatabaseSetup(TestCase):
 
         self.child_three_teeth_six_ten_years = ChildBiospecimen.objects.create(child_fk=self.child_three,
                                                                              collection_fk=self.tooth_one,
-                                                                             incentive_fk=self.incentive_one,
                                                                              age_category_fk=self.six_to_ten_years,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )

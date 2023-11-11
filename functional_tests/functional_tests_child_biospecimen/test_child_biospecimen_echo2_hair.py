@@ -61,7 +61,7 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
         collected_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected',collected_form)
         self.assertIn('In Person',collected_form)
-        self.assertIn('Incentive',collected_form)
+
         self.assertNotIn('number of cards',collected_form.lower())
 
         in_person_remote = Select(self.browser.find_element(By.ID,'id_collected_child_form-in_person_remote'))

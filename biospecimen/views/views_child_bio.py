@@ -65,7 +65,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     elif request.method=="POST" and 'collected_form_button' in request.POST:
         if collection_type in ('Urine','Stool') and child_bio.age_category_fk.age_category=='ZF':
             form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_form')
-            logging.critical(f"Is  form valid {form.is_valid()} form errors {form.errors}")
+            logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
                 collected = Collected()
                 child_bio.status_fk.collected_fk = collected
@@ -85,7 +85,6 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 collected.received_date = form.cleaned_data['date_received']
                 collected.number_of_cards = form.cleaned_data['number_of_cards']
                 ##todo this will need to be the incentive model!!!
-                collected.incentive_date = form.cleaned_data['incentive_date']
                 collected.in_person_remote = form.cleaned_data['in_person_remote']
                 collected.logged_by = request.user
                 collected.save()
@@ -99,7 +98,6 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 child_bio.status_fk.collected_fk = collected
                 collected.received_date = form.cleaned_data['date_received']
                 ##todo this will need to be the incentive model!!!
-                collected.incentive_date = form.cleaned_data['incentive_date']
                 collected.in_person_remote = form.cleaned_data['in_person_remote']
                 collected.logged_by = request.user
                 collected.save()
@@ -113,7 +111,6 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 child_bio.status_fk.collected_fk = collected
                 collected.collected_date_time = form.cleaned_data['date_collected']
                 ##todo this will need to be the incentive model!!!
-                collected.incentive_date = form.cleaned_data['incentive_date']
                 collected.logged_by = request.user
                 collected.save()
                 child_bio.status_fk.save()
@@ -124,6 +121,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'incentive_form_button' in request.POST:
         form = IncentiveForm(data=request.POST, prefix="child_incentive_form")
+        logging.critical(f'incentive form {form} request post is {request.POST}')
         if form.is_valid():
             incentive_one = form.save()
             child_bio.incentive_fk = incentive_one
@@ -134,7 +132,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
         if child_bio.age_category_fk.age_category=='ZF':
             form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
-            logging.critical(f"is shipped choice valid {form.is_valid()} {form.errors} {form}")
+            logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors} {form}")
             if form.is_valid():
                 if form.cleaned_data['shipped_to_wsu_or_echo']=='W':
                     shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
@@ -149,7 +147,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                     # child_bio.status_fk.shipped_echo_fk.save()
                     child_bio.status_fk.save()
                     child_bio.save()
-                    logging.critical(f'Shipped to echo saved')
+                    logging.debug(f'Shipped to echo saved')
                 else:
                     raise AssertionError
         else:
@@ -169,7 +167,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                             child_bio_pk=child_bio_pk)
     elif request.method == "POST" and 'declined_form_button' in request.POST:
             form = DeclinedForm(data=request.POST,prefix='declined_form')
-            logging.critical(f"is declined valid {form.is_valid()} {form.errors} {form}")
+            logging.debug(f"is declined valid {form.is_valid()} {form.errors} {form}")
             if form.is_valid():
                 child_bio.status_fk.declined_fk.declined_date = form.cleaned_data['declined_date']
                 child_bio.status_fk.declined_fk.save()
@@ -216,17 +214,17 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                     collected_child_form = CollectedChildToothForm(prefix="collected_child_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and not child_bio.incentive_fk:
             incentive_form = IncentiveForm(prefix="child_incentive_form")
-            logging.critical(f"{child_bio.status_fk} {child_bio.status_fk.collected_fk} ")
+            logging.debug(f"{child_bio.status_fk} {child_bio.status_fk.collected_fk} ")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk\
             and (child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time)\
                 and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             if child_bio.age_category_fk.age_category=='ZF':
-                logging.critical(f"In shipped choice form")
+                logging.debug(f"In shipped choice form")
                 shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
             else:
                 shipped_choice_form = ShippedChoiceEchoForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:
-            logging.critical(f"Before shipped to echo form")
+            logging.debug(f"Before shipped to echo form")
             shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
         elif child_bio.status_fk.shipped_wsu_fk and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
             shipped_to_wsu_form = ShippedtoWSUFormChild(prefix="child_shipped_to_wsu_form")
@@ -234,7 +232,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             declined_form = DeclinedForm(prefix="declined_form",initial={'declined_date':timezone.now().date()})
         else:
             pass
-    logging.critical(f"RIGHT BEFORE RETURN {shipped_to_echo_form} {child_bio.status_fk }")
+    logging.debug(f"RIGHT BEFORE RETURN {shipped_to_echo_form} {child_bio.status_fk }")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
