@@ -3,15 +3,16 @@ import logging
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
-    KitSent
+    KitSent,Declined,Incentive
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
 CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,CollectedChildToothForm,\
-    ShippedChoiceEchoForm
+    ShippedChoiceEchoForm,DeclinedForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 import random
 
 
@@ -27,6 +28,8 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     shipped_choice_form = None
     shipped_to_echo_form = None
     shipped_to_wsu_form = None
+    declined_form = None
+    incentive_form = None
     logging.debug(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
         form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
@@ -39,37 +42,35 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 new_not_collected = NotCollected.objects.create()
                 new_status.not_collected_fk = new_not_collected
             elif form.cleaned_data['collected_not_collected_kit_sent']=='X':
-                new_no_consent = NoConsent.objects.create()
-                new_status.no_consent_fk = new_no_consent
+                new_declined = Declined.objects.create()
+                new_status.declined_fk = new_declined
             if form.cleaned_data['collected_not_collected_kit_sent']=='K':
                 kit_sent = KitSent.objects.create()
                 new_status.kit_sent_fk = kit_sent
             new_status.save()
             child_bio.save()
-            return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+        return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                             child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'kit_sent_form_button' in request.POST:
         form = KitSentForm(data=request.POST, prefix="kit_sent_form")
         logging.debug(f"Is kit sent form valid {form.is_valid()}")
         if form.is_valid():
             child_bio.status_fk.kit_sent_fk.kit_sent_date = form.cleaned_data['kit_sent_date']
+            child_bio.biospecimen_id = form.cleaned_data['echo_biospecimen_id']
             child_bio.status_fk.kit_sent_fk.save()
             child_bio.status_fk.save()
             child_bio.save()
-            return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+        return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
-
     elif request.method=="POST" and 'collected_form_button' in request.POST:
         if collection_type in ('Urine','Stool') and child_bio.age_category_fk.age_category=='ZF':
             form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_form')
-            logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
+            logging.critical(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
                 collected = Collected()
                 child_bio.status_fk.collected_fk = collected
                 collected.received_date = form.cleaned_data['date_received']
                 collected.number_of_tubes = form.cleaned_data['number_of_tubes']
-                ##todo this will need to be the incentive model!!!
-                collected.incentive_date = form.cleaned_data['incentive_date']
                 collected.in_person_remote = form.cleaned_data['in_person_remote']
                 collected.logged_by = request.user
                 collected.save()
@@ -121,10 +122,19 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
+    elif request.method=="POST" and 'incentive_form_button' in request.POST:
+        form = IncentiveForm(data=request.POST, prefix="child_incentive_form")
+        if form.is_valid():
+            incentive_one = form.save()
+            child_bio.incentive_fk = incentive_one
+            child_bio.incentive_fk.save()
+            child_bio.save()
+        return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+                        child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
         if child_bio.age_category_fk.age_category=='ZF':
             form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
-            logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors}")
+            logging.critical(f"is shipped choice valid {form.is_valid()} {form.errors} {form}")
             if form.is_valid():
                 if form.cleaned_data['shipped_to_wsu_or_echo']=='W':
                     shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
@@ -136,10 +146,10 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 elif form.cleaned_data['shipped_to_wsu_or_echo']=='E':
                     shipped_to_echo = ShippedECHO.objects.create()
                     child_bio.status_fk.shipped_echo_fk = shipped_to_echo
-                    child_bio.status_fk.shipped_echo_fk.save()
+                    # child_bio.status_fk.shipped_echo_fk.save()
                     child_bio.status_fk.save()
                     child_bio.save()
-                    logging.debug(f'Shipped to echo saved')
+                    logging.critical(f'Shipped to echo saved')
                 else:
                     raise AssertionError
         else:
@@ -156,7 +166,17 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 else:
                     raise AssertionError
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
-                        child_bio_pk=child_bio_pk)
+                            child_bio_pk=child_bio_pk)
+    elif request.method == "POST" and 'declined_form_button' in request.POST:
+            form = DeclinedForm(data=request.POST,prefix='declined_form')
+            logging.critical(f"is declined valid {form.is_valid()} {form.errors} {form}")
+            if form.is_valid():
+                child_bio.status_fk.declined_fk.declined_date = form.cleaned_data['declined_date']
+                child_bio.status_fk.declined_fk.save()
+                child_bio.status_fk.save()
+                child_bio.save()
+            return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+                                child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_to_echo_form_button' in request.POST:
         form = ShippedtoEchoForm(data=request.POST, prefix='child_shipped_to_echo_form')
         if form.is_valid():
@@ -194,19 +214,27 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 #I am keeping this logic in case they want to add more biospecimens
                 if collection_type=='Tooth':
                     collected_child_form = CollectedChildToothForm(prefix="collected_child_form")
+        elif child_bio.status_fk and child_bio.status_fk.collected_fk and not child_bio.incentive_fk:
+            incentive_form = IncentiveForm(prefix="child_incentive_form")
+            logging.critical(f"{child_bio.status_fk} {child_bio.status_fk.collected_fk} ")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk\
             and (child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time)\
                 and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
             if child_bio.age_category_fk.age_category=='ZF':
+                logging.critical(f"In shipped choice form")
                 shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
             else:
                 shipped_choice_form = ShippedChoiceEchoForm(prefix="child_shipped_choice_form")
         elif child_bio.status_fk.shipped_echo_fk and not child_bio.status_fk.shipped_echo_fk.shipped_date_time:
+            logging.critical(f"Before shipped to echo form")
             shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
         elif child_bio.status_fk.shipped_wsu_fk and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
             shipped_to_wsu_form = ShippedtoWSUFormChild(prefix="child_shipped_to_wsu_form")
+        elif child_bio.status_fk.declined_fk:
+            declined_form = DeclinedForm(prefix="declined_form",initial={'declined_date':timezone.now().date()})
         else:
             pass
+    logging.critical(f"RIGHT BEFORE RETURN {shipped_to_echo_form} {child_bio.status_fk }")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
@@ -216,4 +244,6 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'shipped_choice_form':shipped_choice_form,
                                                                                               'shipped_to_echo_form': shipped_to_echo_form,
                                                                                               'shipped_to_wsu_form':shipped_to_wsu_form,
+                                                                                              'declined_form':declined_form,
+                                                                                              'incentive_form': incentive_form,
                                                                                               'urine_stool': ['Urine','Stool']})

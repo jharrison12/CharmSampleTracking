@@ -21,5 +21,5 @@ class CaregiverBiospecimenAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Status)
-class Status(admin.ModelAdmin):
-    pass
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ('return_most_up_to_date_status',)

@@ -128,6 +128,9 @@ class ShippedECHO(models.Model):
 class KitSent(models.Model):
     kit_sent_date = models.DateField(null=True,blank=True)
 
+class Declined(models.Model):
+    declined_date = models.DateField(null=True,blank=True)
+
 class Status(models.Model):
     #todo sublcass text choices for status
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
@@ -140,6 +143,7 @@ class Status(models.Model):
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_echo_fk = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
+    declined_fk = models.ForeignKey(Declined,on_delete=models.PROTECT,blank=True,null=True)
 
     def return_most_up_to_date_status(self):
         if self.received_fk and self.received_fk.outcome_fk.get_outcome_display()=='C':
@@ -151,7 +155,6 @@ class Status(models.Model):
         elif self.processed_fk and self.processed_fk.outcome_fk.get_outcome_display()=='C':
             return f"Processed: {self.shipped_fk.outcome_fk.get_outcome_display()}"
         else:
-            logging.debug(f"{self.received_fk} {self.objects.model}")
             return None
 
     def __str__(self):
@@ -241,7 +244,7 @@ class ChildBiospecimen(models.Model):
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory, on_delete=models.PROTECT)
     collection_date = models.DateField(default=timezone.now)
-
+    biospecimen_id = models.CharField(max_length=7, null=True,blank=False,unique=True)
 
     class Meta:
         constraints = [

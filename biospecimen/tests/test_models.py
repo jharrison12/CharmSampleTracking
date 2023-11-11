@@ -3,7 +3,7 @@ import sqlite3
 
 from django.test import TestCase
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored,Shipped,\
-    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent
+    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined
 import datetime
 from dataview.models import Caregiver,Incentive,Child,User
 from dataview.tests.db_setup import DatabaseSetup
@@ -113,6 +113,17 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         caregiver_bio.status_fk = status_shipped_echo
         caregiver_bio.save()
         self.assertEqual(caregiver_bio.status_fk.shipped_echo_fk, shipped_echo)
+
+    def test_caregiver_biospecimen_links_to_declined(self):
+        declined = Declined.objects.create()
+        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
+                                                     collection_fk=placenta)
+        status_declined = Status.objects.create(declined_fk=declined)
+        caregiver_bio.status_fk = status_declined
+        caregiver_bio.save()
+        self.assertEqual(caregiver_bio.status_fk.declined_fk,declined)
+
 
 class ChildBiospecimenModelTest(DatabaseSetup):
 

@@ -1,7 +1,8 @@
 {% extends "dataview/base.html" %}
 {% block section %}
     <div class="row" id="biospecimen_information">
-    <div class="col-sm">ID: {{ child_bio.child_fk.charm_project_identifier }}</div>
+    <div class="col-sm">Charm ID: {{ child_bio.child_fk.charm_project_identifier }}</div>
+    <div class="col-sm">Biospecimen ID: {{ child_bio.biospecimen_id|default:"" }}</div>
     <div class="col-sm">Type: {{ child_bio.collection_fk.collection_type_fk.collection_type }}</div>
     {#  Not sure what the below object was in the SRO version of this device    #}
     <div class="col-sm">Log Status: {{ childbio }}</div>
@@ -16,9 +17,25 @@
           <input type="submit" value="Submit" name="initial_bio_form_button"/>
           </form>
         </div>
-    {% elif child_bio.status_fk and child_bio.status_fk.no_consent_fk %}
-        <div id="not_collected_information" class="row border border-primary p-3 rounded">
-        No Consent
+    {% elif child_bio.status_fk and child_bio.status_fk.declined_fk and not child_bio.status_fk.declined_fk.declined_date %}
+        <div id="declined_information" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
+          {% csrf_token %}
+              <h2>Declined Form</h2>
+            {{ declined_form.as_p }}
+          <input type="submit" value="Submit" name="declined_form_button"/>
+          </form>
+        </div>
+    {% elif child_bio.status_fk and child_bio.status_fk.declined_fk and child_bio.status_fk.declined_fk.declined_date %}
+        <div id="declined_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Declined</button>
+            </div>
+            <div class="col-8">
+                <div>Declined Date:{{ child_bio.status_fk.declined_fk.declined_date }}</div>
+            </div>
         </div>
     {% elif child_bio.status_fk and  child_bio.status_fk.not_collected_fk %}
         <div id="no_consent_information" class="row border border-primary p-3 rounded">
@@ -78,8 +95,28 @@
                 <div>Date Received: {{ child_bio.status_fk.collected_fk.received_date }}</div>
                 <div>In Person or Remote: {{ child_bio.status_fk.collected_fk.get_in_person_remote_display  }}</div>
                 {% endif %}
-                <div>Incentive Date: {{ child_bio.status_fk.collected_fk.incentive_fk.incentive_date }}</div>
                 <div>Logged By: {{ child_bio.status_fk.collected_fk.logged_by.username }}</div>
+            </div>
+        </div>
+    {% endif %}
+    {% if incentive_form and not child_bio.incentive_fk.incentive_date %}
+        <div id="incentive_form_div" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
+          {% csrf_token %}
+              <h2>Incentive Form</h2>
+            {{ incentive_form.as_p }}
+          <input type="submit" value="Submit" name="incentive_form_button"/>
+          </form>
+        </div>
+    {% elif child_bio.incentive_fk.incentive_date %}
+        <div id="shipped_to_echo_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive:</button>
+            </div>
+            <div class="col-8">
+                <div>Incentive Date: {{ child_bio.incentive_fk.incentive_date }}</div>
             </div>
         </div>
     {% endif %}
