@@ -149,3 +149,14 @@ class KitSentModelTest(DatabaseSetup):
         self.assertEqual(child_urine_one_z_to_f.status_fk.kit_sent_fk.kit_sent_date, timezone.datetime(2023,5,5,12,0,0,))
 
 
+class RecievedWSUModelTest(DatabaseSetup):
+
+    def test_child_bio_links_to_received_wsu(self):
+        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type_fk__collection_type='Urine',child_fk__charm_project_identifier='7002M1')
+        recieved_at_wsu = ReceivedWSU.objects.create(recieved_date_time=timezone.datetime(2023,5,7,12,0,0,))
+        status_recieved_wsu = Status.objects.create(received_wsu_fk=recieved_at_wsu)
+        child_urine_one_z_to_f.status_fk=status_recieved_wsu
+        child_urine_one_z_to_f.save()
+        self.assertEqual(child_urine_one_z_to_f.status_fk.received_wsu_fk.recieved_date_time, timezone.datetime(2023,5,7,12,0,0,))
+
+
