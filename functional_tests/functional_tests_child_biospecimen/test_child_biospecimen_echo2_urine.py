@@ -109,17 +109,17 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         shipped_date_time.clear()
         shipped_date_time.send_keys('2023-09-27 12:52:26')
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_div"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_div"]/form/input[2]')
         submit.click()
 
         body_text = self.webpage_text()
         self.assertIn('Shipped to WSU Date: Sept. 27, 2023, 12:52',body_text)
 
         # User sees received wsu form and submits a date time
-        wsu_recieved_form = self.browser.find_element(By.TAG_NAME, 'form').text
-        self.assertIn('Recieved at WSU', wsu_recieved_form)
-
-        received_date_time = self.browser.find_element(By.ID, 'id_child_recieved_at_wsu_form-received_date_and_time')
+        wsu_received_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Received at WSU', wsu_received_form)
+        time.sleep(50)
+        received_date_time = self.browser.find_element(By.ID, 'id_child_received_at_wsu_form-received_date_time')
         received_date_time.clear()
         received_date_time.send_keys('2023-09-30 12:52:26')
 

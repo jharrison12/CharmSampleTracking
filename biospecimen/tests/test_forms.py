@@ -2,7 +2,7 @@ from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
-ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm
+ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -185,6 +185,13 @@ class DeclinedFormTest(TestCase):
     def test_declined_form_has_declined_date(self):
         form = DeclinedForm()
         self.assertIn('Declined date', form.as_p())
+
+class ReceivedatWSUFormTest(TestCase):
+
+    def test_declined_form_has_declined_date(self):
+        form = ReceivedatWSUForm()
+        self.assertIn('Received date time', form.as_p())
+
 
 class CaregiverBloodCollectedForm(TestCase):
 

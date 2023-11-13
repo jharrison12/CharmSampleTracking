@@ -8,7 +8,7 @@ from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBi
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
 CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,CollectedChildToothForm,\
-    ShippedChoiceEchoForm,DeclinedForm
+    ShippedChoiceEchoForm,DeclinedForm,ReceivedatWSUForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -30,6 +30,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     shipped_to_wsu_form = None
     declined_form = None
     incentive_form = None
+    received_at_wsu_form = None
     logging.debug(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
         form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
@@ -191,6 +192,16 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             child_bio.status_fk.shipped_wsu_fk.save()
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
+    elif request.method=="POST" and 'received_at_wsu_form_button' in request.POST:
+        form = ReceivedatWSUForm(data=request.POST, prefix='child_received_at_wsu_form')
+        logging.critical(f"is received at wsu valid {form.is_valid()} {form.errors} {form}")
+        if form.is_valid():
+            received_at_wsu = form.save()
+            child_bio.status_fk.received_wsu_fk = received_at_wsu
+            child_bio.status_fk.received_wsu_fk.save()
+            child_bio.status_fk.save()
+        return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
+                        child_bio_pk=child_bio_pk)
     else:
         if child_bio.status_fk==None:
             if collection_type=='Tooth':
@@ -228,6 +239,8 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
         elif child_bio.status_fk.shipped_wsu_fk and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
             shipped_to_wsu_form = ShippedtoWSUFormChild(prefix="child_shipped_to_wsu_form")
+        elif child_bio.status_fk.shipped_wsu_fk and child_bio.status_fk.shipped_wsu_fk.shipped_date_time:
+            received_at_wsu_form = ReceivedatWSUForm(prefix="child_received_at_wsu_form")
         elif child_bio.status_fk.declined_fk:
             declined_form = DeclinedForm(prefix="declined_form",initial={'declined_date':timezone.now().date()})
         else:
@@ -244,4 +257,5 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'shipped_to_wsu_form':shipped_to_wsu_form,
                                                                                               'declined_form':declined_form,
                                                                                               'incentive_form': incentive_form,
+                                                                                              'received_at_wsu_form':received_at_wsu_form,
                                                                                               'urine_stool': ['Urine','Stool']})

@@ -152,7 +152,7 @@
         </div>
     {% endif %}
     {% if shipped_to_wsu_form and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time %}
-        <div id="shipped_to_echo_div" class="row border border-primary p-3 rounded">
+        <div id="shipped_to_wsu_div" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
           {% csrf_token %}
               <h2>Shipped to WSU Form</h2>
@@ -169,6 +169,25 @@
             </div>
             <div class="col-8">
                 <div>Shipped to WSU Date: {{ child_bio.status_fk.shipped_wsu_fk.shipped_date_time }}</div>
+            </div>
+        </div>
+    {% endif %}
+    {% if received_at_wsu_form and not child_bio.status_fk.received_wsu_fk.received_date_time %}
+         <div id="received_at_wsu_div" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
+          {% csrf_token %}
+              <h2>Received at WSU Form</h2>
+            {{ received_at_wsu_form.as_p }}
+          <input type="submit" value="Submit" name="received_at_wsu_form_button"/>
+          </form>
+        </div>
+    {% elif child_bio.status_fk.received_wsu_fk.received_date_time %}
+        <div id="received_at_wsu_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Received WSU</button>
+            </div>
+            <div class="col-8">
+                <div>Received at WSU Date: {{ child_bio.status_fk.received_wsu_fk.received_date_time }}</div>
             </div>
         </div>
     {% endif %}

@@ -2,7 +2,7 @@ import datetime
 
 from django import forms
 from dataview.models import Incentive
-from biospecimen.models import CaregiverBiospecimen,Processed,Status,Declined
+from biospecimen.models import CaregiverBiospecimen,Processed,Status,Declined,ReceivedWSU
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
@@ -175,3 +175,9 @@ class DeclinedForm(forms.ModelForm):
     class Meta:
         model = Declined
         fields = ['declined_date']
+
+class ReceivedatWSUForm(forms.ModelForm):
+    class Meta:
+        model = ReceivedWSU
+        fields = ['received_date_time']
+
