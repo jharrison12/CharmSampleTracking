@@ -812,13 +812,13 @@ class ChildBiospecimenPage(DatabaseSetup):
 
     def send_to_wsu(self,primary_key):
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={'child_shipped_to_wsu_form-shipped_date_time': ['2023-09-03'],
+                                    data={'child_shipped_to_wsu_form-shipped_date_and_time': ['2023-09-27 12:52:26'],
                                           'shipped_to_wsu_form_button': ['Submit']})
         return response
 
     def received_at_wsu(self,primary_key):
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
-                                    data={'child_received_at_wsu_form-received_date_time': ['2023-09-03'],
+                                    data={'child_received_at_wsu_form-received_date_time': ['2023-09-27 12:52:26'],
                                           'shipped_to_wsu_form_button': ['Submit']})
         return response
 
@@ -1115,6 +1115,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.send_wsu_or_echo(primary_key, 'W')
         response = self.send_to_wsu(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
+        logging.critical(f"response {response.content.decode()}")
         self.assertIsInstance(response.context['received_at_wsu_form'], ReceivedatWSUForm)
 
     def test_echo2_initial_child_urine_redirects_after_received_at_wsu_form_after_submission(self):

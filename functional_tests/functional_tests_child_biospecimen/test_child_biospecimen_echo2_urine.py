@@ -118,13 +118,16 @@ class ChildBioSpecimenEntryUrine(FunctionalTest):
         # User sees received wsu form and submits a date time
         wsu_received_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Received at WSU', wsu_received_form)
-        time.sleep(50)
+
         received_date_time = self.browser.find_element(By.ID, 'id_child_received_at_wsu_form-received_date_time')
         received_date_time.clear()
         received_date_time.send_keys('2023-09-30 12:52:26')
 
+        submit = self.browser.find_element(By.XPATH,'//*[@id="received_at_wsu_div"]/form/input[2]')
+        submit.click()
+
         text = self.webpage_text()
-        self.assertIn('Received at WSU Date: Sept. 27, 2023, 12:52',text)
+        self.assertIn('Received at WSU Date: Sept. 30, 2023, 12:52',text)
 
 
     def test_user_can_choose_status_of_urine_information_chooses_kit_sent_collected_shipped_echo(self):
