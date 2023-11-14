@@ -6,7 +6,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     KitSent,Declined,Incentive
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
 CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,CollectedChildToothForm,\
     ShippedChoiceEchoForm,DeclinedForm,ReceivedatWSUForm
 from django.shortcuts import render,get_object_or_404,redirect
@@ -33,7 +33,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     received_at_wsu_form = None
     logging.debug(f"request.post {request.POST}")
     if request.method=="POST" and 'initial_bio_form_button' in request.POST:
-        form = InitialBioFormChild(data=request.POST, prefix='initial_bio_form')
+        form = InitialBioFormPostNatal(data=request.POST, prefix='initial_bio_form')
         if form.is_valid():
             new_status = Status()
             child_bio.status_fk = new_status
@@ -207,7 +207,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             if collection_type=='Tooth':
                 initial_bio_form = InitialBioFormChildTooth(prefix="initial_bio_form")
             else:
-                initial_bio_form = InitialBioFormChild(prefix="initial_bio_form")
+                initial_bio_form = InitialBioFormPostNatal(prefix="initial_bio_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and not child_bio.status_fk.kit_sent_fk.kit_sent_date:
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date and not child_bio.status_fk.collected_fk:

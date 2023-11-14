@@ -9,7 +9,7 @@ import datetime
 from django.utils import timezone
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
-    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
+    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
     ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
     CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm
 from django.utils.html import escape
@@ -33,112 +33,6 @@ class BiospecimenEntryHomePage(DatabaseSetup):
         response = self.client.get(f'/biospecimen/entry/')
         self.assertTemplateUsed(response, 'biospecimen/biospecimen_entry.html')
 
-@unittest.skip
-class CaregiverBiospecimenPageTest(DatabaseSetup):
-
-    def get_biospecimen_page(self, biospecimen_id):
-        response = self.client.get(f'/biospecimen/caregiver/{biospecimen_id}/')
-        return response
-
-    def test_caregiver_biospecimen_page_returns_correct_template(self):
-        self.assertTemplateUsed(self.get_biospecimen_page('P7000'), 'biospecimen/caregiver_biospecimen.html')
-
-    def test_caregiver_biospecimen_page_contains_urine_1(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), 'Serum 1: Completed')
-
-    def test_caregiver_b_biospecimen_does_not_appear_in_caregiver_a_page(self):
-        self.assertNotContains(self.get_biospecimen_page('P7001'), 'Serum 1: Completed')
-
-    def test_caregiver_a_bio_page_shows_all_urines(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Urine 1")
-        self.assertContains(self.get_biospecimen_page('P7000'), "Urine EC")
-
-    def test_caregiver_a_bio_page_shows_hair(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Prenatal Hair: Completed")
-
-    def test_caregiver_a_bio_page_shows_toenails(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Prenatal Toenail: Completed")
-
-    def test_caregiver_a_bio_page_shows_saliva(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Saliva: Completed")
-
-    def test_caregiver_a_bio_page_does_not_show_none_saliva(self):
-        self.assertNotContains(self.get_biospecimen_page('P7000'), "None Saliva")
-
-    def test_caregiver_a_bio_page_does_not_show_none_placenta(self):
-        self.assertNotContains(self.get_biospecimen_page('P7000'), "None Placenta")
-
-    def test_caregiver_a_bio_page_shows_placenta(self):
-        self.assertContains(self.get_biospecimen_page('P7000'), "Placenta: Completed")
-
-@unittest.skip
-class CaregiverBioSpecimenEntryPage(DatabaseSetup):
-
-    def get_biospecimen_entry_page(self, biospecimen_id):
-        response = self.client.get(f'/biospecimen/caregiver/{biospecimen_id}/entry/')
-        return response
-
-    def test_using_correct_template(self):
-        self.assertTemplateUsed(self.get_biospecimen_entry_page('P7000'),
-                                'biospecimen/caregiver_biospecimen_entry.html')
-
-    def test_caregiver_bio_entry_page_uses_bio_form(self):
-        self.assertIsInstance(self.get_biospecimen_entry_page('P7000').context['bio_form'], CaregiverBiospecimenForm)
-
-    def test_bio_entry_redirects_after_post(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7000/entry/',
-                                    data={'bio_form-collection_fk': self.placenta_two.pk,
-                                          'bio_form-status_fk': self.collected.pk,
-                                          'bio_form-biospecimen_date': datetime.date(2023, 8, 23),
-                                          # 'incentive_fk':  self.incentive_one.pk,
-                                          'bio_form-caregiver_fk': self.first_caregiver.pk,
-                                          'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
-                                          'incentive_form-incentive_date': datetime.date(2023, 8, 23),
-                                          'incentive_form-incentive_amount': 1,
-                                          })
-
-        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/")
-
-    def test_unique_validation_errors_are_sent_back_to_entry_page(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7000/entry/',
-                                    data={'bio_form-collection_fk': self.placenta.pk,
-                                          'bio_form-status_fk': self.collected.pk,
-                                          'bio_form-biospecimen_date': datetime.date(2023, 8, 23),
-                                          'bio_form-caregiver_fk': self.first_caregiver.pk,
-                                          'incentive_fk': self.incentive_one.pk,
-                                          'caregiver_fk': self.first_caregiver.pk,
-                                          'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
-                                          'incentive_form-incentive_date': datetime.date(
-                                              2023, 8, 23),
-                                          'incentive_form-incentive_amount': 1,
-                                          })
-        self.assertEqual(response.status_code, 200)
-
-        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
-        expected_error = escape("This type of biospecimen for this charm id already exists")
-        self.assertContains(response, expected_error)
-
-    def test_caregiver_bio_entry_page_uses_incentive_form(self):
-        self.assertIsInstance(self.get_biospecimen_entry_page('P7000').context['incentive_form'], IncentiveForm)
-
-    def test_bio_entry_is_connected_to_incentive_submitted_in_form(self):
-        response = self.client.post(f'/biospecimen/caregiver/P7000/entry/',
-                                    data={'bio_form-collection_fk': self.placenta_two.pk,
-                                          'bio_form-status_fk': self.collected.pk,
-                                          'bio_form-biospecimen_date': datetime.date(2023, 8, 23),
-                                          # 'incentive_fk':  self.incentive_one.pk,
-                                          'bio_form-caregiver_fk': self.first_caregiver.pk,
-                                          'incentive_form-incentive_type_fk': self.incentive_one.incentive_type_fk.pk,
-                                          'incentive_form-incentive_date': datetime.date(2023, 8, 23),
-                                          'incentive_form-incentive_amount': 1,
-                                          })
-
-        placenta_two = CaregiverBiospecimen.objects.filter(collection_fk__collection_type="Placenta").filter(
-            collection_fk__collection_number=2).first()
-
-        correct_incentive = Incentive.objects.filter(incentive_amount=1).first()
-
-        self.assertEqual(placenta_two.incentive_fk, correct_incentive)
 
 class ChildBiospecimenPage(DatabaseSetup):
 
@@ -436,6 +330,26 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
 
         self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenHairSalivaForm)
+
+    def test_echo2_bio_page_shows_kit_sent_form_if_hair_or_salvia(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+
+        self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
+
+    def test_echo2_bio_page_initial_form_shows_denied_not_collected_kit_sent_if_hair_or_salvia(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+
+        self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormPostNatal)
+
 
     def test_echo2_bio_page_shows_shipped_echo_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
@@ -843,7 +757,7 @@ class ChildBiospecimenPage(DatabaseSetup):
     def test_echo2_initial_child_urine_shows_correct_form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Urine', 'ZF')
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
-        self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormChild)
+        self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormPostNatal)
 
     def test_echo2_initial_child_tooth_shows_correct_form(self):
         primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')

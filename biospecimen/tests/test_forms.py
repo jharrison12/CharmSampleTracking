@@ -1,7 +1,7 @@
 from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormChild,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
+    ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
 ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm
 import datetime
 
@@ -142,7 +142,7 @@ class CaregiverShippedChoiceHairSaliva(TestCase):
 class CaregiverBioInitialStatusForm(TestCase):
 
     def test_child_bio_initial_form_has_drop_down_with_collected(self):
-        form = InitialBioFormChild()
+        form = InitialBioFormPostNatal()
         self.assertIn('Kit Sent',form.as_p())
 
 class CaregiverBioInitialStatusForm(TestCase):

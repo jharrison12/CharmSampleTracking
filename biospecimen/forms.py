@@ -103,7 +103,7 @@ class CollectedBiospecimenUrineForm(forms.Form):
 class InitialBioForm(forms.Form):
     collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED_NO_CONSENT)
 
-class InitialBioFormChild(forms.Form):
+class InitialBioFormPostNatal(forms.Form):
     collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED_NO_CONSENT)
 
 class InitialBioFormChildTooth(forms.Form):

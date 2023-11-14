@@ -5,7 +5,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm
+    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -20,6 +20,8 @@ blood_dict = {'Whole Blood':'whole_blood',
               'Buffy Coat':'buffy_coat'}
 
 BLOOD_TYPES = ('Whole Blood','Serum','Plasma', 'Buffy Coat','Red Blood Cells')
+
+HAIR_SALIVA = CollectionType.objects.filter(collection_type__in=["Hair","Saliva"])
 
 
 def check_for_object_or_return_none(object_name,filter,parameter):
@@ -185,9 +187,11 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    logging.debug(f"{caregiver_bio.status_fk}")
-    if caregiver_bio.status_fk==None:
+    logging.critical(f"{collection_type} {collection_type in HAIR_SALIVA}")
+    if caregiver_bio.status_fk==None and collection_type not in HAIR_SALIVA:
         initial_bio_form = InitialBioForm(prefix="initial_form")
+    elif caregiver_bio.status_fk==None and collection_type in HAIR_SALIVA:
+        initial_bio_form = InitialBioFormPostNatal(prefix="initial_form")
     else:
         return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     return render(request, template_name='biospecimen/caregiver_biospecimen_initial.html', context={'charm_project_identifier':caregiver_charm_id,
@@ -244,12 +248,12 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
-        elif collection_type.collection_type in ('Hair','Saliva'):
+        elif collection_type in HAIR_SALIVA:
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
         else:
             collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
-        if collection_type.collection_type in ('Hair','Saliva'):
+        if collection_type in HAIR_SALIVA:
             shipped_choice = ShippedChoiceEchoForm(prefix='shipped_choice_form')
         else:
             shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
@@ -335,7 +339,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine.save()
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type.collection_type in ('Hair','Urine'):
+        elif collection_type in HAIR_SALIVA:
             form = CollectedBiospecimenHairSalivaForm(data=request.POST, prefix='hair_saliva_form')
             if form.is_valid():
                 hair_or_saliva = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)

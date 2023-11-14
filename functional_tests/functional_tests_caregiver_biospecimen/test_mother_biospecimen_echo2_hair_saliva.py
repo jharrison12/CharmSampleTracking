@@ -17,17 +17,41 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         return caregiverbio.pk
 
 
-    def test_user_can_choose_status_of_hair_or_saliva_information_chooses_collected_shipped_echo(self):
+    def test_user_can_choose_status_of_hair_or_saliva_information_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,child_age='ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-
+        time.sleep(50)
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
+
+        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
+        collected_not_collected.select_by_visible_text('Kit Sent')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        #user sees kit sent form on next page
+
+        body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertNotIn('<form>', body_text)
+        self.assertIn('Kit sent date:', body_text)
+
+        kit_sent_date = self.browser.find_element(By.ID,"id_kit_sent_form-kit_sent_date")
+        kit_sent_date.clear()
+        kit_sent_date.send_keys('2023-09-27')
+
+        biospecimen_id = self.browser.find_element(By.ID,'id_kit_sent_form-echo_biospecimen_id')
+        biospecimen_id.send_keys('5555555')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="initial_information"]/form/input[2]')
+        submit.click()
+
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Sept. 27, 2023',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
         collected_not_collected.select_by_visible_text('Collected')
@@ -36,9 +60,9 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         #user sees collected form on next page
 
-        form = self.browser.find_element(By.TAG_NAME,'form').text
-        self.assertIn('Collected Form',form)
-
+        collected_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Collected', collected_form)
+        self.assertNotIn('Incentive date', collected_form)
 
         #user submits form and sees data
 
