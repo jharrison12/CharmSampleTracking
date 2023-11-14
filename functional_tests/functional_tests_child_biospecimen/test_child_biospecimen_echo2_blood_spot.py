@@ -112,7 +112,7 @@ class ChildBioSpecimenEntryBloodSpotZerotoFiveMonths(FunctionalTest):
         shipped_date_time.clear()
         shipped_date_time.send_keys('2023-09-27 12:52:26')
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_div"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_div"]/form/input[2]')
         submit.click()
 
         body_text = self.webpage_text()

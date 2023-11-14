@@ -22,7 +22,7 @@ class ReportsPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}caregiver_report/')
 
         text = self.webpage_text()
-        time.sleep(50)
+
         self.assertIn('P7000',text)
         self.assertIn('P7001',text)
         self.assertIn('Jane',text)
@@ -45,5 +45,5 @@ class ReportsPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}biospecimen_report/')
 
         text = self.webpage_text()
-        time.sleep(50)
+
         self.assertIn('P7000',text)

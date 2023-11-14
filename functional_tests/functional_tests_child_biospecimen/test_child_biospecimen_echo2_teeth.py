@@ -128,3 +128,38 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
         self.assertIn('Not Collected', body_text)
+
+
+    def test_user_can_choose_status_of_teeth_information_chooses_declined(self):
+        # User visits the caregiver biospecimen page and sees blood_spots
+        primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        #user sees initial form and submits collected
+        body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('Initial Form',body_text)
+
+        self.assertNotIn('No Consent',body_text)
+
+        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
+        collected_not_collected.select_by_visible_text('Declined')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
+
+        submit.click()
+
+        #user sees collected form on next page
+
+        body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertNotIn('<form>', body_text)
+        self.assertIn('Declined', body_text)
+
+        declined_date = self.browser.find_element(By.ID,'id_declined_form-declined_date')
+        declined_date.clear()
+        declined_date.send_keys('2023-09-28')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="declined_information"]/form/input[2]')
+
+        submit.click()
+
+        body_text = self.webpage_text()
+        self.assertIn('Sept. 28, 2023',body_text)
