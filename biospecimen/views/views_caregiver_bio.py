@@ -2,10 +2,11 @@ import logging
 
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
-    Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project
+    Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
+    KitSent
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal
+    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -205,7 +206,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    if request.method=="POST":
+    if request.method=="POST" and collection_type not in HAIR_SALIVA:
         form = InitialBioForm(data=request.POST, prefix='initial_form')
         if form.is_valid():
             new_status = Status()
@@ -231,8 +232,80 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                                 caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError
+    elif request.method=="POST" and collection_type in HAIR_SALIVA:
+        form = InitialBioFormPostNatal(data=request.POST, prefix='initial_form')
+        if form.is_valid():
+            new_status = Status()
+            caregiver_bio.status_fk = new_status
+            new_status.save()
+            caregiver_bio.save()
+            if form.cleaned_data['collected_not_collected_kit_sent'] == 'C':
+                new_collected = Collected.objects.create(logged_by=request.user)
+                new_status.collected_fk = new_collected
+            elif form.cleaned_data['collected_not_collected_kit_sent'] == 'N':
+                new_not_collected = NotCollected.objects.create()
+                new_status.not_collected_fk = new_not_collected
+            elif form.cleaned_data['collected_not_collected_kit_sent'] == 'K':
+                new_no_consent = KitSent.objects.create()
+                new_status.kit_sent_fk = new_no_consent
+            new_status.save()
+            caregiver_bio.save()
+            return redirect("biospecimen:caregiver_biospecimen_entry_hair_urine", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
+        else:
+            raise AssertionError
+
     else:
         return redirect("biospecimen:caregiver_biospecimen_initial",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+
+
+
+@login_required
+def caregiver_biospecimen_entry_hair_urine(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    kit_sent_item = KitSent.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    collected_form = None
+    shipped_choice = None
+    shipped_wsu_form = None
+    shipped_echo_form = None
+    kit_sent_form = None
+    if kit_sent_item.exists() and collection_type in HAIR_SALIVA:
+        kit_sent_form = KitSentForm(prefix="kit_sent_form")
+    return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
+                                                                                                  'caregiver_bio_pk':caregiver_bio_pk,
+                                                                                                  'caregiver_bio': caregiver_bio,
+                                                                                                  'collected_form':collected_form,
+                                                                                                  'collection_type': collection_type.collection_type,
+                                                                                                  'shipped_choice_form': shipped_choice,
+                                                                                                  'shipped_wsu_form': shipped_wsu_form,
+                                                                                                  'shipped_echo_form':shipped_echo_form,
+                                                                                                  'kit_sent_form':kit_sent_form
+                                                                                                  })
+@login_required()
+def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    if request.method == "POST" and collection_type in HAIR_SALIVA:
+        form = KitSentForm(data=request.POST, prefix='kit_sent_form')
+        if form.is_valid():
+            kit_sent_data = KitSent.objects.get(status__caregiverbiospecimen=caregiver_bio)
+            kit_sent_data.kit_sent_date = form.cleaned_data['kit_sent_date']
+            caregiver_bio.biospecimen_id = form.cleaned_data['echo_biospecimen_id']
+            kit_sent_data.save()
+            caregiver_bio.save()
+            collected_item = Collected.objects.create(logged_by=request.user)
+            caregiver_bio.status_fk.collected_fk = collected_item
+            caregiver_bio.status_fk.save()
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
+    else:
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
+
 
 @login_required
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
@@ -332,7 +405,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 collected_urine.collected_date_time = form.cleaned_data['collected_date_time']
                 collected_urine.processed_date_time = form.cleaned_data['processed_date_time']
-                collected_urine.stored_date_time = form.cleaned_data['stored_date_time']
                 collected_urine.stored_date_time = form.cleaned_data['stored_date_time']
                 collected_urine.number_of_tubes = form.cleaned_data['number_of_tubes']
                 collected_urine.logged_by = request.user

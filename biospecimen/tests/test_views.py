@@ -250,6 +250,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
                                     data={'initial_form-collected_not_collected': ['C']})
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
+
     def test_echo2_bio_entry_shipped_choice_redirects_after_post_wsu(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_choice/post/',
@@ -320,17 +321,6 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
                                     data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_page_shows_collected_form_if_hair_or_salvia(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected': ['C']})
-
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-
-        self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenHairSalivaForm)
-
     def test_echo2_bio_page_shows_kit_sent_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
         logging.debug(primary_key)
@@ -339,8 +329,56 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
                                     data={'initial_form-collected_not_collected_kit_sent': ['K']})
 
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        logging.critical(response.context)
 
         self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
+
+    def test_echo2_bio_page_redirects_after_initial_kit_sent_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_redirects_after_kit_sent_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
+                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
+                                          'echo_biospecimen_id': 3333})
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_hair_saliva_uses_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+
+        self.assertTemplateUsed(response, "biospecimen/caregiver_biospecimen_initial.html")
+
+
+    def test_echo2_bio_page_shows_collected_form_if_hair_or_salvia(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
+                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
+                                          'echo_biospecimen_id': 3333})
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+
+        self.assertIsInstance(response.context['collected_form'], CollectedBiospecimenHairSalivaForm)
+
+
 
     def test_echo2_bio_page_initial_form_shows_denied_not_collected_kit_sent_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
@@ -356,7 +394,11 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         logging.debug(primary_key)
 
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected': ['C']})
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
+                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
+                                          'echo_biospecimen_id': 3333})
 
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
                                     data={'hair_saliva_form-in_person_remote': 'I',
