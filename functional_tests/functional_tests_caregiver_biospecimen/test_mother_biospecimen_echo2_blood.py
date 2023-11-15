@@ -7,7 +7,7 @@ import time
 import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.debug)
 
 class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 

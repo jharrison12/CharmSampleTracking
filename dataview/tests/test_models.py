@@ -13,7 +13,7 @@ import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.CRITICAL)
 
 class CaregiverModelsTest(DatabaseSetup):
 

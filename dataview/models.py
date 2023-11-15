@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 import logging
 from django.contrib.auth.models import AbstractUser
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.debug)
 
 
 class User(AbstractUser):

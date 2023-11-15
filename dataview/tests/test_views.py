@@ -8,7 +8,7 @@ from dataview.forms import CaregiverBiospecimenForm, IncentiveForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.debug)
 
 # Create your tests here.
 class HomePageTest(DatabaseSetup):

@@ -5,7 +5,7 @@ from dataview.models import Caregiver,CaregiverName,Name,CaregiverAddress
 from biospecimen.models import CaregiverBiospecimen
 from django.db.models import Prefetch
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.CRITICAL)
 
 MOTHER_BIOS = [
     {'collection_type':'Saliva','age_category':'ZF'},

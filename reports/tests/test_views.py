@@ -1,7 +1,7 @@
 import logging
 from dataview.tests.db_setup import DatabaseSetup
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.debug)
 
 class ReportsPageTest(DatabaseSetup):
 

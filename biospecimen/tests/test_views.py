@@ -329,7 +329,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
                                     data={'initial_form-collected_not_collected_kit_sent': ['K']})
 
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.critical(response.context)
+        logging.debug(response.context)
 
         self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
 
@@ -340,7 +340,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
                                     data={'initial_form-collected_not_collected_kit_sent': ['K']})
 
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
 
     def test_echo2_bio_page_redirects_after_kit_sent_form_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
@@ -372,7 +372,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
                                     data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
-                                          'echo_biospecimen_id': 3333})
+                                          'kit_sent_form-echo_biospecimen_id': 3333})
 
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
 
@@ -757,7 +757,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.client.post(f'/biospecimen/child/7002M1/{primary_key}/initial/',
                                     data={'child_incentive_form-incentive_date': ['2023-09-03'],
                                           'incentive_form_button': ['Submit']})
-        logging.critical(response.content)
+        logging.debug(response.content)
         return response
 
     def send_wsu_or_echo(self,primary_key,e_or_w):
@@ -951,7 +951,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.send_collected_form(primary_key,'Bloodspots')
         response = self.send_incentive_form(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
-        logging.critical(response.content.decode())
+        logging.debug(response.content.decode())
 
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
@@ -1071,7 +1071,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.send_wsu_or_echo(primary_key, 'W')
         response = self.send_to_wsu(primary_key)
         response = self.client.get(f'/biospecimen/child/7002M1/{primary_key}/initial/')
-        logging.critical(f"response {response.content.decode()}")
+        logging.debug(f"response {response.content.decode()}")
         self.assertIsInstance(response.context['received_at_wsu_form'], ReceivedatWSUForm)
 
     def test_echo2_initial_child_urine_redirects_after_received_at_wsu_form_after_submission(self):

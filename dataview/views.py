@@ -9,7 +9,7 @@ from dataview.models import Caregiver, Name, CaregiverName, \
 
 from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.CRITICAL)
 
 # Create your views here.
 @login_required

@@ -3,7 +3,7 @@ from dataview.models import Caregiver,Incentive,Child,AgeCategory,Pregnancy,Proj
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import logging
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.debug)
 
 # Create your models here.
 

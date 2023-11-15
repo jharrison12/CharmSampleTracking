@@ -16,7 +16,7 @@ from django.utils import timezone
 import random
 
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.debug)
 
 @login_required
 def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
@@ -122,7 +122,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'incentive_form_button' in request.POST:
         form = IncentiveForm(data=request.POST, prefix="child_incentive_form")
-        logging.critical(f'incentive form {form} request post is {request.POST}')
+        logging.debug(f'incentive form {form} request post is {request.POST}')
         if form.is_valid():
             incentive_one = form.save()
             child_bio.incentive_fk = incentive_one
@@ -194,7 +194,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'received_at_wsu_form_button' in request.POST:
         form = ReceivedatWSUForm(data=request.POST, prefix='child_received_at_wsu_form')
-        logging.critical(f"is received at wsu valid {form.is_valid()} {form.errors} {form}")
+        logging.debug(f"is received at wsu valid {form.is_valid()} {form.errors} {form}")
         if form.is_valid():
             received_at_wsu = form.save()
             child_bio.status_fk.received_wsu_fk = received_at_wsu

@@ -6,7 +6,7 @@ import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
 
-class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
+class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
     def return_caregiver_bio_pk(self,charm_id,collection_type,trimester,child_age=None):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)

@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import random
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.debug)
 
 blood_dict = {'Whole Blood':'whole_blood',
               'Serum':'serum',
@@ -188,7 +188,7 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    logging.critical(f"{collection_type} {collection_type in HAIR_SALIVA}")
+    logging.debug(f"{collection_type} {collection_type in HAIR_SALIVA}")
     if caregiver_bio.status_fk==None and collection_type not in HAIR_SALIVA:
         initial_bio_form = InitialBioForm(prefix="initial_form")
     elif caregiver_bio.status_fk==None and collection_type in HAIR_SALIVA:
@@ -261,7 +261,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
 
 
 @login_required
-def caregiver_biospecimen_entry_hair_urine(request,caregiver_charm_id,caregiver_bio_pk):
+def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -299,7 +299,9 @@ def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio
             caregiver_bio.save()
             collected_item = Collected.objects.create(logged_by=request.user)
             caregiver_bio.status_fk.collected_fk = collected_item
+            caregiver_bio.status_fk.collected_fk.save()
             caregiver_bio.status_fk.save()
+            caregiver_bio.save()
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
     else:
