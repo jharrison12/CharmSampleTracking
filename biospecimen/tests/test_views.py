@@ -708,7 +708,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertEqual(red_blood_count.status_fk.shipped_wsu_fk.shipped_date_time,whole_blood.status_fk.shipped_wsu_fk.shipped_date_time)
 
     def test_echo2_bio_page_shows_echo_shipped_form_if_collected_not_null_and_shipped_echo_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'T')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.add_shipped_echo_to_biospecimen(biospecimen_pk=caregiver_bio.pk)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
@@ -765,6 +765,24 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         self.assertNotEqual(plasma.status_fk.shipped_echo_fk.shipped_date_time,
                          whole_blood.status_fk.shipped_echo_fk.shipped_date_time)
+
+    def test_echo_2_bio_entry_whole_blood_shows_initial_form_for_collected(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+        logging.debug(response.context)
+        self.assertIsInstance(response.context['initial_bio_form'], InitialBioForm)
+
+    def test_echo_2_bio_entry_whole_blood_shows_incentive_form_after_collected(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
+        self.post_blood_form(primary_key, 'plasma', False)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
+        logging.critical(response.context)
+        self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
+
 
 class ChildBiospecimenPage(DatabaseSetup):
 

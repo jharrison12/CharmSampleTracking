@@ -69,6 +69,21 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
+        time.sleep(50)
+        #user sees incentive form
+
+        form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Incentive Form',form)
+
+        incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-09-03')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
+        submit.click()
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Incentive Date: Sept. 3, 2023', body)
 
         #user sees option to choose shipped to wsu or shipped to echo
 
@@ -155,6 +170,22 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
         self.assertIn('Plasma', body)
+
+        #user sees incentive form
+
+        form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Incentive Form',form)
+
+        incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-09-03')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
+        submit.click()
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Incentive Date: Sept. 3, 2023', body)
+
 
         #user sees option to choose shipped to wsu or shipped to echo
 

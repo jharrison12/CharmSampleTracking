@@ -80,6 +80,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
         pass
 
 def return_caregiver_bloods(caregiver_bio):
+    ##TODO any bugs here?
     try:
         caregiver_bloods = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__collected_date_time=caregiver_bio.status_fk.collected_fk.collected_date_time,
                                                                status_fk__collected_fk__stored_date_time=caregiver_bio.status_fk.collected_fk.stored_date_time,
@@ -125,6 +126,14 @@ def update_shipped_echo(caregiver_bio_pk, bound_form):
     shipped_to_echo.save()
     status_bio.save()
     caregiver_bio.save()
+
+def update_incentive(caregiver_bio_pk,bound_form):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    incentive_item = Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
+    incentive_item.incentive_date = bound_form['incentive_date']
+    incentive_item.save()
+
+
 
 #################################################
 # Views
@@ -363,6 +372,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
+    incentive_form = None
     logging.debug(f"Caregiver bio is {caregiver_bio}")
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
         logging.debug(f"Does collected_item exist? {collected_item.exists()}\n\n"
@@ -378,11 +388,17 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         logging.debug(f"Collected form is none")
         collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
+        new_incentive = Incentive.objects.create()
+        caregiver_bio.incentive_fk = new_incentive
+        caregiver_bio.incentive_fk.save()
+        caregiver_bio.save()
+        incentive_form = IncentiveForm(prefix='incentive_form')
+    elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date:
         shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
-    if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
+    elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to wsu if statement")
         shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
-    if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
+    elif shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to echo if statement")
         shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry_blood.html', context={'charm_project_identifier':caregiver_charm_id,
@@ -393,7 +409,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'shipped_choice_form': shipped_choice,
                                                                                                         'shipped_wsu_form': shipped_wsu_form,
                                                                                                         'shipped_echo_form': shipped_echo_form,
-                                                                                                        'caregiver_bloods': caregiver_bloods
+                                                                                                        'caregiver_bloods': caregiver_bloods,
+                                                                                                        'incentive_form':incentive_form
                                                                                                         })
 
 @login_required
@@ -425,8 +442,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 hair_or_saliva = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 hair_or_saliva.collected_date_time = form.cleaned_data['date_collected']
                 hair_or_saliva.in_person_remote = form.cleaned_data['in_person_remote']
-                ##TODO link up incentive date
-                #hair_or_saliva.incentive_fk
                 hair_or_saliva.logged_by = request.user
                 hair_or_saliva.save()
                 caregiver_bio.save()
@@ -492,6 +507,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
+        if collection_type in HAIR_SALIVA:
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
@@ -502,6 +518,15 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
             else:
                 form.errors
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        elif collection_type.collection_type in BLOOD_TYPES:
+            form = IncentiveForm(data=request.POST, prefix='incentive_form')
+            if form.is_valid():
+                caregiver_bloods = return_caregiver_bloods(caregiver_bio)
+                for item in caregiver_bloods:
+                    update_incentive(item.pk,form)
+            return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
+
     else:
         raise AssertionError
 
