@@ -3,7 +3,7 @@ import logging
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
-    KitSent,Incentive
+    KitSent,Incentive,Declined
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm
@@ -220,8 +220,8 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                 new_not_collected = NotCollected.objects.create()
                 new_status.not_collected_fk = new_not_collected
             elif form.cleaned_data['collected_not_collected']=='X':
-                new_no_consent = NoConsent.objects.create()
-                new_status.no_consent_fk = new_no_consent
+                new_declined = Declined.objects.create()
+                new_status.declined_fk = new_declined
             new_status.save()
             caregiver_bio.save()
             if collection_type.collection_type in BLOOD_TYPES:
@@ -328,14 +328,13 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
         else:
             collected_form = None
-    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
+    if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
+            incentive_form = IncentiveForm(prefix='incentive_form')
+    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date:
         if collection_type in HAIR_SALIVA and caregiver_bio.incentive_fk.incentive_date:
             shipped_choice = ShippedChoiceEchoForm(prefix='shipped_choice_form')
         else:
             shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
-    if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
-        if collection_type in HAIR_SALIVA:
-            incentive_form = IncentiveForm(prefix='incentive_form')
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to wsu if statement")
         shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
@@ -415,6 +414,9 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine.number_of_tubes = form.cleaned_data['number_of_tubes']
                 collected_urine.logged_by = request.user
                 collected_urine.save()
+                incentive = Incentive.objects.create()
+                caregiver_bio.incentive_fk = incentive
+                caregiver_bio.incentive_fk.save()
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in HAIR_SALIVA:
@@ -490,7 +492,6 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        if collection_type in HAIR_SALIVA:
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)

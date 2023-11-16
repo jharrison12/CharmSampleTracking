@@ -265,6 +265,26 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
+    def test_echo2_bio_entry_shows_incentive_form_if_collected_not_null(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected': ['C']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                                    data={"id_urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                          "id_urine_form-processed_date_time": timezone.datetime(
+                                              2023, 5, 5, 5, 5,
+                                              5),
+                                          "id_urine_form-stored_date_time": timezone.datetime(
+                                              2023, 5, 5, 5, 5,
+                                              5),
+                                          "id_urine_form-number_of_tubes": 5
+                                          })
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+
+        self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
+
     def test_echo2_bio_page_shows_shipped_choice_form_if_collected_not_null(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
@@ -324,12 +344,12 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
     def test_echo2_bio_page_shows_kit_sent_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
         logging.debug(primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
 
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
                                     data={'initial_form-collected_not_collected_kit_sent': ['K']})
 
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.debug(response.context)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/')
 
         self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
 

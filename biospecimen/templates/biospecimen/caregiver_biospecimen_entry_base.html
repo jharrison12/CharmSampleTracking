@@ -13,9 +13,9 @@
         <div id="not_collected_information" class="row border border-primary p-3 rounded">
         Not Collected
         </div>
-    {% elif caregiver_bio.status_fk.no_consent_fk %}
-        <div id="no_consent_information" class="row border border-primary p-3 rounded">
-        No Consent
+    {% elif caregiver_bio.status_fk.declined_fk %}
+        <div id="declined_information" class="row border border-primary p-3 rounded">
+        Declined
         </div>
     {#  Potential bug because collected date time is not required but you have to null it to create it        #}
     {% endif %}

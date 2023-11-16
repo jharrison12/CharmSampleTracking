@@ -47,7 +47,7 @@
     {% else %}
     {% endif %}
     {% if caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date and caregiver_bio.status_fk.collected_fk.collected_date_time %}
-        <div id="collected_information_form" class="row border border-primary p-3 rounded">
+        <div id="incentive_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_incentive_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
               <h2>Incentive Form</h2>

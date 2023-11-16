@@ -9,7 +9,7 @@ from django.utils import timezone
 
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
-COLLECTED_NOT_COLLECTED_NO_CONSENT = [('C', 'Collected'), ('N', 'Not Collected'), ('X', 'No Consent')]
+COLLECTED_NOT_COLLECTED_NO_CONSENT = [('C', 'Collected'), ('N', 'Not Collected'), ('X', 'Declined')]
 KIT_SENT_NOT_COLLECTED_NO_CONSENT = [('K', 'Kit Sent'), ('N', 'Not Collected'), ('X', 'Declined')]
 KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
