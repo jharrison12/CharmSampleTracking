@@ -83,7 +83,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         incentive_date.clear()
         incentive_date.send_keys('2023-09-03')
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
@@ -142,7 +142,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertNotIn('<form>', body_text)
         self.assertIn('Not Collected', body_text)
 
-    def test_user_can_choose_status_of_hair_or_salvia_information_chooses_no_consent(self):
+    def test_user_can_choose_status_of_hair_or_salvia_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
@@ -154,8 +154,8 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
-        collected_not_collected.select_by_visible_text('No Consent')
+        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
+        collected_not_collected.select_by_visible_text('Declined')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
@@ -163,4 +163,4 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
-        self.assertIn('No Consent', body_text)
+        self.assertIn('Declined', body_text)

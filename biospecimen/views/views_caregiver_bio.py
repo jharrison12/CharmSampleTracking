@@ -239,15 +239,15 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             caregiver_bio.status_fk = new_status
             new_status.save()
             caregiver_bio.save()
-            if form.cleaned_data['collected_not_collected_kit_sent'] == 'C':
-                new_collected = Collected.objects.create(logged_by=request.user)
-                new_status.collected_fk = new_collected
+            if form.cleaned_data['collected_not_collected_kit_sent'] == 'X':
+                new_declined = Declined.objects.create()
+                new_status.declined_fk = new_declined
             elif form.cleaned_data['collected_not_collected_kit_sent'] == 'N':
                 new_not_collected = NotCollected.objects.create()
                 new_status.not_collected_fk = new_not_collected
             elif form.cleaned_data['collected_not_collected_kit_sent'] == 'K':
-                new_no_consent = KitSent.objects.create()
-                new_status.kit_sent_fk = new_no_consent
+                new_kit_sent = KitSent.objects.create()
+                new_status.kit_sent_fk = new_kit_sent
             new_status.save()
             caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry_hair_urine", caregiver_charm_id=caregiver_charm_id,
