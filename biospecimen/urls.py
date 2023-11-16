@@ -29,6 +29,7 @@ urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/$", caregiver_biospecimen.caregiver_biospecimen_initial, name='caregiver_biospecimen_initial'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/post/$", caregiver_biospecimen.caregiver_biospecimen_initial_post, name='caregiver_biospecimen_initial_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/kit_sent/post/$", caregiver_biospecimen.caregiver_biospecimen_kit_sent_post, name='caregiver_biospecimen_kit_sent_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/incentive/post/$", caregiver_biospecimen.caregiver_biospecimen_incentive_post, name='caregiver_biospecimen_incentive_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_choice/post/$", caregiver_biospecimen.caregiver_shipped_choice_post, name='caregiver_shipped_choice_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_wsu/post/$", caregiver_biospecimen.caregiver_biospecimen_shipped_wsu_post, name='caregiver_biospecimen_shipped_wsu_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_echo/post/$", caregiver_biospecimen.caregiver_biospecimen_shipped_echo_post, name='caregiver_biospecimen_shipped_echo_post'),

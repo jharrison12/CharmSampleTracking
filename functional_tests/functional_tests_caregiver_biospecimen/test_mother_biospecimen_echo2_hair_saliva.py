@@ -22,15 +22,15 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,child_age='ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-        time.sleep(50)
+
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
-        collected_not_collected.select_by_visible_text('Kit Sent')
+        collected_not_collected_kit_sent = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
+        collected_not_collected_kit_sent.select_by_visible_text('Kit Sent')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
@@ -47,16 +47,11 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         biospecimen_id = self.browser.find_element(By.ID,'id_kit_sent_form-echo_biospecimen_id')
         biospecimen_id.send_keys('5555555')
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="initial_information"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="kit_sent_form"]/form/input[2]')
         submit.click()
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Sept. 27, 2023',body_text)
-
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
-        collected_not_collected.select_by_visible_text('Collected')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
-        submit.click()
 
         #user sees collected form on next page
 
@@ -78,6 +73,22 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Collected Date Time: Sept. 27, 2023', body)
+
+        #User sees incentive form
+
+        form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Incentive Form',form)
+
+        incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-09-03')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
+        submit.click()
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Incentive Date: Sept. 3, 2023', body)
+
 
         #user sees option to choose shipped to wsu or shipped to echo
 

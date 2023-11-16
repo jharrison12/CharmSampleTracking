@@ -3,7 +3,7 @@ import logging
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
-    KitSent
+    KitSent,Incentive
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm
@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import random
 
-logging.basicConfig(level=logging.debug)
+logging.basicConfig(level=logging.CRITICAL)
 
 blood_dict = {'Whole Blood':'whole_blood',
               'Serum':'serum',
@@ -296,12 +296,12 @@ def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio
             kit_sent_data.kit_sent_date = form.cleaned_data['kit_sent_date']
             caregiver_bio.biospecimen_id = form.cleaned_data['echo_biospecimen_id']
             kit_sent_data.save()
-            caregiver_bio.save()
-            collected_item = Collected.objects.create(logged_by=request.user)
+            collected_item = Collected.objects.create()
             caregiver_bio.status_fk.collected_fk = collected_item
             caregiver_bio.status_fk.collected_fk.save()
             caregiver_bio.status_fk.save()
             caregiver_bio.save()
+
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
     else:
@@ -320,6 +320,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
+    incentive_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
@@ -328,17 +329,19 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         else:
             collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
-        if collection_type in HAIR_SALIVA:
+        if collection_type in HAIR_SALIVA and caregiver_bio.incentive_fk.incentive_date:
             shipped_choice = ShippedChoiceEchoForm(prefix='shipped_choice_form')
         else:
             shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
+    if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
+        if collection_type in HAIR_SALIVA:
+            incentive_form = IncentiveForm(prefix='incentive_form')
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to wsu if statement")
         shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
     if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to echo if statement")
         shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
-
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,
@@ -346,7 +349,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'collection_type': collection_type.collection_type,
                                                                                                   'shipped_choice_form': shipped_choice,
                                                                                                   'shipped_wsu_form': shipped_wsu_form,
-                                                                                                  'shipped_echo_form':shipped_echo_form
+                                                                                                  'shipped_echo_form':shipped_echo_form,
+                                                                                                  'incentive_form': incentive_form
                                                                                                   })
 
 @login_required
@@ -424,6 +428,10 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 hair_or_saliva.logged_by = request.user
                 hair_or_saliva.save()
                 caregiver_bio.save()
+                incentive = Incentive.objects.create()
+                caregiver_bio.incentive_fk = incentive
+                caregiver_bio.incentive_fk.save()
+                caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type.collection_type in BLOOD_TYPES:
@@ -474,6 +482,25 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError
+    else:
+        raise AssertionError
+
+def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    if request.method=="POST":
+        if collection_type in HAIR_SALIVA:
+            form = IncentiveForm(data=request.POST, prefix='incentive_form')
+            if form.is_valid():
+                incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
+                incentive_item.incentive_date = form.cleaned_data['incentive_date']
+                incentive_item.logged_by = request.user
+                incentive_item.save()
+                caregiver_bio.save()
+            else:
+                form.errors
+            return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
         raise AssertionError
 
