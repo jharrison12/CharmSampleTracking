@@ -127,11 +127,18 @@ def update_shipped_echo(caregiver_bio_pk, bound_form):
     status_bio.save()
     caregiver_bio.save()
 
-def update_incentive(caregiver_bio_pk,bound_form):
+def create_or_update_incentive(caregiver_bio_pk, bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    incentive_item = Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
+    try:
+        incentive_item = Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
+    except Incentive.DoesNotExist:
+        incentive_item = Incentive()
+        caregiver_bio.incentive_fk = incentive_item
+    logging.critical(f"{incentive_item}")
+    logging.critical(f"{bound_form.cleaned_data}")
     incentive_item.incentive_date = bound_form.cleaned_data['incentive_date']
     incentive_item.save()
+    caregiver_bio.save()
 
 
 
@@ -389,10 +396,6 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         logging.debug(f"Collected form is none")
         collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
-        new_incentive = Incentive.objects.create()
-        caregiver_bio.incentive_fk = new_incentive
-        caregiver_bio.incentive_fk.save()
-        caregiver_bio.save()
         incentive_form = IncentiveForm(prefix='incentive_form')
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date:
         shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
@@ -525,7 +528,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
                 caregiver_bloods = return_caregiver_bloods(caregiver_bio)
                 for item in caregiver_bloods:
                     logging.critical(f"Blood item is {item}")
-                    update_incentive(item.pk,form)
+                    create_or_update_incentive(item.pk, form)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
 
