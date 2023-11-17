@@ -217,6 +217,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     if request.method=="POST" and collection_type not in HAIR_SALIVA:
         form = InitialBioForm(data=request.POST, prefix='initial_form')
+        logging.critical(f"{form.is_valid()} {form} {form.errors}")
         if form.is_valid():
             new_status = Status()
             caregiver_bio.status_fk = new_status
@@ -523,6 +524,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
             if form.is_valid():
                 caregiver_bloods = return_caregiver_bloods(caregiver_bio)
                 for item in caregiver_bloods:
+                    logging.critical(f"Blood item is {item}")
                     update_incentive(item.pk,form)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
