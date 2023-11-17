@@ -130,7 +130,7 @@ def update_shipped_echo(caregiver_bio_pk, bound_form):
 def update_incentive(caregiver_bio_pk,bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     incentive_item = Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
-    incentive_item.incentive_date = bound_form['incentive_date']
+    incentive_item.incentive_date = bound_form.cleaned_data['incentive_date']
     incentive_item.save()
 
 

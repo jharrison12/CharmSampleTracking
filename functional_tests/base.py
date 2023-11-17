@@ -36,6 +36,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         login.click()
 
 
+
         self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
         self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
         self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
@@ -547,7 +548,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_collected_complete,
             biospecimen_id='111URS',
-            project_fk=self.echo2
+            project_fk=self.echo2,
+            incentive_fk=self.incentive_two
         )
 
         self.urine_trimester_2_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -556,6 +558,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             collection_fk=self.urine_none,
             biospecimen_id='112URS',
             project_fk=self.echo2
+            #incentive_fk=self.incentive_two
         )
 
         self.urine_trimester_3_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -564,7 +567,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_wsu_incomplete,
             biospecimen_id='113URS',
-            project_fk=self.echo2
+            project_fk=self.echo2,
+            incentive_fk=self.incentive_two
         )
 
         self.urine_trimester_3_caregiver_two = CaregiverBiospecimen.objects.create(
@@ -573,7 +577,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_wsu_complete,
             biospecimen_id='211URS',
-            project_fk=self.echo2
+            project_fk=self.echo2,
+            incentive_fk=self.incentive_two
         )
 
 
@@ -583,7 +588,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_echo_incomplete,
             biospecimen_id='212URS',
-            project_fk=self.echo2
+            project_fk=self.echo2,
+            incentive_fk=self.incentive_two
         )
 
         self.urine_trimester_3_caregiver_two = CaregiverBiospecimen.objects.create(
@@ -592,7 +598,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             collection_fk=self.urine_none,
             status_fk=self.status_outcome_shipped_echo_complete,
             biospecimen_id='213URS',
-            project_fk=self.echo2
+            project_fk=self.echo2,
+            incentive_fk=self.incentive_two
         )
 
         self.placenta_perinatal_2_caregiver_one = CaregiverBiospecimen.objects.create(
@@ -601,7 +608,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             collection_fk=self.placenta_one,
             status_fk=self.status_outcome_collected_placenta,
             biospecimen_id='111P1',
-            project_fk=self.echo1
+            project_fk=self.echo1,
+            incentive_fk=self.incentive_two
         )
 
         self.new_status = Status.objects.create()
