@@ -507,7 +507,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        if collection_type in HAIR_SALIVA:
+        if collection_type in HAIR_SALIVA or collection_type.collection_type=='Urine':
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
