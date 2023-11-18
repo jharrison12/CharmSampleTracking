@@ -51,7 +51,7 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive Information</button>
             </div>
             <div class="col-8">
-                <div>Incentive Date:{{ caregiver_bio.incentive_fk.incentive_date }}</div>
+                <div>Incentive Date: {{ caregiver_bio.incentive_fk.incentive_date }}</div>
                 {% for blood in caregiver_bloods %}
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
@@ -102,6 +102,43 @@
                 <div>Tracking Number:{{ caregiver_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
                 <div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
                 <div>Shipped By: {{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>
+                {% for blood in caregiver_bloods %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                      <label class="form-check-label" for="flexCheckCheckedDisabled">
+                        {{ blood.collection_fk.collection_type_fk.collection_type }}
+                      </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% if received_wsu_form and not caregiver_bio.status_fk.received_wsu_fk.received_date_time %}
+        <div id="received_at_wsu_information_form" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_received_wsu_post' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Recieved at WSU Form</h2>
+            {{ received_wsu_form.as_p }}
+              {% for blood in caregiver_bloods %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                      <label class="form-check-label" for="flexCheckCheckedDisabled">
+                        {{ blood.collection_fk.collection_type_fk.collection_type }}
+                      </label>
+                    </div>
+              {% endfor %}
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
+    {% elif caregiver_bio.status_fk.received_wsu_fk.received_date_time %}
+        <div id="received_at_wsuinformation" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Received at WSU</button>
+            </div>
+            <div class="col-8">
+                <div>Received at WSU {{ caregiver_bio.status_fk.received_wsu_fk.received_date_time }}</div>
                 {% for blood in caregiver_bloods %}
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>

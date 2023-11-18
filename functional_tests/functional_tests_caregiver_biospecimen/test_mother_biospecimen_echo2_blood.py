@@ -25,7 +25,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-
+        time.sleep(50)
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
@@ -78,7 +78,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
         incentive_date.clear()
         incentive_date.send_keys('2023-09-03')
-        time.sleep(50)
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_form"]/form/input[2]')
         submit.click()
 
@@ -124,6 +124,13 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         #user sees that whole blood check box is clicked
         self.assertIn("Whole Blood",needed_div)
+        time.sleep(50)
+        #User sees received date time at
+        #user submits shipped to WSu form
+        received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_and_time")
+        received_date_time.clear()
+        received_date_time.send_keys('2023-09-27 12:52:26')
+
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_echo(self):
 
@@ -180,7 +187,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         incentive_date.clear()
         incentive_date.send_keys('2023-09-03')
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text

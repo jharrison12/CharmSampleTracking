@@ -3,10 +3,11 @@ import logging
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
-    KitSent,Incentive,Declined
+    KitSent,Incentive,Declined,ReceivedWSU
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm
+    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
+ReceivedatWSUForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -109,10 +110,38 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in):
     shipped_to_wsu.courier = bound_form.cleaned_data['courier']
     shipped_to_wsu.logged_date_time = bound_form.cleaned_data['logged_date_time']
     shipped_to_wsu.shipped_by = user_logged_in
+    received_object = ReceivedWSU.objects.create()
+    status_bio.received_wsu_fk = received_object
+    status_bio.received_wsu_fk.save()
     shipped_to_wsu.save()
+    status_bio.save()
     status_bio.save()
     caregiver_bio.save()
     logging.debug(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
+
+def update_received_wsu(caregiver_bio_pk,data,user_logged_in):
+    logging.critical(data)
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+    try:
+        received_at_wsu = ReceivedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
+        finished_form = ReceivedatWSUForm(data=data, prefix='received_at_wsu_form')
+        if finished_form.is_valid():
+            received_at_wsu.received_date_time = finished_form.cleaned_data['received_date_time']
+            logging.critical(f"form is valid {finished_form.is_valid()}  form errors {finished_form.errors} {finished_form.cleaned_data}")
+            received_at_wsu.save()
+            finished_form.save()
+            caregiver_bio.save()
+            logging.critical(f"received at wsu found {received_at_wsu} status_bio:{status_bio} is received datetime saved {received_at_wsu.received_date_time}")
+    except ReceivedWSU.DoesNotExist:
+        received_at_wsu = ReceivedWSU()
+        finished_form = ReceivedatWSUForm(data=data,prefix='received_at_wsu_form')
+        if finished_form.is_valid():
+            caregiver_bio.status_fk.received_wsu_fk.received_date_time = finished_form
+            received_at_wsu.save()
+            finished_form.save()
+            status_bio.received_wsu_fk = received_at_wsu
+            status_bio.save()
 
 def update_shipped_echo(caregiver_bio_pk, bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -375,12 +404,14 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     caregiver_bloods = return_caregiver_bloods(caregiver_bio)
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
     incentive_form = None
+    received_wsu_form = None
     logging.debug(f"Caregiver bio is {caregiver_bio}")
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
         logging.debug(f"Does collected_item exist? {collected_item.exists()}\n\n"
@@ -404,6 +435,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
         logging.critical(f"in shipped to wsu if statement")
         shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
+    elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=True):
+        received_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
     elif shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
         logging.critical(f"in shipped to echo if statement")
         shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
@@ -416,7 +449,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'shipped_wsu_form': shipped_wsu_form,
                                                                                                         'shipped_echo_form': shipped_echo_form,
                                                                                                         'caregiver_bloods': caregiver_bloods,
-                                                                                                        'incentive_form':incentive_form
+                                                                                                        'incentive_form':incentive_form,
+                                                                                                        'received_wsu_form':received_wsu_form
                                                                                                         })
 
 @login_required
@@ -599,6 +633,23 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
         raise AssertionError
+
+@login_required
+def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    shipped_wsu_fk = ShippedWSU.objects.get(status=status)
+    logging.debug(f"In received wsu post")
+    if request.method == "POST":
+        if collection_type.collection_type in BLOOD_TYPES:
+            caregiver_bloods = return_caregiver_bloods(caregiver_bio)
+            logging.critical(f"care giver bloods {caregiver_bloods}")
+            for item in caregiver_bloods:
+                logging.critical(f"updating recieved wsu {item.pk}")
+                update_received_wsu(caregiver_bio_pk=item.pk, data=request.POST, user_logged_in=request.user)
+        return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+                            caregiver_bio_pk=caregiver_bio_pk)
 
 @login_required
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):
