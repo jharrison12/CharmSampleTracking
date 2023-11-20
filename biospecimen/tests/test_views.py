@@ -177,6 +177,8 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
                                                         age_category_fk__age_category=age_category)
         return caregiverbio.pk
 
+    #TEMPLATES
+
     def test_echo2_initial_bio_page_returns_correct_template(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
@@ -197,36 +199,10 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response, 'Trimester: First')
 
-    def test_echo2_bio_page_shows_initial_collected_or_not_form_if_no_collected_object_and_collection_urine(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
-        self.assertIsInstance(response.context['initial_bio_form'], InitialBioForm)
-
-    @unittest.skip
-    def test_echo2_bio_page_does_not_show_collected_urine_form_if_no_collected_object_and_collection_urine(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertNotIsInstance(response.context['collected_form'], CollectedBiospecimenUrineForm)
-
     def test_echo2_bio_page_does_not_show_formalin_if_urine(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertNotContains(response, 'formalin')
-
-    def test_echo2_bio_entry_urine_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={"id_urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
-                                          "id_urine_form-processed_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "id_urine_form-stored_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "id_urine_form-number_of_tubes": 5
-                                          })
-
-        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_entry_urine_shows_user_who_is_logged_in_after_submitted(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
@@ -244,12 +220,57 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response,'Logged By: testuser')
 
+    def test_echo2_bio_page_shows_shipped_to_wsu_data_if_complete(self):
+        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'F')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response, 'Courier: FedEx')
+
+    def test_echo2_bio_page_shows_shipped_by_user(self):
+        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'F')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertContains(response, 'Shipped By: testuser')
+
+    def test_echo2_bio_page_shows_shipped_to_echo_data_if_complete(self):
+        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'T')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+        response = self.client.get(f'/biospecimen/caregiver/P7001/{primary_key}/entry/')
+        # logging.debug(response.content.decode())
+        # print html RESPONSE CONTENT DECODE
+        self.assertContains(response, 'Shipped Date Time:')
+
+    def test_echo2_bio_page_hair_saliva_uses_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+
+        self.assertTemplateUsed(response, "biospecimen/caregiver_biospecimen_initial.html")
+
+    #REDIRECTS
+
+    def test_echo2_bio_entry_urine_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                                    data={"id_urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                          "id_urine_form-processed_date_time": timezone.datetime(
+                                              2023, 5, 5, 5, 5,
+                                              5),
+                                          "id_urine_form-stored_date_time": timezone.datetime(
+                                              2023, 5, 5, 5, 5,
+                                              5),
+                                          "id_urine_form-number_of_tubes": 5
+                                          })
+
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+
     def test_echo2_bio_initial_posts_to_initial_post_view(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
                                     data={'initial_form-collected_not_collected': ['C']})
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
-
 
     def test_echo2_bio_entry_shipped_choice_redirects_after_post_wsu(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
@@ -264,6 +285,74 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
                                     data={'shipped_choice_form-shipped_to_wsu_or_echo': ['E']})
 
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_entry_shipped_echo_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'S')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
+                                    data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_redirects_after_initial_kit_sent_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
+
+    def test_echo2_bio_page_redirects_after_kit_sent_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
+                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
+                                          'echo_biospecimen_id': 3333})
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+
+    def test_echo2_bio_page_incentive_post_redirects(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
+        logging.debug(primary_key)
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
+                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
+                                          'kit_sent_form-echo_biospecimen_id': 3333})
+
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                                    data={'hair_saliva_form-in_person_remote': 'I',
+                                          'hair_saliva_form-date_collected': '2023-09-27',
+                                          'hair_saliva_form-incentive_date': '2023-09-27'})
+
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        logging.critical(f"what {response.content.decode()}")
+
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/incentive/post/',
+                                    data={'incentive_form-incentive_date': '2023-09-27'})
+
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+
+    #FORMS
+
+    def test_echo2_bio_page_shows_initial_collected_or_not_form_if_no_collected_object_and_collection_urine(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.assertIsInstance(response.context['initial_bio_form'], InitialBioForm)
+
+    @unittest.skip
+    def test_echo2_bio_page_does_not_show_collected_urine_form_if_no_collected_object_and_collection_urine(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertNotIsInstance(response.context['collected_form'], CollectedBiospecimenUrineForm)
 
     def test_echo2_bio_entry_shows_incentive_form_if_collected_not_null(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
@@ -304,27 +393,6 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
 
-    def test_echo2_bio_page_shows_shipped_to_wsu_data_if_complete(self):
-        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'F')
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertContains(response, 'Courier: FedEx')
-
-    def test_echo2_bio_page_shows_shipped_by_user(self):
-        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'F')
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertContains(response, 'Shipped By: testuser')
-
-    def test_echo2_bio_page_shows_shipped_to_echo_data_if_complete(self):
-        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'T')
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-        response = self.client.get(f'/biospecimen/caregiver/P7001/{primary_key}/entry/')
-        # logging.debug(response.content.decode())
-        # print html RESPONSE CONTENT DECODE
-        self.assertContains(response, 'Shipped Date Time:')
-
     def test_echo2_bio_page_shows_shipped_echo_form_if_echo_fk_not_null(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'T')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
@@ -337,12 +405,6 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         logging.debug(f"shipped to echo {response.context}")
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
-    def test_echo2_bio_entry_shipped_echo_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'S')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
-                                    data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
-        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
-
     def test_echo2_bio_page_shows_kit_sent_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
         logging.debug(primary_key)
@@ -354,36 +416,6 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/')
 
         self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
-
-    def test_echo2_bio_page_redirects_after_initial_kit_sent_submission(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
-
-    def test_echo2_bio_page_redirects_after_kit_sent_form_submission(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
-                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
-                                          'echo_biospecimen_id': 3333})
-
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
-
-    def test_echo2_bio_page_hair_saliva_uses_correct_template(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
-
-        self.assertTemplateUsed(response, "biospecimen/caregiver_biospecimen_initial.html")
-
 
     def test_echo2_bio_page_shows_collected_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
@@ -399,8 +431,6 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
 
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
-
-
 
     def test_echo2_bio_page_initial_form_shows_denied_not_collected_kit_sent_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
@@ -434,31 +464,6 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         logging.critical(response.content.decode())
 
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceEchoForm)
-
-    def test_echo2_bio_page_incentive_post_redirects(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
-        logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
-                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
-                                          'kit_sent_form-echo_biospecimen_id': 3333})
-
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={'hair_saliva_form-in_person_remote': 'I',
-                                          'hair_saliva_form-date_collected': '2023-09-27',
-                                          'hair_saliva_form-incentive_date': '2023-09-27'})
-
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.critical(f"what {response.content.decode()}")
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/incentive/post/',
-                                    data={'incentive_form-incentive_date': '2023-09-27'})
-
-        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
 
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
@@ -580,7 +585,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         self.assertContains(response, 'Trimester: First')
-
 
     def test_echo2_bio_page_shows_collected_blood_form_if_blood_and_collected(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
