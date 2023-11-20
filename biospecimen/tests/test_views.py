@@ -553,6 +553,11 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         return response
 
+    def blood_received_at_wsu(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/received_wsu/post/',
+                                    data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+
+        return response
 
     #Template Tests
 
@@ -565,6 +570,11 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry_blood.html')
+    #move
+    def test_echo2_entry_bio_hair_saliva_page_returns_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairsaliva/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
 
     def test_echo2_bio_page_shows_trimester_if_blood(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
@@ -636,6 +646,45 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/blood/")
 
+    def test_echo2_bio_blood_shipped_choice_form_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, "serum", True)
+        self.blood_incentive_form_send(primary_key)
+        response = self.blood_shipped_choice_form_send(primary_key,'W')
+
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/blood/")
+
+    def test_echo2_bio_blood_shipped_wsu_form_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, "serum", True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_choice_form_send(primary_key, 'W')
+        response = self.blood_shipped_to_wsu(primary_key)
+
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/blood/")
+
+    def test_echo2_bio_blood_shipped_echo_form_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, "serum", True)
+        self.blood_incentive_form_send(primary_key)
+        response = self.blood_shipped_choice_form_send(primary_key, 'E')
+
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/blood/")
+
+    def test_echo2_bio_blood_received_wsu_form_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, "serum", True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_choice_form_send(primary_key, 'W')
+        self.blood_shipped_to_wsu(primary_key)
+        response = self.blood_received_at_wsu(primary_key)
+
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/blood/")
+
 
     #View has form tests
 
@@ -703,7 +752,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertIsInstance(response.context['received_wsu_form'], ReceivedatWSUForm)
 
     #View updates data tests
-
 
     def test_echo2_bio_entry_blood_updates_serum_if_checkbox_checked(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
@@ -833,6 +881,37 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         logging.debug(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
 
         self.assertEqual(red_blood_count.status_fk.shipped_wsu_fk.shipped_date_time,whole_blood.status_fk.shipped_wsu_fk.shipped_date_time)
+
+    def test_echo_2_bio_entry_whole_blood_updates_received_wsu_data_for_associated_bloods(self):
+        primary_key_whole_blood = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
+        logging.debug(f"whole blood status test: {whole_blood.status_fk}")
+        self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
+        self.blood_collected_form_send(primary_key_whole_blood, 'red_blood_cells', True)
+
+        logging.debug(f"whole blood status test:  {whole_blood.status_fk}")
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_choice/post/',
+                                    data={'shipped_choice_form-shipped_to_wsu_or_echo':['W']})
+
+        response =  self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/shipped_wsu/post/',
+                                    data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-tracking_number':555,
+                                          'shipped_to_wsu_form-number_of_tubes':5,
+                                          'shipped_to_wsu_form-logged_date_time': timezone.datetime(
+                                                  2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-courier': 'F'})
+
+        response =  self.client.post(f'/biospecimen/caregiver/P7000/{primary_key_whole_blood}/received_wsu/post/',
+                                    data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Red Blood Cells', 'F')
+        red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
+        whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
+
+        logging.debug(f" red blood count {red_blood_count.status_fk} whole blood {whole_blood.status_fk}")
+
+        self.assertEqual(red_blood_count.status_fk.received_wsu_fk.received_date_time,whole_blood.status_fk.received_wsu_fk.received_date_time)
+
 
     def test_echo_2_bio_entry_whole_blood_updates_shipped_to_echo_data_for_associated_bloods(self):
         primary_key_whole_blood = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
