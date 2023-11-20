@@ -280,6 +280,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             raise AssertionError
     elif request.method=="POST" and collection_type in HAIR_SALIVA:
         form = InitialBioFormPostNatal(data=request.POST, prefix='initial_form')
+        logging.critical(f"is form valid {form} {form.is_valid()}")
         if form.is_valid():
             new_status = Status()
             caregiver_bio.status_fk = new_status
@@ -296,7 +297,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                 new_status.kit_sent_fk = new_kit_sent
             new_status.save()
             caregiver_bio.save()
-            return redirect("biospecimen:caregiver_biospecimen_entry_hair_urine", caregiver_charm_id=caregiver_charm_id,
+            return redirect("biospecimen:caregiver_biospecimen_entry_hair_saliva", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError

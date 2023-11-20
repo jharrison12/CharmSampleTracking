@@ -177,6 +177,77 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
                                                         age_category_fk__age_category=age_category)
         return caregiverbio.pk
 
+    def collected_send_form(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                                    data={"id_urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                          "id_urine_form-processed_date_time": timezone.datetime(2023, 5, 5, 5, 5,5),
+                                          "id_urine_form-stored_date_time": timezone.datetime(2023, 5, 5, 5, 5,5),
+                                          "id_urine_form-number_of_tubes": 5})
+        return response
+
+    def hair_saliva_collected_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
+                         data={'hair_saliva_form-in_person_remote': 'I',
+                               'hair_saliva_form-date_collected': '2023-09-27',
+                               'hair_saliva_form-incentive_date': '2023-09-27'})
+
+        return response
+
+    def initial_send_form(self, primary_key,c_n_or_x):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={"initial_form-collected_not_collected": c_n_or_x,
+                                          })
+        return response
+
+    def initial_send_form_hair_saliva(self, primary_key,c_n_or_x):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
+                                    data={"initial_form-collected_not_collected_kit_sent": c_n_or_x,
+                                          })
+        return response
+
+    def kit_sent_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
+                         data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
+                               'kit_sent_form-echo_biospecimen_id': 3333})
+
+        return response
+
+    def incentive_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/incentive/post/',
+                                    data={"incentive_form-incentive_date": '2023-09-03',
+                                          })
+        return response
+
+    def shipped_choice_send_form(self,primary_key,w_or_e):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_choice/post/',
+                                    data={"shipped_choice_form-shipped_to_wsu_or_echo": w_or_e,
+                                          })
+        return response
+
+    def shipped_to_echo_echo_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
+                         data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
+
+        return response
+
+
+    def shipped_to_wsu_send_form(self,primary_key):
+        response =  self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_wsu/post/',
+                                    data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-tracking_number':555,
+                                          'shipped_to_wsu_form-number_of_tubes':5,
+                                          'shipped_to_wsu_form-logged_date_time': timezone.datetime(
+                                                  2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-courier': 'F'})
+
+        return response
+
+    def received_at_wsu_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/received_wsu/post/',
+                                    data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+
+        return response
+
     #TEMPLATES
 
     def test_echo2_initial_bio_page_returns_correct_template(self):
@@ -185,8 +256,20 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_echo2_bio_page_returns_correct_template(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
+
+    def test_echo2_bio_page_hair_saliva_uses_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+
+        self.assertTemplateUsed(response, "biospecimen/caregiver_biospecimen_initial.html")
+
+    def test_echo2_entry_bio_hair_saliva_page_returns_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
 
     def test_echo2_bio_page_shows_caregiver_id(self):
@@ -206,17 +289,7 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
     def test_echo2_bio_entry_urine_shows_user_who_is_logged_in_after_submitted(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={"id_urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
-                                          "id_urine_form-processed_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "id_urine_form-stored_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "id_urine_form-number_of_tubes": 5
-                                          })
-
+        response = self.collected_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertContains(response,'Logged By: testuser')
 
@@ -241,107 +314,57 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         # print html RESPONSE CONTENT DECODE
         self.assertContains(response, 'Shipped Date Time:')
 
-    def test_echo2_bio_page_hair_saliva_uses_correct_template(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
-
-        self.assertTemplateUsed(response, "biospecimen/caregiver_biospecimen_initial.html")
-
     #REDIRECTS
 
     def test_echo2_bio_entry_urine_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={"id_urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
-                                          "id_urine_form-processed_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "id_urine_form-stored_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "id_urine_form-number_of_tubes": 5
-                                          })
-
+        response = self.collected_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
-
 
     def test_echo2_bio_initial_posts_to_initial_post_view(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected': ['C']})
+        response = self.initial_send_form(primary_key,'C')
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_entry_shipped_choice_redirects_after_post_wsu(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_choice/post/',
-                                    data={'shipped_choice_form-shipped_to_wsu_or_echo': ['W']})
-
+        response = self.shipped_choice_send_form(primary_key,'W')
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_entry_shipped_choice_redirects_after_post_echo(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_choice/post/',
-                                    data={'shipped_choice_form-shipped_to_wsu_or_echo': ['E']})
-
+        response = self.shipped_choice_send_form(primary_key,'E')
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_entry_shipped_echo_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'S')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
-                                    data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
+        response = self.shipped_to_echo_echo_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_page_redirects_after_initial_kit_sent_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
 
     def test_echo2_bio_page_redirects_after_kit_sent_form_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
-                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
-                                          'echo_biospecimen_id': 3333})
-
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
 
     def test_echo2_bio_page_incentive_post_redirects(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
         logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
-                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
-                                          'kit_sent_form-echo_biospecimen_id': 3333})
-
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={'hair_saliva_form-in_person_remote': 'I',
-                                          'hair_saliva_form-date_collected': '2023-09-27',
-                                          'hair_saliva_form-incentive_date': '2023-09-27'})
-
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.critical(f"what {response.content.decode()}")
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/incentive/post/',
-                                    data={'incentive_form-incentive_date': '2023-09-27'})
-
+        response = self.incentive_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-
     #FORMS
+        #Urine
 
     def test_echo2_bio_page_shows_initial_collected_or_not_form_if_no_collected_object_and_collection_urine(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
@@ -356,24 +379,9 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
 
     def test_echo2_bio_entry_shows_incentive_form_if_collected_not_null(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected': ['C']})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={"urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
-                                          "urine_form-processed_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "urine_form-stored_date_time": timezone.datetime(
-                                              2023, 5, 5, 5, 5,
-                                              5),
-                                          "urine_form-number_of_tubes": 5
-                                          })
-
+        response = self.initial_send_form(primary_key,'C')
+        response = self.collected_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-
-        logging.critical(response.content.decode())
-
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
 
     def test_echo2_bio_page_shows_shipped_choice_form_if_collected_not_null(self):
@@ -382,87 +390,49 @@ class CaregiverEcho2BiospecimenPageNonBlood(DatabaseSetup):
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
     def test_echo2_bio_page_shows_wsu_shipped_form_if_collected_not_null_and_shipped_wsu_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'T')
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-        new_ship_to_wsu = ShippedWSU()
-        status_item.shipped_wsu_fk = new_ship_to_wsu
-        new_ship_to_wsu.shipped_by = User.objects.get(pk=1)
-        new_ship_to_wsu.save()
-        caregiver_bio.save()
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.shipped_choice_send_form(primary_key,'W')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
 
     def test_echo2_bio_page_shows_shipped_echo_form_if_echo_fk_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'T')
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        status_item = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-        new_ship_to_echo = ShippedECHO()
-        status_item.shipped_echo_fk = new_ship_to_echo
-        new_ship_to_echo.save()
-        status_item.save()
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.shipped_choice_send_form(primary_key,'E')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.debug(f"shipped to echo {response.context}")
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
+
+    #FORMS
+        #HAIR
 
     def test_echo2_bio_page_shows_kit_sent_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
+        self.initial_send_form_hair_saliva(primary_key,'K')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/')
-
         self.assertIsInstance(response.context['kit_sent_form'], KitSentForm)
 
     def test_echo2_bio_page_shows_collected_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
-                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
-                                          'kit_sent_form-echo_biospecimen_id': 3333})
-
+        self.initial_send_form_hair_saliva(primary_key,'K')
+        self.kit_sent_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
 
     def test_echo2_bio_page_initial_form_shows_denied_not_collected_kit_sent_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        logging.debug(primary_key)
-
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
-
         self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormPostNatal)
-
 
     def test_echo2_bio_page_shows_shipped_echo_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/post/',
-                                    data={'initial_form-collected_not_collected_kit_sent': ['K']})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/kit_sent/post/',
-                                    data={'kit_sent_form-kit_sent_date': ['2023-09-30'],
-                                          'kit_sent_form-echo_biospecimen_id': 3333})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/post/',
-                                    data={'hair_saliva_form-in_person_remote': 'I',
-                                          'hair_saliva_form-date_collected':'2023-09-27',
-                                          'hair_saliva_form-incentive_date':'2023-09-27'})
-
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/incentive/post/',
-                                    data={'incentive_form-incentive_date': '2023-09-27'})
-
+        self.initial_send_form_hair_saliva(primary_key,'K')
+        self.kit_sent_send_form(primary_key)
+        self.hair_saliva_collected_send_form(primary_key)
+        self.incentive_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-
-        logging.critical(response.content.decode())
-
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceEchoForm)
 
 
@@ -576,10 +546,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry_blood.html')
     #move
-    def test_echo2_entry_bio_hair_saliva_page_returns_correct_template(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairsaliva/')
-        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
+
 
     def test_echo2_bio_page_shows_trimester_if_blood(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
