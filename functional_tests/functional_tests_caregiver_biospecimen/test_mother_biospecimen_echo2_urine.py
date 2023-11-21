@@ -20,7 +20,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-        time.sleep(50)
+
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
@@ -55,7 +55,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit.click()
 
         #user sees some of the information just entered
-        time.sleep(50)
+
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
 
@@ -112,6 +112,21 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Courier: FedEx',body)
         self.assertIn('Shipped By: testuser',body)
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Received at WSU Form',body)
+
+        #User sees received date time at
+        #user submits shipped to WSu form
+        received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
+        received_date_time.clear()
+        received_date_time.send_keys('2023-09-27 12:52:26')
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
+        submit.click()
+
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
 
     def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees urine

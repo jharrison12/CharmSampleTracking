@@ -134,14 +134,17 @@ def update_received_wsu(caregiver_bio_pk,data,user_logged_in):
             caregiver_bio.save()
             logging.critical(f"received at wsu found {received_at_wsu} status_bio:{status_bio} is received datetime saved {received_at_wsu.received_date_time}")
     except ReceivedWSU.DoesNotExist:
+        logging.critical(f"received at wsu doesn't exist")
         received_at_wsu = ReceivedWSU.objects.create()
         finished_form = ReceivedatWSUForm(data=data,prefix='received_at_wsu_form')
         if finished_form.is_valid():
             caregiver_bio.status_fk.received_wsu_fk = received_at_wsu
             caregiver_bio.status_fk.received_wsu_fk.received_date_time = finished_form.cleaned_data['received_date_time']
             received_at_wsu.save()
-            finished_form.save()
-            status_bio.save()
+            caregiver_bio.status_fk.received_wsu_fk.save()
+            caregiver_bio.status_fk.save()
+            caregiver_bio.save()
+
 
 def update_shipped_echo(caregiver_bio_pk, bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -363,11 +366,13 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     collected_form = None
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
     incentive_form = None
+    received_at_wsu_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
@@ -385,6 +390,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to wsu if statement")
         shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
+    if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
+        logging.critical(f"made it to received at wsu form")
+        received_at_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
     if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
         logging.debug(f"in shipped to echo if statement")
         shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
@@ -396,7 +404,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'shipped_choice_form': shipped_choice,
                                                                                                   'shipped_wsu_form': shipped_wsu_form,
                                                                                                   'shipped_echo_form':shipped_echo_form,
-                                                                                                  'incentive_form': incentive_form
+                                                                                                  'incentive_form': incentive_form,
+                                                                                                  'received_at_wsu_form':received_at_wsu_form
                                                                                                   })
 
 @login_required
@@ -652,7 +661,6 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type.collection_type=='Urine':
-            caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             update_received_wsu(caregiver_bio_pk=caregiver_bio_pk,data=request.POST,user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
