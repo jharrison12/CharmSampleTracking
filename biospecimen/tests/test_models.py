@@ -69,7 +69,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_outcome_links_to_perinatal(self):
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta',collection_number_fk=None)
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk=placenta)
+        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',collection_fk=placenta,project_fk__project_name='ECHO2')
         perinatal_event = Perinatal.objects.get(child_fk__charm_project_identifier='7000M1')
         self.assertEqual(caregiver.perinatal_fk,perinatal_event)
 
