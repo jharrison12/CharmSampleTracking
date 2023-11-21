@@ -291,29 +291,55 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
     #REDIRECTS
 
-    def test_echo2_bio_entry_urine_redirects_after_post(self):
+    def test_echo2_bio_entry_urine_collected_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
         response = self.collected_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_initial_posts_to_initial_post_view(self):
+    def test_echo2_bio_urine_initial_posts_to_initial_post_view(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
         response = self.initial_send_form(primary_key,'C')
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
+    def test_echo2_urine_incentive_form_redirects_to_entry(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.initial_send_form(primary_key,'C')
+        response = self.collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
     def test_echo2_bio_entry_shipped_choice_redirects_after_post_wsu(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.initial_send_form(primary_key,'C')
+        response = self.collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
         response = self.shipped_choice_send_form(primary_key,'W')
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_entry_shipped_choice_redirects_after_post_echo(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'F')
+    def test_echo2_bio_entry_urine_shipped_choice_redirects_after_post_echo(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.initial_send_form(primary_key,'C')
+        response = self.collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
         response = self.shipped_choice_send_form(primary_key,'E')
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_entry_shipped_echo_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('P7001', 'Urine', 'S')
+    def test_echo2_bio_urine_entry_shipped_echo_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.initial_send_form(primary_key,'C')
+        response = self.collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key,'E')
         response = self.shipped_to_echo_echo_send_form(primary_key)
+        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_urine_entry_received_urine_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        response = self.initial_send_form(primary_key,'C')
+        response = self.collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key,'W')
+        response = self.received_at_wsu_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     #FORMS

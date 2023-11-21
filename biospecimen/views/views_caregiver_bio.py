@@ -134,13 +134,13 @@ def update_received_wsu(caregiver_bio_pk,data,user_logged_in):
             caregiver_bio.save()
             logging.critical(f"received at wsu found {received_at_wsu} status_bio:{status_bio} is received datetime saved {received_at_wsu.received_date_time}")
     except ReceivedWSU.DoesNotExist:
-        received_at_wsu = ReceivedWSU()
+        received_at_wsu = ReceivedWSU.objects.create()
         finished_form = ReceivedatWSUForm(data=data,prefix='received_at_wsu_form')
         if finished_form.is_valid():
-            caregiver_bio.status_fk.received_wsu_fk.received_date_time = finished_form
+            caregiver_bio.status_fk.received_wsu_fk = received_at_wsu
+            caregiver_bio.status_fk.received_wsu_fk.received_date_time = finished_form.cleaned_data['received_date_time']
             received_at_wsu.save()
             finished_form.save()
-            status_bio.received_wsu_fk = received_at_wsu
             status_bio.save()
 
 def update_shipped_echo(caregiver_bio_pk, bound_form):
@@ -649,8 +649,14 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
             for item in caregiver_bloods:
                 logging.critical(f"updating recieved wsu {item.pk}")
                 update_received_wsu(caregiver_bio_pk=item.pk, data=request.POST, user_logged_in=request.user)
-        return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+            return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
+        elif collection_type.collection_type=='Urine':
+            caregiver_bloods = return_caregiver_bloods(caregiver_bio)
+            update_received_wsu(caregiver_bio_pk=caregiver_bio_pk,data=request.POST,user_logged_in=request.user)
+            return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                            caregiver_bio_pk=caregiver_bio_pk)
+
 
 @login_required
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):
