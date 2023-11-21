@@ -490,43 +490,192 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
 
     #TEMPLATES
 
-    def test_echo2_bio_page_hair_saliva_uses_correct_template(self):
+    def test_echo2_bio_page_hair_uses_correct_template(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
 
         self.assertTemplateUsed(response, "biospecimen/caregiver_biospecimen_initial.html")
 
-    def test_echo2_entry_bio_hair_saliva_page_returns_correct_template(self):
+    def test_echo2_entry_bio_hair_page_returns_correct_template(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
+
+    def test_echo2_bio_page_saliva_uses_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None, age_category='ZF')
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+
+        self.assertTemplateUsed(response, "biospecimen/caregiver_biospecimen_initial.html")
+
+    def test_echo2_entry_bio_saliva_page_returns_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None, age_category='ZF')
         response = self.initial_send_form_hair_saliva(primary_key,'K')
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
 
     #REDIRECTS
 
-    def test_echo2_bio_page_redirects_after_initial_kit_sent_submission(self):
+    def test_echo2_bio_page_hair_redirects_after_initial_kit_sent_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
         response = self.initial_send_form_hair_saliva(primary_key,'K')
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
 
-    def test_echo2_bio_page_redirects_after_kit_sent_form_submission(self):
+    def test_echo2_bio_page_hair_redirects_after_initial_declined_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'X')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
+
+    def test_echo2_bio_page_hair_redirects_after_initial_not_collected_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'N')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
+
+    def test_echo2_bio_page_hair_redirects_after_kit_sent_form_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
         response = self.initial_send_form_hair_saliva(primary_key,'K')
         response = self.kit_sent_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_page_incentive_post_redirects(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, age_category='ZF')
-        logging.debug(primary_key)
+    def test_echo2_bio_page_hair_redirects_after_collected_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
         response = self.initial_send_form_hair_saliva(primary_key,'K')
         response = self.kit_sent_send_form(primary_key)
         response = self.hair_saliva_collected_send_form(primary_key)
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_hair_redirects_after_incentive_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
         response = self.incentive_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_hair_redirects_after_shipped_choice_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'W')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_hair_redirects_after_shipped_wsu_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'W')
+        response = self.shipped_to_wsu_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_hair_redirects_after_received_wsu_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'W')
+        response = self.shipped_to_wsu_send_form(primary_key)
+        response = self.received_at_wsu_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_hair_redirects_after_shipped_echo_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'E')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    #REDIRECTS
+        #SALIV
+    
+    def test_echo2_bio_page_saliva_redirects_after_initial_kit_sent_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
+
+    def test_echo2_bio_page_saliva_redirects_after_initial_declined_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'X')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
+
+    def test_echo2_bio_page_saliva_redirects_after_initial_not_collected_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'N')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/hairandsaliva/")
+
+    def test_echo2_bio_page_saliva_redirects_after_kit_sent_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_saliva_redirects_after_collected_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_saliva_redirects_after_incentive_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_saliva_redirects_after_shipped_choice_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'W')
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_saliva_redirects_after_shipped_wsu_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'W')
+        response = self.shipped_to_wsu_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_saliva_redirects_after_shipped_echo_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'W')
+        response = self.shipped_to_wsu_send_form(primary_key)
+        response = self.received_at_wsu_send_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
+
+    def test_echo2_bio_page_saliva_redirects_after_received_wsu_form_submission(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
+        response = self.initial_send_form_hair_saliva(primary_key,'K')
+        response = self.kit_sent_send_form(primary_key)
+        response = self.hair_saliva_collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        response = self.shipped_choice_send_form(primary_key, 'E')
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     #FORMS
         #HAIR
+
+    def test_echo2_bio_page_initial_form_shows_denied_not_collected_kit_sent_if_hair_or_salvia(self):
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
+        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormPostNatal)
 
     def test_echo2_bio_page_shows_kit_sent_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
@@ -540,11 +689,6 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         self.kit_sent_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
-
-    def test_echo2_bio_page_initial_form_shows_denied_not_collected_kit_sent_if_hair_or_salvia(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/initial/')
-        self.assertIsInstance(response.context['initial_bio_form'], InitialBioFormPostNatal)
 
     def test_echo2_bio_page_shows_shipped_echo_form_if_hair_or_salvia(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')

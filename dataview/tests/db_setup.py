@@ -510,6 +510,7 @@ class DatabaseSetup(TestCase):
         self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
 
         self.saliva_one = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+        self.saliva_none = Collection.objects.create(collection_type_fk=self.saliva)
 
         self.stool_one = Collection.objects.create(collection_type_fk=self.stool,collection_number_fk=self.number_one)
 
@@ -827,6 +828,16 @@ class DatabaseSetup(TestCase):
             biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111HA',
             project_fk=self.echo2,
             age_category_fk=self.zero_to_five_age_category)
+
+        self.biospecimen_saliva_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=None,
+            collection_fk=self.saliva_none,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111SL',
+            project_fk=self.echo2,
+            age_category_fk=self.zero_to_five_age_category)
+
 
 
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
