@@ -518,6 +518,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.toenail_one = Collection.objects.create(collection_type_fk=self.toenail,collection_number_fk=self.number_one)
 
         self.saliva_one = Collection.objects.create(collection_type_fk=self.saliva,collection_number_fk=self.number_one)
+        self.saliva_none = Collection.objects.create(collection_type_fk=self.saliva)
 
         self.stool_one = Collection.objects.create(collection_type_fk=self.stool,collection_number_fk=self.number_one)
 
@@ -607,9 +608,18 @@ class FunctionalTest(StaticLiveServerTestCase):
             perinatal_fk=self.perinatal_one,
             collection_fk=self.placenta_one,
             status_fk=self.status_outcome_collected_placenta,
-            biospecimen_id='111P1',
+            biospecimen_id='111P2',
             project_fk=self.echo1,
             incentive_fk=self.incentive_two
+        )
+
+        self.placenta_perinatal_1_caregiver_one_echo2 = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.first_caregiver,
+            perinatal_fk=self.perinatal_one,
+            collection_fk=self.placenta_one,
+            status_fk=None,
+            biospecimen_id='111P1',
+            project_fk=self.echo2
         )
 
         self.new_status = Status.objects.create()
@@ -836,6 +846,16 @@ class FunctionalTest(StaticLiveServerTestCase):
             project_fk=self.echo2,
             age_category_fk=self.zero_to_five_age_category)
 
+        self.biospecimen_saliva_caregiver_one = CaregiverBiospecimen.objects.create(
+            caregiver_fk=self.first_caregiver,
+            status_fk=None,
+            collection_fk=self.saliva_none,
+            incentive_fk=self.incentive_one,
+            biospecimen_date=timezone.datetime(2023,5,3).date(),biospecimen_id='1111SL',
+            project_fk=self.echo2,
+            age_category_fk=self.zero_to_five_age_category)
+
+
 
         #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
 
@@ -952,6 +972,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                                                                              age_category_fk=self.six_to_ten_years,
                                                                              collection_date=datetime.date(2023, 8, 10)
                                                                              )
+
 
 
 

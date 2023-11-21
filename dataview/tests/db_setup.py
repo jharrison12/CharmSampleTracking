@@ -600,9 +600,18 @@ class DatabaseSetup(TestCase):
             perinatal_fk=self.perinatal_one,
             collection_fk=self.placenta_one,
             status_fk=self.status_outcome_collected_placenta,
-            biospecimen_id='111P1',
+            biospecimen_id='111P2',
             project_fk=self.echo1,
             incentive_fk=self.incentive_two
+        )
+
+        self.placenta_perinatal_1_caregiver_one_echo2 = CaregiverBiospecimen.objects.create(
+            caregiver_fk = self.first_caregiver,
+            perinatal_fk=self.perinatal_one,
+            collection_fk=self.placenta_one,
+            status_fk=None,
+            biospecimen_id='111P1',
+            project_fk=self.echo2
         )
 
         self.new_status = Status.objects.create()
