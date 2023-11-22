@@ -249,6 +249,6 @@ class CaregiverEcho2BiospecimenPagePlacenta(DatabaseSetup):
         self.shipped_choice_send_form(primary_key, 'W')
         self.shipped_to_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.critical(f"{response.context}")
+        logging.debug(f"{response.context}")
         self.assertIsInstance(response.context['received_at_wsu_form'], ReceivedatWSUForm)
 

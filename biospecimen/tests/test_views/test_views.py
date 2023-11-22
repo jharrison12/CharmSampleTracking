@@ -408,7 +408,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.shipped_choice_send_form(primary_key, 'W')
         self.shipped_to_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        logging.critical(f"{response.context}")
+        logging.debug(f"{response.context}")
         self.assertIsInstance(response.context['received_at_wsu_form'], ReceivedatWSUForm)
 
 
@@ -936,7 +936,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'plasma', False)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
-        logging.critical(response.context)
+        logging.debug(response.context)
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
 
 
@@ -948,7 +948,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_collected_form_send(primary_key, 'plasma', False)
         self.blood_incentive_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/blood/')
-        logging.critical(response.context)
+        logging.debug(response.context)
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
     def test_echo2_bio_page_shows_echo_shipped_form_if_collected_not_null_and_shipped_echo_not_null(self):
