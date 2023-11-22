@@ -9,8 +9,9 @@ from django.utils import timezone
 
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
-COLLECTED_NOT_COLLECTED_NO_CONSENT = [('C', 'Collected'), ('N', 'Not Collected'), ('X', 'Declined')]
-KIT_SENT_NOT_COLLECTED_NO_CONSENT = [('K', 'Kit Sent'), ('N', 'Not Collected'), ('X', 'Declined')]
+COLLECTED_NOT_COLLECTED_DECLINED = [('C', 'Collected'), ('N', 'Not Collected'), ('X', 'Declined')]
+COLLECTED_NOT_COLLECTED_NO_CONSENT = [('C', 'Collected'), ('N', 'Not Collected'), ('O', 'No Consent')]
+KIT_SENT_NOT_COLLECTED_DECLINED = [('K', 'Kit Sent'), ('N', 'Not Collected'), ('X', 'Declined')]
 KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
@@ -87,6 +88,18 @@ class CollectedBiospecimenForm(forms.Form):
     number_of_tubes = forms.IntegerField()
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
 
+class CollectedBiospecimenPlacentaForm(forms.Form):
+    collected_date_time = forms.DateTimeField(initial=timezone.now())
+    processed_date_time = forms.DateTimeField()
+    placed_in_formalin = forms.DateTimeField()
+
+    class Meta:
+        fields = ['collected_date_time','processed_date_time','placed_in_formalin']
+        widgets = {
+            "collected_date_time": forms.DateTimeInput,
+            "processed_date_time": forms.DateTimeInput
+        }
+
 class CollectedBiospecimenUrineForm(forms.Form):
     collected_date_time = forms.DateTimeField(initial=timezone.now())
     processed_date_time = forms.DateTimeField()
@@ -101,13 +114,16 @@ class CollectedBiospecimenUrineForm(forms.Form):
         }
 
 class InitialBioForm(forms.Form):
-    collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED_NO_CONSENT)
+    collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED_DECLINED)
 
 class InitialBioFormPostNatal(forms.Form):
-    collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED_NO_CONSENT)
+    collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED_DECLINED)
+
+class InitialBioFormPeriNatal(forms.Form):
+    collected_not_collected_no_consent = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED_NO_CONSENT)
 
 class InitialBioFormChildTooth(forms.Form):
-    collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED_NO_CONSENT)
+    collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED_DECLINED)
 
 class ShippedChoiceForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE)
@@ -119,6 +135,12 @@ class ShippedtoWSUForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
     tracking_number = forms.CharField()
     number_of_tubes = forms.IntegerField()
+    logged_date_time = forms.DateTimeField()
+    courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
+
+class ShippedtoWSUFormPlacenta(forms.Form):
+    shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
+    tracking_number = forms.CharField()
     logged_date_time = forms.DateTimeField()
     courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
 

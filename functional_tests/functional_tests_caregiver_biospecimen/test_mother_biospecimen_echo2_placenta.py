@@ -28,7 +28,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
+        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_no_consent'))
         collected_not_collected.select_by_visible_text('Collected')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
@@ -43,14 +43,11 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         collected.clear()
         collected.send_keys('2023-09-27 12:52:26')
 
-        stored = self.browser.find_element(By.ID,"id_placenta_form-stored_date_time")
-        stored.send_keys('2023-09-27 12:52:26')
-
         processed = self.browser.find_element(By.ID,"id_placenta_form-processed_date_time")
         processed.send_keys('2023-09-27 12:52:26')
 
-        number_of_tubes = self.browser.find_element(By.ID,"id_placenta_form-number_of_tubes")
-        number_of_tubes.send_keys(5)
+        placed_in_formalin = self.browser.find_element(By.ID,"id_placenta_form-placed_in_formalin")
+        placed_in_formalin.send_keys('2023-09-27 12:52:26')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
@@ -58,7 +55,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         #user sees some of the information just entered
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Number of Tubes: 5', body)
+        self.assertIn('Placed in Formalin: Sept. 27, 2023, 12:52 p.m.', body)
 
         self.assertIn('Logged By: testuser',body)
 
@@ -77,17 +74,13 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         #user sees option to choose shipped to wsu or shipped to echo
 
 
-
         form = self.browser.find_element(By.TAG_NAME,'form').text
-        self.assertIn('Shipped Choice Form',form)
-
-        shipped_to_wsu = Select(self.browser.find_element(By.ID,'id_shipped_choice_form-shipped_to_wsu_or_echo'))
-        shipped_to_wsu.select_by_visible_text('Shipped to WSU')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')
-        submit.click()
+        self.assertNotIn('Shipped Choice Form',form)
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Shipped to WSU Form',body)
+        self.assertNotIn('tubes',body)
+        self.assertNotIn('Logged date time:',body)
 
         #user submits shipped to WSu form
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
@@ -96,12 +89,6 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
         shipped_date_time.send_keys('777777')
-
-        number_of_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-number_of_tubes")
-        number_of_tubes.send_keys(5)
-
-        logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
-        logged_date_time.send_keys('2023-09-27 12:52:26')
 
         courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
         courier.send_keys('FedEx')

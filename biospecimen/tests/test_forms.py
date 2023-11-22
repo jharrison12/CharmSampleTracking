@@ -2,7 +2,8 @@ from django.test import TestCase
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
-ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm
+ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm,\
+    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -141,15 +142,19 @@ class CaregiverShippedChoiceHairSaliva(TestCase):
 
 class CaregiverBioInitialStatusForm(TestCase):
 
-    def test_child_bio_initial_form_has_drop_down_with_collected(self):
+    def test_child_bio_initial_form_postnatal_has_drop_down_with_collected(self):
         form = InitialBioFormPostNatal()
         self.assertIn('Kit Sent',form.as_p())
-
-class CaregiverBioInitialStatusForm(TestCase):
 
     def test_bio_initial_form_has_drop_down_with_collected(self):
         form = InitialBioForm()
         self.assertIn('Collected',form.as_p())
+
+    def test_bio_initial_form_perinatal_has_drop_down_with_collected(self):
+        form = InitialBioFormPeriNatal()
+        self.assertIn('No Consent',form.as_p())
+        self.assertNotIn('Declined',form.as_p())
+
 
 class CaregiverBioShippedChoiceForm(TestCase):
 
@@ -168,6 +173,10 @@ class CaregiverShippedtoWSUForm(TestCase):
         form = ShippedtoWSUForm(data={'':''})
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['shipped_date_and_time'][0])
+
+    def test_shipped_to_wsu_form_placenta(self):
+        form =ShippedtoWSUFormPlacenta()
+        self.assertNotIn('tubes',form.as_p())
 
 class CaregiverShippedtoECHOForm(TestCase):
 
