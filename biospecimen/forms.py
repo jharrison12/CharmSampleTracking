@@ -141,7 +141,6 @@ class ShippedtoWSUForm(forms.Form):
 class ShippedtoWSUFormPlacenta(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
     tracking_number = forms.CharField()
-    logged_date_time = forms.DateTimeField()
     courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
 
 class ShippedtoWSUFormChild(forms.Form):

@@ -100,6 +100,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Courier: FedEx',body)
         self.assertIn('Shipped By: testuser',body)
+        self.assertNotIn('Number of Tubes',body)
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Received at WSU Form',body)
@@ -112,7 +113,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
         submit.click()
-
+        time.sleep(50)
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
 

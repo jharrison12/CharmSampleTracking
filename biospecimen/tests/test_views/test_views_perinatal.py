@@ -71,9 +71,6 @@ class CaregiverEcho2BiospecimenPagePlacenta(DatabaseSetup):
         response =  self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_wsu/post/',
                                     data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
                                           'shipped_to_wsu_form-tracking_number':555,
-                                          'shipped_to_wsu_form-number_of_tubes':5,
-                                          'shipped_to_wsu_form-logged_date_time': timezone.datetime(
-                                                  2023, 12, 5, 5, 5, 5),
                                           'shipped_to_wsu_form-courier': 'F'})
 
         return response
@@ -158,30 +155,14 @@ class CaregiverEcho2BiospecimenPagePlacenta(DatabaseSetup):
         response = self.incentive_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_entry_shipped_choice_redirects_after_post_wsu(self):
+    def test_echo2_bio_entry_shipped_to_wsu_redirects_after_post_wsu(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
         response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'W')
+        response = self.shipped_to_wsu_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_entry_Placenta_shipped_choice_redirects_after_post_echo(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
-        response = self.initial_send_form(primary_key,'C')
-        response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'E')
-        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
-
-    def test_echo2_bio_Placenta_entry_shipped_echo_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
-        response = self.initial_send_form(primary_key,'C')
-        response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'E')
-        response = self.shipped_to_echo_echo_send_form(primary_key)
-        self.assertRedirects(response, f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_Placenta_entry_received_Placenta_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
@@ -220,14 +201,6 @@ class CaregiverEcho2BiospecimenPagePlacenta(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUFormPlacenta)
 
-    def test_echo2_bio_page_shows_shipped_echo_form_if_echo_fk_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
-        self.initial_send_form(primary_key,'C')
-        self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
-        self.shipped_choice_send_form(primary_key,'E')
-        response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
     def test_echo2_bio_page_shows_wsu_received_form_if_collected_not_null_and_shipped_wsu_not_null(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')

@@ -608,12 +608,28 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        if collection_type in HAIR_SALIVA or collection_type.collection_type=='Urine' or collection_type in PERINATAL:
+        if collection_type in HAIR_SALIVA or collection_type.collection_type=='Urine':
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
                 incentive_item.incentive_date = form.cleaned_data['incentive_date']
                 incentive_item.logged_by = request.user
+                incentive_item.save()
+                caregiver_bio.save()
+            else:
+                form.errors
+            return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        if collection_type in PERINATAL:
+            form = IncentiveForm(data=request.POST, prefix='incentive_form')
+            if form.is_valid():
+                #create shipped wsu so logic skips shipped choice form
+                #refactor this at some point
+                incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
+                incentive_item.incentive_date = form.cleaned_data['incentive_date']
+                incentive_item.logged_by = request.user
+                shipped_to_wsu = ShippedWSU.objects.create()
+                caregiver_bio.status_fk.shipped_wsu_fk = shipped_to_wsu
+                caregiver_bio.status_fk.save()
                 incentive_item.save()
                 caregiver_bio.save()
             else:
@@ -679,6 +695,19 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
                     update_shipped_wsu(caregiver_bio_pk=item.pk,bound_form=form,user_logged_in=request.user)
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
+        elif collection_type in PERINATAL:
+            logging.debug(f"post is {request.POST}")
+            form = ShippedtoWSUFormPlacenta(data=request.POST, prefix='shipped_to_wsu_form')
+            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            if form.is_valid():
+                shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+                shipped_wsu_fk.tracking_number = form.cleaned_data['tracking_number']
+                shipped_wsu_fk.courier = form.cleaned_data['courier']
+                shipped_wsu_fk.shipped_by = request.user
+                shipped_wsu_fk.save()
+                logging.debug(f"shipped wsu saved")
+                return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
         else:
             logging.debug(f"post is {request.POST}")
             form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
@@ -711,10 +740,13 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
                 update_received_wsu(caregiver_bio_pk=item.pk, data=request.POST, user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type.collection_type=='Urine':
+        elif collection_type.collection_type=='Urine' or collection_type in PERINATAL:
             update_received_wsu(caregiver_bio_pk=caregiver_bio_pk,data=request.POST,user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
+    return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                    caregiver_bio_pk=caregiver_bio_pk)
+
 
 
 @login_required
