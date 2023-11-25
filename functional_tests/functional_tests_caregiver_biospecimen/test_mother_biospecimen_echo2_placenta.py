@@ -226,9 +226,9 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         self.assertNotIn('<form>', body_text)
         self.assertIn('Not Collected', body_text)
 
-    def test_user_can_choose_status_of_placenta_information_chooses_declined(self):
+    def test_user_can_choose_status_of_placenta_information_chooses_no_consent(self):
         # User visits the caregiver biospecimen page and sees placenta
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta', 'S')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -238,8 +238,8 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
-        collected_not_collected.select_by_visible_text('Declined')
+        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_no_consent'))
+        collected_not_collected.select_by_visible_text('No Consent')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
@@ -247,4 +247,4 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
-        self.assertIn('Declined', body_text)
+        self.assertIn('No Consent', body_text)
