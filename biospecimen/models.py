@@ -134,6 +134,18 @@ class Declined(models.Model):
 class ReceivedWSU(models.Model):
     received_date_time = models.DateTimeField(null=True,blank=True)
 
+class ShippedMSU(models.Model):
+    shipped_date_time = models.DateTimeField(null=True,blank=True)
+
+    def __str__(self):
+        return f"shipped {self.shipped_date_time}"
+
+class ReceivedMSU(models.Model):
+    received_date_time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"received {self.received_date_time}"
+
 class Status(models.Model):
     #todo sublcass text choices for status
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,null=True,blank=True)
@@ -145,6 +157,8 @@ class Status(models.Model):
     no_consent_fk = models.ForeignKey(NoConsent,on_delete=models.PROTECT,null=True,blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     received_wsu_fk = models.ForeignKey(ReceivedWSU,on_delete=models.PROTECT,null=True,blank=True)
+    shipped_msu_fk = models.ForeignKey(ShippedMSU,on_delete=models.PROTECT,null=True,blank=True)
+    received_msu_fk = models.ForeignKey(ReceivedMSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_echo_fk = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
     declined_fk = models.ForeignKey(Declined,on_delete=models.PROTECT,blank=True,null=True)

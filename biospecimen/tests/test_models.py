@@ -3,7 +3,8 @@ import sqlite3
 
 from django.test import TestCase
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored,Shipped,\
-    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU
+    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU,\
+    ShippedMSU,ReceivedMSU
 import datetime
 from dataview.models import Caregiver,Incentive,Child,User
 from dataview.tests.db_setup import DatabaseSetup
@@ -77,7 +78,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         not_collected = NotCollected.objects.create()
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
-                                                     collection_fk=placenta)
+                                                         collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_nc = Status.objects.create(not_collected_fk=not_collected)
         caregiver_bio.status_fk = status_nc
         caregiver_bio.save()
@@ -87,7 +88,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         no_consent = NoConsent.objects.create()
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
-                                                     collection_fk=placenta)
+                                                         collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_no_consent = Status.objects.create(no_consent_fk=no_consent)
         caregiver_bio.status_fk = status_no_consent
         caregiver_bio.save()
@@ -97,7 +98,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         shipped_wsu = ShippedWSU.objects.create(shipped_by=User.objects.get(pk=1))
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
-                                                     collection_fk=placenta)
+                                                         collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_shipped_wsu = Status.objects.create(shipped_wsu_fk=shipped_wsu)
         caregiver_bio.status_fk = status_shipped_wsu
         caregiver_bio.save()
@@ -108,7 +109,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         shipped_echo = ShippedECHO.objects.create()
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
-                                                         collection_fk=placenta)
+                                                         collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_shipped_echo = Status.objects.create(shipped_echo_fk=shipped_echo)
         caregiver_bio.status_fk = status_shipped_echo
         caregiver_bio.save()
@@ -118,11 +119,32 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         declined = Declined.objects.create()
         placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
-                                                     collection_fk=placenta)
+                                                         collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_declined = Status.objects.create(declined_fk=declined)
         caregiver_bio.status_fk = status_declined
         caregiver_bio.save()
         self.assertEqual(caregiver_bio.status_fk.declined_fk,declined)
+
+    def test_caregiver_biospecimen_links_to_shipped_msu(self):
+        shipped_msu = ShippedMSU.objects.create()
+        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
+                                                         collection_fk=placenta,project_fk__project_name__contains='ECHO2')
+        status_shipped_msu = Status.objects.create(shipped_msu_fk=shipped_msu)
+        caregiver_bio.status_fk = status_shipped_msu
+        caregiver_bio.save()
+        self.assertEqual(caregiver_bio.status_fk.shipped_msu_fk, shipped_msu)
+
+    def test_caregiver_biospecimen_links_to_received_msu(self):
+        received_msu = ReceivedMSU.objects.create()
+        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='P7000',
+                                                         collection_fk=placenta,project_fk__project_name__contains='ECHO2')
+        status_received_msu = Status.objects.create(received_msu_fk=received_msu)
+        caregiver_bio.status_fk = status_received_msu
+        caregiver_bio.save()
+        self.assertEqual(caregiver_bio.status_fk.received_msu_fk, received_msu)
+
 
 
 class ChildBiospecimenModelTest(DatabaseSetup):
