@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'dataview',
     'biospecimen',
     'reports',
+    'lists',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

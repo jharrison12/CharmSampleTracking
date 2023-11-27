@@ -1,0 +1,8 @@
+{% extends "dataview/base.html" %}
+{% block header %}Reports:{% endblock %}
+{% block section %}
+    <ul>
+        <li><a href="{% url "lists:incentive_list" %}">Incentive List</a></li>
+        <li><a href="#">Child Report</a></li>
+    </ul>
+{% endblock %}

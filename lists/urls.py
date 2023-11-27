@@ -15,25 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include,path
-from dataview import views as dataviews
-from dataview import urls as dataview_urls
-from biospecimen import urls as biospecimen_urls
-from lists import urls as lists_urls
-from reports import urls as reports_urls
+from django.urls import include,path,re_path
+from reports import views as reports
+from lists import views as lists
 
 
-# app_name='main'
+app_name = "lists"
 urlpatterns = [
-    path('', dataviews.home_page, name='home'),
-    path('data/',include(dataview_urls)),
-    path('biospecimen/',include(biospecimen_urls)),
-    path('reports/', include(reports_urls)),
-    path('lists/', include(lists_urls)),
-    path('admin/', admin.site.urls),
-]
-
-
-urlpatterns += [
-    path('accounts/', include('django.contrib.auth.urls')),
+    re_path(r"^$", lists.home_page, name='lists_home'),
+    re_path(r"^incentive_list/$", lists.incentive_list, name='incentive_list')
 ]
