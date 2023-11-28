@@ -1,8 +1,12 @@
-{% extends "dataview/base.html" %}
-{% block header %}Reports:{% endblock %}
+{% extends "lists/home.html" %}
+{% block header %}Incentive List{% endblock %}
 {% block section %}
     <ul>
-        <li><a href="{% url "lists:incentive_list" %}">Incentive List</a></li>
-        <li><a href="#">Child Report</a></li>
+        <li><h2>Incentive List Caregiver</h2></li>
+        <ul>
+            <li><a href="{% url "lists:incentive_list_caregiver_biospecimen" %}">Incentive List Caregiver Biospecimen</a></li>
+            <li><a href="{% url "lists:incentive_list_caregiver_charm_id" %}">Incentive List Caregiver Charm ID</a></li>
+        </ul>
+        <li><h2>Incentive List Child</h2></li>
     </ul>
 {% endblock %}

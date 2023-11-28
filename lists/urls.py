@@ -23,5 +23,7 @@ from lists import views as lists
 app_name = "lists"
 urlpatterns = [
     re_path(r"^$", lists.home_page, name='lists_home'),
-    re_path(r"^incentive_list/$", lists.incentive_list, name='incentive_list')
+    re_path(r"^incentive_list/$", lists.incentive_list, name='incentive_list'),
+    re_path(r"^incentive_list/caregiver/biospecimen/$", lists.incentive_list_caregiver_biospecimen, name='incentive_list_caregiver_biospecimen'),
+    re_path(r"^incentive_list/caregiver/charm_id/$", lists.incentive_list_caregiver_charm_id, name='incentive_list_caregiver_charm_id')
 ]
