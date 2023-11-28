@@ -10,15 +10,15 @@ class ReportsPageTest(FunctionalTest):
     def webpage_text(self):
         return self.browser.find_element(By.TAG_NAME, 'body').text
 
-    def test_user_can_see_incentive_list(self):
+    def test_user_can_see_incentive_list_charm_id(self):
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}lists/')
 
         text = self.webpage_text()
 
         self.assertIn('Incentive', text)
-        self.browser.get(f'{self.browser.current_url}incentive_list/caregiver/')
-
+        self.browser.get(f'{self.browser.current_url}incentive_list/caregiver/charm_id/')
+        time.sleep(50)
         text = self.webpage_text()
 
         self.assertIn('P7000', text)

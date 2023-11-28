@@ -1,5 +1,12 @@
 {% extends "lists/home.html" %}
 {% block header %}Incentive List{% endblock %}
 {% block section %}
-P7000
+    <ul>
+    {% for charm_id in list_of_ids %}
+        <li>{{ charm_id }}</li>
+    {% endfor %}
+    </ul>
+    {% for biospecimen in list_of_biospecimens %}
+        {{ biospecimen }}
+    {% endfor %}
 {% endblock %}

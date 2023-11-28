@@ -32,3 +32,11 @@ class IncentiveListPageCaregiverCharmID(DatabaseSetup):
     def test_incentive_list_contains_p7000_if_biospecimen_at_point_of_incentive_form(self):
         response = self.client.get(f'/lists/incentive_list/caregiver/charm_id/')
         self.assertContains(response, 'P7000')
+
+    def test_incentive_list_contains_p7001_if_biospecimen_at_point_of_incentive_form(self):
+        response = self.client.get(f'/lists/incentive_list/caregiver/charm_id/')
+        self.assertContains(response, 'P7001')
+
+    def test_incentive_list_contains_biospecimen_name_if_biospecimen_at_point_of_incentive_form(self):
+        response = self.client.get(f'/lists/incentive_list/caregiver/charm_id/')
+        self.assertContains(response, 'Hair')
