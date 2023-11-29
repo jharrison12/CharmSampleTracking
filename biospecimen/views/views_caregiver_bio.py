@@ -2,8 +2,9 @@ import logging
 
 from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
-    Shipped, Received,CollectionNumber,CollectionType,Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Trimester,Project,\
-    KitSent,Incentive,Declined,ReceivedWSU
+    Shipped, Received, CollectionNumber, CollectionType, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
+    Trimester, Project, \
+    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
@@ -402,6 +403,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     incentive_form = None
     received_at_wsu_form = None
     shipped_to_msu_form = None
+    logging.critical(f"Collection type is {collection_type.collection_type}")
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
@@ -416,7 +418,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date\
             and collection_type not in PERINATAL:
         if collection_type in HAIR_SALIVA and caregiver_bio.incentive_fk.incentive_date:
-            shipped_to_msu_form = ShippedtoMSUForm(prefix='shipped_choice_form')
+            shipped_to_msu_form = ShippedtoMSUForm(prefix='shipped_to_msu_form')
         else:
             shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
@@ -749,7 +751,28 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
     return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
 
-
+@login_required
+def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+    shipped_msu_fk = ShippedMSU.objects.create(status=status)
+    logging.debug(f"In wsu post")
+    if request.method == "POST":
+        if collection_type in HAIR_SALIVA:
+            logging.debug(f"post is {request.POST}")
+            form = ShippedtoMSUForm(data=request.POST, prefix='shipped_to_msu_form')
+            logging.critical(f"is shipped to msu form valid{form.is_valid()}  {form.errors} {form}")
+            if form.is_valid():
+                shipped_msu_fk.shipped_date_time = form.cleaned_data['shipped_date_time']
+                shipped_msu_fk.save()
+                status.save()
+                logging.debug(f"shipped msu saved")
+                return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                    caregiver_bio_pk=caregiver_bio_pk)
+    else:
+        raise AssertionError
 
 @login_required
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):

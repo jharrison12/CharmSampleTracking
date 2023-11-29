@@ -66,7 +66,17 @@
             </div>
         </div>
     {% endif %}
-    {% if caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.incentive_fk.incentive_date and not caregiver_bio.status_fk.shipped_echo_fk and not caregiver_bio.status_fk.shipped_wsu_fk  %}
+    {% if shipped_to_msu_form %}
+    <div id="shipped_to_msu" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_msu_post' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Shipped MSU Form</h2>
+            {{ shipped_to_msu_form.as_p }}
+          <input type="submit" value="Submit" />
+          </form>
+    </div>
+    {% endif %}
+    {% if shipped_choice_form %}
         <div id="shipped_choice" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_shipped_choice_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -75,7 +85,7 @@
           <input type="submit" value="Submit" />
           </form>
         </div>
-    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_wsu_fk and not caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time  %}
+    {% elif shipped_wsu_form  %}
         <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -100,7 +110,7 @@
             </div>
         </div>
     {% endif %}
-    {% if caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_echo_fk and not caregiver_bio.status_fk.shipped_echo_fk.shipped_date_time %}
+    {% if shipped_echo_form %}
         <div id="shipped_to_echo_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_echo_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -122,7 +132,7 @@
         </div>
 
     {% endif %}
-    {% if received_at_wsu_form and caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time%}
+    {% if received_at_wsu_form %}
         <div id="received_at_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_received_wsu_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
