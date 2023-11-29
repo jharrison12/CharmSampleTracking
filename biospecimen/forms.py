@@ -2,7 +2,7 @@ import datetime
 
 from django import forms
 from dataview.models import Incentive
-from biospecimen.models import CaregiverBiospecimen,Processed,Status,Declined,ReceivedWSU
+from biospecimen.models import CaregiverBiospecimen,Processed,Status,Declined,ReceivedWSU,ShippedMSU
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
@@ -202,3 +202,7 @@ class ReceivedatWSUForm(forms.ModelForm):
         model = ReceivedWSU
         fields = ['received_date_time']
 
+class ShippedtoMSUForm(forms.ModelForm):
+    class Meta:
+        model = ShippedMSU
+        fields = ['shipped_date_time']

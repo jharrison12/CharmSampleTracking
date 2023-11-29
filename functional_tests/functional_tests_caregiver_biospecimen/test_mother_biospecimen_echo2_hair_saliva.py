@@ -89,17 +89,18 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Incentive Date: Sept. 3, 2023', body)
 
-
-        #user sees option to choose shipped to wsu or shipped to echo
+        #user sees shipped to msu form
+        time.sleep(50)
 
         form = self.browser.find_element(By.TAG_NAME,'form').text
-        self.assertIn('Shipped Choice Form',form)
+        self.assertIn('Shipped to MSU',form)
 
         self.assertNotIn('Shipped to WSU',form)
-        shipped_to_echo = Select(self.browser.find_element(By.ID,'id_shipped_choice_form-shipped_to_wsu_or_echo'))
-        shipped_to_echo.select_by_visible_text('Shipped to Echo')
+        self.assertNotIn('Shipped to Echo',form)
+        date_time_shipped = self.browser.find_element(By.ID,'id_shipped_to_msu_form-shipped_date_time')
+        date_time_shipped.send_keys('2023-10-20 09:17:07')
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_msu"]/form/input[2]')
 
         submit.click()
 

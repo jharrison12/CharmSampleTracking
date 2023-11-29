@@ -7,7 +7,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, P
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
-ReceivedatWSUForm,InitialBioFormPeriNatal,CollectedBiospecimenPlacentaForm,ShippedtoWSUFormPlacenta
+ReceivedatWSUForm,InitialBioFormPeriNatal,CollectedBiospecimenPlacentaForm,ShippedtoWSUFormPlacenta,ShippedtoMSUForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -401,6 +401,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     shipped_echo_form = None
     incentive_form = None
     received_at_wsu_form = None
+    shipped_to_msu_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
         if collection_type.collection_type =='Urine':
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
@@ -415,7 +416,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date\
             and collection_type not in PERINATAL:
         if collection_type in HAIR_SALIVA and caregiver_bio.incentive_fk.incentive_date:
-            shipped_choice = ShippedChoiceEchoForm(prefix='shipped_choice_form')
+            shipped_to_msu_form = ShippedtoMSUForm(prefix='shipped_choice_form')
         else:
             shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
     if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
@@ -440,7 +441,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'shipped_wsu_form': shipped_wsu_form,
                                                                                                   'shipped_echo_form':shipped_echo_form,
                                                                                                   'incentive_form': incentive_form,
-                                                                                                  'received_at_wsu_form':received_at_wsu_form
+                                                                                                  'received_at_wsu_form':received_at_wsu_form,
+                                                                                                  'shipped_to_msu_form':shipped_to_msu_form
                                                                                                   })
 
 @login_required

@@ -3,7 +3,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedB
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
 ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm,\
-    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta
+    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -201,6 +201,12 @@ class ReceivedatWSUFormTest(TestCase):
         form = ReceivedatWSUForm()
         self.assertIn('Received date time', form.as_p())
 
+class ShippedtoMSUFormTest(TestCase):
+
+    def test_declined_form_has_declined_date(self):
+        form = ShippedtoMSUForm()
+        self.assertIn('Shipped date time', form.as_p())
+
 
 class CaregiverBloodCollectedForm(TestCase):
 
@@ -227,3 +233,4 @@ class CaregiverBloodCollectedForm(TestCase):
     def test_blood_collected_form_has_checkbox_for_serum(self):
         form = CollectedBloodForm()
         self.assertIn('<input type="checkbox" name="serum', form.as_p())
+
