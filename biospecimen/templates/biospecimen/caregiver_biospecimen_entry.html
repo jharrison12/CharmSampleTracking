@@ -70,7 +70,7 @@
     <div id="shipped_to_msu" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_msu_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
-              <h2>Shipped MSU Form</h2>
+              <h2>Shipped to MSU Form</h2>
             {{ shipped_to_msu_form.as_p }}
           <input type="submit" value="Submit" />
           </form>

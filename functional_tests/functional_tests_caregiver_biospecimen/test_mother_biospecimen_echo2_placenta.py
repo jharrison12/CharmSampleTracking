@@ -113,7 +113,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
         submit.click()
-        time.sleep(50)
+
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
 
@@ -129,7 +129,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
+        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_no_consent'))
         collected_not_collected.select_by_visible_text('Collected')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
@@ -144,20 +144,17 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         collected.clear()
         collected.send_keys('2023-09-27 12:52:26')
 
-        stored = self.browser.find_element(By.ID,"id_placenta_form-stored_date_time")
-        stored.send_keys('2023-09-27 12:52:26')
-
         processed = self.browser.find_element(By.ID,"id_placenta_form-processed_date_time")
         processed.send_keys('2023-09-27 12:52:26')
 
-        number_of_tubes = self.browser.find_element(By.ID,"id_placenta_form-number_of_tubes")
-        number_of_tubes.send_keys(5)
+        placed_in_formalin = self.browser.find_element(By.ID,"id_placenta_form-placed_in_formalin")
+        placed_in_formalin.send_keys('2023-09-27 12:52:26')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Number of Tubes: 5', body)
+
 
         #User sees incentive form
 

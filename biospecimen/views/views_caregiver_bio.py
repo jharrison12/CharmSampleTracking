@@ -404,36 +404,50 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_at_wsu_form = None
     shipped_to_msu_form = None
     logging.critical(f"Collection type is {collection_type.collection_type}")
-    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
-        if collection_type.collection_type =='Urine':
-            collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
-        elif collection_type in HAIR_SALIVA:
+    if collection_type in HAIR_SALIVA:
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
-        elif collection_type in PERINATAL:
-            collected_form = CollectedBiospecimenPlacentaForm(prefix='placenta_form')
-        else:
-            collected_form = None
-    if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
+        if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
             incentive_form = IncentiveForm(prefix='incentive_form')
-    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date\
-            and collection_type not in PERINATAL:
-        if collection_type in HAIR_SALIVA and caregiver_bio.incentive_fk.incentive_date:
+        if collected_item.exists() and collected_item.filter(
+                collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date:
             shipped_to_msu_form = ShippedtoMSUForm(prefix='shipped_to_msu_form')
-        else:
-            shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
-    if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
-        if collection_type in PERINATAL:
-            logging.debug(f"in shipped to wsu if statement")
-            shipped_wsu_form = ShippedtoWSUFormPlacenta(prefix="shipped_to_wsu_form")
-        else:
+        if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
             logging.debug(f"in shipped to wsu if statement")
             shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
-    if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
-        logging.debug(f"made it to received at wsu form")
-        received_at_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
-    if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
-        logging.debug(f"in shipped to echo if statement")
-        shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
+        if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
+            logging.debug(f"in shipped to echo if statement")
+            shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
+    elif collection_type in PERINATAL:
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
+            collected_form = CollectedBiospecimenPlacentaForm(prefix='placenta_form')
+        if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
+            incentive_form = IncentiveForm(prefix='incentive_form')
+        if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
+            logging.debug(f"in shipped to wsu if statement")
+            shipped_wsu_form = ShippedtoWSUFormPlacenta(prefix="shipped_to_wsu_form")
+        if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
+            logging.debug(f"made it to received at wsu form")
+            received_at_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
+        if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
+            logging.debug(f"in shipped to echo if statement")
+            shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
+    elif collection_type.collection_type=='Urine':
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
+            collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
+        if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
+            incentive_form = IncentiveForm(prefix='incentive_form')
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date and\
+            not shipped_to_wsu_item and not shipped_to_echo_item :
+            shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
+        if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
+            shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
+        if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
+            logging.debug(f"made it to received at wsu form")
+            received_at_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
+        if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
+            logging.debug(f"in shipped to echo if statement")
+            shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,
@@ -660,7 +674,7 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     if request.method=="POST":
         logging.debug(f"post is {request.POST}")
         form = ShippedChoiceForm(data=request.POST, prefix='shipped_choice_form')
-        logging.debug(f"is shipped form valid {form.is_valid()}  {form.errors}")
+        logging.critical(f"is shipped form valid {form.is_valid()}  {form.errors}")
         if form.is_valid():
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'W':
                 shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
@@ -677,6 +691,8 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
             else:
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
     else:
         raise AssertionError
 

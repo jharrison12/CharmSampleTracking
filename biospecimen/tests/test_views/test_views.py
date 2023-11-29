@@ -11,7 +11,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Processed
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm, CollectedBiospecimenHairSalivaForm,\
     ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
-    CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm
+    CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm,ShippedtoMSUForm
 from django.utils.html import escape
 from dataview.tests.db_setup import DatabaseSetup
 
@@ -459,12 +459,15 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         return response
 
     def shipped_to_msu_form(self, primary_key):
-        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_choice/post/',
+        response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_msu/post/',
                                     data={"shipped_to_msu_form-date_time_shipped": timezone.datetime(2023,4, 5, 5, 5, 5),
                                           })
         return response
 
-    def shipped_to_echo_echo_send_form(self,primary_key):
+    def received_at_msu_send_form(self,primary_key):
+        raise AssertionError
+
+    def shipped_to_echo_send_form(self, primary_key):
         response = self.client.post(f'/biospecimen/caregiver/P7000/{primary_key}/shipped_echo/post/',
                          data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
 
@@ -561,14 +564,14 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         response = self.shipped_to_msu_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_page_hair_redirects_after_shipped_wsu_form_submission(self):
+    def test_echo2_bio_page_hair_redirects_after_received_msu_form_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,age_category='ZF')
         response = self.initial_send_form_hair_saliva(primary_key,'K')
         response = self.kit_sent_send_form(primary_key)
         response = self.hair_saliva_collected_send_form(primary_key)
         response = self.incentive_send_form(primary_key)
         response = self.shipped_to_msu_form(primary_key)
-        response = self.shipped_to_wsu_send_form(primary_key)
+        response = self.received_at_msu_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_page_hair_redirects_after_received_wsu_form_submission(self):
@@ -630,7 +633,7 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         response = self.incentive_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_page_saliva_redirects_after_shipped_choice_form_submission(self):
+    def test_echo2_bio_page_saliva_redirects_after_shipped_to_msu_form_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
         response = self.initial_send_form_hair_saliva(primary_key,'K')
         response = self.kit_sent_send_form(primary_key)
@@ -639,14 +642,14 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         response = self.shipped_to_msu_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
-    def test_echo2_bio_page_saliva_redirects_after_shipped_wsu_form_submission(self):
+    def test_echo2_bio_page_saliva_redirects_after_received_msu_form_submission(self):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Saliva', trimester=None,age_category='ZF')
         response = self.initial_send_form_hair_saliva(primary_key,'K')
         response = self.kit_sent_send_form(primary_key)
         response = self.hair_saliva_collected_send_form(primary_key)
         response = self.incentive_send_form(primary_key)
         response = self.shipped_to_msu_form(primary_key)
-        response = self.shipped_to_wsu_send_form(primary_key)
+        response = self.received_at_msu_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_page_saliva_redirects_after_shipped_echo_form_submission(self):
@@ -656,8 +659,8 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         response = self.hair_saliva_collected_send_form(primary_key)
         response = self.incentive_send_form(primary_key)
         response = self.shipped_to_msu_form(primary_key)
-        response = self.shipped_to_wsu_send_form(primary_key)
-        response = self.received_at_wsu_send_form(primary_key)
+        response = self.received_at_msu_send_form(primary_key)
+        response = self.shipped_to_echo_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/P7000/{primary_key}/entry/")
 
     def test_echo2_bio_page_saliva_redirects_after_received_wsu_form_submission(self):
@@ -697,7 +700,7 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         self.hair_saliva_collected_send_form(primary_key)
         self.incentive_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/P7000/{primary_key}/entry/')
-        self.assertIsInstance(response.context['shipped_to_msu_form'], ShippedMSU)
+        self.assertIsInstance(response.context['shipped_to_msu_form'], ShippedtoMSUForm)
 
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
