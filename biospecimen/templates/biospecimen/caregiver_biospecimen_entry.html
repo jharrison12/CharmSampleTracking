@@ -75,6 +75,17 @@
           <input type="submit" value="Submit" />
           </form>
     </div>
+    {% elif caregiver_bio.status_fk.shipped_msu_fk.shipped_date_time %}
+        <div id="shipped_to_msu_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped MSU</button>
+            </div>
+            <div class="col-8">
+                <div>Shipped Date Time: {{ caregiver_bio.status_fk.shipped_msu_fk.shipped_date_time }}</div>
+            </div>
+        </div>
     {% endif %}
     {% if shipped_choice_form %}
         <div id="shipped_choice" class="row border border-primary p-3 rounded">

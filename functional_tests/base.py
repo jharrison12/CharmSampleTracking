@@ -1,5 +1,9 @@
+import logging
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
     Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
     Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
@@ -12,6 +16,8 @@ from selenium.webdriver.common.by import By
 import time
 from django.utils import timezone
 import os
+
+logging.basicConfig(level=logging.CRITICAL)
 
 class FunctionalTest(StaticLiveServerTestCase):
 
@@ -979,3 +985,14 @@ class FunctionalTest(StaticLiveServerTestCase):
 def tearDown(self):
             self.browser.quit()
 
+
+def wait_for_element(browser,myelement):
+    #logging.critical(browser,myelement)
+    try:
+        element = WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.ID, myelement))
+        )
+    except:
+        raise AssertionError
+
+    return element

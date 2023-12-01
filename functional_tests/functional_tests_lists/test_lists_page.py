@@ -18,7 +18,7 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertIn('Incentive', text)
         self.browser.get(f'{self.browser.current_url}incentive_list/caregiver/charm_id/')
-        time.sleep(50)
+
         text = self.webpage_text()
 
         self.assertIn('P7000', text)
