@@ -420,8 +420,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if shipped_to_msu_item.exists() and shipped_to_msu_item.filter(shipped_date_time__isnull=False) and not received_at_msu_item:
             logging.critical(f"in shipped to msu if statement")
             received_msu_form = ReceivedatMSUForm(prefix="received_at_msu_form")
-        if received_at_msu_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
-            logging.debug(f"in shipped to echo if statement")
+        if received_at_msu_item.exists() and received_at_msu_item.filter(received_date_time__isnull=False) and not shipped_to_echo_item:
+            logging.critical(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     elif collection_type in PERINATAL:
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
@@ -824,13 +824,12 @@ def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregi
     else:
         raise AssertionError
 
-
 @login_required
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-    shipped_echo_fk = ShippedECHO.objects.get(status=status)
+    shipped_echo_fk = ShippedECHO.objects.create(status=status)
     logging.debug(f"In echo post")
     if request.method == "POST":
         if collection_type.collection_type in BLOOD_TYPES:
@@ -850,6 +849,8 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
             if form.is_valid():
                 shipped_echo_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
                 shipped_echo_fk.save()
+                status.shipped_echo_fk = shipped_echo_fk
+                status.save()
                 logging.debug(f"shipped echo saved")
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                     caregiver_bio_pk=caregiver_bio_pk)

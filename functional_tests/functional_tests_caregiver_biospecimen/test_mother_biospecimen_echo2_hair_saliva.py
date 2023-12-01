@@ -138,7 +138,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         date_time_received.send_keys('2023-10-20 09:17:07')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="received_at_msu"]/form/input[2]')
-        time.sleep(50)
+
         submit.click()
 
         #user sees received at MSU data
@@ -164,7 +164,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertIn('Shipped Date Time: Oct. 20, 2023, 9:17 a.m.',body)
 
 
-    def test_user_can_choose_status_of_hair_or_salvia_information_chooses_not_collected(self):
+    def test_user_can_choose_status_of_hair_or_salvia_information_chooses_not_collected_hope(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
@@ -192,7 +192,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
-        time.sleep(50)
+
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
