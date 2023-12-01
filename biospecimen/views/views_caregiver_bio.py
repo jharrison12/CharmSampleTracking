@@ -417,8 +417,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if collected_item.exists() and collected_item.filter(
                 collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date and not shipped_to_msu_item:
             shipped_to_msu_form = ShippedtoMSUForm(prefix='shipped_to_msu_form')
-        if shipped_to_msu_item.exists() and shipped_to_msu_item.filter(shipped_date_time__isnull=False):
-            logging.debug(f"in shipped to msu if statement")
+        if shipped_to_msu_item.exists() and shipped_to_msu_item.filter(shipped_date_time__isnull=False) and not received_at_msu_item:
+            logging.critical(f"in shipped to msu if statement")
             received_msu_form = ReceivedatMSUForm(prefix="received_at_msu_form")
         if received_at_msu_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
             logging.debug(f"in shipped to echo if statement")
@@ -798,6 +798,32 @@ def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_
                     caregiver_bio_pk=caregiver_bio_pk)
     else:
         raise AssertionError
+
+@login_required
+def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+    collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
+    received_msu_item = ReceivedMSU.objects.create(status=status)
+    logging.critical(f"In received msu post")
+    if request.method == "POST":
+        if collection_type in HAIR_SALIVA:
+            form = ReceivedatMSUForm(data=request.POST,prefix='received_at_msu_form')
+            logging.critical(f"is received to msu form valid{form.is_valid()}  {form.errors} {form}")
+            if form.is_valid():
+                received_msu_item.received_date_time = form.cleaned_data['received_date_time']
+                status.received_msu_fk = received_msu_item
+                received_msu_item.save()
+                status.save()
+                caregiver_bio.save()
+                logging.debug(f"shipped msu saved")
+                return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                    caregiver_bio_pk=caregiver_bio_pk)
+    else:
+        raise AssertionError
+
 
 @login_required
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):

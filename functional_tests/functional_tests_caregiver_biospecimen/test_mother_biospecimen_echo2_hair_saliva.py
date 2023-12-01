@@ -122,6 +122,31 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         submit.click()
 
+        #user sees shipped to echo data
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Shipped Date Time: Oct. 20, 2023, 9:17 a.m.', body)
+
+        #use sees received at MSU Form
+
+        form = self.browser.find_element(By.TAG_NAME,'form').text
+        self.assertIn('Received at MSU',form)
+
+        self.assertNotIn('Shipped to WSU',form)
+        self.assertNotIn('Shipped to Echo',form)
+        date_time_received = self.browser.find_element(By.ID,'id_received_at_msu_form-received_date_time')
+        date_time_received.send_keys('2023-10-20 09:17:07')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="received_at_msu"]/form/input[2]')
+        time.sleep(50)
+        submit.click()
+
+        #user sees received at MSU data
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Received Date Time: Oct. 20, 2023, 9:17 a.m.', body)
+
+        #user sees shipped to echo form
+
         body = self.browser.find_element(By.TAG_NAME,'body').text
         needed_div = self.browser.find_element(By.ID,'shipped_to_echo_form').text
 

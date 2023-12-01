@@ -87,6 +87,27 @@
             </div>
         </div>
     {% endif %}
+    {% if received_msu_form %}
+        <div id="received_at_msu" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_received_at_msu_post' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Received at MSU Form</h2>
+            {{ received_msu_form.as_p }}
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
+    {% elif caregiver_bio.status_fk.received_msu_fk.received_date_time %}
+        <div id="received_at_msu_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Received MSU</button>
+            </div>
+            <div class="col-8">
+                <div>Received Date Time: {{ caregiver_bio.status_fk.received_msu_fk.received_date_time }}</div>
+            </div>
+        </div>
+    {% endif %}
     {% if shipped_choice_form %}
         <div id="shipped_choice" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_shipped_choice_post' charm_project_identifier caregiver_bio_pk %}>
