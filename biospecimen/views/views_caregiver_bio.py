@@ -93,7 +93,6 @@ def return_caregiver_bloods(caregiver_bio):
         caregiver_bloods = None
     return caregiver_bloods
 
-
 def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
@@ -147,7 +146,6 @@ def update_received_wsu(caregiver_bio_pk,data,user_logged_in):
             caregiver_bio.status_fk.save()
             caregiver_bio.save()
 
-
 def update_shipped_echo(caregiver_bio_pk, bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
@@ -173,7 +171,6 @@ def create_or_update_incentive(caregiver_bio_pk, bound_form):
     incentive_item.incentive_date = bound_form.cleaned_data['incentive_date']
     incentive_item.save()
     caregiver_bio.save()
-
 
 
 #################################################
@@ -238,13 +235,18 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    logging.debug(f"collecttion type {collection_type} collection type in hair saliva? {collection_type in HAIR_SALIVA}")
-    if caregiver_bio.status_fk==None and collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
-        logging.debug(f"made it to INCORRECT initial bio form")
+    logging.critical(f"collection type {collection_type.collection_type} "
+                     f"{HAIR_SALIVA}"
+                     f"{HAIR_SALIVA.all().select_related()}"
+                     f"collection type in hair saliva? {collection_type.collection_type in HAIR_SALIVA.all()}"
+                     f"collection type in hair saliva? {collection_type in HAIR_SALIVA.all()}")
+                     # f"{collection_type.objects.filter(id=HAIR_SALIVA.all().id).exists()}")
+    if caregiver_bio.status_fk==None and collection_type not in HAIR_SALIVA.all() and collection_type not in PERINATAL.all():
+        logging.critical(f"made it to INCORRECT initial bio form")
         initial_bio_form = InitialBioForm(prefix="initial_form")
-    elif caregiver_bio.status_fk==None and collection_type in PERINATAL:
+    elif caregiver_bio.status_fk==None and collection_type in PERINATAL.all():
         initial_bio_form = InitialBioFormPeriNatal(prefix="initial_form")
-    elif caregiver_bio.status_fk==None and collection_type in HAIR_SALIVA:
+    elif caregiver_bio.status_fk==None and collection_type in HAIR_SALIVA.all():
         logging.debug(f"made it to correct initial bio form")
         initial_bio_form = InitialBioFormPostNatal(prefix="initial_form")
     else:
@@ -260,7 +262,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    if request.method=="POST" and collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
+    if request.method=="POST" and collection_type not in HAIR_SALIVA.all() and collection_type not in PERINATAL.all():
         form = InitialBioForm(data=request.POST, prefix='initial_form')
         logging.debug(f"{form.is_valid()} {form} {form.errors}")
         if form.is_valid():
@@ -287,7 +289,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                                 caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError
-    elif request.method=="POST" and collection_type in HAIR_SALIVA:
+    elif request.method=="POST" and collection_type in HAIR_SALIVA.all():
         form = InitialBioFormPostNatal(data=request.POST, prefix='initial_form')
         logging.debug(f"is form valid {form} {form.is_valid()}")
         if form.is_valid():
@@ -311,7 +313,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         else:
             raise AssertionError
 
-    elif request.method == "POST" and collection_type in PERINATAL:
+    elif request.method == "POST" and collection_type in PERINATAL.all():
         form = InitialBioFormPeriNatal(data=request.POST, prefix='initial_form')
         logging.debug(f"is form valid {form} {form.is_valid()}")
         if form.is_valid():
@@ -354,7 +356,7 @@ def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiv
     shipped_wsu_form = None
     shipped_echo_form = None
     kit_sent_form = None
-    if kit_sent_item.exists() and collection_type in HAIR_SALIVA:
+    if kit_sent_item.exists() and collection_type in HAIR_SALIVA.all():
         kit_sent_form = KitSentForm(prefix="kit_sent_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
@@ -370,7 +372,7 @@ def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiv
 def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    if request.method == "POST" and collection_type in HAIR_SALIVA:
+    if request.method == "POST" and collection_type in HAIR_SALIVA.all():
         form = KitSentForm(data=request.POST, prefix='kit_sent_form')
         if form.is_valid():
             kit_sent_data = KitSent.objects.get(status__caregiverbiospecimen=caregiver_bio)
@@ -408,8 +410,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_at_wsu_form = None
     shipped_to_msu_form = None
     received_msu_form = None
-    logging.debug(f"Collection type is {collection_type.collection_type}")
-    if collection_type in HAIR_SALIVA:
+    logging.critical(f"Collection type is {collection_type.collection_type}")
+    if collection_type in HAIR_SALIVA.all():
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
         if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
@@ -423,7 +425,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if received_at_msu_item.exists() and received_at_msu_item.filter(received_date_time__isnull=False) and not shipped_to_echo_item:
             logging.debug(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
-    elif collection_type in PERINATAL:
+    elif collection_type in PERINATAL.all():
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenPlacentaForm(prefix='placenta_form')
         if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
@@ -545,7 +547,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 caregiver_bio.incentive_fk.save()
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type in HAIR_SALIVA:
+        elif collection_type in HAIR_SALIVA.all():
             form = CollectedBiospecimenHairSalivaForm(data=request.POST, prefix='hair_saliva_form')
             if form.is_valid():
                 hair_or_saliva = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
@@ -560,7 +562,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type in PERINATAL:
+        elif collection_type in PERINATAL.all():
             form = CollectedBiospecimenPlacentaForm(data=request.POST, prefix='placenta_form')
             if form.is_valid():
                 placenta = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
@@ -633,7 +635,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        if collection_type in HAIR_SALIVA or collection_type.collection_type=='Urine':
+        if collection_type in HAIR_SALIVA.all() or collection_type.collection_type=='Urine':
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
@@ -644,7 +646,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
             else:
                 form.errors
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
-        if collection_type in PERINATAL:
+        if collection_type in PERINATAL.all():
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 #create shipped wsu so logic skips shipped choice form
@@ -722,7 +724,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
                     update_shipped_wsu(caregiver_bio_pk=item.pk,bound_form=form,user_logged_in=request.user)
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type in PERINATAL:
+        elif collection_type in PERINATAL.all():
             logging.debug(f"post is {request.POST}")
             form = ShippedtoWSUFormPlacenta(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
@@ -767,7 +769,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
                 update_received_wsu(caregiver_bio_pk=item.pk, data=request.POST, user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type.collection_type=='Urine' or collection_type in PERINATAL:
+        elif collection_type.collection_type=='Urine' or collection_type in PERINATAL.all():
             update_received_wsu(caregiver_bio_pk=caregiver_bio_pk,data=request.POST,user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
@@ -782,7 +784,7 @@ def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_
     shipped_to_msu_item = ShippedMSU.objects.create(status=status)
     logging.debug(f"In msu post")
     if request.method == "POST":
-        if collection_type in HAIR_SALIVA:
+        if collection_type in HAIR_SALIVA.all():
             logging.debug(f"post is {request.POST}")
             form = ShippedtoMSUForm(data=request.POST, prefix='shipped_to_msu_form')
             logging.debug(f"is shipped to msu form valid{form.is_valid()}  {form.errors} {form}")
@@ -807,7 +809,7 @@ def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregi
     received_msu_item = ReceivedMSU.objects.create(status=status)
     logging.debug(f"In received msu post")
     if request.method == "POST":
-        if collection_type in HAIR_SALIVA:
+        if collection_type in HAIR_SALIVA.all():
             form = ReceivedatMSUForm(data=request.POST,prefix='received_at_msu_form')
             logging.debug(f"is received to msu form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():

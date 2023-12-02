@@ -38,7 +38,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
     def test_user_can_choose_status_of_hair_or_saliva_information_chooses_kit_sent_collected_shipped_msu_then_echo(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None,child_age='ZF')
+        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -47,6 +47,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertIn('Charm ID: P7000', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
+
 
         collected_not_collected_kit_sent = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
         collected_not_collected_kit_sent.select_by_visible_text('Kit Sent')
@@ -176,8 +177,8 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
-        collected_not_collected.select_by_visible_text('Not Collected')
+        collected_not_collected_kit_sent = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
+        collected_not_collected_kit_sent.select_by_visible_text('Not Collected')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
@@ -203,9 +204,9 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         # WebDriverWait(self.browser,timeout=50).until(EC.presence_of_element_located((By.ID,'id_initial_form-collected_not_collected_kit_sent')))
 
         # self.wait_for_row_in_list_table()
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
+        collected_not_collected_kit_sent = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected_kit_sent'))
         #collected_not_collected = Select(wait_for_element(self.browser,'id_initial_form-collected_not_collected_kit_sent'))
-        collected_not_collected.select_by_visible_text('Declined')
+        collected_not_collected_kit_sent.select_by_visible_text('Declined')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
