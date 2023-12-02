@@ -21,7 +21,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
             try:
                 table = self.browser.find_element(By.ID, "id_initial_form-collected_not_collected_kit_sent")
                 return table
-                logging.critical(f"{time.time()}")
+                logging.debug(f"{time.time()}")
             except (AssertionError, WebDriverException):
                 if time.time() - start_time > MAX_WAIT:
                     raise

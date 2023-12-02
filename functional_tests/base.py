@@ -987,7 +987,7 @@ def tearDown(self):
 
 
 def wait_for_element(browser,myelement):
-    #logging.critical(browser,myelement)
+    #logging.debug(browser,myelement)
     try:
         element = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.ID, myelement))
