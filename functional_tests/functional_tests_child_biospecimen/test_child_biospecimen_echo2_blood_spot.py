@@ -122,6 +122,8 @@ class ChildBioSpecimenEntryBloodSpotZerotoFiveMonths(FunctionalTest):
         self.assertNotIn('number of tubes', body_text.lower())
         self.assertNotIn('courier', body_text.lower())
 
+        self.assertFalse(True)
+
 
     def test_user_can_choose_status_of_blood_spots_0_5_months_information_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees blood_spots

@@ -121,6 +121,16 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
         body_text = self.webpage_text()
         self.assertIn('Shipped to WSU Date: Sept. 27, 2023',body_text)
 
+        #User sees received at WSU form
+        received_at_wsu = self.browser.find_element(By.ID, 'id_child_received_at_wsu_form-received_date_time')
+        received_at_wsu.clear()
+        received_at_wsu.send_keys('2023-10-04 12:52:26')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="received_at_wsu_div"]/form/input[2]')
+        submit.click()
+        body_text = self.webpage_text()
+        self.assertIn('Received at WSU Date: Oct. 4, 2023',body_text)
+
 
     def test_user_can_choose_status_of_stool_information_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees stool
