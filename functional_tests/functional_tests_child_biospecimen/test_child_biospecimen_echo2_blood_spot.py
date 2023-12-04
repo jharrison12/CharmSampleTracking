@@ -122,7 +122,19 @@ class ChildBioSpecimenEntryBloodSpotZerotoFiveMonths(FunctionalTest):
         self.assertNotIn('number of tubes', body_text.lower())
         self.assertNotIn('courier', body_text.lower())
 
-        self.assertFalse(True)
+        #User sees received at wsu form
+
+        received_date_time = self.browser.find_element(By.ID, 'id_child_received_at_wsu_form-received_date_time')
+        received_date_time.clear()
+        received_date_time.send_keys('2023-10-15 12:52:26')
+
+        '//*[@id="received_at_wsu_div"]/form/input[2]'
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="received_at_wsu_div"]/form/input[2]')
+        submit.click()
+
+        body_text = self.webpage_text()
+        self.assertIn('Received at WSU Date: Oct. 15, 2023, 12:52 p.m.',body_text)
 
 
     def test_user_can_choose_status_of_blood_spots_0_5_months_information_chooses_kit_sent_collected_shipped_echo(self):
