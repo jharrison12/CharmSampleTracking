@@ -436,7 +436,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
             logging.debug(f"made it to received at wsu form")
             received_at_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
-        if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
+        if received_at_wsu_item.exists() and not shipped_to_echo_item:
             logging.debug(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     elif collection_type.collection_type=='Urine':

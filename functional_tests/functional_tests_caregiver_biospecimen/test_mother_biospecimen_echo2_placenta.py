@@ -117,12 +117,17 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
 
         #User sees shipped to echo form
-        shipped_echo_date_time = self.browser.find_element(By.ID,"id_shipped_echo_form-shipped_date_time")
+        shipped_echo_date_time = self.browser.find_element(By.ID,"id_shipped_to_echo_form-shipped_date_and_time")
         shipped_echo_date_time.clear()
         shipped_echo_date_time.send_keys('2023-09-27 12:52:26')
 
-        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_echo_form_information_form"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
         submit.click()
+
+        #User sees shipped to echo data
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('Shipped Date Time: Sept. 27, 2023, 12:52 p.m.',body)
+
 
 
     def test_user_can_choose_status_of_placenta_information_chooses_not_collected(self):
