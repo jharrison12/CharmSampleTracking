@@ -2,15 +2,9 @@ import logging
 import sqlite3
 
 from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
-    Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory,KitSent
-
-from dataview.models import User
+    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory,KitSent,User,Caregiver,Incentive,Project,\
+    Child,Pregnancy
 import datetime, pytz
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -29,102 +23,33 @@ class DatabaseSetup(TestCase):
         ##Update Below
 
 
-        self.caucasion = Race.objects.create(race=Race.RaceChoice.WHITE)
-        self.black = Race.objects.create(race=Race.RaceChoice.BLACK)
-        self.black = Race.objects.create(race=Race.RaceChoice.UNKNOWN)
-
-        self.hispanic = Ethnicity.objects.create(ethnicity=Ethnicity.EthnicityChoice.HISPANIC)
-        self.non_hispanic = Ethnicity.objects.create(ethnicity=Ethnicity.EthnicityChoice.NON_HISPANIC)
-        self.hispanic_unknown = Ethnicity.objects.create(ethnicity=Ethnicity.EthnicityChoice.UNKNOWN)
-
         self.first_caregiver = Caregiver.objects.create(charm_project_identifier='P7000',
-                                                        date_of_birth=timezone.datetime(1985, 7, 3).date(),
-                                                        ewcp_participant_identifier='0000',
-                                                        participation_level_identifier='01',
-                                                        specimen_id='4444', echo_pin='333',
-                                                        race_fk=self.caucasion,
-                                                        ethnicity_fk=self.hispanic)
+                                                        specimen_id='4444')
 
         self.second_caregiver = Caregiver.objects.create(charm_project_identifier='P7001',
-                                                         date_of_birth=timezone.datetime(1985, 7, 4).date(),
-                                                         ewcp_participant_identifier='0001',
-                                                         participation_level_identifier='02',
-                                                         specimen_id='5555', echo_pin='444',
-                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
-                                                         )
+                                                         specimen_id='5555')
 
         self.third_caregiver = Caregiver.objects.create(charm_project_identifier='P7002',
-                                                        date_of_birth=timezone.datetime(1985, 7, 4).date(),
-                                                        ewcp_participant_identifier='0002',
-                                                        participation_level_identifier='02',
-                                                        specimen_id='6666', echo_pin='555',
-                                                        race_fk=self.black, ethnicity_fk=self.non_hispanic
-                                                        )
+                                                        specimen_id='6666')
 
         self.fourth_caregiver = Caregiver.objects.create(charm_project_identifier='P7003',
-                                                         date_of_birth=timezone.datetime(1985, 7, 4).date(),
-                                                         ewcp_participant_identifier='0003',
-                                                         participation_level_identifier='02',
-                                                         specimen_id='7777', echo_pin='666',
-                                                         race_fk=self.black, ethnicity_fk=self.non_hispanic
-                                                         )
+                                                         specimen_id='7777')
 
         self.fifth_caregiver = Caregiver.objects.create(charm_project_identifier='P7004',
-                                                        date_of_birth=timezone.datetime(1985, 7, 4).date(),
-                                                        ewcp_participant_identifier='0004',
-                                                        participation_level_identifier='02',
-                                                        specimen_id='8888', echo_pin='777',
-                                                        race_fk=self.black, ethnicity_fk=self.non_hispanic
-                                                        )
-
-        self.first_caregiver_name = Name()
-        self.first_caregiver_name.first_name = 'Jane'
-        self.first_caregiver_name.last_name = 'Doe'
-        self.first_caregiver_name.save()
-
-        self.second_caregiver_name = Name()
-        self.second_caregiver_name.first_name = 'Jessica'
-        self.second_caregiver_name.last_name = 'Smith'
-        self.second_caregiver_name.save()
-
-        self.first_caregiver_old_name = Name.objects.create(first_name='Sandy', last_name='Cheeks')
-
-        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_name, revision_number=1,
-                                     eff_start_date=timezone.now(), status='C')
-
-        CaregiverName.objects.create(caregiver_fk=self.first_caregiver, name_fk=self.first_caregiver_old_name,
-                                     revision_number=2,
-                                     eff_start_date=timezone.now(), status='A')
-
-        CaregiverName.objects.create(caregiver_fk=self.second_caregiver, name_fk=self.second_caregiver_name,
-                                     revision_number=1,
-                                     eff_start_date=timezone.now(), status='C')
+                                                        specimen_id='8888')
 
         #create incentive
-        self.incentive_type_one = IncentiveType.objects.create(incentive_type_text='Gift Card')
 
-        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100)
+        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100,)
         self.incentive_two = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100,incentive_date=timezone.datetime(2023, 8, 4).date())
-
-        #create recruitment
-        self.health_care_facility_1 = HealthcareFacility.objects.create(name='University of Michigan')
-
-        self.caregiver_1_recruitment = Recruitment.objects.create(caregiver_fk=self.first_caregiver,
-                                                                  incentive_fk=self.incentive_one,
-                                                                  healthcare_facility_fk=self.health_care_facility_1,
-                                                                  recruitment_date=timezone.datetime(2023, 8, 4).date())
 
         #create mother and nonmother caregiver tables
 
-        self.mother_in_law = Relation.objects.create(relation_type='Mother-in-law')
-
-        self.mother_one = Mother.objects.create(caregiver_fk=self.first_caregiver)
         self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
                                                                  pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
                                                                  due_date=timezone.datetime(2023, 5, 23).date(),
                                                                  last_menstrual_period=timezone.datetime(2023, 5, 4).date(),
                                                                  )
-        self.mother_one_pregnancy_one.save()
 
         # create trimester
 
@@ -139,18 +64,10 @@ class DatabaseSetup(TestCase):
 
         #create primary care_giver
 
-        self.primary_care_giver_child_one = PrimaryCaregiver.objects.create(caregiver_fk=self.first_caregiver)
-        self.primary_care_giver_child_two = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
-        self.primary_care_giver_child_three = PrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver)
-
         # create child
 
         self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
                                               charm_project_identifier='7000M1',
-                                              birth_hospital=self.health_care_facility_1,
-                                              birth_sex=Child.BirthSexChoices.MALE,
-                                              birth_date=timezone.datetime(2023, 5, 20).date(),
-                                              child_twin=False, race_fk=self.caucasion, ethnicity_fk=self.hispanic,
                                               pregnancy_fk=self.mother_one_pregnancy_one)
         self.mother_one_pregnancy_one.save()
         self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
@@ -170,113 +87,6 @@ class DatabaseSetup(TestCase):
                                               pregnancy_fk=self.mother_one_pregnancy_one)
 
 
-        self.child_one_name = Name.objects.create(last_name='Harrison', first_name='Jonathan')
-        self.child_two_name = Name.objects.create(last_name='Smith', first_name='Kevin')
-
-        self.child_name_connection = ChildName.objects.create(child_fk=self.child_one, name_fk=self.child_one_name,
-                                                              status=ChildName.ChildNameStatusChoice.CURRENT, )
-        self.child_two_name_connection = ChildName.objects.create(child_fk=self.child_two, name_fk=self.child_two_name,
-                                                                  status=ChildName.ChildNameStatusChoice.CURRENT, )
-        self.second_caregiver_is_mother_in_law = CaregiverChildRelation.objects.create(child_fk=self.child_two,
-                                                                                       caregiver_fk=self.second_caregiver,
-                                                                                       relation_fk=self.mother_in_law)
-
-
-
-        # Create address
-        self.address = Address.objects.create(address_line_1='One Drive', city='Lansing', state='MI', zip_code='38000')
-        self.address_move = Address.objects.create(address_line_1='future street', address_line_2='apt 1',
-                                                   city='Lansing', state='MI', zip_code='38000')
-
-        self.caregiver_1_address = CaregiverAddress.objects.create(caregiver_fk=self.first_caregiver,
-                                                                   address_fk=self.address,
-                                                                   status='C')
-
-
-        self.address2 = Address.objects.create(address_line_1='Two Drive', city='Lansing', state='MI', zip_code='38000')
-        self.caregiver_2_address = CaregiverAddress.objects.create(caregiver_fk=self.second_caregiver,
-                                                                   address_fk=self.address2,
-                                                                   status='C')
-
-        # Create email
-        email = Email.objects.create(email='jharrison12@gmail.com')
-        CaregiverEmail.objects.create(email_fk=email, caregiver_fk=self.first_caregiver,
-                                      email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
-
-        email_secondary = Email.objects.create(email='f@gmail.com')
-        CaregiverEmail.objects.create(email_fk=email_secondary, caregiver_fk=self.first_caregiver,
-                                      email_type=CaregiverEmail.EmailTypeChoices.SECONDARY)
-
-        email_archived = Email.objects.create(email='INACTIVE@gmail.com')
-        CaregiverEmail.objects.create(email_fk=email_archived, caregiver_fk=self.first_caregiver,
-                                      email_type=CaregiverEmail.EmailTypeChoices.INACTIVE)
-
-        email2 = Email.objects.create(email='jharrison13@gmail.com')
-        CaregiverEmail.objects.create(email_fk=email2, caregiver_fk=self.second_caregiver,
-                                      email_type=CaregiverEmail.EmailTypeChoices.PRIMARY)
-
-        # Create phone
-        phone = Phone.objects.create(area_code='555', phone_number='555-5555')
-        CaregiverPhone.objects.create(phone_fk=phone, caregiver_fk=self.first_caregiver,
-                                      phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.PRIMARY)
-
-        phone_secondary = Phone.objects.create(area_code='666', phone_number='666-6666')
-        CaregiverPhone.objects.create(phone_fk=phone_secondary, caregiver_fk=self.first_caregiver,
-                                      phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.SECONDARY)
-
-        phone_archived = Phone.objects.create(area_code='777', phone_number='666-6666')
-        CaregiverPhone.objects.create(phone_fk=phone_archived, caregiver_fk=self.first_caregiver,
-                                      phone_type=CaregiverPhone.CaregiverPhoneTypeChoices.INACTIVE)
-
-        # Create social media
-        twitter = SocialMedia.objects.create(social_media_name='Twitter')
-        self.first_caregiver_social_media = CaregiverSocialMedia.objects.create(social_media_fk=twitter, caregiver_fk=self.first_caregiver,
-                                                                                social_media_user_name='@jonathan',social_media_consent=True)
-        facebook = SocialMedia.objects.create(social_media_name='Facebook')
-        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
-                                            social_media_user_name='jonathan-h', social_media_consent=True)
-        facebook = SocialMedia.objects.create(social_media_name='Instagram')
-        CaregiverSocialMedia.objects.create(social_media_fk=facebook, caregiver_fk=self.first_caregiver,
-                                            social_media_user_name='@jonathanscat',social_media_consent=True)
-
-        # Create caregiver
-        contact_a_email = Email.objects.create(email='b@b.com')
-        contact_b_email = Email.objects.create(email='c@c.com')
-        contact_c_email = Email.objects.create(email='d@d.com')
-
-        contact_a_name = Name.objects.create(first_name='John', last_name='Jones')
-        contact_b_name = Name.objects.create(first_name='Jessica', last_name='Jones')
-        contact_c_name = Name.objects.create(first_name='James', last_name='Contact')
-
-        contact_a_address = Address.objects.create(address_line_1='two drive', city='Lansing', state='MI',
-                                                   zip_code='38000')
-        contact_c_address = Address.objects.create(address_line_1='three drive', city='East Lansing', state='MI',
-                                                   zip_code='38000')
-
-        contact_a_phone = Phone.objects.create(area_code='999', phone_number='999-9999')
-        contact_b_phone = Phone.objects.create(area_code='999', phone_number='999-9998')
-        contact_c_phone = Phone.objects.create(area_code='999', phone_number='999-9997')
-
-        self.caregiver_contact_a = CaregiverPersonalContact.objects.create(caregiver_fk=self.first_caregiver,
-                                                                           name_fk=contact_a_name,
-                                                                           address_fk=contact_a_address,
-                                                                           email_fk=contact_a_email,
-                                                                           phone_fk=contact_a_phone,
-                                                                           caregiver_contact_type='PR')
-
-        self.caregiver_contact_b = CaregiverPersonalContact.objects.create(caregiver_fk=self.first_caregiver,
-                                                                           name_fk=contact_b_name,
-                                                                           address_fk=contact_a_address,
-                                                                           email_fk=contact_b_email,
-                                                                           phone_fk=contact_b_phone,
-                                                                           caregiver_contact_type='SD')
-
-        self.caregiver_contact_b = CaregiverPersonalContact.objects.create(caregiver_fk=self.second_caregiver,
-                                                                           name_fk=contact_c_name,
-                                                                           address_fk=contact_c_address,
-                                                                           email_fk=contact_c_email,
-                                                                           phone_fk=contact_c_phone,
-                                                                           caregiver_contact_type='PR')
 
         #Create surveys
 
@@ -284,51 +94,6 @@ class DatabaseSetup(TestCase):
         self.new_project = Project.objects.create(project_name='MARCH')
         self.echo1 = Project.objects.create(project_name='ECHO1')
         self.echo2 = Project.objects.create(project_name='ECHO2')
-
-        self.prenatal_1 = Survey.objects.create(survey_name='Prenatal 1', project_fk=self.new_project)
-        self.prenatal_2 = Survey.objects.create(survey_name='Prenatal 2', project_fk=self.new_project)
-
-        self.completed_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Completed')
-        self.incomplete_survey_outcome = SurveyOutcome.objects.create(survey_outcome_text='Incomplete')
-
-
-
-        self.caregiver_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
-                                                                   survey_fk=self.prenatal_1,
-                                                                   survey_outcome_fk=self.completed_survey_outcome,
-                                                                   incentive_fk=self.incentive_two,
-                                                                   survey_completion_date=timezone.datetime(2023,8,30).date()
-                                                                   )
-
-        self.caregiver_prenatal_2 = CaregiverSurvey.objects.create(caregiver_fk=self.first_caregiver,
-                                                                   survey_fk=self.prenatal_2,
-                                                                   survey_outcome_fk=self.incomplete_survey_outcome,
-                                                                   incentive_fk=self.incentive_two,
-                                                                   survey_completion_date=timezone.datetime(2023,5,3).date()
-                                                                   )
-
-        self.caregiver_2_prenatal_1 = CaregiverSurvey.objects.create(caregiver_fk=self.second_caregiver,
-                                                                     survey_fk=self.prenatal_1,
-                                                                     survey_outcome_fk=self.completed_survey_outcome,
-                                                                     incentive_fk=self.incentive_two,
-                                                                     survey_completion_date=timezone.datetime(2023,5,3).date()
-                                                                     )
-
-
-
-        # Create consent
-        self.consent_version_1 = ConsentVersion.objects.create(consent_version='5.1')
-        self.consent_version_2 = ConsentVersion.objects.create(consent_version='5.2')
-        self.consent_contract_1 = ConsentContract.objects.create(caregiver_fk=self.first_caregiver,
-                                                                 consent_version_fk=self.consent_version_1,
-                                                                 consent_date=datetime.date.today() - datetime.timedelta(
-                                                                     days=1))
-        self.consent_contract_1 = ConsentContract.objects.create(caregiver_fk=self.first_caregiver,
-                                                                 consent_version_fk=self.consent_version_2,
-                                                                 consent_date=datetime.date.today())
-        self.consent_contract_1_cg_2 = ConsentContract.objects.create(caregiver_fk=self.second_caregiver,
-                                                                      consent_version_fk=self.consent_version_1,
-                                                                      consent_date=datetime.date.today())
 
         #create biospecimen
 
@@ -742,16 +507,6 @@ class DatabaseSetup(TestCase):
             biospecimen_id='1112PL',
             project_fk=self.echo1)
 
-
-
-        # self.biospecimen_bloodspots_two_caregiver_one = CaregiverBiospecimen.objects.create(
-        #     caregiver_fk=self.first_caregiver,
-        #     status_fk=self.status_outcome_incomplete,
-        #     collection_fk=self.bloodspots_two,
-        #     incentive_fk=self.incentive_one,
-        #     biospecimen_date=datetime.date.today(),
-        # biospecimen_id='1112BS')
-
         self.biospecimen_whole_blood_one_caregiver_one = CaregiverBiospecimen.objects.create(
             caregiver_fk=self.first_caregiver,
             status_fk=self.status_outcome_processed_complete_six,
@@ -847,58 +602,6 @@ class DatabaseSetup(TestCase):
             project_fk=self.echo2,
             age_category_fk=self.zero_to_five_age_category)
 
-
-
-        #self.non_mother_one = NonPrimaryCaregiver.objects.create(caregiver_fk=self.second_caregiver,relation_fk=self.mother_in_law)
-
-
-        #creat consent item
-
-        self.consent_mother_placenta = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_PLACENTA)
-        self.consent_mother_blood = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_BLOOD)
-        self.consent_mother_urine = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.MOTHER_URINE)
-        self.consent_mother_address = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.ADDRESS)
-        self.consent_mother_birth_cert = ConsentType.objects.create(consent_type_text=ConsentType.ConsentTypeChoices.BIRTH_CERTIFICATE)
-
-        self.consent_mother_placenta_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_placenta,caregiver_fk=self.first_caregiver)
-        self.consent_mother_blood_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_blood,caregiver_fk=self.first_caregiver)
-        self.consent_mother_urine_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_urine,caregiver_fk=self.first_caregiver)
-        self.consent_mother_address_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_address,caregiver_fk=self.first_caregiver)
-        self.consent_mother_birth_cert_caregiver_one = ConsentItem.objects.create(consent_type_fk=self.consent_mother_birth_cert,caregiver_fk=self.first_caregiver)
-
-
-        #create child address
-
-        # create child address
-
-        self.child_address = ChildAddress.objects.create(child_fk=self.child_one, address_fk=self.address)
-
-        #create child survey
-
-        self.survey_that_child_takes = Survey.objects.create(survey_name='Eight Year Survey',project_fk=self.new_project)
-        self.other_survey_that_child_takes = Survey.objects.create(survey_name='Five Year Survey',project_fk=self.new_project)
-
-        self.child_one_survey_one = ChildSurvey.objects.create(child_fk=self.child_one,
-                                                               survey_fk=self.survey_that_child_takes,
-                                                               survey_outcome_fk=self.completed_survey_outcome,
-                                                               survey_completion_date=timezone.datetime(2023,5,3).date())
-
-        self.child_two_survey_one = ChildSurvey.objects.create(child_fk=self.child_two,
-                                                               survey_fk=self.other_survey_that_child_takes,
-                                                               survey_outcome_fk=self.incomplete_survey_outcome,
-                                                               survey_completion_date=timezone.datetime(2023,5,4).date())
-
-
-
-        #child assent
-        self.eight_year_assent = Assent.objects.create(assent_text='Eight Year Survey')
-        self.five_year_assent = Assent.objects.create(assent_text='Five Year Survey')
-        self.child_one_eight_year_assent = ChildAssent.objects.create(child_fk=self.child_one,
-                                                                      assent_fk=self.eight_year_assent,
-                                                                      assent_date=timezone.datetime(2023,5,4).date(),assent_boolean=True)
-        self.child_two_five_year_assent = ChildAssent.objects.create(child_fk=self.child_two,
-                                                                     assent_fk=self.five_year_assent,
-                                                                     assent_date=timezone.datetime(2023,5,4).date(),assent_boolean=False)
 
         # child biospecimen
 

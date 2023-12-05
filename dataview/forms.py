@@ -1,5 +1,5 @@
 from django import forms
-from dataview.models import Incentive
+from biospecimen.models import Incentive
 from biospecimen.models import CaregiverBiospecimen
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
@@ -36,4 +36,4 @@ class IncentiveForm(forms.models.ModelForm):
 
     class Meta:
         model = Incentive
-        fields = ['incentive_type_fk','incentive_date','incentive_amount']
+        fields = ['incentive_type','incentive_date','incentive_amount']

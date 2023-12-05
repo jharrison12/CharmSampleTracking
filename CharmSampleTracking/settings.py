@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "dataview.User"
+AUTH_USER_MODEL = "biospecimen.User"
 LOGIN_REDIRECT_URL = '/'
 # LOGIN_URL = '/'
 

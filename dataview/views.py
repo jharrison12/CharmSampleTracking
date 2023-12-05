@@ -1,11 +1,6 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404,redirect
-from dataview.models import Caregiver, Name, CaregiverName, \
-    Address, Email, CaregiverEmail, Phone, CaregiverPhone, SocialMedia, CaregiverSocialMedia, CaregiverPersonalContact, \
-    Survey, Project, CaregiverSurvey, Incentive, IncentiveType, ConsentItem, Child, ChildName, \
-    ChildSurvey, \
-    ChildAssent, CaregiverChildRelation, Pregnancy
 
 from dataview.forms import CaregiverBiospecimenForm,IncentiveForm
 

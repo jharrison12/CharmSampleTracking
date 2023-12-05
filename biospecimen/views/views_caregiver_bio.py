@@ -1,9 +1,8 @@
 import logging
 
-from dataview.models import Caregiver,Name, Child
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received, CollectionNumber, CollectionType, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
-    Trimester, Project, \
+    Trimester, Project, Caregiver, Child,\
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
