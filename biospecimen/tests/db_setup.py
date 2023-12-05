@@ -40,15 +40,13 @@ class DatabaseSetup(TestCase):
 
         #create incentive
 
-        self.incentive_one = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100,)
-        self.incentive_two = Incentive.objects.create(incentive_type_fk=self.incentive_type_one,incentive_amount=100,incentive_date=timezone.datetime(2023, 8, 4).date())
+        self.incentive_one = Incentive.objects.create(incentive_amount=100,incentive_type=Incentive.IncentiveType.GIFT_CARD)
+        self.incentive_two = Incentive.objects.create(incentive_type=Incentive.IncentiveType.GIFT_CARD,incentive_amount=100,incentive_date=timezone.datetime(2023, 8, 4).date())
 
         #create mother and nonmother caregiver tables
 
-        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.mother_one,
-                                                                 pregnancy_id=f"{self.mother_one.caregiver_fk.charm_project_identifier}F",
-                                                                 due_date=timezone.datetime(2023, 5, 23).date(),
-                                                                 last_menstrual_period=timezone.datetime(2023, 5, 4).date(),
+        self.mother_one_pregnancy_one = Pregnancy.objects.create(mother_fk=self.first_caregiver,
+                                                                 pregnancy_id=f"{self.first_caregiver.charm_project_identifier}F"
                                                                  )
 
         # create trimester
@@ -66,30 +64,17 @@ class DatabaseSetup(TestCase):
 
         # create child
 
-        self.child_one = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_one,
+        self.child_one = Child.objects.create(caregiver_fk=self.first_caregiver,
                                               charm_project_identifier='7000M1',
                                               pregnancy_fk=self.mother_one_pregnancy_one)
         self.mother_one_pregnancy_one.save()
-        self.child_two = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_two,
+        self.child_two = Child.objects.create(caregiver_fk=self.first_caregiver,
                                               charm_project_identifier='7001M1',
-                                              birth_hospital=self.health_care_facility_1,
-                                              birth_sex=Child.BirthSexChoices.FEMALE,
-                                              birth_date=timezone.datetime(2021, 8, 10),
-                                              child_twin=False, race_fk=self.black, ethnicity_fk=self.non_hispanic,
                                               pregnancy_fk=self.mother_one_pregnancy_one)
 
-        self.child_three = Child.objects.create(primary_care_giver_fk=self.primary_care_giver_child_three,
+        self.child_three = Child.objects.create(caregiver_fk=self.first_caregiver,
                                               charm_project_identifier='7002M1',
-                                              birth_hospital=self.health_care_facility_1,
-                                              birth_sex=Child.BirthSexChoices.FEMALE,
-                                              birth_date=timezone.datetime(2021, 8, 10),
-                                              child_twin=False, race_fk=self.black, ethnicity_fk=self.non_hispanic,
                                               pregnancy_fk=self.mother_one_pregnancy_one)
-
-
-
-        #Create surveys
-
 
         self.new_project = Project.objects.create(project_name='MARCH')
         self.echo1 = Project.objects.create(project_name='ECHO1')

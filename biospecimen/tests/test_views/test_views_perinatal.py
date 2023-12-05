@@ -1,17 +1,9 @@
 import logging
-import sqlite3
-import unittest
-from django.test import TestCase
-from dataview.models import Caregiver, Project,Incentive,  Child,User
-from biospecimen.models import Collection, Status, ChildBiospecimen, CaregiverBiospecimen, Processed, Stored, \
-    ShippedWSU, ShippedECHO, Collected
-import datetime
+from biospecimen.models import CaregiverBiospecimen,Caregiver
 from django.utils import timezone
-from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, ShippedChoiceForm, \
-    ShippedtoWSUForm, ShippedtoEchoForm,ReceivedatWSUForm,InitialBioFormPeriNatal,CollectedBiospecimenForm,CollectedBiospecimenPlacentaForm,\
+from biospecimen.forms import IncentiveForm, ReceivedatWSUForm,InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm,\
 ShippedtoWSUFormPlacenta
-from django.utils.html import escape
-from dataview.tests.db_setup import DatabaseSetup
+from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
 

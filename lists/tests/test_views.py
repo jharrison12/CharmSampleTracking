@@ -1,5 +1,5 @@
 import logging
-from dataview.tests.db_setup import DatabaseSetup
+from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.debug)
 

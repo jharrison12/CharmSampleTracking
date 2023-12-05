@@ -307,7 +307,7 @@ class CaregiverBiospecimen(models.Model):
 
 
 class Child(models.Model):
-    care_giver_fk = models.OneToOneField(Caregiver, on_delete=models.PROTECT)
+    caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
     pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT)
     charm_project_identifier = models.CharField(max_length=8, unique=True)
 

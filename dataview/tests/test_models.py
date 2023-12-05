@@ -1,14 +1,10 @@
 import logging
-import sqlite3
 
-from django.test import TestCase
-from dataview.models import Caregiver,Name,CaregiverName,Address,CaregiverAddress,\
-    Email,CaregiverEmail,Phone,CaregiverPhone, SocialMedia,CaregiverSocialMedia,CaregiverPersonalContact,\
-    Project,Survey,CaregiverSurvey,Incentive,IncentiveType,SurveyOutcome,HealthcareFacility,Recruitment,ConsentVersion,\
-    ConsentContract,CaregiverSocialMediaHistory,Mother,NonPrimaryCaregiver,Relation,PrimaryCaregiver, ConsentItem, ConsentType,Child,ChildName,ChildAddress,ChildAddressHistory,\
-    ChildSurvey,ChildAssent,Assent,AgeCategory,Race, Ethnicity,Pregnancy, CaregiverChildRelation
-from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Outcome
-from dataview.tests.db_setup import DatabaseSetup
+from dataview.models import Caregiver,Name,CaregiverName, CaregiverPersonalContact, \
+    Survey,CaregiverSurvey, HealthcareFacility, ConsentContract,CaregiverSocialMediaHistory,Mother, PrimaryCaregiver, \
+    Child, ChildAddress,ChildAddressHistory,\
+    ChildSurvey,ChildAssent, CaregiverChildRelation
+from biospecimen.tests.db_setup import DatabaseSetup
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
