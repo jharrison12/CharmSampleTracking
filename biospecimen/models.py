@@ -282,7 +282,6 @@ class Trimester(models.Model):
         return f"{self.get_trimester_display()}"
 
 
-
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     status_fk = models.OneToOneField(Status, on_delete=models.PROTECT, blank=True,null=True)

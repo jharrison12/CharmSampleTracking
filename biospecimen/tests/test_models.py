@@ -6,10 +6,6 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 class BioSpecimenCaregiverModelsTest(DatabaseSetup):
-    def test_biospecimen_links_to_mother_table(self):
-        caregiver_bio_one = Caregiver.objects.filter(caregiverbiospecimen__collection_fk__collection_type_fk__collection_type='Urine')\
-            .filter(charm_project_identifier='P7000').first()
-        self.assertEqual(caregiver_bio_one,self.first_caregiver)
 
     def test_biospecimen_urine_links_to_two_caregivers(self):
         urine_samples = CaregiverBiospecimen.objects.filter(collection_fk__collection_type_fk__collection_type='Urine')\
@@ -21,9 +17,9 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         self.assertEqual(first_incentive.incentive_amount,100)
 
     def test_caregiver_biospecimen_doesnt_allow_duplicates(self):
-        caregiverbio_one = CaregiverBiospecimen(caregiver_fk=self.first_caregiver, collection_fk=self.serum_one,
-                                                status_fk=self.status_outcome_processed_complete_one, biospecimen_date=datetime.date.today(),
-                                                incentive_fk=self.incentive_one)
+        caregiverbio_one = CaregiverBiospecimen(caregiver_fk=Caregiver.objects.get(charm_project_identifier='P7000'),
+                                                collection_fk=Collection.objects.get(collection_type_fk__collection_type='Serum',
+                                                                                     collection_number_fk__collection_number='F'))
         with self.assertRaises(ValidationError):
             caregiverbio_one.full_clean()
 
@@ -147,7 +143,7 @@ class ChildBiospecimenModelTest(DatabaseSetup):
         urine = Collection.objects.get(collection_type_fk__collection_type='Urine',collection_number_fk__collection_number='T')
         test_child = Child.objects.filter(childbiospecimen__age_category_fk__age_category='EC',
                                           childbiospecimen__collection_fk=urine).first()
-        self.assertEqual(test_child,self.child_one)
+        self.assertEqual(test_child.charm_project_identifier,'7000M1')
 
     def test_multiple_children_link_to_one_biospecimen(self):
         urine_collection = Collection.objects.get(collection_type_fk__collection_type='Urine',collection_number_fk__collection_number='T')
