@@ -41,7 +41,6 @@ USE_TZ = True
 # Application definition
 
 INSTALLED_APPS = [
-    'dataview',
     'biospecimen',
     'reports',
     'lists',

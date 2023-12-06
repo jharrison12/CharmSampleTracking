@@ -21,6 +21,7 @@ from biospecimen.views import views_child_bio as child_biospecimen
 
 app_name = "biospecimen"
 urlpatterns = [
+    re_path(r"^$", caregiver_biospecimen.home_page, name='home_page'),
     re_path(r"^history/$", caregiver_biospecimen.biospecimen_history, name='biospecimen_history'),
     re_path(r"^entry/$", caregiver_biospecimen.biospecimen_entry, name='biospecimen_entry'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", caregiver_biospecimen.caregiver_biospecimen, name='caregiver_biospecimen'),

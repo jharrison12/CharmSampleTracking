@@ -176,6 +176,10 @@ def create_or_update_incentive(caregiver_bio_pk, bound_form):
 # Views
 ##################################################
 @login_required
+def home_page(request):
+    return render(request=request,template_name='biospecimen/home.html')
+
+@login_required
 def biospecimen_history(request):
     list_of_historic_caregivers = Caregiver.objects.filter(
         caregiverbiospecimen__status_fk__processed_fk__isnull=False).filter(
@@ -234,14 +238,14 @@ def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = CollectionType.objects.get(collection__caregiverbiospecimen=caregiver_bio)
-    logging.critical(f"collection type {collection_type.collection_type} "
+    logging.debug(f"collection type {collection_type.collection_type} "
                      f"{HAIR_SALIVA}"
                      f"{HAIR_SALIVA.all().select_related()}"
                      f"collection type in hair saliva? {collection_type.collection_type in HAIR_SALIVA.all()}"
                      f"collection type in hair saliva? {collection_type in HAIR_SALIVA.all()}")
                      # f"{collection_type.objects.filter(id=HAIR_SALIVA.all().id).exists()}")
     if caregiver_bio.status_fk==None and collection_type not in HAIR_SALIVA.all() and collection_type not in PERINATAL.all():
-        logging.critical(f"made it to INCORRECT initial bio form")
+        logging.debug(f"made it to INCORRECT initial bio form")
         initial_bio_form = InitialBioForm(prefix="initial_form")
     elif caregiver_bio.status_fk==None and collection_type in PERINATAL.all():
         initial_bio_form = InitialBioFormPeriNatal(prefix="initial_form")
@@ -409,7 +413,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_at_wsu_form = None
     shipped_to_msu_form = None
     received_msu_form = None
-    logging.critical(f"Collection type is {collection_type.collection_type}")
+    logging.debug(f"Collection type is {collection_type.collection_type}")
     if collection_type in HAIR_SALIVA.all():
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')

@@ -1,9 +1,0 @@
-{% extends "dataview/base.html" %}
-{% block header %}Child ID: {{ child.charm_project_identifier }} {% endblock %}
-{% block section %}
-    <h2>Assents:</h2>
-    {% for assent in child_assent %}
-        {{ assent.assent_fk.assent_text }}: {{ assent.assent_boolean }}
-    {% endfor %}
-
-{% endblock %}
