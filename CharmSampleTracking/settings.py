@@ -41,7 +41,6 @@ USE_TZ = True
 # Application definition
 
 INSTALLED_APPS = [
-    'dataview',
     'biospecimen',
     'reports',
     'lists',
@@ -114,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "dataview.User"
+AUTH_USER_MODEL = "biospecimen.User"
 LOGIN_REDIRECT_URL = '/'
 # LOGIN_URL = '/'
 

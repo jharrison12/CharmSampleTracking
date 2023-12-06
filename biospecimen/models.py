@@ -1,11 +1,57 @@
 from django.db import models
-from dataview.models import Caregiver,Incentive,Child,AgeCategory,Pregnancy,Project,User
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import AbstractUser
 import logging
 logging.basicConfig(level=logging.debug)
 
 # Create your models here.
+
+class User(AbstractUser):
+    pass
+
+class Project(models.Model):
+    project_name = models.CharField(null=False, blank=False, max_length=255,unique=True)
+
+    def __str__(self):
+        return f"{self.project_name}"
+
+class AgeCategory(models.Model):
+
+    class AgeCategoryChoice (models.TextChoices):
+        EARLY_CHILDHOOD = 'EC', _('Early Childhood')
+        MIDDLE_CHILDHOOD = 'MC', _('Middle Childhood')
+        LATE_CHILDHOOD = 'LC', _('Late Childhood')
+        ZERO_TO_FIVE = 'ZF', _('Zero to Five Months')
+        TWELVE_TO_THIRTEEN_MONTHS = 'TT', _('Twelve to Thirteen Months')
+        SIX_TO_TEN_YEARS = 'ST', _('Six to Ten Years')
+
+    age_category = models.CharField(max_length=2,choices=AgeCategoryChoice.choices)
+
+    def __str__(self):
+        return f"{self.age_category}"
+
+class Caregiver(models.Model):
+    #caregiver_pk = models.AutoField(primary_key=True)
+    #should race and ethnicity be nullable?
+    charm_project_identifier = models.CharField(default='', max_length=6,unique=True)
+    specimen_id = models.CharField(null=False,max_length=4,unique=True)
+
+    def __str__(self):
+        return self.charm_project_identifier
+
+class Incentive(models.Model):
+    class IncentiveType(models.TextChoices):
+        GIFT_CARD = 'G', _('Gift Card')
+        CASH = 'C', _('Cash')
+        CHECK = 'H', _('Check')
+    incentive_type = models.CharField(max_length=1,choices=IncentiveType.choices)
+    incentive_date = models.DateField(blank=True,null=True)
+    incentive_amount =models.IntegerField(null=True)
+
+    def __str__(self):
+        return f"{self.incentive_type}: {self.incentive_amount}"
+
 
 class Outcome(models.Model):
     class OutcomeChoices(models.TextChoices):
@@ -212,6 +258,18 @@ class Collection(models.Model):
             models.UniqueConstraint(fields=['collection_type_fk','collection_number_fk'],name="collection_unique_constraint")
         ]
 
+class Pregnancy(models.Model):
+    mother_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
+    pregnancy_id = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['mother_fk', 'pregnancy_id'], name="pregnancy_unique_constraint")
+        ]
+
+    def __string__(self):
+        return f"{self.pregnancy_id}"
+
 class Trimester(models.Model):
     pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT)
     class TrimesterChoices(models.TextChoices):
@@ -223,14 +281,7 @@ class Trimester(models.Model):
     def __str__(self):
         return f"{self.get_trimester_display()}"
 
-class Perinatal(models.Model):
-    #perinatal event like birth
-    #i need this table to capture multiple placentas associated with one birth
-    pregnancy_fk = models.ForeignKey(Pregnancy,null=False,blank=False,on_delete=models.PROTECT)
-    child_fk = models.OneToOneField(Child,on_delete=models.PROTECT)
 
-    def __str__(self):
-        return f"{self.pregnancy_fk.pregnancy_id}"
 
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
@@ -238,7 +289,7 @@ class CaregiverBiospecimen(models.Model):
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     trimester_fk = models.ForeignKey(Trimester,on_delete=models.PROTECT,blank=True,null=True)
-    perinatal_fk = models.ForeignKey(Perinatal,on_delete=models.PROTECT,blank=True,null=True)
+    perinatal_fk = models.ForeignKey("Perinatal",on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory,on_delete=models.PROTECT,blank=True,null=True)
     project_fk = models.ForeignKey(Project,on_delete=models.PROTECT,blank=False,null=False)
     biospecimen_id = models.CharField(max_length=7, null=False,blank=False,unique=True)
@@ -253,6 +304,21 @@ class CaregiverBiospecimen(models.Model):
 
     def __str__(self):
         return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"
+
+
+class Child(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
+    pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT)
+    charm_project_identifier = models.CharField(max_length=8, unique=True)
+
+class Perinatal(models.Model):
+    #perinatal event like birth
+    #i need this table to capture multiple placentas associated with one birth
+    pregnancy_fk = models.ForeignKey(Pregnancy,null=False,blank=False,on_delete=models.PROTECT)
+    child_fk = models.OneToOneField(Child,on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.pregnancy_fk.pregnancy_id}"
 
 
 class ChildBiospecimen(models.Model):
@@ -271,5 +337,3 @@ class ChildBiospecimen(models.Model):
 
     def __str__(self):
         return f"{self.child_fk.charm_project_identifier} {self.collection_fk}"
-
-

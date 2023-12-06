@@ -1,13 +1,7 @@
-import logging
-import sqlite3
-
-from django.test import TestCase
-from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,Processed,Outcome,Stored,Shipped,\
-    Received,Collected,Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU,\
-    ShippedMSU,ReceivedMSU
+from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status, Outcome,Stored, Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU,\
+    ShippedMSU,ReceivedMSU,Caregiver,Incentive,Child,User
 import datetime
-from dataview.models import Caregiver,Incentive,Child,User
-from dataview.tests.db_setup import DatabaseSetup
+from biospecimen.tests.db_setup import DatabaseSetup
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 

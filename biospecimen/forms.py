@@ -1,8 +1,7 @@
 import datetime
 
 from django import forms
-from dataview.models import Incentive
-from biospecimen.models import CaregiverBiospecimen,Processed,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU
+from biospecimen.models import CaregiverBiospecimen,Processed,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU,Incentive
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone

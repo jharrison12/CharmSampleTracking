@@ -16,17 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path
-from dataview import views as dataviews
-from dataview import urls as dataview_urls
 from biospecimen import urls as biospecimen_urls
+from biospecimen import views as biospecimen_views
 from lists import urls as lists_urls
 from reports import urls as reports_urls
 
 
 # app_name='main'
 urlpatterns = [
-    path('', dataviews.home_page, name='home'),
-    path('data/',include(dataview_urls)),
+    path('', biospecimen_views.views_caregiver_bio.home_page, name='home'),
     path('biospecimen/',include(biospecimen_urls)),
     path('reports/', include(reports_urls)),
     path('lists/', include(lists_urls)),
