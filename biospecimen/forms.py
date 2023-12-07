@@ -60,7 +60,7 @@ class CaregiverBiospecimenForm(forms.models.ModelForm):
 
     class Meta:
         model = CaregiverBiospecimen
-        fields = ['caregiver_fk','collection_fk','status_fk','biospecimen_date']
+        fields = ['collection_fk','status_fk']
         error_messages = {
             NON_FIELD_ERRORS: {
                 'unique_together': f"This type of biospecimen for this charm id already exists",

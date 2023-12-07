@@ -1,6 +1,6 @@
 from django.contrib import admin
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,User
+    CollectionType,CollectionNumber,Received,Collected,ShippedWSU,ShippedECHO,User
 # Register your models here.
 
 from django.contrib import admin

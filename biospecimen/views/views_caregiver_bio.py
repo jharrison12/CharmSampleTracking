@@ -2,8 +2,7 @@ import logging
 
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Processed, Outcome, Collection, Stored, \
     Shipped, Received, CollectionNumber, CollectionType, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
-    Trimester, Project, Caregiver, Child,\
-    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU
+    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
