@@ -1,6 +1,6 @@
 from django.contrib import admin
-from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,ShippedWSU,ShippedECHO,User
+from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,\
+    CollectionType,Collected,ShippedWSU,ShippedECHO,User
 # Register your models here.
 
 from django.contrib import admin
@@ -9,7 +9,6 @@ from django.contrib.auth.admin import UserAdmin
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Collection)
-admin.site.register(CollectionNumber)
 admin.site.register(CollectionType)
 
 @admin.register(CaregiverBiospecimen)

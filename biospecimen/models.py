@@ -162,34 +162,16 @@ class CollectionType(models.Model):
     def __str__(self):
         return f"{self.collection_type}"
 
-class CollectionNumber(models.Model):
-    class CollectionNumberChoices(models.TextChoices):
-        FIRST = 'F',_('First')
-        SECOND = 'S',_('Second')
-        THIRD = 'T',_('Third')
-        EARLY_CHILDHOOD = 'EC',_('Early Childhood')
-        MIDDLE_CHILDHOOD = 'MC',_('Middle Childhood')
-    collection_number = models.CharField(max_length=2,choices=CollectionNumberChoices.choices)
-
-    def __str__(self):
-        return f"{self.collection_number}"
 
 class Collection(models.Model):
     #todo subclass text choices
-    collection_type_fk = models.ForeignKey(CollectionType,on_delete=models.PROTECT)
-    collection_number_fk = models.ForeignKey(CollectionNumber,on_delete=models.PROTECT,blank=True,null=True)
+    collection_type_fk = models.ForeignKey(CollectionType,on_delete=models.PROTECT,unique=True)
 
     def __str__(self):
-        return f"{self.collection_type_fk.collection_type} {self.collection_number_fk or ''}"
+        return f"{self.collection_type_fk.collection_type}"
 
-    class Meta:
-        constraints=[
-            models.UniqueConstraint(fields=['collection_type_fk','collection_number_fk'],name="collection_unique_constraint")
-        ]
 
 class Caregiver(models.Model):
-    #caregiver_pk = models.AutoField(primary_key=True)
-    #should race and ethnicity be nullable?
     charm_project_identifier = models.CharField(default='', max_length=6,unique=True)
 
     def __str__(self):

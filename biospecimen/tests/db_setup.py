@@ -2,8 +2,8 @@ import logging
 import sqlite3
 
 from django.test import TestCase
-from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory,KitSent,User,Caregiver,Incentive,Project,\
+from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,\
+    CollectionType,CollectionNumber,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,AgeCategory,KitSent,User,Caregiver,Incentive,Project,\
     Child,Pregnancy
 import datetime, pytz
 from django.utils import timezone
