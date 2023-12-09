@@ -22,11 +22,8 @@ from biospecimen.views import views_child_bio as child_biospecimen
 app_name = "biospecimen"
 urlpatterns = [
     re_path(r"^$", caregiver_biospecimen.home_page, name='home_page'),
-    re_path(r"^history/$", caregiver_biospecimen.biospecimen_history, name='biospecimen_history'),
     re_path(r"^entry/$", caregiver_biospecimen.biospecimen_entry, name='biospecimen_entry'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/$", caregiver_biospecimen.caregiver_biospecimen, name='caregiver_biospecimen'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/entry/$", caregiver_biospecimen.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
-    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/history/$", caregiver_biospecimen.caregiver_biospecimen_item, name='caregiver_biospecimen_item'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/$", caregiver_biospecimen.caregiver_biospecimen_initial, name='caregiver_biospecimen_initial'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/initial/post/$", caregiver_biospecimen.caregiver_biospecimen_initial_post, name='caregiver_biospecimen_initial_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/kit_sent/post/$", caregiver_biospecimen.caregiver_biospecimen_kit_sent_post, name='caregiver_biospecimen_kit_sent_post'),

@@ -178,17 +178,6 @@ def home_page(request):
     return render(request=request,template_name='biospecimen/home.html')
 
 @login_required
-def biospecimen_history(request):
-    list_of_historic_caregivers = Caregiver.objects.filter(
-        caregiverbiospecimen__status_fk__processed_fk__isnull=False).filter(
-        caregiverbiospecimen__status_fk__received_fk__isnull=False).filter(
-        caregiverbiospecimen__status_fk__collected_fk__isnull=False).filter(
-        caregiverbiospecimen__status_fk__shipped_fk__isnull=False)
-
-    items = CaregiverBiospecimen.objects.filter(caregiver_fk__in=list_of_historic_caregivers)
-    return render(request, template_name='biospecimen/biospecimen_history.html', context={'list_of_historic_caregivers':items})
-
-@login_required
 def biospecimen_entry(request):
     list_of_echo_2_bio = CaregiverBiospecimen.objects.filter(project_fk__project_name='ECHO2')
     return render(request, template_name='biospecimen/biospecimen_entry.html', context={'list_of_biospecimens':list_of_echo_2_bio})
@@ -214,23 +203,6 @@ def child_biospecimen_page(request,child_charm_id):
                                                                                    'child_collections':child_collections,
                                                                                    'child_biospecimens':child_biospecimens})
 
-@login_required
-def caregiver_biospecimen_item(request,caregiver_charm_id,caregiver_bio_pk):
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    processed_form = ProcessedBiospecimenForm(prefix="processed_form")
-    stored_form = StoredBiospecimenForm(prefix="stored_form")
-    shipped_form = ShippedBiospecimenForm(prefix="shipped_form")
-    received_form = ReceivedBiospecimenForm(prefix="received_form")
-    try:
-        biospecimen_item =  CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    except:
-        raise AssertionError
-    return render(request, template_name='biospecimen/caregiver_biospecimen_history.html', context={'biospecimen_item':biospecimen_item,
-                                                                                                       'caregiver':caregiver,
-                                                                                                       'processed_form':processed_form,
-                                                                                                       'stored_form':stored_form,
-                                                                                                       'shipped_form':shipped_form,
-                                                                                                       'received_form':received_form})
 
 @login_required
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
