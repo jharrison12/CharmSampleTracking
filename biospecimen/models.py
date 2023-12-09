@@ -46,15 +46,15 @@ class Incentive(models.Model):
 
 
 class Collected(models.Model):
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,null=True,blank=True)
     collected_date_time = models.DateTimeField(null=True,blank=True)
     processed_date_time = models.DateTimeField(null=True,blank=True)
     stored_date_time = models.DateTimeField(null=True,blank=True)
+    number_of_tubes = models.IntegerField(null=True,blank=True)
     placed_in_formalin_date_time = models.DateTimeField(null=True,blank=True)
     received_date = models.DateField(null=True,blank=True)
-    number_of_tubes = models.IntegerField(null=True,blank=True)
     number_of_cards = models.IntegerField(null=True,blank=True)
-    logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
 
     class InpersonRemoteChoices(models.TextChoices):
         IN_PERSON = 'I', _('In Person')
@@ -80,11 +80,10 @@ class NoConsent(models.Model):
         return f"collected {self.status_set}"
 
 class ShippedWSU(models.Model):
+    shipped_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
     shipped_date_time = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(default=None,null=True,blank=True)
     tracking_number = models.CharField(max_length=255,null=True,blank=True)
-    shipped_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
-    logged_date_time = models.DateTimeField(default=timezone.now,blank=True,null=True)
 
     class CourierChoices(models.TextChoices):
         FEDEX = 'F', _('FedEx')
@@ -99,19 +98,27 @@ class ShippedWSU(models.Model):
 
 class ShippedECHO(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
-    logged_date_time = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
     def __str__(self):
-        return f"collected {self.status_set}"
+        return f"shipped {self.shipped_date_time}"
 
 class KitSent(models.Model):
     kit_sent_date = models.DateField(null=True,blank=True)
 
+    def __str__(self):
+        return f"kit sent {self.kit_sent_date}"
+
 class Declined(models.Model):
     declined_date = models.DateField(null=True,blank=True)
 
+    def __str__(self):
+        return f"declined date {self.declined_date}"
+
 class ReceivedWSU(models.Model):
     received_date_time = models.DateTimeField(null=True,blank=True)
+
+    def __str__(self):
+        return f"received date time {self.received_date_time}"
 
 class ShippedMSU(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
@@ -127,15 +134,15 @@ class ReceivedMSU(models.Model):
 
 class Status(models.Model):
     #todo sublcass text choices for status
+    kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
     collected_fk = models.ForeignKey(Collected, on_delete=models.PROTECT, null=True, blank=True)
-    not_collected_fk = models.ForeignKey(NotCollected, on_delete=models.PROTECT, null=True, blank=True)
-    no_consent_fk = models.ForeignKey(NoConsent,on_delete=models.PROTECT,null=True,blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     received_wsu_fk = models.ForeignKey(ReceivedWSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_msu_fk = models.ForeignKey(ShippedMSU,on_delete=models.PROTECT,null=True,blank=True)
     received_msu_fk = models.ForeignKey(ReceivedMSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_echo_fk = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
-    kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
+    not_collected_fk = models.ForeignKey(NotCollected, on_delete=models.PROTECT, null=True, blank=True)
+    no_consent_fk = models.ForeignKey(NoConsent,on_delete=models.PROTECT,null=True,blank=True)
     declined_fk = models.ForeignKey(Declined,on_delete=models.PROTECT,blank=True,null=True)
 
     def return_most_up_to_date_status(self):
@@ -156,19 +163,30 @@ class Status(models.Model):
     class Meta:
         verbose_name_plural = "status"
 
-class CollectionType(models.Model):
-    collection_type = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.collection_type}"
-
 
 class Collection(models.Model):
     #todo subclass text choices
-    collection_type_fk = models.ForeignKey(CollectionType,on_delete=models.PROTECT,unique=True)
+    class CollectionType(models.TextChoices):
+        URINE = 'U',_('Urine')
+        SERUM = 'S',_('Serum')
+        PLASMA = 'P',_('Plasma')
+        BLOODSPOTS = 'D', _('Bloodspots')
+        WHOLEBLOOD = 'W', _('Whole Blood')
+        BUFFYCOAT = 'F', _('Buffy Coat')
+        REDBLOODCELLS = 'R', _('Red Blood Cells')
+        HAIR = 'H', _('Hair')
+        TOENAIL = 'T', _('Toenail')
+        SALIVA = 'L', _('Saliva')
+        PLACENTA = 'C', _('Placenta')
+        STOOL = 'O', _('Stool')
+        TOOTH = 'E', _('Tooth')
+        CORDBLOOD = 'X', _('Cord Blood')
+        BLOOD = 'B', _('Blood')
+
+    collection_type = models.CharField(max_length=1,choices=CollectionType.choices)
 
     def __str__(self):
-        return f"{self.collection_type_fk.collection_type}"
+        return f"{self.collection_type}"
 
 
 class Caregiver(models.Model):
@@ -234,7 +252,6 @@ class ChildBiospecimen(models.Model):
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory, on_delete=models.PROTECT)
-    collection_date = models.DateField(default=timezone.now)
     biospecimen_id = models.CharField(max_length=7, null=True,blank=False,unique=True)
 
     class Meta:

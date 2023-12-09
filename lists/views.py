@@ -1,7 +1,7 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404,redirect
-from biospecimen.models import CaregiverBiospecimen,Collection,CollectionType,Caregiver
+from biospecimen.models import CaregiverBiospecimen,Collection,Caregiver
 from django.db.models import Prefetch
 from django.shortcuts import render
 logging.basicConfig(level=logging.CRITICAL)
