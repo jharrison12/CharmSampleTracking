@@ -12,7 +12,7 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         if trimester is not None:
             caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
-                                                            collection_fk__collection_type_fk__collection_type=collection_type,
+                                                            collection_fk__collection_type=collection_type,
                                                             trimester_fk__trimester=trimester,
                                                             project_fk__project_name=project)
         else:
@@ -25,7 +25,7 @@ class MotherBioSpecimenBloodspotsTest(FunctionalTest):
 
     def test_user_can_see_bio_blood_spot_information(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk(charm_id='P7000',collection_type='Bloodspots',collection_num='F')
+        primary_key = self.return_caregiver_bio_pk(charm_id='4100',collection_type='Bloodspots')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/history/')
 

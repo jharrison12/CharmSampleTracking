@@ -252,11 +252,11 @@ class ChildBiospecimen(models.Model):
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory, on_delete=models.PROTECT)
-    biospecimen_id = models.CharField(max_length=7, null=True,blank=False,unique=True)
+    biospecimen_id = models.CharField(max_length=10, null=True,blank=False,unique=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['collection_fk','age_category_fk'], name='child biospeciment unique constraint')
+            models.UniqueConstraint(fields=['collection_fk','age_category_fk','age_category_fk'], name='child biospeciment unique constraint')
         ]
 
     def __str__(self):

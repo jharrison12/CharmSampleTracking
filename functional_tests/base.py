@@ -3,8 +3,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Processed,Stored,Outcome,Shipped,\
-    CollectionType,CollectionNumber,Received,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,KitSent,AgeCategory,\
+from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Collected,Trimester,Perinatal,ShippedWSU,ShippedECHO,KitSent,AgeCategory,\
     User,Caregiver,Incentive,Project,\
     Child,Pregnancy
 import datetime,pytz

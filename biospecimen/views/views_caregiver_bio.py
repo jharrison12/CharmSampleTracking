@@ -20,7 +20,7 @@ blood_dict = {'Whole Blood':'whole_blood',
               'Buffy Coat':'buffy_coat'}
 
 BLOOD_TYPES = ["S","P","D","W","F","R","B"]
-
+URINE = "U"
 HAIR_SALIVA = ["H","L"]
 PERINATAL = ["C","X"]
 
@@ -238,7 +238,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         form = InitialBioForm(data=request.POST, prefix='initial_form')
         logging.critical(f"{form.is_valid()} {form} {form.errors} collection type {collection_type} "
                          f"\n\nperinatal {PERINATAL}"
-                         f"\n\n is perinatal in PERINATAL {collection_type not in PERINATAL}")
+                         f"\n\n is collection_type in PERINATAL {collection_type in PERINATAL}")
         if form.is_valid():
             new_status = Status()
             caregiver_bio.status_fk = new_status
@@ -413,7 +413,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if received_at_wsu_item.exists() and not shipped_to_echo_item:
             logging.debug(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
-    elif collection_type=='Urine':
+    elif collection_type==URINE:
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
@@ -506,7 +506,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     logging.debug(f"collection type {collection_type} caregiver {caregiver_bio.caregiver_fk.charm_project_identifier}"
                      f"")
     if request.method=="POST":
-        if collection_type == "Urine":
+        if collection_type==URINE:
             form = CollectedBiospecimenUrineForm(data=request.POST, prefix='urine_form')
             if form.is_valid():
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
@@ -609,7 +609,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
-        if collection_type in HAIR_SALIVA or collection_type=='Urine':
+        if collection_type in HAIR_SALIVA or collection_type==URINE:
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
@@ -743,7 +743,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
                 update_received_wsu(caregiver_bio_pk=item.pk, data=request.POST, user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type=='Urine' or collection_type in PERINATAL:
+        elif collection_type==URINE or collection_type in PERINATAL:
             update_received_wsu(caregiver_bio_pk=caregiver_bio_pk,data=request.POST,user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
