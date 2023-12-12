@@ -15,14 +15,14 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         logging.debug(f"{charm_id} {collection_type} {trimester}")
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
-                                                        collection_fk__collection_type_fk__collection_type=collection_type,
+                                                        collection_fk__collection_type=collection_type,
                                                         trimester_fk__trimester=trimester,
                                                         project_fk__project_name=project)
         return caregiverbio.pk
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4101', 'B', 'S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -123,7 +123,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Courier: FedEx',needed_div)
 
         #user sees that whole blood check box is clicked
-        self.assertIn("Whole Blood",needed_div)
+        self.assertIn("Blood",needed_div)
 
         #User sees received date time at
         #user submits shipped to WSu form
@@ -140,7 +140,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_echo(self):
 
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', trimester='F')
+        primary_key = self.return_caregiver_bio_pk('4101', 'B',trimester='S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -156,7 +156,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit.click()
 
         #user sees collected form on next page
-
+        time.sleep(50)
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected Form',form)
 
@@ -228,7 +228,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4101', 'B', trimester='S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -251,7 +251,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4101', 'B',trimester='S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
