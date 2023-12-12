@@ -133,13 +133,13 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
     def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        primary_key = self.return_caregiver_bio_pk('4101', 'U', 'S')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4101', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
@@ -219,13 +219,13 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        primary_key = self.return_caregiver_bio_pk('4101', 'U', 'S')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4101', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
@@ -242,13 +242,13 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
     def test_user_can_choose_status_of_urine_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Urine', 'S')
+        primary_key = self.return_caregiver_bio_pk('4101', 'U', 'S')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4101', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
