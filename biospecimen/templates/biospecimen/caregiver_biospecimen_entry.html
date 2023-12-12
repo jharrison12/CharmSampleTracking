@@ -37,11 +37,11 @@
             </div>
             <div class="col-8">
                 <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
-                {% if collection_type not in 'Hair,Saliva' %}<div>Processed Date Time: {{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>{% endif %}
-                {% if collection_type not in  'Hair,Saliva' %}<div>Stored Date Time: {{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>{% endif %}
-                {% if collection_type not in  'Hair,Saliva' and collection_type not in 'Placenta' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>{% endif %}
-                {% if collection_type in 'Hair,Saliva' and collection_type not in 'Placenta' %}<div>In Person/Remote: {{ caregiver_bio.status_fk.collected_fk.get_in_person_remote_display }}</div>{% endif %}
-                {% if collection_type in 'Placenta' %}<div>Placed in Formalin: {{ caregiver_bio.status_fk.collected_fk.placed_in_formalin_date_time }}</div>{% endif %}
+                {% if collection_type not in 'H,L' %}<div>Processed Date Time: {{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>{% endif %}
+                {% if collection_type not in  'H,L' %}<div>Stored Date Time: {{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>{% endif %}
+                {% if collection_type not in  'H,L,C' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>{% endif %}
+                {% if collection_type in 'H,L,C' %}<div>In Person/Remote: {{ caregiver_bio.status_fk.collected_fk.get_in_person_remote_display }}</div>{% endif %}
+                {% if collection_type in 'C' %}<div>Placed in Formalin: {{ caregiver_bio.status_fk.collected_fk.placed_in_formalin_date_time }}</div>{% endif %}
                 <div>Logged By: {{ caregiver_bio.status_fk.collected_fk.logged_by.username }}</div>
             </div>
         </div>
@@ -137,7 +137,7 @@
                 <div>Shipped Date Time:{{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time }}</div>
                 <div>Courier: {{ caregiver_bio.status_fk.shipped_wsu_fk.get_courier_display }}</div>
                 <div>Tracking Number:{{ caregiver_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
-                {% if collection_type not in 'Placenta' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>{% endif %}
+                {% if collection_type not in 'C' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>{% endif %}
                 <div>Shipped By: {{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>
             </div>
         </div>

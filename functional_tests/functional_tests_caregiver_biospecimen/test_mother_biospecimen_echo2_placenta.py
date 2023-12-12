@@ -12,19 +12,19 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         echo2 = Project.objects.get(project_name='ECHO2')
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
-                                                        collection_fk__collection_type_fk__collection_type=collection_type,
+                                                        collection_fk__collection_type=collection_type,
                                                         project_fk=echo2)
         return caregiverbio.pk
 
     def test_user_can_choose_status_of_placenta_information_chooses_collected_shipped_wsu_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees placenta
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
+        primary_key = self.return_caregiver_bio_pk('4101', 'C')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4101', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
@@ -132,13 +132,13 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
     def test_user_can_choose_status_of_placenta_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees placenta
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
+        primary_key = self.return_caregiver_bio_pk('4101', 'C')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4101', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
@@ -155,13 +155,13 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
     def test_user_can_choose_status_of_placenta_information_chooses_no_consent(self):
         # User visits the caregiver biospecimen page and sees placenta
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Placenta')
+        primary_key = self.return_caregiver_bio_pk('4101', 'C')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4101', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
