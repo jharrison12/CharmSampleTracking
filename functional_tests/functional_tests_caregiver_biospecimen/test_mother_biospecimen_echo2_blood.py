@@ -22,7 +22,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('4101', 'B', 'S')
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -129,7 +129,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('4101', 'B', trimester='S')
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', trimester='S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
@@ -152,7 +152,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
     def test_user_can_choose_status_of_blood_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('4101', 'B',trimester='S')
+        primary_key = self.return_caregiver_bio_pk('4100', 'B',trimester='S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
 
