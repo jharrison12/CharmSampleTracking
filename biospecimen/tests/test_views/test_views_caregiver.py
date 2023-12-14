@@ -564,7 +564,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
-                                                        collection_fk__collection_type_fk__collection_type=collection_type,
+                                                        collection_fk__collection_type=collection_type,
                                                         trimester_fk__trimester=trimester,
                                                         project_fk__project_name=project)
         return caregiverbio.pk
@@ -661,24 +661,24 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     #Template Tests
 
     def test_echo2_initial_bio_blood_page_returns_correct_template(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/initial/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_echo2_entry_bio_blood_page_returns_correct_template(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry_blood.html')
     #move
 
 
     def test_echo2_bio_page_shows_trimester_if_blood(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         self.assertContains(response, 'Trimester: First')
 
     def test_echo2_bio_page_shows_collected_blood_form_if_blood_and_collected(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(f"{response.content.decode()}")
@@ -689,7 +689,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertContains(response, '<input type="checkbox" name="blood_form-red_blood_cells')
 
     def test_echo2_bio_entry_blood_shows_updated_values_if_posted(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/',
                                     data={'blood_form-buffy_coat': True,'blood_form-whole_blood':True,
@@ -702,7 +702,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertContains(response,'Number of Tubes: 5')
 
     def test_echo2_bio_entry_whole_blood_is_checked_and_not_editable(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         self.assertContains(response, '<input type="checkbox" name="blood_form-whole_blood" disabled id="id_blood_form-whole_blood" checked>')
@@ -711,7 +711,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
     def test_echo2_bio_blood_form_redirects_after_post(self):
         #not sure what this is testing
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         response = self.blood_initial_send_form(primary_key, 'C')
         response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/',
                                     data={"id_blood_form-serum": True,
@@ -721,20 +721,20 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
 
     def test_echo2_bio_blood_initial_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         response = self.blood_initial_send_form(primary_key,'C')
 
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
     def test_echo2_bio_blood_collected_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.blood_initial_send_form(primary_key,'C')
         response = self.blood_collected_form_send(primary_key,"serum",True)
 
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
     def test_echo2_bio_blood_incentive_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.blood_initial_send_form(primary_key,'C')
         self.blood_collected_form_send(primary_key,"serum",True)
         response = self.blood_incentive_form_send(primary_key)
@@ -742,7 +742,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
     def test_echo2_bio_blood_shipped_choice_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, "serum", True)
         self.blood_incentive_form_send(primary_key)
@@ -751,7 +751,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
     def test_echo2_bio_blood_shipped_wsu_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, "serum", True)
         self.blood_incentive_form_send(primary_key)
@@ -761,7 +761,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
     def test_echo2_bio_blood_shipped_echo_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, "serum", True)
         self.blood_incentive_form_send(primary_key)
@@ -770,7 +770,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
     def test_echo2_bio_blood_received_wsu_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, "serum", True)
         self.blood_incentive_form_send(primary_key)
@@ -784,14 +784,14 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     #View has form tests
 
     def test_echo_2_bio_entry_whole_blood_shows_initial_form_for_collected(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/initial/')
         logging.debug(response.context)
         self.assertIsInstance(response.context['initial_bio_form'], InitialBioForm)
 
     def test_echo_2_bio_entry_whole_blood_shows_incentive_form_after_collected(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
@@ -802,7 +802,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
 
     def test_echo_2_bio_entry_whole_blood_shows_shipped_choice_form_after_incentive(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
@@ -813,7 +813,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
     def test_echo2_bio_page_shows_echo_shipped_form_if_collected_not_null_and_shipped_echo_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, 'plasma', False)
@@ -824,7 +824,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
     def test_echo2_bio_page_shows_wsu_shipped_form_if_collected_not_null_and_shipped_wsu_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, 'plasma', False)
@@ -835,7 +835,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
 
     def test_echo2_bio_page_shows_received_at_wsu_form_if_shipped_at_wsu_not_null(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, 'plasma', False)
@@ -849,10 +849,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     #View updates data tests
 
     def test_echo2_bio_entry_blood_updates_serum_if_checkbox_checked(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'serum', True)
-        primary_key = self.return_caregiver_bio_pk('4100', 'Serum', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'S', 'S')
         serum = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.assertEqual(serum.status_fk.collected_fk.collected_date_time,
@@ -864,10 +864,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertEqual(serum.status_fk.collected_fk.number_of_tubes,5)
 
     def test_echo2_bio_entry_blood_updates_plasma_if_checkbox_checked(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'plasma', True)
-        primary_key = self.return_caregiver_bio_pk('4100', 'Plasma', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'P', 'S')
         plasma = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.assertEqual(plasma.status_fk.collected_fk.collected_date_time,
@@ -880,10 +880,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
 
     def test_echo2_bio_entry_blood_updates_whole_blood_if_checkbox_checked(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'whole_blood', True)
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.assertEqual(whole_blood.status_fk.collected_fk.collected_date_time,
@@ -895,10 +895,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertEqual(whole_blood.status_fk.collected_fk.number_of_tubes,5)
 
     def test_echo2_bio_entry_blood_updates_buffy_coat_if_checkbox_checked(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'buffy_coat', True)
-        primary_key = self.return_caregiver_bio_pk('4100', 'Buffy Coat', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'F', 'S')
         buffy_coat = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.assertEqual(buffy_coat.status_fk.collected_fk.collected_date_time,
@@ -910,10 +910,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertEqual(buffy_coat.status_fk.collected_fk.number_of_tubes,5)
 
     def test_echo2_bio_entry_blood_updates_red_blood_count_if_checkbox_checked(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'red_blood_cells', True)
-        primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'R', 'S')
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
 
         self.assertEqual(red_blood_count.status_fk.collected_fk.collected_date_time,
@@ -926,15 +926,15 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
 
     def test_echo2_bio_entry_blood_does_not_create_red_blood_count_if_checkbox_not_checked(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'red_blood_cells', False)
         with self.assertRaises(CaregiverBiospecimen.DoesNotExist):
-            primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'F')
+            primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'S')
 
 
     def test_echo2_bio_entry_blood_does_not_update_plasma_if_checkbox_not_checked(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'W', 'S')
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key)
         self.blood_collected_form_send(primary_key, 'plasma', False)
         primary_key = self.create_bio_specimen(caregiver_id='4100',collection_type='Plasma')
@@ -951,7 +951,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
 
     def test_echo_2_bio_entry_whole_blood_updates_shipped_to_wsu_data_for_associated_bloods(self):
-        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'W', 'S')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
         logging.debug(f"whole blood status test: {whole_blood.status_fk}")
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
@@ -969,7 +969,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                                   2023, 12, 5, 5, 5, 5),
                                           'shipped_to_wsu_form-courier': 'F'})
 
-        primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'S')
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
@@ -978,7 +978,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.assertEqual(red_blood_count.status_fk.shipped_wsu_fk.shipped_date_time,whole_blood.status_fk.shipped_wsu_fk.shipped_date_time)
 
     def test_echo_2_bio_entry_whole_blood_updates_received_wsu_data_for_associated_bloods(self):
-        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'W', 'S')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
         logging.debug(f"whole blood status test: {whole_blood.status_fk}")
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
@@ -999,7 +999,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response =  self.client.post(f'/biospecimen/caregiver/4100/{primary_key_whole_blood}/received_wsu/post/',
                                     data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
 
-        primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'S')
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
@@ -1009,7 +1009,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
 
     def test_echo_2_bio_entry_whole_blood_updates_shipped_to_echo_data_for_associated_bloods(self):
-        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'W', 'S')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
@@ -1023,7 +1023,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                     data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5,
                                                                                                          5, 5)})
 
-        primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'F')
+        primary_key = self.return_caregiver_bio_pk('4100', 'Red Blood Cells', 'S')
         red_blood_count = CaregiverBiospecimen.objects.get(pk=primary_key)
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
@@ -1033,7 +1033,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                          whole_blood.status_fk.shipped_echo_fk.shipped_date_time)
 
     def test_echo_2_bio_entry_whole_blood_does_not_update_shipped_to_echo_data_for_bloods_not_checked(self):
-        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'Whole Blood', 'F')
+        primary_key_whole_blood = self.return_caregiver_bio_pk('4100', 'W', 'S')
         whole_blood = CaregiverBiospecimen.objects.get(pk=primary_key_whole_blood)
 
         self.add_collected_fk_to_biospecimen(biospecimen_pk=primary_key_whole_blood)
