@@ -243,6 +243,12 @@ class CaregiverBiospecimen(models.Model):
     project_fk = models.ForeignKey(Project,on_delete=models.PROTECT,blank=False,null=False)
     biospecimen_id = models.CharField(max_length=7, null=False,blank=False,unique=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['caregiver_fk','collection_fk','trimester_fk'], name='caregiver biospecimen unique constraint')
+        ]
+
+
     def __str__(self):
         return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"
 
