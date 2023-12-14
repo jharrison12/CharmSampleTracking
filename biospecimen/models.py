@@ -207,12 +207,12 @@ class Trimester(models.Model):
         return f"{self.get_trimester_display()}"
 
 class Pregnancy(models.Model):
-    mother_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
+    caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
     pregnancy_number = models.IntegerField(null=False,default=1)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['mother_fk', 'pregnancy_number'], name="pregnancy_unique_constraint")
+            models.UniqueConstraint(fields=['caregiver_fk', 'pregnancy_number'], name="pregnancy_unique_constraint")
         ]
 
     def __string__(self):
@@ -221,7 +221,7 @@ class Pregnancy(models.Model):
 class Child(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
     pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT)
-    charm_project_identifier = models.CharField(max_length=8, unique=True)
+    charm_project_identifier = models.CharField(max_length=6, unique=True)
 
 class Perinatal(models.Model):
     #perinatal event like birth
@@ -241,7 +241,7 @@ class CaregiverBiospecimen(models.Model):
     perinatal_fk = models.ForeignKey("Perinatal",on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory,on_delete=models.PROTECT,blank=True,null=True)
     project_fk = models.ForeignKey(Project,on_delete=models.PROTECT,blank=False,null=False)
-    biospecimen_id = models.CharField(max_length=7, null=False,blank=False,unique=True)
+    biospecimen_id = models.CharField(max_length=10, null=False,blank=False,unique=True)
 
     class Meta:
         constraints = [
@@ -262,7 +262,7 @@ class ChildBiospecimen(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['collection_fk','age_category_fk','age_category_fk'], name='child biospeciment unique constraint')
+            models.UniqueConstraint(fields=['collection_fk','age_category_fk',], name='child biospeciment unique constraint')
         ]
 
     def __str__(self):
