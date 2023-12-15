@@ -203,6 +203,12 @@ class Trimester(models.Model):
         THIRD = 'T',_('Third')
     trimester = models.CharField(max_length=1,choices=TrimesterChoices.choices)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['pregnancy_fk', 'trimester'], name="trimester_unique_constraint")
+        ]
+
+
     def __str__(self):
         return f"{self.get_trimester_display()}"
 

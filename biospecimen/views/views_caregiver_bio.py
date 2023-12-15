@@ -35,7 +35,8 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
                                   caregiver_bio_primary,form_data,logged_in_user,project='ECHO2',collection_number_object=None,):
     if true_or_false:
         logging.debug(f"What is true or false {true_or_false}\n")
-        trimester = Trimester.objects.get(trimester=trimester_text)
+        caregiver_biospecimen = CaregiverBiospecimen.objects.get(id=caregiver_bio_primary)
+        trimester = Trimester.objects.get(pregnancy_fk__pregnancy_number)
         project_object = Project.objects.get(project_name=project)
         collection_object = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=collection_number_object)
         try:
