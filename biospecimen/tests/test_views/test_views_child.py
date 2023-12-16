@@ -79,7 +79,7 @@ class ChildBiospecimenPage(DatabaseSetup):
 
     def return_child_bio_pk(self,child_id,collection_type,age):
         child_object = Child.objects.get(charm_project_identifier=child_id)
-        logging.critical(f"{child_object}")
+        logging.debug(f"{child_object}")
         child_biospecimen = ChildBiospecimen.objects.get(child_fk=child_object,
                                                          collection_fk__collection_type=collection_type,
                                                          age_category_fk__age_category=age)
@@ -232,7 +232,7 @@ class ChildBiospecimenPage(DatabaseSetup):
         response = self.send_collected_form(primary_key,'U')
         response = self.send_incentive_form(primary_key)
         response = self.client.get(f'/biospecimen/child/4100F1/{primary_key}/initial/')
-        logging.critical(response.content.decode())
+        logging.debug(response.content.decode())
         self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
 
     def test_echo2_initial_child_urine_shows_incentive_form_after_collection_submission(self):

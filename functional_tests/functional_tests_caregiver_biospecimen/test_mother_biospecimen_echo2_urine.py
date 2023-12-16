@@ -12,7 +12,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
     def return_caregiver_bio_pk(self,charm_id,collection_type,trimester):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
-        logging.critical(f"{mother_one}")
+        logging.debug(f"{mother_one}")
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type=collection_type,
                                                         trimester_fk__trimester=trimester)

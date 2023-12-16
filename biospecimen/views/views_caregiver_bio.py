@@ -19,6 +19,7 @@ blood_dict = {'Whole Blood':'whole_blood',
               'Red Blood Cells':'red_blood_cells',
               'Buffy Coat':'buffy_coat'}
 
+
 BLOOD_TYPES = ["S","P","D","W","F","R","B"]
 URINE = "U"
 HAIR_SALIVA = ["H","L"]
@@ -35,18 +36,14 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
                                   caregiver_bio_primary,form_data,logged_in_user,project='ECHO2',collection_number_object=None,):
     if true_or_false:
         logging.debug(f"What is true or false {true_or_false}\n")
-        caregiver_biospecimen = CaregiverBiospecimen.objects.get(id=caregiver_bio_primary)
-        trimester = Trimester.objects.get(pregnancy_fk__pregnancy_number)
         project_object = Project.objects.get(project_name=project)
-        collection_object = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=collection_number_object)
         try:
-            biospecimen_object = CaregiverBiospecimen.objects.get(caregiver_fk=caregiver_object,
-                                             collection_fk=collection_object,
-                                             trimester_fk=trimester,
-                                             project_fk__project_name=project)
+            biospecimen_object = CaregiverBiospecimen.objects.get(collection_fk__collection_type=collection_type,
+                                                                  caregiver_fk=caregiver_object,
+                                                                  trimester_fk__trimester=trimester_text,
+                                                                  project_fk=project_object)
             status_fk = Status.objects.get(caregiverbiospecimen=biospecimen_object)
             collected_fk = Collected.objects.get(status=status_fk)
-
             collected_fk.collected_date_time = form_data.cleaned_data['collected_date_time']
             collected_fk.stored_date_time = form_data.cleaned_data['stored_date_time']
             collected_fk.processed_date_time = form_data.cleaned_data['processed_date_time']
@@ -56,27 +53,24 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             biospecimen_object.save()
             logging.debug(f"Collected date time in update statement {biospecimen_object.status_fk.collected_fk.collected_date_time}\n")
             logging.debug(f"Biospecimen object updated {biospecimen_object}\n")
-        except CaregiverBiospecimen.DoesNotExist:
+        except Status.DoesNotExist:
             new_status = Status()
             new_collected = Collected()
-            new_biospecimen = CaregiverBiospecimen(caregiver_fk=caregiver_object,
-                                                trimester_fk=trimester,
-                                                project_fk=project_object,
-                                                biospecimen_id=random.randrange(1000,9999),
-                                                status_fk=new_status,
-                                                collection_fk=collection_object
-                                                )
+            biospecimen_object = CaregiverBiospecimen.objects.get(collection_fk__collection_type=collection_type,
+                                                                  caregiver_fk=caregiver_object,
+                                                                  trimester_fk__trimester=trimester_text,
+                                                                  project_fk=project_object)
             new_status.collected_fk = new_collected
             new_collected.collected_date_time = form_data.cleaned_data['collected_date_time']
             new_collected.stored_date_time = form_data.cleaned_data['stored_date_time']
             new_collected.processed_date_time = form_data.cleaned_data['processed_date_time']
             new_collected.number_of_tubes = form_data.cleaned_data['number_of_tubes']
             new_collected.logged_by = logged_in_user
-            new_biospecimen.status_fk = new_status
+            biospecimen_object.status_fk = new_status
             new_collected.save()
             new_status.save()
-            new_biospecimen.save()
-            logging.debug(f"Everything created and saved {new_biospecimen}")
+            biospecimen_object.save()
+            logging.debug(f"Everything created and saved {biospecimen_object}")
     else:
         pass
 
@@ -86,7 +80,7 @@ def return_caregiver_bloods(caregiver_bio):
         caregiver_bloods = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__collected_date_time=caregiver_bio.status_fk.collected_fk.collected_date_time,
                                                                status_fk__collected_fk__stored_date_time=caregiver_bio.status_fk.collected_fk.stored_date_time,
                                                                status_fk__collected_fk__number_of_tubes=caregiver_bio.status_fk.collected_fk.number_of_tubes,
-                                                               collection_fk__collection_type_fk__collection_type__in=BLOOD_TYPES)
+                                                               collection_fk__collection_type__in=BLOOD_TYPES)
     except:
         caregiver_bloods = None
     return caregiver_bloods
@@ -466,8 +460,10 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         collected_form = CollectedBloodForm(prefix='blood_form')
         logging.debug(blood_dict.get(collection_type))
         # disable whatever check box you used to pull the data
-        collected_form.fields[str(blood_dict.get(collection_type))].initial = True
-        collected_form.fields[str(blood_dict.get(collection_type))].disabled = True
+        logging.critical(f"collection type {collection_type}")
+        if collection_type!=Collection.CollectionType.BLOOD:
+            collected_form.fields[str(blood_dict.get(collection_type))].initial = True
+            collected_form.fields[str(blood_dict.get(collection_type))].disabled = True
         # collected_form.fields[str(blood_dict.get(collection_type))].widget.attrs['readonly'] = True
     else:
         logging.debug(f"Collected form is none")
@@ -504,7 +500,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    logging.critical(f"collection type {collection_type} caregiver {caregiver_bio.caregiver_fk.charm_project_identifier}"
+    logging.debug(f"collection type {collection_type} caregiver {caregiver_bio.caregiver_fk.charm_project_identifier}"
                      f"")
     if request.method=="POST":
         if collection_type==URINE:
@@ -563,36 +559,43 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 form.cleaned_data[str(blood_dict.get(collection_type))] = True
                 logging.debug(f"Did form cleaned data update work {form.cleaned_data} ")
                 ##if serum is true check that serum exists if exists update if not create and update
-                create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
-                                                      collection_type='Serum',
+                create_or_update_blood_values(true_or_false=form.cleaned_data['blood'],
+                                                      collection_type=Collection.CollectionType.BLOOD,
                                                       caregiver_object=caregiver,
-                                                      trimester_text=caregiver_bio.trimester_fk.trimester,
+                                                      trimester_text=caregiver_bio.trimester_fk,
+                                                      form_data=form,
+                                                      caregiver_bio_primary=caregiver_bio_pk,
+                                                      logged_in_user=request.user)
+                create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
+                                                      collection_type=Collection.CollectionType.SERUM,
+                                                      caregiver_object=caregiver,
+                                                      trimester_text=caregiver_bio.trimester_fk,
                                                       form_data=form,
                                                       caregiver_bio_primary=caregiver_bio_pk,
                                                       logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['plasma'],
-                                                      collection_type='Plasma',
+                                                      collection_type=Collection.CollectionType.PLASMA,
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
                                                       caregiver_bio_primary=caregiver_bio_pk,
                                               logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['whole_blood'],
-                                                      collection_type='Whole Blood',
+                                                      collection_type=Collection.CollectionType.WHOLEBLOOD,
                                                       caregiver_object=caregiver,
                                                       trimester_text=caregiver_bio.trimester_fk.trimester,
                                                       form_data=form,
                                                       caregiver_bio_primary=caregiver_bio_pk,
                                               logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['buffy_coat'],
-                                              collection_type='Buffy Coat',
+                                              collection_type=Collection.CollectionType.BUFFYCOAT,
                                               caregiver_object=caregiver,
                                               trimester_text=caregiver_bio.trimester_fk.trimester,
                                               form_data=form,
                                               caregiver_bio_primary=caregiver_bio_pk,
                                               logged_in_user=request.user)
                 create_or_update_blood_values(true_or_false=form.cleaned_data['red_blood_cells'],
-                                              collection_type='Red Blood Cells',
+                                              collection_type=Collection.CollectionType.REDBLOODCELLS,
                                               caregiver_object=caregiver,
                                               trimester_text=caregiver_bio.trimester_fk.trimester,
                                               form_data=form,
