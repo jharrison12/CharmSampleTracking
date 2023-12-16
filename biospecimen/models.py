@@ -280,3 +280,6 @@ class Component(models.Model):
 
     component_type = models.CharField(max_length=1,choices=ComponentType.choices)
     number_of_tubes = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f"{self.component_type}"

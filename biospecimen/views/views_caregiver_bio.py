@@ -1,7 +1,7 @@
 import logging
 
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Collection, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
-    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,Trimester,Child
+    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,Trimester,Child,Component
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
@@ -19,6 +19,13 @@ blood_dict = {'Whole Blood':'whole_blood',
               'Red Blood Cells':'red_blood_cells',
               'Buffy Coat':'buffy_coat'}
 
+blood_dict_form = {'whole_blood':'W',
+                   'serum':'S',
+                   'plasma':'P',
+                   'red_blood_cells':'R',
+                   'buffy_coat':'F',
+                   }
+
 
 BLOOD_TYPES = ["S","P","D","W","F","R","B"]
 URINE = "U"
@@ -32,27 +39,18 @@ def check_for_object_or_return_none(object_name,filter,parameter):
     except object_name.DoesNotExist:
         return None
 
-def create_or_update_blood_values(true_or_false,collection_type,caregiver_object,trimester_text,
-                                  caregiver_bio_primary,form_data,logged_in_user,project='ECHO2',collection_number_object=None,):
-    if true_or_false:
-        logging.debug(f"What is true or false {true_or_false}\n")
+def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,project='ECHO2'):
+        logging.critical(f"What is caregiver_bio {caregiver_bio}\n")
         project_object = Project.objects.get(project_name=project)
         try:
-            biospecimen_object = CaregiverBiospecimen.objects.get(collection_fk__collection_type=collection_type,
-                                                                  caregiver_fk=caregiver_object,
-                                                                  trimester_fk__trimester=trimester_text,
-                                                                  project_fk=project_object)
-            status_fk = Status.objects.get(caregiverbiospecimen=biospecimen_object)
-            collected_fk = Collected.objects.get(status=status_fk)
-            collected_fk.collected_date_time = form_data.cleaned_data['collected_date_time']
-            collected_fk.stored_date_time = form_data.cleaned_data['stored_date_time']
-            collected_fk.processed_date_time = form_data.cleaned_data['processed_date_time']
-            collected_fk.number_of_tubes = form_data.cleaned_data['number_of_tubes']
-            collected_fk.save()
-            status_fk.save()
-            biospecimen_object.save()
-            logging.debug(f"Collected date time in update statement {biospecimen_object.status_fk.collected_fk.collected_date_time}\n")
-            logging.debug(f"Biospecimen object updated {biospecimen_object}\n")
+            components = Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio)
+            form_components = {k: form_data[k] for k in (blood_dict_form.keys())}
+            for component in form_components:
+                blood_collection_component = components.get(component_type=blood_dict_form[component])
+                blood_collection_component.number_of_tubes = form_data[f"{component}_number_of_tubes"]
+                blood_collection_component.save()
+                logging.critical(f"did blood collection component work {blood_collection_component}")
+            logging.critical(f"components is {components} form components is {form_components} from data is {form_data}")
         except Status.DoesNotExist:
             new_status = Status()
             new_collected = Collected()
@@ -71,19 +69,7 @@ def create_or_update_blood_values(true_or_false,collection_type,caregiver_object
             new_status.save()
             biospecimen_object.save()
             logging.debug(f"Everything created and saved {biospecimen_object}")
-    else:
-        pass
 
-def return_caregiver_bloods(caregiver_bio):
-    ##TODO any bugs here?
-    try:
-        caregiver_bloods = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__collected_date_time=caregiver_bio.status_fk.collected_fk.collected_date_time,
-                                                               status_fk__collected_fk__stored_date_time=caregiver_bio.status_fk.collected_fk.stored_date_time,
-                                                               status_fk__collected_fk__number_of_tubes=caregiver_bio.status_fk.collected_fk.number_of_tubes,
-                                                               collection_fk__collection_type__in=BLOOD_TYPES)
-    except:
-        caregiver_bloods = None
-    return caregiver_bloods
 
 def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -446,7 +432,6 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    caregiver_bloods = return_caregiver_bloods(caregiver_bio)
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
@@ -490,7 +475,6 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'shipped_choice_form': shipped_choice,
                                                                                                         'shipped_wsu_form': shipped_wsu_form,
                                                                                                         'shipped_echo_form': shipped_echo_form,
-                                                                                                        'caregiver_bloods': caregiver_bloods,
                                                                                                         'incentive_form':incentive_form,
                                                                                                         'received_wsu_form':received_wsu_form
                                                                                                         })
@@ -557,50 +541,18 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 #I'm disabling field that references the collection type of the page
                 #disabled fields are not passed through the post request, so you have to do it manually :/
                 form.cleaned_data[str(blood_dict.get(collection_type))] = True
-                logging.debug(f"Did form cleaned data update work {form.cleaned_data} ")
-                ##if serum is true check that serum exists if exists update if not create and update
-                create_or_update_blood_values(true_or_false=form.cleaned_data['blood'],
-                                                      collection_type=Collection.CollectionType.BLOOD,
-                                                      caregiver_object=caregiver,
-                                                      trimester_text=caregiver_bio.trimester_fk,
-                                                      form_data=form,
-                                                      caregiver_bio_primary=caregiver_bio_pk,
-                                                      logged_in_user=request.user)
-                create_or_update_blood_values(true_or_false=form.cleaned_data['serum'],
-                                                      collection_type=Collection.CollectionType.SERUM,
-                                                      caregiver_object=caregiver,
-                                                      trimester_text=caregiver_bio.trimester_fk,
-                                                      form_data=form,
-                                                      caregiver_bio_primary=caregiver_bio_pk,
-                                                      logged_in_user=request.user)
-                create_or_update_blood_values(true_or_false=form.cleaned_data['plasma'],
-                                                      collection_type=Collection.CollectionType.PLASMA,
-                                                      caregiver_object=caregiver,
-                                                      trimester_text=caregiver_bio.trimester_fk.trimester,
-                                                      form_data=form,
-                                                      caregiver_bio_primary=caregiver_bio_pk,
-                                              logged_in_user=request.user)
-                create_or_update_blood_values(true_or_false=form.cleaned_data['whole_blood'],
-                                                      collection_type=Collection.CollectionType.WHOLEBLOOD,
-                                                      caregiver_object=caregiver,
-                                                      trimester_text=caregiver_bio.trimester_fk.trimester,
-                                                      form_data=form,
-                                                      caregiver_bio_primary=caregiver_bio_pk,
-                                              logged_in_user=request.user)
-                create_or_update_blood_values(true_or_false=form.cleaned_data['buffy_coat'],
-                                              collection_type=Collection.CollectionType.BUFFYCOAT,
-                                              caregiver_object=caregiver,
-                                              trimester_text=caregiver_bio.trimester_fk.trimester,
-                                              form_data=form,
-                                              caregiver_bio_primary=caregiver_bio_pk,
-                                              logged_in_user=request.user)
-                create_or_update_blood_values(true_or_false=form.cleaned_data['red_blood_cells'],
-                                              collection_type=Collection.CollectionType.REDBLOODCELLS,
-                                              caregiver_object=caregiver,
-                                              trimester_text=caregiver_bio.trimester_fk.trimester,
-                                              form_data=form,
-                                              caregiver_bio_primary=caregiver_bio_pk,
-                                              logged_in_user=request.user)
+                logging.critical(f"Did form cleaned data update work {form.cleaned_data} ")
+
+                create_or_update_component_values(caregiver_bio=caregiver_bio,
+                                                  logged_in_user=request.user,
+                                                  form_data=form.cleaned_data)
+                # create_or_update_blood_values(true_or_false=form.cleaned_data['blood'],
+                #                                       collection_type=Collection.CollectionType.BLOOD,
+                #                                       caregiver_object=caregiver,
+                #                                       trimester_text=caregiver_bio.trimester_fk,
+                #                                       form_data=form,
+                #                                       caregiver_bio_primary=caregiver_bio_pk,
+                #                                       logged_in_user=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError

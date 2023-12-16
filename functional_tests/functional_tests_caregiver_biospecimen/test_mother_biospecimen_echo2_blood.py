@@ -53,7 +53,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         processed = self.browser.find_element(By.ID,"id_blood_form-processed_date_time")
         processed.send_keys('2023-09-27 12:52:26')
-
+        time.sleep(50)
         number_of_tubes = self.browser.find_element(By.ID,"id_blood_form-number_of_tubes")
         number_of_tubes.send_keys(5)
 
@@ -65,7 +65,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
-        time.sleep(50)
+
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
 
