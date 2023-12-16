@@ -1,6 +1,6 @@
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,\
     Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU,\
-    ShippedMSU,ReceivedMSU,Caregiver,Incentive,Child,User
+    ShippedMSU,ReceivedMSU,Caregiver,Incentive,Child,User,Component
 import datetime
 from biospecimen.tests.db_setup import DatabaseSetup
 from django.utils import timezone
@@ -154,6 +154,9 @@ class ReceivedWSUModelTest(DatabaseSetup):
 class ComponentBioModelTest(DatabaseSetup):
 
     def test_component_links_to_blood_bio(self):
-        pass
-
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_one = Component.objects.create(caregiver_biospecimen_fk=caregiver_bio,component_type=Component.ComponentType.SERUM)
+        self.assertEqual(component_one,caregiver_bio.component_set.get(component_type=Component.ComponentType.SERUM))
 

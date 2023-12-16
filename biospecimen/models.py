@@ -168,12 +168,6 @@ class Collection(models.Model):
     #todo subclass text choices
     class CollectionType(models.TextChoices):
         URINE = 'U',_('Urine')
-        SERUM = 'S',_('Serum')
-        PLASMA = 'P',_('Plasma')
-        BLOODSPOTS = 'D', _('Bloodspots')
-        WHOLEBLOOD = 'W', _('Whole Blood')
-        BUFFYCOAT = 'F', _('Buffy Coat')
-        REDBLOODCELLS = 'R', _('Red Blood Cells')
         HAIR = 'H', _('Hair')
         TOENAIL = 'T', _('Toenail')
         SALIVA = 'L', _('Saliva')
@@ -273,3 +267,16 @@ class ChildBiospecimen(models.Model):
 
     def __str__(self):
         return f"{self.biospecimen_id}"
+
+class Component(models.Model):
+    caregiver_biospecimen_fk = models.ForeignKey(CaregiverBiospecimen,on_delete=models.PROTECT)
+    class ComponentType(models.TextChoices):
+        SERUM = 'S',_('Serum')
+        PLASMA = 'P',_('Plasma')
+        BLOODSPOTS = 'D', _('Bloodspots')
+        WHOLEBLOOD = 'W', _('Whole Blood')
+        BUFFYCOAT = 'F', _('Buffy Coat')
+        REDBLOODCELLS = 'R', _('Red Blood Cells')
+
+    component_type = models.CharField(max_length=1,choices=ComponentType.choices)
+    number_of_tubes = models.IntegerField(null=True)
