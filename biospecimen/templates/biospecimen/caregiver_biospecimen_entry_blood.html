@@ -63,16 +63,7 @@
             </div>
         </div>
     {% endif %}
-    {% if caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.incentive_fk.incentive_date and not caregiver_bio.status_fk.shipped_echo_fk and not caregiver_bio.status_fk.shipped_wsu_fk  %}
-        <div id="shipped_choice" class="row border border-primary p-3 rounded">
-          <form method="POST" action={% url 'biospecimen:caregiver_shipped_choice_post' charm_project_identifier caregiver_bio_pk %}>
-          {% csrf_token %}
-              <h2>Shipped Choice Form</h2>
-            {{ shipped_choice_form.as_p }}
-          <input type="submit" value="Submit" />
-          </form>
-        </div>
-    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_wsu_fk and not caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time  %}
+    {% if shipped_wsu_form  %}
         <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -150,7 +141,7 @@
             </div>
         </div>
     {% endif %}
-    {% if caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_echo_fk and not caregiver_bio.status_fk.shipped_echo_fk.shipped_date_time %}
+    {% if shipped_echo_form %}
         <div id="shipped_to_echo_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_echo_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
@@ -167,7 +158,7 @@
           <input type="submit" value="Submit" />
           </form>
         </div>
-    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_echo_fk and caregiver_bio.status_fk.shipped_echo_fk.shipped_date_time %}
+    {% elif caregiver_bio.status_fk.shipped_echo_fk and caregiver_bio.status_fk.shipped_echo_fk.shipped_date_time %}
         <div id="shipped_to_echo_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}

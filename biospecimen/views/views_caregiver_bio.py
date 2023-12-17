@@ -462,15 +462,11 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not caregiver_bio.incentive_fk:
         incentive_form = IncentiveForm(prefix='incentive_form')
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
-            and not (caregiver_bio.status_fk.shipped_wsu_fk or caregiver_bio.status_fk.shipped_echo_fk):
-        logging.debug(f"Made it to shipped choice")
-        shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
-    elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
-        logging.debug(f"in shipped to wsu if statement")
+            and not (caregiver_bio.status_fk.shipped_wsu_fk):
         shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
-    elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=True):
+    elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False):
         received_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
-    elif shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
+    elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False):
         logging.debug(f"in shipped to echo if statement")
         shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry_blood.html', context={'charm_project_identifier':caregiver_charm_id,
@@ -646,7 +642,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-    shipped_wsu_fk = ShippedWSU.objects.get(status=status)
+    shipped_wsu_fk = ShippedWSU.objects.create(status=status)
     logging.debug(f"In wsu post")
     if request.method == "POST":
         if collection_type in BLOOD_TYPES:
