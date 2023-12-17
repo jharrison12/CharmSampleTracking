@@ -53,9 +53,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         processed = self.browser.find_element(By.ID,"id_blood_form-processed_date_time")
         processed.send_keys('2023-09-27 12:52:26')
-        time.sleep(50)
-        number_of_tubes = self.browser.find_element(By.ID,"id_blood_form-number_of_tubes")
-        number_of_tubes.send_keys(5)
 
 
         #user sees a ton of checkboxes for all the bloods possible
@@ -63,11 +60,14 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form-whole_blood")
         whole_blood_checkbox.click()
 
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_blood_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(3)
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Number of Tubes: 5', body)
+        self.assertIn('Whole Blood: 3', body)
 
         #user sees incentive form
 
