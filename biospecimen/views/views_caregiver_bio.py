@@ -464,7 +464,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
             and not (caregiver_bio.status_fk.shipped_wsu_fk):
         shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
-    elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False):
+    elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and received_at_wsu_item.filter(received_date_time__isnull=True):
         received_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False):
         logging.debug(f"in shipped to echo if statement")
