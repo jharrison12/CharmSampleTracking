@@ -141,7 +141,7 @@
             </div>
         </div>
     {% endif %}
-    {% if shipped_echo_form %}
+    {% if shipped_echo_form and not caregiver_bio.status_fk.shipped_echo_fk.shipped_date_time %}
         <div id="shipped_to_echo_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_echo_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
