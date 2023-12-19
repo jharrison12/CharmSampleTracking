@@ -690,11 +690,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
     logging.debug(f"In received wsu post")
     if request.method == "POST":
         if collection_type in BLOOD_TYPES:
-            caregiver_bloods = return_caregiver_bloods(caregiver_bio)
-            logging.debug(f"care giver bloods {caregiver_bloods}")
-            for item in caregiver_bloods:
-                logging.debug(f"updating recieved wsu {item.pk}")
-                update_received_wsu(caregiver_bio_pk=item.pk, data=request.POST, user_logged_in=request.user)
+            update_received_wsu(caregiver_bio_pk=caregiver_bio.pk, data=request.POST, user_logged_in=request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type==URINE or collection_type in PERINATAL:
