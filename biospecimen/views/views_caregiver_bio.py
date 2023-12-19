@@ -404,10 +404,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
             incentive_form = IncentiveForm(prefix='incentive_form')
-        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date and\
-            not shipped_to_wsu_item and not shipped_to_echo_item :
-            shipped_choice = ShippedChoiceForm(prefix='shipped_choice_form')
-        if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False)\
+                and caregiver_bio.incentive_fk.incentive_date and \
+                not shipped_to_wsu_item:
             shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
         if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
             logging.debug(f"made it to received at wsu form")

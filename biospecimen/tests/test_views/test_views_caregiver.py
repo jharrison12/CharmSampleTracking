@@ -146,7 +146,6 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
         response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'W')
         response = self.shipped_to_wsu_send_form(primary_key)
         response = self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')

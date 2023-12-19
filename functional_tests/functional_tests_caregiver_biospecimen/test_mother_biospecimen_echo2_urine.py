@@ -76,19 +76,9 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Incentive Date: Sept. 27, 2023', body)
 
-        #user sees option to choose shipped to wsu or shipped to echo
+        #user sees shipped to wsu form
 
-
-
-        form = self.browser.find_element(By.TAG_NAME,'form').text
-        self.assertIn('Shipped Choice Form',form)
-
-        shipped_to_wsu = Select(self.browser.find_element(By.ID,'id_shipped_choice_form-shipped_to_wsu_or_echo'))
-        shipped_to_wsu.select_by_visible_text('Shipped to WSU')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice"]/form/input[2]')
-        submit.click()
-
-        body = self.browser.find_element(By.TAG_NAME,'body').text
+        body = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped to WSU Form',body)
 
         #user submits shipped to WSu form
@@ -130,6 +120,9 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
+
+        #user sees shipped to echo form
+        self.fail()
 
     def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees urine
