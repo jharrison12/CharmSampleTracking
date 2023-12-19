@@ -639,8 +639,8 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-    shipped_wsu_fk = ShippedWSU.objects.create(status=status)
-    logging.debug(f"In wsu post")
+    shipped_wsu_item = ShippedWSU.objects.create()
+    logging.critical(f"In wsu post")
     if request.method == "POST":
         if collection_type in BLOOD_TYPES:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
@@ -656,27 +656,34 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             form = ShippedtoWSUFormPlacenta(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-                shipped_wsu_fk.tracking_number = form.cleaned_data['tracking_number']
-                shipped_wsu_fk.courier = form.cleaned_data['courier']
-                shipped_wsu_fk.shipped_by = request.user
-                shipped_wsu_fk.save()
+                shipped_wsu_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+                shipped_wsu_item.tracking_number = form.cleaned_data['tracking_number']
+                shipped_wsu_item.courier = form.cleaned_data['courier']
+                shipped_wsu_item.shipped_by = request.user
+                shipped_wsu_item.save()
                 logging.debug(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
-        else:
-            logging.debug(f"post is {request.POST}")
+        elif collection_type in URINE:
+            logging.critical(f"post is {request.POST}")
             form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_wsu_fk.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-                shipped_wsu_fk.tracking_number = form.cleaned_data['tracking_number']
-                shipped_wsu_fk.number_of_tubes = form.cleaned_data['number_of_tubes']
-                shipped_wsu_fk.logged_date_time = form.cleaned_data['logged_date_time']
-                shipped_wsu_fk.courier = form.cleaned_data['courier']
-                shipped_wsu_fk.save()
-                logging.debug(f"shipped wsu saved")
+                shipped_wsu_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+                shipped_wsu_item.tracking_number = form.cleaned_data['tracking_number']
+                shipped_wsu_item.number_of_tubes = form.cleaned_data['number_of_tubes']
+                shipped_wsu_item.logged_date_time = form.cleaned_data['logged_date_time']
+                shipped_wsu_item.courier = form.cleaned_data['courier']
+                shipped_wsu_item.shipped_by = request.user
+                shipped_wsu_item.save()
+                caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
+                caregiver_bio.status_fk.shipped_wsu_fk.save()
+                caregiver_bio.status_fk.save()
+                caregiver_bio.save()
+                logging.critical(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        else:
+            raise AssertionError
     else:
         raise AssertionError
 
