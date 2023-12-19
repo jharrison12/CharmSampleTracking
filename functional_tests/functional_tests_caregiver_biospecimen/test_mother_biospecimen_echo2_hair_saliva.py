@@ -30,7 +30,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
     def return_caregiver_bio_pk(self,charm_id,collection_type,trimester,child_age=None):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
-                                                        collection_fk__collection_type_fk__collection_type=collection_type,
+                                                        collection_fk__collection_type=collection_type,
                                                         trimester_fk__trimester=trimester,
                                                         age_category_fk__age_category=child_age)
         return caregiverbio.pk
@@ -38,13 +38,13 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
     def test_user_can_choose_status_of_hair_or_saliva_information_chooses_kit_sent_collected_shipped_msu_then_echo(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, child_age='ZF')
+        primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
@@ -167,13 +167,13 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
     def test_user_can_choose_status_of_hair_or_salvia_information_chooses_not_collected_hope(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, child_age='ZF')
+        primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
@@ -190,13 +190,13 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
     def test_user_can_choose_status_of_hair_or_salvia_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('P7000', 'Hair', trimester=None, child_age='ZF')
+        primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
