@@ -411,8 +411,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
             logging.debug(f"made it to received at wsu form")
             received_at_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
-        if shipped_to_echo_item.exists() and shipped_to_echo_item.filter(shipped_date_time__isnull=True):
-            logging.debug(f"in shipped to echo if statement")
+        if received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
+                and (not shipped_to_echo_item.exists() or shipped_to_echo_item.filter(shipped_date_time__isnull=True)):
+            logging.critical(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
@@ -640,7 +641,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_wsu_item = ShippedWSU.objects.create()
-    logging.critical(f"In wsu post")
+    logging.debug(f"In wsu post")
     if request.method == "POST":
         if collection_type in BLOOD_TYPES:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
@@ -665,9 +666,9 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in URINE:
-            logging.critical(f"post is {request.POST}")
+            logging.debug(f"post is {request.POST}")
             form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_wsu_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
                 shipped_wsu_item.tracking_number = form.cleaned_data['tracking_number']
@@ -680,7 +681,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
                 caregiver_bio.status_fk.shipped_wsu_fk.save()
                 caregiver_bio.status_fk.save()
                 caregiver_bio.save()
-                logging.critical(f"shipped wsu saved")
+                logging.debug(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError
@@ -768,7 +769,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             logging.debug(f"post is {request.POST}")
             form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
-            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_echo_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
                 shipped_echo_item.save()
@@ -780,14 +781,15 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
         else:
             logging.debug(f"post is {request.POST}")
             form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
-            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_echo_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
                 shipped_echo_item.save()
-                status.shipped_echo_fk = shipped_echo_item
-                status.save()
+                caregiver_bio.status_fk.shipped_echo_fk = shipped_echo_item
+                caregiver_bio.status_fk.shipped_echo_fk.save()
+                caregiver_bio.status_fk.save()
                 caregiver_bio.save()
-                logging.debug(f"shipped echo saved")
+                logging.critical(f"shipped echo saved")
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                     caregiver_bio_pk=caregiver_bio_pk)
 
