@@ -236,31 +236,13 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
 
-    def test_echo2_bio_page_shows_shipped_choice_form_if_incentive_sent(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key,'C')
-        response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        self.assertIsInstance(response.context['shipped_choice_form'], ShippedChoiceForm)
-
-    def test_echo2_bio_page_shows_wsu_shipped_form_if_shipped_choice_wsu_sent(self):
+    def test_echo2_bio_page_shows_wsu_shipped_form_if_incentive_submitted(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         self.initial_send_form(primary_key,'C')
         self.collected_send_form(primary_key)
         self.incentive_send_form(primary_key)
-        self.shipped_choice_send_form(primary_key,'W')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
-
-    def test_echo2_bio_page_shows_shipped_echo_form_if_shipped_choice_echo(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        self.initial_send_form(primary_key,'C')
-        self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
-        self.shipped_choice_send_form(primary_key,'E')
-        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
     def test_echo2_bio_page_shows_wsu_received_form_if_shipped_to_wsu_form_sent(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
@@ -272,6 +254,16 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         logging.critical(f"{response.content.decode()}")
         self.assertIsInstance(response.context['received_at_wsu_form'], ReceivedatWSUForm)
+
+    def test_echo2_bio_page_shows_shipped_echo_form_if_received_at_wsu(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.incentive_send_form(primary_key)
+        self.shipped_to_wsu_send_form(primary_key)
+        self.received_at_wsu_send_form(primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
+        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
 class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
 
