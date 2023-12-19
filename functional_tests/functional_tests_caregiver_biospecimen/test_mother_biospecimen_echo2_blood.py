@@ -53,7 +53,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         processed = self.browser.find_element(By.ID,"id_blood_form-processed_date_time")
         processed.send_keys('2023-09-27 12:52:26')
-
+        time.sleep(50)
 
         #user sees a ton of checkboxes for all the bloods possible
 

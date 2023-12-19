@@ -598,10 +598,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
         elif collection_type in BLOOD_TYPES:
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
-                caregiver_bloods = return_caregiver_bloods(caregiver_bio)
-                for item in caregiver_bloods:
-                    logging.debug(f"Blood item is {item}")
-                    create_or_update_incentive(item.pk, form)
+                create_or_update_incentive(caregiver_bio.pk,form)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
 
@@ -652,9 +649,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             logging.debug(f"form is valid {form.is_valid()}  form errors {form.errors}")
             logging.debug(f"caregiver bloods {caregiver_bloods}")
             if form.is_valid():
-                for item in caregiver_bloods:
-                    logging.debug(f"updating shipped wsu {item.pk}")
-                    update_shipped_wsu(caregiver_bio_pk=item.pk,bound_form=form,user_logged_in=request.user)
+                update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user)
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in PERINATAL:
