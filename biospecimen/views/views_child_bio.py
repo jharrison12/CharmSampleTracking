@@ -3,7 +3,7 @@ import logging
 
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status,\
     Collected,NotCollected,NoConsent,ShippedWSU,ShippedECHO,Project,\
-    KitSent,Declined,Incentive
+    KitSent,Declined,Incentive,AgeCategory,Collection
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedChildBloodSpotForm,\
@@ -17,6 +17,18 @@ import random
 
 
 logging.basicConfig(level=logging.debug)
+
+NOT_COLLECTED = 'N'
+DECLINED = 'X'
+KIT_SENT = 'K'
+URINE_AND_STOOL = ['U','O']
+BLOODSPOT = 'S'
+BLOODSPOT_AND_HAIR = ['S','H']
+TOOTH = Collection.CollectionType.TOOTH
+
+ZERO_TO_FIVE = 'ZF'
+TWELVE_TO_THIRTEEN_MONTHS = 'TT'
+SIX_TO_TEN_YEARS = AgeCategory.AgeCategoryChoice.SIX_TO_TEN_YEARS
 
 @login_required
 def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
@@ -39,13 +51,13 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
             child_bio.status_fk = new_status
             new_status.save()
             child_bio.save()
-            if form.cleaned_data['collected_not_collected_kit_sent']=='N':
+            if form.cleaned_data['collected_not_collected_kit_sent']==NOT_COLLECTED:
                 new_not_collected = NotCollected.objects.create()
                 new_status.not_collected_fk = new_not_collected
-            elif form.cleaned_data['collected_not_collected_kit_sent']=='X':
+            elif form.cleaned_data['collected_not_collected_kit_sent']==DECLINED:
                 new_declined = Declined.objects.create()
                 new_status.declined_fk = new_declined
-            if form.cleaned_data['collected_not_collected_kit_sent']=='K':
+            if form.cleaned_data['collected_not_collected_kit_sent']==KIT_SENT:
                 kit_sent = KitSent.objects.create()
                 new_status.kit_sent_fk = kit_sent
             new_status.save()
@@ -64,7 +76,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'collected_form_button' in request.POST:
-        if collection_type in ('Urine','Stool') and child_bio.age_category_fk.age_category=='ZF':
+        if collection_type in URINE_AND_STOOL and child_bio.age_category_fk.age_category==ZERO_TO_FIVE:
             form = CollectedChildUrineStoolForm(data=request.POST,prefix='collected_child_form')
             logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
@@ -77,7 +89,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 collected.save()
                 child_bio.status_fk.save()
                 child_bio.save()
-        elif collection_type in ('Bloodspots') and child_bio.age_category_fk.age_category=='ZF':
+        elif collection_type==BLOODSPOT and child_bio.age_category_fk.age_category==ZERO_TO_FIVE:
             form = CollectedChildBloodSpotForm(data=request.POST, prefix='collected_child_form')
             logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
@@ -91,7 +103,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 collected.save()
                 child_bio.status_fk.save()
                 child_bio.save()
-        elif collection_type in ('Bloodspots','Hair') and child_bio.age_category_fk.age_category=='TT':
+        elif collection_type in BLOODSPOT_AND_HAIR and child_bio.age_category_fk.age_category==TWELVE_TO_THIRTEEN_MONTHS:
             form = CollectedChildBloodSpotHairFormOneYear(data=request.POST, prefix='collected_child_form')
             logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
@@ -104,7 +116,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                 collected.save()
                 child_bio.status_fk.save()
                 child_bio.save()
-        elif collection_type=='Tooth' and child_bio.age_category_fk.age_category=='ST':
+        elif collection_type==TOOTH and child_bio.age_category_fk.age_category==SIX_TO_TEN_YEARS:
             form = CollectedChildToothForm(data=request.POST, prefix='collected_child_form')
             logging.debug(f"Is  form valid {form.is_valid()} form errors {form.errors}")
             if form.is_valid():
@@ -131,7 +143,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         return redirect("biospecimen:child_biospecimen_page_initial", child_charm_id=child_charm_id,
                         child_bio_pk=child_bio_pk)
     elif request.method=="POST" and 'shipped_choice_form_button' in request.POST:
-        if child_bio.age_category_fk.age_category=='ZF':
+        if child_bio.age_category_fk.age_category==ZERO_TO_FIVE:
             form = ShippedChoiceForm(data=request.POST, prefix='child_shipped_choice_form')
             logging.debug(f"is shipped choice valid {form.is_valid()} {form.errors} {form}")
             if form.is_valid():
@@ -204,24 +216,24 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                         child_bio_pk=child_bio_pk)
     else:
         if child_bio.status_fk==None:
-            if collection_type=='Tooth':
+            if collection_type==TOOTH:
                 initial_bio_form = InitialBioFormChildTooth(prefix="initial_bio_form")
             else:
                 initial_bio_form = InitialBioFormPostNatal(prefix="initial_bio_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and not child_bio.status_fk.kit_sent_fk.kit_sent_date:
             kit_sent_form = KitSentForm(prefix="kit_sent_form")
         elif child_bio.status_fk and child_bio.status_fk.kit_sent_fk and child_bio.status_fk.kit_sent_fk.kit_sent_date and not child_bio.status_fk.collected_fk:
-            if child_bio.age_category_fk.age_category=='ZF':
-                if collection_type in ('Urine','Stool'):
+            if child_bio.age_category_fk.age_category==ZERO_TO_FIVE:
+                if collection_type in URINE_AND_STOOL:
                     collected_child_form = CollectedChildUrineStoolForm(prefix="collected_child_form")
-                elif collection_type in ('Bloodspots'):
+                elif collection_type==BLOODSPOT:
                     collected_child_form = CollectedChildBloodSpotForm(prefix="collected_child_form")
-            elif child_bio.age_category_fk.age_category=='TT':
-                if collection_type in ('Bloodspots','Hair'):
+            elif child_bio.age_category_fk.age_category==TWELVE_TO_THIRTEEN_MONTHS:
+                if collection_type in BLOODSPOT_AND_HAIR:
                     collected_child_form = CollectedChildBloodSpotHairFormOneYear(prefix="collected_child_form")
-            elif child_bio.age_category_fk.age_category=='ST':
+            elif child_bio.age_category_fk.age_category==SIX_TO_TEN_YEARS:
                 #I am keeping this logic in case they want to add more biospecimens
-                if collection_type=='Tooth':
+                if collection_type==TOOTH:
                     collected_child_form = CollectedChildToothForm(prefix="collected_child_form")
         elif child_bio.status_fk and child_bio.status_fk.collected_fk and not child_bio.incentive_fk:
             incentive_form = IncentiveForm(prefix="child_incentive_form")
@@ -229,7 +241,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         elif child_bio.status_fk and child_bio.status_fk.collected_fk\
             and (child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time)\
                 and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk):
-            if child_bio.age_category_fk.age_category=='ZF':
+            if child_bio.age_category_fk.age_category==ZERO_TO_FIVE:
                 logging.debug(f"In shipped choice form")
                 shipped_choice_form = ShippedChoiceForm(prefix="child_shipped_choice_form")
             else:

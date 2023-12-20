@@ -11,7 +11,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
     def return_child_bio_pk(self,child_id,collection_type,age):
         child_object = Child.objects.get(charm_project_identifier=child_id)
         child_biospecimen = ChildBiospecimen.objects.get(child_fk=child_object,
-                                                         collection_fk__collection_type_fk__collection_type=collection_type,
+                                                         collection_fk__collection_type=collection_type,
                                                          age_category_fk__age_category=age)
 
         return child_biospecimen.pk
@@ -22,7 +22,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
 
     def test_user_can_choose_status_of_tooth_twelve_to_thirteen_months_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')
+        primary_key = self.return_child_bio_pk('', 'E', 'ST')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
 

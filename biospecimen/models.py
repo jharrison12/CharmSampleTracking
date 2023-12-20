@@ -176,6 +176,7 @@ class Collection(models.Model):
         TOOTH = 'E', _('Tooth')
         CORDBLOOD = 'X', _('Cord Blood')
         BLOOD = 'B', _('Blood')
+        BLOODSPOT = 'S', _('Bloodspot')
 
     collection_type = models.CharField(max_length=1,choices=CollectionType.choices)
 
