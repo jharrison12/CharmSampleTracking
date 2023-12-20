@@ -130,27 +130,6 @@
           </form>
         </div>
     {% endif %}
-    {% if shipped_to_echo_form and not child_bio.status_fk.shipped_echo_fk.shipped_date_time %}
-        <div id="shipped_to_echo_div" class="row border border-primary p-3 rounded">
-          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
-          {% csrf_token %}
-              <h2>Shipped to Echo Form</h2>
-            {{ shipped_to_echo_form.as_p }}
-          <input type="submit" value="Submit" name="shipped_to_echo_form_button"/>
-          </form>
-        </div>
-    {% elif child_bio.status_fk.shipped_echo_fk.shipped_date_time  %}
-        <div id="shipped_to_echo_information" class="row border border-primary p-3 rounded">
-            <div class="col-4">
-                {# TODO ADD FILTER TAG  #}
-                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
-                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped to Echo:</button>
-            </div>
-            <div class="col-8">
-                <div>Shipped to Echo Date: {{ child_bio.status_fk.shipped_echo_fk.shipped_date_time }}</div>
-            </div>
-        </div>
-    {% endif %}
     {% if shipped_to_wsu_form and not child_bio.status_fk.shipped_wsu_fk.shipped_date_time %}
         <div id="shipped_to_wsu_div" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
@@ -188,6 +167,27 @@
             </div>
             <div class="col-8">
                 <div>Received at WSU Date: {{ child_bio.status_fk.received_wsu_fk.received_date_time }}</div>
+            </div>
+        </div>
+    {% endif %}
+    {% if shipped_to_echo_form and not child_bio.status_fk.shipped_echo_fk.shipped_date_time %}
+        <div id="shipped_to_echo_div" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:child_biospecimen_page_initial' child_charm_id child_bio_pk %}>
+          {% csrf_token %}
+              <h2>Shipped to Echo Form</h2>
+            {{ shipped_to_echo_form.as_p }}
+          <input type="submit" value="Submit" name="shipped_to_echo_form_button"/>
+          </form>
+        </div>
+    {% elif child_bio.status_fk.shipped_echo_fk.shipped_date_time  %}
+        <div id="shipped_to_echo_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped to Echo:</button>
+            </div>
+            <div class="col-8">
+                <div>Shipped to Echo Date: {{ child_bio.status_fk.shipped_echo_fk.shipped_date_time }}</div>
             </div>
         </div>
     {% endif %}
