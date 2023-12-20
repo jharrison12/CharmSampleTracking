@@ -22,13 +22,13 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
 
     def test_user_can_choose_status_of_tooth_twelve_to_thirteen_months_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('', 'E', 'ST')
+        primary_key = self.return_child_bio_pk('4100F1', 'E', 'ST')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
@@ -107,12 +107,12 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
 
     def test_user_can_choose_status_of_teeth_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')
+        primary_key = self.return_child_bio_pk('4100F1', 'Tooth', 'ST')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         self.assertNotIn('No Consent',body_text)
@@ -132,12 +132,12 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
 
     def test_user_can_choose_status_of_teeth_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('7002M1', 'Tooth', 'ST')
+        primary_key = self.return_child_bio_pk('4100F1', 'Tooth', 'ST')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         self.assertNotIn('No Consent',body_text)

@@ -11,7 +11,7 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
     def return_child_bio_pk(self,child_id,collection_type,age):
         child_object = Child.objects.get(charm_project_identifier=child_id)
         child_biospecimen = ChildBiospecimen.objects.get(child_fk=child_object,
-                                                         collection_fk__collection_type_fk__collection_type=collection_type,
+                                                         collection_fk__collection_type=collection_type,
                                                          age_category_fk__age_category=age)
 
         return child_biospecimen.pk
@@ -22,13 +22,13 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
 
     def test_user_can_choose_status_of_child_stool_information_chooses_kit_sent_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees stool
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+        primary_key = self.return_child_bio_pk('4100F1', 'O', 'ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
 
         # user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form', body_text)
 
         collected_not_collected = Select(
@@ -134,13 +134,13 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
 
     def test_user_can_choose_status_of_stool_information_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees stool
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+        primary_key = self.return_child_bio_pk('4100F1', 'O', 'ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
@@ -228,12 +228,12 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
 
     def test_user_can_choose_status_of_stool_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees stool
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+        primary_key = self.return_child_bio_pk('4100F1', 'O', 'ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
@@ -251,12 +251,12 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
 
     def test_user_can_choose_status_of_stool_information_chooses_no_consent(self):
         # User visits the caregiver biospecimen page and sees stool
-        primary_key = self.return_child_bio_pk('7002M1', 'Stool', 'ZF')
+        primary_key = self.return_child_bio_pk('4100F1', 'O', 'ZF')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))

@@ -258,6 +258,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         else:
             pass
     logging.debug(f"RIGHT BEFORE RETURN {shipped_to_echo_form} {child_bio.status_fk }")
+    logging.critical(f"Collection type {collection_type}")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,
@@ -270,4 +271,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'declined_form':declined_form,
                                                                                               'incentive_form': incentive_form,
                                                                                               'received_at_wsu_form':received_at_wsu_form,
-                                                                                              'urine_stool': ['Urine','Stool']})
+                                                                                              'urine_stool': ['U','O'],
+                                                                                              'TOOTH':'E',
+                                                                                              'BLOODSPOT':'S',
+                                                                                              'ZERO_TO_FIVE_MONTHS':'ZF'})

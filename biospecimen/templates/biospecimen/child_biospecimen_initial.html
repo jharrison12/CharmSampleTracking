@@ -83,15 +83,15 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Collected</button>
             </div>
             <div class="col-8">
-                {% if child_bio.collection_fk.collection_type_fk.collection_type == 'Tooth' %}
+                {% if child_bio.collection_fk.collection_type == TOOTH %}
                     <div>Date Collected: {{ child_bio.status_fk.collected_fk.collected_date_time }}</div>
                 {% endif %}
-                {% if child_bio.collection_fk.collection_type_fk.collection_type in urine_stool  %}
+                {% if child_bio.collection_fk.collection_type in urine_stool %}
                     <div>Number of Tubes: {{ child_bio.status_fk.collected_fk.number_of_tubes }}</div>
-                {% elif child_bio.collection_fk.collection_type_fk.collection_type == 'Bloodspots' and child_bio.age_category_fk.age_category == 'ZF' %}
+                {% elif child_bio.collection_fk.collection_type == BLOODSPOT and child_bio.age_category_fk.age_category == ZERO_TO_FIVE_MONTHS %}
                     <div>Number of Cards: {{ child_bio.status_fk.collected_fk.number_of_cards }}</div>
                 {% endif %}
-                {% if child_bio.collection_fk.collection_type_fk.collection_type != 'Tooth' %}
+                {% if child_bio.collection_fk.collection_type != TOOTH  %}
                 <div>Date Received: {{ child_bio.status_fk.collected_fk.received_date }}</div>
                 <div>In Person or Remote: {{ child_bio.status_fk.collected_fk.get_in_person_remote_display  }}</div>
                 {% endif %}
