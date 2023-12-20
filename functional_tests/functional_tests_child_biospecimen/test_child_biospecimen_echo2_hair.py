@@ -11,7 +11,7 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
     def return_child_bio_pk(self,child_id,collection_type,age):
         child_object = Child.objects.get(charm_project_identifier=child_id)
         child_biospecimen = ChildBiospecimen.objects.get(child_fk=child_object,
-                                                         collection_fk__collection_type_fk__collection_type=collection_type,
+                                                         collection_fk__collection_type=collection_type,
                                                          age_category_fk__age_category=age)
 
         return child_biospecimen.pk
@@ -22,13 +22,13 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
 
     def test_user_can_choose_status_of_hair_twelve_to_thirteen_months_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('7002M1', 'Hair', 'TT')
+        primary_key = self.return_child_bio_pk('4100F1', 'H', 'TT')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1F1/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
@@ -94,15 +94,6 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
         text = self.webpage_text()
         self.assertIn('Sept. 30, 2023', text)
 
-        #user sees shipped choice form
-        shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
-        self.assertNotIn('Shipped to WSU',shipped_choice_form)
-
-        shipped_choice = Select(self.browser.find_element(By.ID,'id_child_shipped_choice_form-shipped_to_wsu_or_echo'))
-        shipped_choice.select_by_visible_text('Shipped to Echo')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice_form_div"]/form/input[2]')
-        submit.click()
-
         #User sees shipped to echo form and submits a date time
         echo_shipped_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped to Echo',echo_shipped_form)
@@ -120,16 +111,17 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
 
     def test_user_can_choose_status_of_hair_information_chooses_no_consent(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('7002M1', 'Hair', 'TT')
+        primary_key = self.return_child_bio_pk('4100F1', 'H', 'TT')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
-        collected_not_collected.select_by_visible_text('Not Collected')
+        collected_not_collected.select_by_visible_text('Declined')
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
 
         submit.click()
@@ -138,16 +130,16 @@ class ChildBioSpecimenEntryHair(FunctionalTest):
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
-        self.assertIn('Not Collected', body_text)
+        self.assertIn('Declined', body_text)
 
     def test_user_can_choose_status_of_hair_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('7002M1', 'Hair', 'TT')
+        primary_key = self.return_child_bio_pk('4100F1', 'H', 'TT')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/child/7002M1/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('ID: 7002M1', body_text)
+        self.assertIn('ID: 4100F1', body_text)
         self.assertIn('Initial Form',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_bio_form-collected_not_collected_kit_sent'))
