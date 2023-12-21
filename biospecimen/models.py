@@ -179,6 +179,7 @@ class Collection(models.Model):
         BLOODSPOT = 'S', _('Bloodspot')
 
     collection_type = models.CharField(max_length=1,choices=CollectionType.choices)
+    collection_number = models.IntegerField(default=None,null=True,blank=True)
 
     def __str__(self):
         return f"{self.collection_type}"

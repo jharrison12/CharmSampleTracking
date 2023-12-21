@@ -8,11 +8,12 @@ from django.utils import timezone
 
 class ChildBioSpecimenEntryTooth(FunctionalTest):
 
-    def return_child_bio_pk(self,child_id,collection_type,age):
+    def return_child_bio_pk(self,child_id,collection_type,age,collection_number):
         child_object = Child.objects.get(charm_project_identifier=child_id)
         child_biospecimen = ChildBiospecimen.objects.get(child_fk=child_object,
                                                          collection_fk__collection_type=collection_type,
-                                                         age_category_fk__age_category=age)
+                                                         age_category_fk__age_category=age,
+                                                         collection_fk__collection_number=collection_number)
 
         return child_biospecimen.pk
 
@@ -22,7 +23,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
 
     def test_user_can_choose_status_of_tooth_twelve_to_thirteen_months_chooses_kit_sent_collected_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('4100F1', 'E', 'ST')
+        primary_key = self.return_child_bio_pk('4100F1', 'E', 'ST',collection_number=1)
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
 
@@ -70,6 +71,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
+        #user sees incentive form
         incentive_form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Incentive', incentive_form)
 
@@ -82,18 +84,9 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         text = self.webpage_text()
         self.assertIn('Sept. 30, 2023', text)
 
-        shipped_choice_form = self.browser.find_element(By.TAG_NAME,'form').text
-        self.assertNotIn('Shipped to WSU',shipped_choice_form)
-
-        shipped_choice = Select(self.browser.find_element(By.ID,'id_child_shipped_choice_form-shipped_to_wsu_or_echo'))
-        shipped_choice.select_by_visible_text('Shipped to Echo')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_choice_form_div"]/form/input[2]')
-        submit.click()
-
         #User sees shipped to echo form and submits a date time
         echo_shipped_form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Shipped to Echo',echo_shipped_form)
-
 
         echo_shipped_date = self.browser.find_element(By.ID, 'id_child_shipped_to_echo_form-shipped_date_and_time')
         echo_shipped_date.clear()
@@ -107,7 +100,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
 
     def test_user_can_choose_status_of_teeth_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('4100F1', 'Tooth', 'ST')
+        primary_key = self.return_child_bio_pk('4100F1', 'E', 'ST',collection_number=1)
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
@@ -132,7 +125,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
 
     def test_user_can_choose_status_of_teeth_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees blood_spots
-        primary_key = self.return_child_bio_pk('4100F1', 'Tooth', 'ST')
+        primary_key = self.return_child_bio_pk('4100F1', 'E', 'ST',collection_number=1)
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/child/4100F1/{primary_key}/initial/')
         #user sees initial form and submits collected
@@ -149,7 +142,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         submit.click()
 
         #user sees collected form on next page
-
+        time.sleep(50)
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
         self.assertIn('Declined', body_text)
