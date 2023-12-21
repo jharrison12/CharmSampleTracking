@@ -224,22 +224,13 @@ class Child(models.Model):
     pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT)
     charm_project_identifier = models.CharField(max_length=6, unique=True)
 
-class Perinatal(models.Model):
-    #perinatal event like birth
-    #i need this table to capture multiple placentas associated with one birth
-    pregnancy_fk = models.ForeignKey(Pregnancy,null=False,blank=False,on_delete=models.PROTECT)
-    child_fk = models.OneToOneField(Child,on_delete=models.PROTECT)
-
-    def __str__(self):
-        return f"{self.pregnancy_fk.pregnancy_id}"
-
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     status_fk = models.OneToOneField(Status, on_delete=models.PROTECT, blank=True,null=True)
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     trimester_fk = models.ForeignKey(Trimester,on_delete=models.PROTECT,blank=True,null=True)
-    perinatal_fk = models.ForeignKey("Perinatal",on_delete=models.PROTECT,blank=True,null=True)
+    pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory,on_delete=models.PROTECT,blank=True,null=True)
     project_fk = models.ForeignKey(Project,on_delete=models.PROTECT,blank=False,null=False)
     biospecimen_id = models.CharField(max_length=10, null=False,blank=False,unique=True)
@@ -248,7 +239,6 @@ class CaregiverBiospecimen(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['caregiver_fk','collection_fk','trimester_fk'], name='caregiver biospecimen unique constraint')
         ]
-
 
     def __str__(self):
         return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"

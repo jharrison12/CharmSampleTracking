@@ -357,6 +357,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    incentive_item = Incentive.objects.filter(caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -390,7 +391,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             collected_form = CollectedBiospecimenPlacentaForm(prefix='placenta_form')
         if collected_item.exists() and caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date:
             incentive_form = IncentiveForm(prefix='incentive_form')
-        if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=True):
+        if incentive_item.exists() and incentive_item.filter(incentive_date__isnull=False) and not shipped_to_wsu_item.exists():
             logging.debug(f"in shipped to wsu if statement")
             shipped_wsu_form = ShippedtoWSUFormPlacenta(prefix="shipped_to_wsu_form")
         if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
@@ -587,8 +588,6 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
                 incentive_item.incentive_date = form.cleaned_data['incentive_date']
                 incentive_item.logged_by = request.user
-                shipped_to_wsu = ShippedWSU.objects.create()
-                caregiver_bio.status_fk.shipped_wsu_fk = shipped_to_wsu
                 caregiver_bio.status_fk.save()
                 incentive_item.save()
                 caregiver_bio.save()
@@ -662,6 +661,10 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
                 shipped_wsu_item.courier = form.cleaned_data['courier']
                 shipped_wsu_item.shipped_by = request.user
                 shipped_wsu_item.save()
+                caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
+                caregiver_bio.status_fk.shipped_wsu_fk.save()
+                caregiver_bio.status_fk.save()
+                caregiver_bio.save()
                 logging.debug(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
