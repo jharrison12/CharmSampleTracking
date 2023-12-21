@@ -212,7 +212,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         elif child_bio.status_fk and child_bio.status_fk.collected_fk\
             and (child_bio.status_fk.collected_fk.received_date or child_bio.status_fk.collected_fk.collected_date_time)\
                 and not (child_bio.status_fk.shipped_echo_fk or child_bio.status_fk.shipped_wsu_fk or child_bio.status_fk.shipped_msu_fk):
-            if collection_type in URINE_AND_STOOL or collection_type==BLOODSPOT:
+            if collection_type in URINE_AND_STOOL or (collection_type==BLOODSPOT and child_bio.age_category_fk.age_category==ZERO_TO_FIVE):
                 shipped_to_wsu_form = ShippedtoWSUFormChild(prefix="child_shipped_to_wsu_form")
             elif collection_type in BLOODSPOT_AND_HAIR or collection_type==TOOTH:
                 shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
