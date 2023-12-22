@@ -191,7 +191,7 @@ class Caregiver(models.Model):
     def __str__(self):
         return self.charm_project_identifier
 
-class Trimester(models.Model):
+class PregnancyTrimester(models.Model):
     pregnancy_fk = models.ForeignKey("Pregnancy",on_delete=models.PROTECT)
     class TrimesterChoices(models.TextChoices):
         FIRST = 'F',_('First')
@@ -225,12 +225,15 @@ class Child(models.Model):
     pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT)
     charm_project_identifier = models.CharField(max_length=6, unique=True)
 
+    def __string__(self):
+        return f"child: {self.charm_project_identifier}"
+
 class CaregiverBiospecimen(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver,on_delete=models.PROTECT)
     status_fk = models.OneToOneField(Status, on_delete=models.PROTECT, blank=True,null=True)
     collection_fk = models.ForeignKey(Collection, on_delete=models.PROTECT)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
-    trimester_fk = models.ForeignKey(Trimester,on_delete=models.PROTECT,blank=True,null=True)
+    trimester_fk = models.ForeignKey(PregnancyTrimester,on_delete=models.PROTECT,blank=True,null=True)
     pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory,on_delete=models.PROTECT,blank=True,null=True)
     project_fk = models.ForeignKey(Project,on_delete=models.PROTECT,blank=False,null=False)

@@ -17,6 +17,7 @@ logging.basicConfig(level=logging.CRITICAL)
 class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
+        logging.critical(f"chrarm_id {charm_id} collection_type {collection_type} trimester {trimester} age_category {age_category} project {project}")
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type=collection_type,

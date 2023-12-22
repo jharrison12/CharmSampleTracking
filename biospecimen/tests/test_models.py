@@ -1,5 +1,7 @@
+import logging
+
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,\
-    Trimester,Perinatal,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU,\
+    PregnancyTrimester,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU,\
     ShippedMSU,ReceivedMSU,Caregiver,Incentive,Child,User,Component
 import datetime
 from biospecimen.tests.db_setup import DatabaseSetup
@@ -9,44 +11,37 @@ from django.core.exceptions import ValidationError
 class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_biospecimen_urine_links_to_two_caregivers(self):
-        urine_samples = CaregiverBiospecimen.objects.filter(collection_fk__collection_type='U')\
-            .filter(collection_fk__collection_number_fk__collection_number="F")
-        self.assertEqual(urine_samples.count(),2)
+        urine_samples = CaregiverBiospecimen.objects.filter(collection_fk__collection_type='U')
+        self.assertEqual(urine_samples.count(),6)
 
     def test_biospecimen_links_to_incentive_table(self):
-        first_incentive =  Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type_fk__collection_type='U').first()
+        first_incentive =  Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type='U').first()
         self.assertEqual(first_incentive.incentive_amount,100)
 
     def test_caregiver_biospecimen_doesnt_allow_duplicates(self):
         caregiverbio_one = CaregiverBiospecimen(caregiver_fk=Caregiver.objects.get(charm_project_identifier='4100'),
-                                                collection_fk=Collection.objects.get(collection_type_fk__collection_type='Serum',
-                                                                                     collection_number_fk__collection_number='F'))
+                                                collection_fk=Collection.objects.get(collection_type='U'))
         with self.assertRaises(ValidationError):
             caregiverbio_one.full_clean()
 
 
-    def test_caregiver_biospecimen_links_to_collected(self):
+    def test_caregiver_biospecimen_links_to_component(self):
         caregiver_bio = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier='4100',
                                                          trimester_fk__trimester='F',
-                                                         collection_fk__collection_type_fk__collection_type='Bloodspots').first()
+                                                         component__component_type='S').first()
         caregiver = Caregiver.objects.get(caregiverbiospecimen__status_fk__collected_fk__number_of_tubes=5)
         self.assertEqual(caregiver,caregiver_bio.caregiver_fk)
 
     def test_caregiver_biospecimen_links_to_trimester(self):
-        urine_tree = Collection.objects.get(collection_number_fk__collection_number=None,collection_type_fk__collection_type='Urine')
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',collection_fk=urine_tree,status_fk__collected_fk=None)
-        trimester = Trimester.objects.get(trimester='S')
-        self.assertEqual(caregiver.trimester_fk,trimester)
+        caregiver = Caregiver.objects.get(charm_project_identifier='4100')
+        caregiverbio = CaregiverBiospecimen.objects.get(biospecimen_id='12UR410001')
+        trimester = PregnancyTrimester.objects.filter(caregiverbiospecimen__caregiver_fk=caregiver, pregnancy_fk__pregnancy_number=1,trimester='S',)
 
-    def test_caregiver_biospecimen_outcome_links_to_perinatal(self):
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta',collection_number_fk=None)
-        caregiver = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',collection_fk=placenta,project_fk__project_name='ECHO2')
-        perinatal_event = Perinatal.objects.get(child_fk__charm_project_identifier='4100F1')
-        self.assertEqual(caregiver.perinatal_fk,perinatal_event)
+        self.assertEqual(caregiverbio.trimester_fk,trimester)
 
     def test_caregiver_biospecimen_outcome_links_to_not_collected(self):
         not_collected = NotCollected.objects.create()
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_nc = Status.objects.create(not_collected_fk=not_collected)
@@ -56,7 +51,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_outcome_links_to_no_consent(self):
         no_consent = NoConsent.objects.create()
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_no_consent = Status.objects.create(no_consent_fk=no_consent)
@@ -66,7 +61,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_links_to_shippedwsu(self):
         shipped_wsu = ShippedWSU.objects.create(shipped_by=User.objects.get(pk=1))
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_shipped_wsu = Status.objects.create(shipped_wsu_fk=shipped_wsu)
@@ -77,7 +72,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_links_to_shipped_echo(self):
         shipped_echo = ShippedECHO.objects.create()
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_shipped_echo = Status.objects.create(shipped_echo_fk=shipped_echo)
@@ -87,7 +82,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_links_to_declined(self):
         declined = Declined.objects.create()
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_declined = Status.objects.create(declined_fk=declined)
@@ -97,7 +92,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_links_to_shipped_msu(self):
         shipped_msu = ShippedMSU.objects.create()
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_shipped_msu = Status.objects.create(shipped_msu_fk=shipped_msu)
@@ -107,7 +102,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_links_to_received_msu(self):
         received_msu = ReceivedMSU.objects.create()
-        placenta = Collection.objects.get(collection_type_fk__collection_type='Placenta', collection_number_fk=None)
+        placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
         status_received_msu = Status.objects.create(received_msu_fk=received_msu)
@@ -120,20 +115,20 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 class ChildBiospecimenModelTest(DatabaseSetup):
 
     def test_child_links_to_biospecimen(self):
-        urine = Collection.objects.get(collection_type_fk__collection_type='Urine',collection_number_fk__collection_number='T')
-        test_child = Child.objects.filter(childbiospecimen__age_category_fk__age_category='EC',
+        urine = Collection.objects.get(collection_type='U')
+        test_child = Child.objects.filter(childbiospecimen__age_category_fk__age_category='ZF',
                                           childbiospecimen__collection_fk=urine).first()
         self.assertEqual(test_child.charm_project_identifier,'4100F1')
 
     def test_multiple_children_link_to_one_biospecimen(self):
-        urine_collection = Collection.objects.get(collection_type_fk__collection_type='Urine',collection_number_fk__collection_number='T')
-        urine = ChildBiospecimen.objects.filter(collection_fk=urine_collection)
+        urine = Collection.objects.get(collection_type='U')
+        urine = ChildBiospecimen.objects.filter(collection_fk=urine)
         self.assertEqual(urine.count(),2)
 
 class KitSentModelTest(DatabaseSetup):
 
     def test_child_links_to_kit(self):
-        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type_fk__collection_type='Urine',child_fk__charm_project_identifier='7002M1')
+        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type='U',child_fk__charm_project_identifier='4100F1',age_category_fk__age_category='ZF')
         kit_sent = KitSent.objects.create(kit_sent_date=timezone.datetime(2023,5,5,12,0,0,))
         status_kit_sent = Status.objects.create(kit_sent_fk=kit_sent)
         child_urine_one_z_to_f.status_fk=status_kit_sent
@@ -144,7 +139,7 @@ class KitSentModelTest(DatabaseSetup):
 class ReceivedWSUModelTest(DatabaseSetup):
 
     def test_child_bio_links_to_received_wsu(self):
-        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type='U',child_fk__charm_project_identifier='7002M1')
+        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type='U',child_fk__charm_project_identifier='4100F1')
         received_at_wsu = ReceivedWSU.objects.create(received_date_time=timezone.datetime(2023,5,7,12,0,0,))
         status_received_wsu = Status.objects.create(received_wsu_fk=received_at_wsu)
         child_urine_one_z_to_f.status_fk=status_received_wsu

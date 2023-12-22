@@ -34,6 +34,7 @@ SIX_TO_TEN_YEARS = AgeCategory.AgeCategoryChoice.SIX_TO_TEN_YEARS
 def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
     child_bio = ChildBiospecimen.objects.get(pk=child_bio_pk)
     collection_type = child_bio.collection_fk.collection_type
+    collection_type_display = child_bio.collection_fk.get_collection_type_display()
     initial_bio_form = None
     kit_sent_form = None
     collected_child_form = None
@@ -239,6 +240,7 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
                                                                                               'declined_form':declined_form,
                                                                                               'incentive_form': incentive_form,
                                                                                               'received_at_wsu_form':received_at_wsu_form,
+                                                                                              'collection_type_display':collection_type_display,
                                                                                               'urine_stool': ['U','O'],
                                                                                               'TOOTH':'E',
                                                                                               'BLOODSPOT':'S',
