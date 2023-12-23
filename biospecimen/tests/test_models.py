@@ -39,7 +39,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
     def test_caregiver_biospecimen_links_to_trimester(self):
         caregiver = Caregiver.objects.get(charm_project_identifier='4100')
         caregiverbio = CaregiverBiospecimen.objects.get(biospecimen_id='12UR410001')
-        trimester = PregnancyTrimester.objects.filter(caregiverbiospecimen__caregiver_fk=caregiver, pregnancy_fk__pregnancy_number=1,trimester='S',)
+        trimester = PregnancyTrimester.objects.get(pregnancy_fk__caregiver_fk=caregiver, pregnancy_fk__pregnancy_number=1,trimester='S')
 
         self.assertEqual(caregiverbio.trimester_fk,trimester)
 
