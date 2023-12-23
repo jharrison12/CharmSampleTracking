@@ -414,7 +414,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             received_at_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
         if received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
                 and (not shipped_to_echo_item.exists() or shipped_to_echo_item.filter(shipped_date_time__isnull=True)):
-            logging.critical(f"in shipped to echo if statement")
+            logging.debug(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
@@ -784,7 +784,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
         else:
             logging.debug(f"post is {request.POST}")
             form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
-            logging.critical(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
+            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_echo_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
                 shipped_echo_item.save()
@@ -792,7 +792,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
                 caregiver_bio.status_fk.shipped_echo_fk.save()
                 caregiver_bio.status_fk.save()
                 caregiver_bio.save()
-                logging.critical(f"shipped echo saved")
+                logging.debug(f"shipped echo saved")
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                     caregiver_bio_pk=caregiver_bio_pk)
 

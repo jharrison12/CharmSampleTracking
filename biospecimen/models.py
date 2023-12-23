@@ -204,7 +204,6 @@ class PregnancyTrimester(models.Model):
             models.UniqueConstraint(fields=['pregnancy_fk', 'trimester'], name="trimester_unique_constraint")
         ]
 
-
     def __str__(self):
         return f"{self.get_trimester_display()}"
 
@@ -275,6 +274,11 @@ class Component(models.Model):
 
     component_type = models.CharField(max_length=1,choices=ComponentType.choices)
     number_of_tubes = models.IntegerField(null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['caregiver_biospecimen_fk','component_type',], name='component unique constraint')
+        ]
 
     def __str__(self):
         return f"{self.component_type}"

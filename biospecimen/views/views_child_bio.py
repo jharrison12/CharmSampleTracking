@@ -220,14 +220,14 @@ def child_biospecimen_page_initial(request,child_charm_id,child_bio_pk):
         elif child_bio.status_fk.shipped_wsu_fk and child_bio.status_fk.shipped_wsu_fk.shipped_date_time and not child_bio.status_fk.received_wsu_fk:
             received_at_wsu_form = ReceivedatWSUForm(prefix="child_received_at_wsu_form")
         elif child_bio.status_fk.received_wsu_fk and child_bio.status_fk.received_wsu_fk.received_date_time:
-            logging.critical(f"in shipped to echo if statement")
+            logging.debug(f"in shipped to echo if statement")
             shipped_to_echo_form = ShippedtoEchoForm(prefix="child_shipped_to_echo_form")
         elif child_bio.status_fk.declined_fk:
             declined_form = DeclinedForm(prefix="declined_form",initial={'declined_date':timezone.now().date()})
         else:
             pass
     logging.debug(f"RIGHT BEFORE RETURN {shipped_to_echo_form} {child_bio.status_fk }")
-    logging.critical(f"Collection type {collection_type}")
+    logging.debug(f"Collection type {collection_type}")
     return render(request,template_name='biospecimen/child_biospecimen_initial.html',context={'child_bio':child_bio,
                                                                                               'child_charm_id':child_charm_id,
                                                                                               'child_bio_pk':child_bio_pk,

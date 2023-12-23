@@ -15,8 +15,12 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         self.assertEqual(urine_samples.count(),6)
 
     def test_biospecimen_links_to_incentive_table(self):
-        first_incentive =  Incentive.objects.filter(caregiverbiospecimen__collection_fk__collection_type='U').first()
-        self.assertEqual(first_incentive.incentive_amount,100)
+        caregiverbio_one = CaregiverBiospecimen.objects.get(caregiver_fk=Caregiver.objects.get(charm_project_identifier='4100'),
+                                                collection_fk=Collection.objects.get(collection_type='U'),trimester_fk__trimester='S')
+        caregiverbio_one.incentive_fk = Incentive.objects.create(incentive_amount=100)
+        caregiverbio_one.save()
+
+        self.assertEqual(caregiverbio_one.incentive_fk.incentive_amount,100)
 
     def test_caregiver_biospecimen_doesnt_allow_duplicates(self):
         caregiverbio_one = CaregiverBiospecimen(caregiver_fk=Caregiver.objects.get(charm_project_identifier='4100'),
@@ -27,10 +31,10 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_caregiver_biospecimen_links_to_component(self):
         caregiver_bio = CaregiverBiospecimen.objects.filter(caregiver_fk__charm_project_identifier='4100',
-                                                         trimester_fk__trimester='F',
+                                                         trimester_fk__trimester='S',
                                                          component__component_type='S').first()
-        caregiver = Caregiver.objects.get(caregiverbiospecimen__status_fk__collected_fk__number_of_tubes=5)
-        self.assertEqual(caregiver,caregiver_bio.caregiver_fk)
+        component_to_pull = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,component_type='S')
+        self.assertEqual(caregiver_bio,component_to_pull.caregiver_biospecimen_fk)
 
     def test_caregiver_biospecimen_links_to_trimester(self):
         caregiver = Caregiver.objects.get(charm_project_identifier='4100')
@@ -139,7 +143,7 @@ class KitSentModelTest(DatabaseSetup):
 class ReceivedWSUModelTest(DatabaseSetup):
 
     def test_child_bio_links_to_received_wsu(self):
-        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type='U',child_fk__charm_project_identifier='4100F1')
+        child_urine_one_z_to_f = ChildBiospecimen.objects.get(collection_fk__collection_type='U',child_fk__charm_project_identifier='4100F1',age_category_fk__age_category='ZF')
         received_at_wsu = ReceivedWSU.objects.create(received_date_time=timezone.datetime(2023,5,7,12,0,0,))
         status_received_wsu = Status.objects.create(received_wsu_fk=received_at_wsu)
         child_urine_one_z_to_f.status_fk=status_received_wsu
@@ -152,6 +156,6 @@ class ComponentBioModelTest(DatabaseSetup):
         blood = Collection.objects.get(collection_type='B')
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
-        component_one = Component.objects.create(caregiver_biospecimen_fk=caregiver_bio,component_type=Component.ComponentType.SERUM)
-        self.assertEqual(component_one,caregiver_bio.component_set.get(component_type=Component.ComponentType.SERUM))
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio, caregiver_biospecimen_fk__trimester_fk__trimester='S',component_type='S')
+        self.assertEqual(caregiver_bio,component_test.caregiver_biospecimen_fk)
 

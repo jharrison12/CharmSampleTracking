@@ -1,7 +1,7 @@
 import logging
 import unittest
 from biospecimen.models import Collection, Status, ChildBiospecimen, CaregiverBiospecimen,\
-    ShippedECHO, Collected, Caregiver, Project, Child,User,Component
+    ShippedECHO, Collected, Caregiver, Project, Child,User,Component,PregnancyTrimester
 import datetime
 from django.utils import timezone
 from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
@@ -17,13 +17,14 @@ logging.basicConfig(level=logging.CRITICAL)
 class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
-        logging.critical(f"chrarm_id {charm_id} collection_type {collection_type} trimester {trimester} age_category {age_category} project {project}")
+        logging.debug(f"chrarm_id {charm_id} collection_type {collection_type} trimester {trimester} age_category {age_category} project {project}")
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type=collection_type,
                                                         trimester_fk__trimester=trimester,
                                                         project_fk__project_name=project,
                                                         age_category_fk__age_category=age_category)
+
         return caregiverbio.pk
 
     def collected_send_form(self, primary_key):
@@ -253,7 +254,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         # self.shipped_choice_send_form(primary_key, 'W')
         self.shipped_to_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        logging.critical(f"{response.content.decode()}")
+        logging.debug(f"{response.content.decode()}")
         self.assertIsInstance(response.context['received_at_wsu_form'], ReceivedatWSUForm)
 
     def test_echo2_bio_page_shows_shipped_echo_form_if_received_at_wsu(self):
@@ -681,7 +682,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_incentive_form_send(primary_key)
         response = self.blood_shipped_to_wsu(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.content.decode())
+        logging.debug(response.content.decode())
         self.assertContains(response, '<input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>')
 
     # Redirection tests
@@ -762,7 +763,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_collected_form_send(primary_key, 'plasma', False)
         self.blood_incentive_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.content.decode())
+        logging.debug(response.content.decode())
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
 
     def test_echo2_bio_page_shows_received_at_wsu_form_if_shipped_at_wsu_not_null(self):
@@ -773,7 +774,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_incentive_form_send(primary_key)
         response = self.blood_shipped_to_wsu(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.content.decode())
+        logging.debug(response.content.decode())
         self.assertIsInstance(response.context['received_wsu_form'], ReceivedatWSUForm)
 
     #View updates data tests
