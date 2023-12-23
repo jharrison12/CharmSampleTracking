@@ -142,7 +142,7 @@ class ChildBioSpecimenEntryTooth(FunctionalTest):
         submit.click()
 
         #user sees collected form on next page
-        time.sleep(50)
+
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
         self.assertIn('Declined', body_text)

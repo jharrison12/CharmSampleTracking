@@ -22,7 +22,7 @@ def incentive_list_caregiver_biospecimen(request):
 def incentive_list_caregiver_charm_id(request):
     list_of_ids = Caregiver.objects.filter(caregiverbiospecimen__incentive_fk__isnull=False).values_list("charm_project_identifier",flat=True).distinct()
     caregivers = Caregiver.objects.filter(caregiverbiospecimen__incentive_fk__isnull=False)
-    list_of_biospecimens = CollectionType.objects.filter(collection__caregiverbiospecimen__caregiver_fk__in=caregivers)
+    list_of_biospecimens =  [c[0] for c in Collection.CollectionType.choices]
     return render(request=request,template_name='lists/incentive_list_caregiver_charm_id.html',context={'list_of_ids':list_of_ids,
                                                                                                         'list_of_biospecimens':list_of_biospecimens})
 
