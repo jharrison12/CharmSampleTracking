@@ -21,7 +21,7 @@ class ReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
 
-        self.assertIn('P7000', text)
+        self.assertIn('4100', text)
         self.assertIn('Hair', text)
 
 
