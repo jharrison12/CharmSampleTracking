@@ -14,7 +14,7 @@ class Echo2BioPage(FunctionalTest):
 
         body = self.webpage_text()
 
-        self.browser.find_element(By.LINK_TEXT,'Biospecimen Entry').click()
+        self.browser.find_element(By.LINK_TEXT,'Charm IDs').click()
         time.sleep(20)
 
         #user looks for 4100 and clicks on the link

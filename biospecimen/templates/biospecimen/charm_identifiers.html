@@ -1,7 +1,9 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}Charm ID:{% endblock %}
 {% block section %}
     <ul>
         {% for charm_id in list_of_charm_ids %}
-            {{ charm_id.charm_project_identifier }}
+            <li>{{ charm_id.charm_project_identifier }}</li>
         {% endfor %}
     </ul>
 {% endblock %}
