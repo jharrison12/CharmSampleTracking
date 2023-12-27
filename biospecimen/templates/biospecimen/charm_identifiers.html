@@ -1,0 +1,7 @@
+{% block section %}
+    <ul>
+        {% for charm_id in list_of_charm_ids %}
+            {{ charm_id.charm_project_identifier }}
+        {% endfor %}
+    </ul>
+{% endblock %}

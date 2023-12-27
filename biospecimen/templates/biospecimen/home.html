@@ -1,6 +1,7 @@
 {% extends "biospecimen/base.html" %}
 {% block section %}
     <ul>
+        <li><a href {% url "biospecimen:charm_identifiers" %}>Charm IDs</a></li>
         <li><a href={% url "biospecimen:biospecimen_entry" %}>Biospecimen Entry</a></li>
     </ul>
 {% endblock %}

@@ -15,6 +15,13 @@ class Echo2BioPage(FunctionalTest):
         body = self.webpage_text()
 
         self.browser.find_element(By.LINK_TEXT,'Biospecimen Entry').click()
+        time.sleep(20)
 
-
+        #user looks for 4100 and clicks on the link
         self.assertIn('Charm ID',body)
+        self.assertIn('4100',body)
+        self.browser.find_element(By.LINK_TEXT, '4100').click()
+
+        #user sees a list or biospecimen for 4100
+        body = self.webpage_text()
+        self.assertIn('4100B01',body)
