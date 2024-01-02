@@ -3,7 +3,7 @@
 {% block section %}
     <ul>
         {% for charm_id in list_of_charm_ids %}
-            <li>{{ charm_id.charm_project_identifier }}</li>
+            <li><a href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>{{ charm_id.charm_project_identifier }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

@@ -1,0 +1,9 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}Charm ID: {{ caregiver.charm_project_identifier }}{% endblock %}
+{% block section %}
+    <ul>
+        {% for bio_id in list_of_biospecimen_ids %}
+            <li>{{ bio_id }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

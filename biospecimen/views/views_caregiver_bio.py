@@ -174,6 +174,13 @@ def charm_identifiers(request):
     return render(request,template_name='biospecimen/charm_identifiers.html',context={'list_of_charm_ids':list_of_charm_ids})
 
 @login_required
+def list_of_bio_ids(request,caregiver_charm_id):
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    list_of_biospecimen_ids = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver)
+    return render(request,template_name='biospecimen/list_of_charm_ids.html',context={'list_of_biospecimen_ids':list_of_biospecimen_ids,
+                                                                                      'caregiver':caregiver})
+
+@login_required
 def caregiver_biospecimen(request,caregiver_charm_id):
     #TODO: Fix this so you're iterating over one queryset and not 15
     caregiver = get_object_or_404(Caregiver,charm_project_identifier=caregiver_charm_id)
