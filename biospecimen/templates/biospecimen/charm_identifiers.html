@@ -1,9 +1,22 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Charm ID:{% endblock %}
 {% block section %}
-    <ul>
+    <form class="p-2 mb-2 bg-body-tertiary border-bottom">
+        <input class="form-control" id="myInput" type="search" placeholder="Search for id..">
+    </form>
+    <ul class="list-group" id="myList">
         {% for charm_id in list_of_charm_ids %}
-            <li><a href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>{{ charm_id.charm_project_identifier }}</a></li>
+            <li class="list-group-item"><a href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>{{ charm_id.charm_project_identifier }}</a></li>
         {% endfor %}
     </ul>
+{#    <script>#}
+{#    $(document).ready(function(){#}
+{#      $("#myInput").on("keyup", function() {#}
+{#        var value = $(this).val().toLowerCase();#}
+{#        $("#myList li").filter(function() {#}
+{#          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)#}
+{#        });#}
+{#      });#}
+{#    });#}
+{#    </script>#}
 {% endblock %}

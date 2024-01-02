@@ -15,8 +15,9 @@ class Echo2BioPage(FunctionalTest):
         body = self.webpage_text()
 
         #self.browser.find_element(By.PARTIAL_LINK_TEXT,'Charm').click()
+        #The above doesn't work in the ft, so you have to manually go there
         self.browser.get(f'{self.browser.current_url}biospecimen/charm_ids/')
-        time.sleep(1)
+        time.sleep(50)
         #user looks for 4100 and clicks on the link
         body = self.webpage_text()
         self.assertIn('Charm ID',body)
