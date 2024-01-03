@@ -2,6 +2,7 @@
 {% block json_script %}
     <script type="text/javascript" src="/static/biospecimen/js/jquery-3.7.1.js"></script>
     <script src="/static/biospecimen/js/filter_charm_ids.js" async></script>
+    <script src="/static/biospecimen/js/modal_charm_id_check.js" async></script>
 {% endblock %}
 {% block header %}Charm ID:{% endblock %}
 {% block section %}
@@ -10,7 +11,26 @@
     </form>
     <ul class="list-group" id="myList">
         {% for charm_id in list_of_charm_ids %}
-            <li class="list-group-item"><a href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>{{ charm_id.charm_project_identifier }}</a></li>
+            <li class="list-group-item"><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-bs-charmid={{ charm_id.charm_project_identifier }}>{{ charm_id.charm_project_identifier }}</button></li>
+{#            <li class="list-group-item"><a data-bs-toggle="modal" data-target="#exampleModalCenter" href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>{{ charm_id.charm_project_identifier }}</a></li>#}
         {% endfor %}
     </ul>
+        <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+{#              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><a href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>Confirm</a></button>#}
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><a href={% url "biospecimen:list_of_bio_ids" 4100 %}>Confirm</a></button>
+              <button type="button" class="btn btn-primary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}

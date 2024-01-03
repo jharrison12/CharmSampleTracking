@@ -27,7 +27,7 @@ class Echo2BioPage(FunctionalTest):
         search_bar = self.browser.find_element(By.ID,"myInput")
         search_bar.clear()
         search_bar.send_keys('4100')
-
+        time.sleep(50)
         body = self.webpage_text()
 
         #test that your javascript works that hides ids
