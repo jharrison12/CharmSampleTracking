@@ -17,13 +17,28 @@ class Echo2BioPage(FunctionalTest):
         #self.browser.find_element(By.PARTIAL_LINK_TEXT,'Charm').click()
         #The above doesn't work in the ft, so you have to manually go there
         self.browser.get(f'{self.browser.current_url}biospecimen/charm_ids/')
-        time.sleep(50)
+
         #user looks for 4100 and clicks on the link
         body = self.webpage_text()
         self.assertIn('Charm ID',body)
         self.assertIn('4100',body)
+        self.assertIn('4702', body)
+
+        search_bar = self.browser.find_element(By.ID,"myInput")
+        search_bar.clear()
+        search_bar.send_keys('4100')
+
+        body = self.webpage_text()
+
+        #test that your javascript works that hides ids
+        self.assertNotIn('4702',body)
+
         self.browser.find_element(By.LINK_TEXT, '4100').click()
 
         #user sees a list or biospecimen for 4100
+        #user also sees trimesters listed
+
         body = self.webpage_text()
-        self.assertIn('12BL410001',body)
+        self.assertIn('Trimester 2',body)
+        self.assertIn('Blood 4100 (12BL4100)',body)
+

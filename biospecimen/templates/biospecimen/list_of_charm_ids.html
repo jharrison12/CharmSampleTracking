@@ -3,7 +3,7 @@
 {% block section %}
     <ul>
         {% for bio_id in list_of_biospecimen_ids %}
-            <li>{{ bio_id }}</li>
+            <li><a href={% url "biospecimen:caregiver_biospecimen_initial" caregiver.charm_project_identifier bio_id.id %}>{{ bio_id.collection_fk.get_collection_type_display }} {{ caregiver.charm_project_identifier }} ({{ bio_id.biospecimen_id }})</a></li>
         {% endfor %}
     </ul>
 {% endblock %}
