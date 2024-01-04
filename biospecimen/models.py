@@ -216,8 +216,20 @@ class Pregnancy(models.Model):
             models.UniqueConstraint(fields=['caregiver_fk', 'pregnancy_number'], name="pregnancy_unique_constraint")
         ]
 
-    def __string__(self):
+    def __str__(self):
         return f"pregnancy: {self.pregnancy_number}"
+
+class Perinatal(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
+    pregnancy_fk = models.OneToOneField(Pregnancy,on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['caregiver_fk', 'pregnancy_fk'], name="perinatal_unique_constraint")
+        ]
+
+    def __str__(self):
+        return f"birth event: {self.caregiver_fk.charm_project_identifier} {self.pregnancy_fk.pregnancy_number}"
 
 class Child(models.Model):
     caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT)
@@ -234,6 +246,7 @@ class CaregiverBiospecimen(models.Model):
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,blank=True,null=True)
     trimester_fk = models.ForeignKey(PregnancyTrimester,on_delete=models.PROTECT,blank=True,null=True)
     pregnancy_fk = models.ForeignKey(Pregnancy,on_delete=models.PROTECT,blank=True,null=True)
+    perinatal_fk = models.ForeignKey(Perinatal,on_delete=models.PROTECT,blank=True,null=True)
     age_category_fk = models.ForeignKey(AgeCategory,on_delete=models.PROTECT,blank=True,null=True)
     project_fk = models.ForeignKey(Project,on_delete=models.PROTECT,blank=False,null=False)
     biospecimen_id = models.CharField(max_length=10, null=False,blank=False,unique=True)

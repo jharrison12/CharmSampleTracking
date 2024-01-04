@@ -177,8 +177,16 @@ def charm_identifiers(request):
 def list_of_bio_ids(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     list_of_biospecimen_ids = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver)
+    trimester_2_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver,trimester_fk__trimester=PregnancyTrimester.TrimesterChoices.SECOND)
+    trimester_3_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver,trimester_fk__trimester=PregnancyTrimester.TrimesterChoices.THIRD)
+    perinatal_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver,perinatal_fk__isnull=False)
+    postnatal_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver,age_category_fk__isnull=False)
     return render(request, template_name='biospecimen/list_of_mother_bio_ids.html', context={'list_of_biospecimen_ids':list_of_biospecimen_ids,
-                                                                                      'caregiver':caregiver})
+                                                                                             'trimester_2_biospecimens':trimester_2_biospecimens,
+                                                                                             'trimester_3_biospecimens':trimester_3_biospecimens,
+                                                                                             'perinatal_biospecimens':perinatal_biospecimens,
+                                                                                             'postnatal_biospecimens':postnatal_biospecimens,
+                                                                                            'caregiver':caregiver})
 
 @login_required
 def caregiver_biospecimen(request,caregiver_charm_id):
