@@ -53,3 +53,8 @@ class Echo2BioPage(FunctionalTest):
         perinatal_list = self.browser.find_element(By.ID,'perinatal_list').text
 
         self.assertIn('Placenta 4100 (12PL410001)',perinatal_list)
+
+        postnatal_list = self.browser.find_element(By.ID,'postnatal_list').text
+
+        self.assertIn('Hair 4100 (12HA410001)',postnatal_list)
+

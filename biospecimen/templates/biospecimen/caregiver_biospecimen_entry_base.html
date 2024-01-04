@@ -3,7 +3,7 @@
 {% block section %}
     <div class="row" id="biospecimen_information">
     <div class="col-sm">ID: {{ caregiver_bio.biospecimen_id }}</div>
-    <div class="col-sm">Type: {{ caregiver_bio.collection_fk.collection_type_fk.collection_type }}</div>
+    <div class="col-sm">Type: {{ caregiver_bio.collection_fk.get_collection_type_display }}</div>
     {#  Not sure what the below object was in the SRO version of this device    #}
     <div class="col-sm">Log Status: {{ biospecimen_item }}</div>
     {% if caregiver_bio.trimester_fk %}<div class="col-sm">Trimester: {{ caregiver_bio.trimester_fk.get_trimester_display }}</div>{% endif %}
