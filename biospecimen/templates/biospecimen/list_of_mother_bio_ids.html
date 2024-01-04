@@ -1,6 +1,9 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Charm ID: {{ caregiver.charm_project_identifier }}{% endblock %}
 {% block section %}
+    <h2>Trimester 2:</h2>
+    <h2>Trimester 3:</h2>
+    <h2>Caregiver Collections for Child:</h2>
     <ul>
         {% for bio_id in list_of_biospecimen_ids %}
             <li><a href={% url "biospecimen:caregiver_biospecimen_initial" caregiver.charm_project_identifier bio_id.id %}>{{ bio_id.collection_fk.get_collection_type_display }} {{ caregiver.charm_project_identifier }} ({{ bio_id.biospecimen_id }})</a></li>

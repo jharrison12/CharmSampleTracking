@@ -39,7 +39,9 @@ class CaregiverEcho2BiospecimenHome(DatabaseSetup):
 
     def test_charm_identifiers_4100_pageshows_biospecimen_ids_template(self):
         response = self.client.get(f'/biospecimen/charm_ids/4100/')
-        self.assertTemplateUsed(response, 'biospecimen/list_of_charm_ids.html')
+        self.assertTemplateUsed(response, 'biospecimen/list_of_mother_bio_ids.html')
+
+
 
     #REDIRECTS
 

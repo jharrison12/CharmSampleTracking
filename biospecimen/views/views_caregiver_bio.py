@@ -177,7 +177,7 @@ def charm_identifiers(request):
 def list_of_bio_ids(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     list_of_biospecimen_ids = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver)
-    return render(request,template_name='biospecimen/list_of_charm_ids.html',context={'list_of_biospecimen_ids':list_of_biospecimen_ids,
+    return render(request, template_name='biospecimen/list_of_mother_bio_ids.html', context={'list_of_biospecimen_ids':list_of_biospecimen_ids,
                                                                                       'caregiver':caregiver})
 
 @login_required

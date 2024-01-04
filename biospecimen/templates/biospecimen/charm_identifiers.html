@@ -11,11 +11,11 @@
     </form>
     <ul class="list-group" id="myList">
         {% for charm_id in list_of_charm_ids %}
-            <li class="list-group-item"><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-bs-charmid={{ charm_id.charm_project_identifier }}>{{ charm_id.charm_project_identifier }}</button></li>
+            <li class="list-group-item"><button id='{{ charm_id.charm_project_identifier }}_button' type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-bs-charmid={{ charm_id.charm_project_identifier }}>{{ charm_id.charm_project_identifier }}</button></li>
 {#            <li class="list-group-item"><a data-bs-toggle="modal" data-target="#exampleModalCenter" href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>{{ charm_id.charm_project_identifier }}</a></li>#}
         {% endfor %}
     </ul>
-        <!-- Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">

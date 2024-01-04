@@ -27,18 +27,19 @@ class Echo2BioPage(FunctionalTest):
         search_bar = self.browser.find_element(By.ID,"myInput")
         search_bar.clear()
         search_bar.send_keys('4100')
-        time.sleep(50)
+
         body = self.webpage_text()
 
         #test that your javascript works that hides ids
         self.assertNotIn('4702',body)
 
-        self.browser.find_element(By.LINK_TEXT, '4100').click()
+        self.browser.find_element(By.ID, '4100_button').click()
+        #User sees modal asking for confirmation of bio id
+        self.browser.find_element(By.LINK_TEXT,'Confirm').click()
 
         #user sees a list or biospecimen for 4100
         #user also sees trimesters listed
-
         body = self.webpage_text()
         self.assertIn('Trimester 2',body)
-        self.assertIn('Blood 4100 (12BL4100)',body)
+        self.assertIn('Blood 4100 (12BL410001)',body)
 
