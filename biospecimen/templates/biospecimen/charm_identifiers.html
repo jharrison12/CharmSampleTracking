@@ -27,8 +27,11 @@
           </div>
           <div class="modal-footer">
 {#              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><a href={% url "biospecimen:list_of_bio_ids" charm_id.charm_project_identifier %}>Confirm</a></button>#}
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><a id="modal-link">Confirm</a></button>
-{#              <a id='modal-link' class="btn btn-secondary btn-lg" role="button" data-bs-dismiss="modal">Confirm</a>#}
+{#            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><a id="modal-link">Confirm</a></button>#}
+                {#     the below doesn't work it just refreshes the page instead of going to new page.  Although it looks correct in HTML         #}
+{#              <a type="button" id='modal-link' class="btn btn-secondary btn-lg" data-bs-dismiss="modal" data-bs-dismiss="modal">Confirm</a>#}
+{#              for some reaon the data-bs-dismiss property was causing the confirm button not work...#}
+              <a type="button" id='modal-link' class="btn btn-secondary btn-lg">Confirm</a>
               <button type="button" class="btn btn-primary">Cancel</button>
           </div>
         </div>
