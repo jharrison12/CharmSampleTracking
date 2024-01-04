@@ -32,9 +32,12 @@
 {#              <a type="button" id='modal-link' class="btn btn-secondary btn-lg" data-bs-dismiss="modal" data-bs-dismiss="modal">Confirm</a>#}
 {#              for some reaon the data-bs-dismiss property was causing the confirm button not work...#}
               <a type="button" id='modal-link' class="btn btn-secondary btn-lg">Confirm</a>
-              <button type="button" class="btn btn-primary">Cancel</button>
+              <button type="button" class="btn btn-primary btn-lg" data-bs-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
     </div>
+    {#  Below is needed to reload javascript when user hits back button (which I imagine will happen)  #}
+    {#  https://stackoverflow.com/questions/9046184/reload-the-site-when-reached-via-browsers-back-button  #}
+    <input type="hidden" id="refresh" value="no">
 {% endblock %}

@@ -22,12 +22,12 @@ if (exampleModal) {
     modalLink.setAttribute('href',`/biospecimen/charm_ids/${recipient}/`)
     console.log(modalLink)
 
-
-
   })
 }
 
-    //
-    // const modalLink = exampleModal.getElementsByTagName('a')
-  // modalLink.setAttribute('href',`/biospecimen/charm_ids/${recipient}/`)
-  //modalLink.href = `{% url "biospecimen:list_of_bio_ids" ${recipient} %}`
+// Reload javascript if user hits back button.
+$(document).ready(function(e) {
+    var $input = $('#refresh');
+
+    $input.val() == 'yes' ? location.reload(true) : $input.val('yes');
+});
