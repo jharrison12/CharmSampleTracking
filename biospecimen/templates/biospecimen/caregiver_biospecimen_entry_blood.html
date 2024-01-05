@@ -11,28 +11,28 @@
             {{ collected_form.non_field_errors }}
               <div class="form-group">
                 {{ collected_form.collected_date_time.errors }}
-                <label for="{{ collected_form.collected_date_time.id_for_label }}">Collected Date Time:</label>
+                <label for="{{ collected_form.collected_date_time.id_for_label }}" class="form-label">Collected Date Time:</label>
                 {{ collected_form.collected_date_time }}
               </div>
               <div class="form-group">
                 {{ collected_form.processed_date_time.errors }}
-                <label for="{{ collected_form.processed_date_time.id_for_label }}">Processed Date Time:</label>
+                <label for="{{ collected_form.processed_date_time.id_for_label }}" class="form-label">Processed Date Time:</label>
                 {{ collected_form.processed_date_time }}
               </div>
               <div class="form-group">
                 {{ collected_form.stored_date_time.errors }}
-                <label for="{{ collected_form.stored_date_time.id_for_label }}">Stored Date Time:</label>
+                <label for="{{ collected_form.stored_date_time.id_for_label }}" class="form-label">Stored Date Time:</label>
                 {{ collected_form.stored_date_time }}
               </div>
               <div class="row g-3">
-                  <div class="col-auto border border-primary">
+                  <div class="col-auto">
                     {{ collected_form.whole_blood.errors }}
-                    <label for="{{ collected_form.whole_blood.id_for_label }}">Whole Blood:</label>
+                    <label for="{{ collected_form.whole_blood.id_for_label }}" class="col-form-label">Whole Blood:</label>
                     {{ collected_form.whole_blood }}
                   </div>
-                  <div class="col-auto border border-primary">
+                  <div class="col-auto">
                     {{ collected_form.whole_blood_number_of_tubes.errors }}
-                    <label for="{{ collected_form.whole_blood_number_of_tubes.id_for_label }}">Number of Tubes:</label>
+                    <label for="{{ collected_form.whole_blood_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
                     {{ collected_form.whole_blood_number_of_tubes }}
                   </div>
               </div>
