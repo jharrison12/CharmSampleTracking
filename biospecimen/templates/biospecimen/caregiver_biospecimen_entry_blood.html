@@ -30,10 +30,58 @@
                     <label for="{{ collected_form.whole_blood.id_for_label }}" class="col-form-label">Whole Blood:</label>
                     {{ collected_form.whole_blood }}
                   </div>
-                  <div class="col-auto">
+                  <div class="col-auto" id="whole_blood_number_of_tubes_div">
                     {{ collected_form.whole_blood_number_of_tubes.errors }}
                     <label for="{{ collected_form.whole_blood_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
                     {{ collected_form.whole_blood_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ collected_form.plasma.errors }}
+                    <label for="{{ collected_form.plasma.id_for_label }}" class="col-form-label">Plasma:</label>
+                    {{ collected_form.plasma }}
+                  </div>
+                  <div class="col-auto">
+                    {{ collected_form.plasma_number_of_tubes.errors }}
+                    <label for="{{ collected_form.plasma_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ collected_form.plasma_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ collected_form.buffy_coat.errors }}
+                    <label for="{{ collected_form.buffy_coat.id_for_label }}" class="col-form-label">Buffy Coat:</label>
+                    {{ collected_form.buffy_coat }}
+                  </div>
+                  <div class="col-auto">
+                    {{ collected_form.buffy_coat_number_of_tubes.errors }}
+                    <label for="{{ collected_form.buffy_coat_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ collected_form.buffy_coat_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ collected_form.red_blood_cells.errors }}
+                    <label for="{{ collected_form.red_blood_cells.id_for_label }}" class="col-form-label">Red Blood Cells:</label>
+                    {{ collected_form.red_blood_cells }}
+                  </div>
+                  <div class="col-auto">
+                    {{ collected_form.red_blood_cells_number_of_tubes.errors }}
+                    <label for="{{ collected_form.red_blood_cells_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ collected_form.red_blood_cells_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ collected_form.serum.errors }}
+                    <label for="{{ collected_form.serum.id_for_label }}" class="col-form-label">Serum:</label>
+                    {{ collected_form.serum }}
+                  </div>
+                  <div class="col-auto">
+                    {{ collected_form.serum_number_of_tubes.errors }}
+                    <label for="{{ collected_form.serum_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ collected_form.serum_number_of_tubes }}
                   </div>
               </div>
           <input type="submit" value="Submit" />
@@ -51,7 +99,7 @@
                 <div>Processed Date Time:{{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>
                 <div>Stored Date Time:{{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>
                 <div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>
-                <div>Logged By:BLANK</div>
+                <div>Logged By:{{ caregiver_bio.status_fk.collected_fk.logged_by }}</div>
                 {% for blood in caregiver_bloods %}
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>

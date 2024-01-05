@@ -574,6 +574,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 caregiver_bio.status_fk.collected_fk.collected_date_time = form.cleaned_data['collected_date_time']
                 caregiver_bio.status_fk.collected_fk.processed_date_time = form.cleaned_data['processed_date_time']
                 caregiver_bio.status_fk.collected_fk.stored_date_time = form.cleaned_data['stored_date_time']
+                caregiver_bio.status_fk.collected_fk.logged_by = request.user
                 caregiver_bio.status_fk.collected_fk.save()
                 caregiver_bio.status_fk.save()
                 caregiver_bio.save()

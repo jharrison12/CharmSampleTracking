@@ -25,7 +25,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
-
+        time.sleep(500)
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: 4100', [item.text for item in header_text])
