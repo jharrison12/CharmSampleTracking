@@ -1,11 +1,41 @@
 {% extends "biospecimen/caregiver_biospecimen_entry_base.html" %}
+{% block json_script %}
+    <script src="/static/biospecimen/js/blood_component.js" async></script>
+{% endblock %}
 {% block bio_logic %}
     {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
         <div id="collected_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
               <h2>Collected Form</h2>
-            {{ collected_form.as_p }}
+            {{ collected_form.non_field_errors }}
+              <div class="form-group">
+                {{ collected_form.collected_date_time.errors }}
+                <label for="{{ collected_form.collected_date_time.id_for_label }}">Collected Date Time:</label>
+                {{ collected_form.collected_date_time }}
+              </div>
+              <div class="form-group">
+                {{ collected_form.processed_date_time.errors }}
+                <label for="{{ collected_form.processed_date_time.id_for_label }}">Processed Date Time:</label>
+                {{ collected_form.processed_date_time }}
+              </div>
+              <div class="form-group">
+                {{ collected_form.stored_date_time.errors }}
+                <label for="{{ collected_form.stored_date_time.id_for_label }}">Stored Date Time:</label>
+                {{ collected_form.stored_date_time }}
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto border border-primary">
+                    {{ collected_form.whole_blood.errors }}
+                    <label for="{{ collected_form.whole_blood.id_for_label }}">Whole Blood:</label>
+                    {{ collected_form.whole_blood }}
+                  </div>
+                  <div class="col-auto border border-primary">
+                    {{ collected_form.whole_blood_number_of_tubes.errors }}
+                    <label for="{{ collected_form.whole_blood_number_of_tubes.id_for_label }}">Number of Tubes:</label>
+                    {{ collected_form.whole_blood_number_of_tubes }}
+                  </div>
+              </div>
           <input type="submit" value="Submit" />
           </form>
         </div>
@@ -23,7 +53,7 @@
                 <div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>
                 <div>Logged By:BLANK</div>
                 {% for blood in caregiver_bloods %}
-                    <div class="form-check">
+                    <div class="form-check form-check-inline">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
                       <label class="form-check-label" for="flexCheckCheckedDisabled">
                         {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}
@@ -53,7 +83,7 @@
             <div class="col-8">
                 <div>Incentive Date: {{ caregiver_bio.incentive_fk.incentive_date }}</div>
                 {% for blood in caregiver_bloods %}
-                    <div class="form-check">
+                    <div class="form-check form-check-inline">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
                       <label class="form-check-label" for="flexCheckCheckedDisabled">
                           {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}
@@ -70,7 +100,7 @@
               <h2>Shipped to WSU Form</h2>
             {{ shipped_wsu_form.as_p }}
               {% for blood in caregiver_bloods %}
-                    <div class="form-check">
+                    <div class="form-check form-check-inline">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
                       <label class="form-check-label" for="flexCheckCheckedDisabled">
                           {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}
