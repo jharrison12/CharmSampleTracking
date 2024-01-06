@@ -21,6 +21,22 @@ $('#id_blood_form-buffy_coat').click(function() {
 $('#id_blood_form-red_blood_cells').click(function() {
   $('#red_blood_cells_number_of_tubes_div')[this.checked ? "show" : "hide"]();
 });
+$('#id_shipped_to_wsu_form-whole_blood').click(function() {
+  $('#whole_blood_number_of_tubes_div')[this.checked ? "show" : "hide"]();
+});
+$('#id_shipped_to_wsu_form-serum').click(function() {
+  $('#serum_number_of_tubes_div')[this.checked ? "show" : "hide"]();
+});
+$('#id_shipped_to_wsu_form-plasma').click(function() {
+  $('#plasma_number_of_tubes_div')[this.checked ? "show" : "hide"]();
+});
+$('#id_shipped_to_wsu_form-buffy_coat').click(function() {
+  $('#buffy_coat_number_of_tubes_div')[this.checked ? "show" : "hide"]();
+});
+$('#id_shipped_to_wsu_form-red_blood_cells').click(function() {
+  $('#red_blood_cells_number_of_tubes_div')[this.checked ? "show" : "hide"]();
+});
+
 
 
 // Reload javascript if user hits back button.

@@ -115,8 +115,8 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         courier.send_keys('FedEx')
 
         #User sees a bunch of check boxes without number of tubes
-        body = self.browser.find_element(By.ID, 'body').text
-        time.sleep(5)
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        time.sleep(50)
         self.assertNotIn('Number of Tubes:', body)
         self.assertIn('Plasma', body)
         self.assertIn('Whole Blood', body)
