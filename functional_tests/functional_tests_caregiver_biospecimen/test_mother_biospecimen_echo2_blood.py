@@ -25,7 +25,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
-        time.sleep(500)
+
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
         self.assertIn('Charm ID: 4100', [item.text for item in header_text])
@@ -56,6 +56,17 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
 
         #user sees a ton of checkboxes for all the bloods possible
+        #user does not see whole blood number of tubes until whole blood is checked
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+
+        self.assertNotIn('Number of Tubes:',body)
+        self.assertIn('Plasma',body)
+        self.assertIn('Whole Blood',body)
+        self.assertIn('Serum',body)
+        self.assertIn('Red Blood Cells',body)
+        self.assertIn('Buffy Coat',body)
+
 
         whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form-whole_blood")
         whole_blood_checkbox.click()
@@ -68,6 +79,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Whole Blood Number of Tubes: 3', body)
+        self.assertNotIn('Plasma Number of Tubes', body)
 
         #user sees incentive form
 
@@ -85,6 +97,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Incentive Date: Sept. 3, 2023', body)
 
         #user submits shipped to WSu form
+
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
         shipped_date_time.clear()
         shipped_date_time.send_keys('2023-09-27 12:52:26')
@@ -100,6 +113,25 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
         courier.send_keys('FedEx')
+
+        #User sees a bunch of check boxes without number of tubes
+        body = self.browser.find_element(By.ID, 'body').text
+        time.sleep(5)
+        self.assertNotIn('Number of Tubes:', body)
+        self.assertIn('Plasma', body)
+        self.assertIn('Whole Blood', body)
+        self.assertIn('Serum', body)
+        self.assertIn('Red Blood Cells', body)
+        self.assertIn('Buffy Coat', body)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form-whole_blood")
+        whole_blood_checkbox.click()
+
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_blood_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(3)
+
+        ##TODO implement code check that tubes match number of tubes previously entered
+        ##TODO implement code that sends email or alerts staff if this happens?
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
         submit.click()
