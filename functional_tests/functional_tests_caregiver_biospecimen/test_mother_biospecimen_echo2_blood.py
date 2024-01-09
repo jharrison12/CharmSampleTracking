@@ -105,9 +105,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
         shipped_date_time.send_keys('777777')
 
-        number_of_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-number_of_tubes")
-        number_of_tubes.send_keys(5)
-
         logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
         logged_date_time.send_keys('2023-09-27 12:52:26')
 
@@ -115,20 +112,22 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         courier.send_keys('FedEx')
 
         #User sees a bunch of check boxes without number of tubes
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        time.sleep(50)
-        self.assertNotIn('Number of Tubes:', body)
-        self.assertIn('Plasma', body)
-        self.assertIn('Whole Blood', body)
-        self.assertIn('Serum', body)
-        self.assertIn('Red Blood Cells', body)
-        self.assertIn('Buffy Coat', body)
+        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
 
-        whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form-whole_blood")
+        self.assertNotIn('Number of Tubes:', shipped_div)
+        self.assertIn('Plasma', shipped_div)
+        self.assertIn('Whole Blood', shipped_div)
+        self.assertIn('Serum', shipped_div)
+        self.assertIn('Red Blood Cells', shipped_div)
+        self.assertIn('Buffy Coat', shipped_div)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood")
         whole_blood_checkbox.click()
 
-        whole_blood_tubes = self.browser.find_element(By.ID,"id_blood_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(3)
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(5)
+
+        self.assertIn('Number of Tubes:', shipped_div)
 
         ##TODO implement code check that tubes match number of tubes previously entered
         ##TODO implement code that sends email or alerts staff if this happens?
