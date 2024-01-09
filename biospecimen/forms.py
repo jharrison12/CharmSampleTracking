@@ -136,6 +136,12 @@ class ShippedtoWSUForm(forms.Form):
     number_of_tubes = forms.IntegerField()
     logged_date_time = forms.DateTimeField()
     courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
+
+class ShippedtoWSUFormBlood(forms.Form):
+    shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
+    tracking_number = forms.CharField()
+    logged_date_time = forms.DateTimeField()
+    courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
     whole_blood = forms.BooleanField(required=False)
     whole_blood_number_of_tubes = forms.IntegerField(required=False)
     plasma = forms.BooleanField(required=False)

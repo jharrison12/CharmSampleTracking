@@ -5,7 +5,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, C
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
-ReceivedatWSUForm,InitialBioFormPeriNatal,CollectedBiospecimenPlacentaForm,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm
+ReceivedatWSUForm,InitialBioFormPeriNatal,CollectedBiospecimenPlacentaForm,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -76,7 +76,7 @@ def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,pro
             logging.debug(f"Everything created and saved {biospecimen_object}")
 
 
-def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in):
+def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in,collection_type=None):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     logging.debug(f"did update shipped wsu function for {caregiver_bio} find status {status_bio} ")
@@ -90,7 +90,8 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in):
         logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
     shipped_to_wsu.shipped_date_time = bound_form.cleaned_data['shipped_date_and_time']
     shipped_to_wsu.tracking_number = bound_form.cleaned_data['tracking_number']
-    shipped_to_wsu.number_of_tubes = bound_form.cleaned_data['number_of_tubes']
+    if collection_type not in BLOOD_TYPES:
+        shipped_to_wsu.number_of_tubes = bound_form.cleaned_data['number_of_tubes']
     shipped_to_wsu.courier = bound_form.cleaned_data['courier']
     shipped_to_wsu.logged_date_time = bound_form.cleaned_data['logged_date_time']
     shipped_to_wsu.shipped_by = user_logged_in
@@ -484,7 +485,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         incentive_form = IncentiveForm(prefix='incentive_form')
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
             and not (caregiver_bio.status_fk.shipped_wsu_fk):
-        shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
+        shipped_wsu_form = ShippedtoWSUFormBlood(prefix="shipped_to_wsu_form")
     elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and received_at_wsu_item.filter(received_date_time__isnull=True):
         received_wsu_form = ReceivedatWSUForm(prefix="received_at_wsu_form")
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
@@ -665,11 +666,11 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     if request.method == "POST":
         if collection_type in BLOOD_TYPES:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
-            form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.debug(f"form is valid {form.is_valid()}  form errors {form.errors}")
-            logging.debug(f"caregiver bloods {caregiver_bloods}")
+            form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form')
+            logging.critical(f"form is valid {form.is_valid()}  form errors {form.errors}")
+            logging.critical(f"caregiver bloods {caregiver_bloods}")
             if form.is_valid():
-                update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user)
+                update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user,collection_type=collection_type)
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in PERINATAL:

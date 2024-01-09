@@ -127,6 +127,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
         whole_blood_tubes.send_keys(5)
 
+        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
         self.assertIn('Number of Tubes:', shipped_div)
 
         ##TODO implement code check that tubes match number of tubes previously entered
