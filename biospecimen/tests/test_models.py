@@ -159,3 +159,11 @@ class ComponentBioModelTest(DatabaseSetup):
         component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio, caregiver_biospecimen_fk__trimester_fk__trimester='S',component_type='S')
         self.assertEqual(caregiver_bio,component_test.caregiver_biospecimen_fk)
 
+    def test_component_links_to_collected(self):
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
+                                               caregiver_biospecimen_fk__trimester_fk__trimester='S',
+                                               component_type='S')
+        self.assertEqual(component_test.collected_fk, caregiver_bio.status_fk.collected_fk)

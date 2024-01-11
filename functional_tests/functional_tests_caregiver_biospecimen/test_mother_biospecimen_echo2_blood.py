@@ -97,7 +97,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Incentive Date: Sept. 3, 2023', body)
 
         #user submits shipped to WSu form
-
+        time.sleep(50)
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
         shipped_date_time.clear()
         shipped_date_time.send_keys('2023-09-27 12:52:26')

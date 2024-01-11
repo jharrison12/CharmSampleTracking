@@ -277,6 +277,11 @@ class ChildBiospecimen(models.Model):
 
 class Component(models.Model):
     caregiver_biospecimen_fk = models.ForeignKey(CaregiverBiospecimen,on_delete=models.PROTECT)
+    collected_fk = models.ForeignKey(Collected,on_delete=models.PROTECT,null=True,blank=True)
+    shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
+    received_wsu_fk = models.ForeignKey(ReceivedWSU,on_delete=models.PROTECT,null=True,blank=True)
+    shipped_echo_fk = models.ForeignKey(ShippedECHO,on_delete=models.PROTECT,null=True,blank=True)
+
     class ComponentType(models.TextChoices):
         SERUM = 'S',_('Serum')
         PLASMA = 'P',_('Plasma')

@@ -8,7 +8,7 @@ from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBio
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm, \
     ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
-    CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm,ShippedtoMSUForm,CollectedBiospecimenHairSalivaForm
+    CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm,ShippedtoMSUForm,CollectedBiospecimenHairSalivaForm,ShippedtoWSUFormBlood
 from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -764,7 +764,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_incentive_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(response.content.decode())
-        self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
+        self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUFormBlood)
 
     def test_echo2_bio_page_shows_received_at_wsu_form_if_shipped_at_wsu_not_null(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
