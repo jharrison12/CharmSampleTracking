@@ -10,6 +10,12 @@ from django.core.exceptions import ValidationError
 
 class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
+    def blood_received_at_wsu(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/received_wsu/post/',
+                                    data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+
+        return response
+
     def test_biospecimen_urine_links_to_two_caregivers(self):
         urine_samples = CaregiverBiospecimen.objects.filter(collection_fk__collection_type='U')
         self.assertEqual(urine_samples.count(),6)
@@ -152,7 +158,55 @@ class ReceivedWSUModelTest(DatabaseSetup):
 
 class ComponentBioModelTest(DatabaseSetup):
 
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester,
+                                                        project_fk__project_name=project)
+        return caregiverbio.pk
+
+    def blood_collected_form_send(self, primary_key, type, false_or_true):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/', data={f'blood_form-{type}': false_or_true,
+                                                                                              f'blood_form-{type}_number_of_tubes': 5,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               })
+        return response
+
+    def blood_initial_send_form(self, primary_key,c_n_or_x):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/initial/post/',
+                                    data={"initial_form-collected_not_collected": c_n_or_x,
+                                          })
+        return response
+
+    def blood_incentive_form_send(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/incentive/post/',
+                                    data={"incentive_form-incentive_date": '2023-09-03',
+                                          })
+
+        return response
+
+    def blood_shipped_to_wsu(self,primary_key):
+        response =  self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_wsu/post/',
+                                    data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-tracking_number':555,
+                                          'shipped_to_wsu_form-number_of_tubes':5,
+                                          'shipped_to_wsu_form-logged_date_time': timezone.datetime(
+                                                  2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-courier': 'F'})
+
+        return response
+
     def test_component_links_to_blood_bio(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
         blood = Collection.objects.get(collection_type='B')
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
@@ -160,10 +214,18 @@ class ComponentBioModelTest(DatabaseSetup):
         self.assertEqual(caregiver_bio,component_test.caregiver_biospecimen_fk)
 
     def test_component_links_to_collected(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
         blood = Collection.objects.get(collection_type='B')
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
         component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
                                                caregiver_biospecimen_fk__trimester_fk__trimester='S',
-                                               component_type='S')
+                                               component_type=Component.ComponentType.SERUM)
+        test_status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
+        component_test.collected_fk=test_status.collected_fk
+        component_test.save()
+        logging.critical(component_test)
+        logging.critical(Status.objects.get(caregiverbiospecimen=caregiver_bio))
         self.assertEqual(component_test.collected_fk, caregiver_bio.status_fk.collected_fk)

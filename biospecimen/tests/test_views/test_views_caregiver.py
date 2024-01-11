@@ -685,6 +685,35 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         logging.debug(response.content.decode())
         self.assertContains(response, '<input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>')
 
+    def test_blood_collected_creates_row_in_component_that_links_to_blood_collected(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
+                                               caregiver_biospecimen_fk__trimester_fk__trimester='S',
+                                               component_type=Component.ComponentType.SERUM)
+        logging.critical(component_test)
+        self.assertEqual(component_test.collected_fk, caregiver_bio.status_fk.collected_fk)
+
+    def test_blood_collected_creates_row_in_component_that_links_to_blood_shipped_wsu(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key)
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
+                                               caregiver_biospecimen_fk__trimester_fk__trimester='S',
+                                               component_type=Component.ComponentType.SERUM)
+        logging.critical(component_test)
+        self.assertEqual(component_test.shipped_wsu_fk, caregiver_bio.status_fk.shipped_wsu_fk)
+
+
     # Redirection tests
 
     def test_echo2_bio_blood_form_redirects_after_post(self):
