@@ -97,7 +97,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Incentive Date: Sept. 3, 2023', body)
 
         #user submits shipped to WSu form
-        time.sleep(50)
+
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
         shipped_date_time.clear()
         shipped_date_time.send_keys('2023-09-27 12:52:26')
@@ -125,7 +125,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         whole_blood_checkbox.click()
 
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(5)
+        whole_blood_tubes.send_keys(3)
 
         shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
         self.assertIn('Number of Tubes:', shipped_div)
@@ -144,11 +144,28 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn("Blood",needed_div)
 
         #User sees received date time at
-        #user submits shipped to WSu form
+        #user submits received at WSU form
         received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
         received_date_time.clear()
         received_date_time.send_keys('2023-09-27 12:52:26')
 
+        #User sees a bunch of check boxes without number of tubes
+        received_div = self.browser.find_element(By.ID, 'received_at_wsu_information_form').text
+        whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood_number_of_tubes").text
+        time.sleep(2)
+        self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
+        self.assertIn('Plasma', received_div)
+        self.assertIn('Whole Blood', received_div)
+        self.assertIn('Serum', received_div)
+        self.assertIn('Red Blood Cells', received_div)
+        self.assertIn('Buffy Coat', received_div)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood")
+        whole_blood_checkbox.click()
+
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(3)
+        time.sleep(3)
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
         submit.click()
 

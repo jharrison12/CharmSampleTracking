@@ -153,6 +153,19 @@ class ShippedtoWSUFormBlood(forms.Form):
     serum = forms.BooleanField(required=False)
     serum_number_of_tubes = forms.IntegerField(required=False)
 
+class ReceivedatWSUBloodForm(forms.Form):
+    received_date_time = forms.DateTimeField(initial=timezone.now())
+    whole_blood = forms.BooleanField(required=False)
+    whole_blood_number_of_tubes = forms.IntegerField(required=False)
+    plasma = forms.BooleanField(required=False)
+    plasma_number_of_tubes = forms.IntegerField(required=False)
+    buffy_coat = forms.BooleanField(required=False)
+    buffy_coat_number_of_tubes = forms.IntegerField(required=False)
+    red_blood_cells = forms.BooleanField(required=False)
+    red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
+    serum = forms.BooleanField(required=False)
+    serum_number_of_tubes = forms.IntegerField(required=False)
+
 class ShippedtoWSUFormPlacenta(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now())
     tracking_number = forms.CharField()

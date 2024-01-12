@@ -258,8 +258,73 @@
         <div id="received_at_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_received_wsu_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
-              <h2>Recieved at WSU Form</h2>
-            {{ received_wsu_form.as_p }}
+              <h2>Received at WSU Form</h2>
+              {{ received_wsu_form.non_field_errors }}
+              <div class="form-group">
+                {{ received_wsu_form.shipped_date_and_time.errors }}
+                <label for="{{ received_wsu_form.shipped_date_and_time.id_for_label }}" class="form-label">Received Date Time:</label>
+                {{ received_wsu_form.received_date_time }}
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ received_wsu_form.whole_blood.errors }}
+                    <label for="{{ received_wsu_form.whole_blood.id_for_label }}" class="col-form-label">Whole Blood:</label>
+                    {{ received_wsu_form.whole_blood }}
+                  </div>
+                  <div class="col-auto" id="whole_blood_number_of_tubes_div">
+                    {{ received_wsu_form.whole_blood_number_of_tubes.errors }}
+                    <label for="{{ received_wsu_form.whole_blood_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ received_wsu_form.whole_blood_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ received_wsu_form.plasma.errors }}
+                    <label for="{{ received_wsu_form.plasma.id_for_label }}" class="col-form-label">Plasma:</label>
+                    {{ received_wsu_form.plasma }}
+                  </div>
+                  <div class="col-auto" id="plasma_number_of_tubes_div">
+                    {{ received_wsu_form.plasma_number_of_tubes.errors }}
+                    <label for="{{ received_wsu_form.plasma_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ received_wsu_form.plasma_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ received_wsu_form.buffy_coat.errors }}
+                    <label for="{{ received_wsu_form.buffy_coat.id_for_label }}" class="col-form-label">Buffy Coat:</label>
+                    {{ received_wsu_form.buffy_coat }}
+                  </div>
+                  <div class="col-auto" id="buffy_coat_number_of_tubes_div">
+                    {{ received_wsu_form.buffy_coat_number_of_tubes.errors }}
+                    <label for="{{ received_wsu_form.buffy_coat_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ received_wsu_form.buffy_coat_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ received_wsu_form.red_blood_cells.errors }}
+                    <label for="{{ received_wsu_form.red_blood_cells.id_for_label }}" class="col-form-label">Red Blood Cells:</label>
+                    {{ received_wsu_form.red_blood_cells }}
+                  </div>
+                  <div class="col-auto" id="red_blood_cells_number_of_tubes_div">
+                    {{ received_wsu_form.red_blood_cells_number_of_tubes.errors }}
+                    <label for="{{ received_wsu_form.red_blood_cells_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ received_wsu_form.red_blood_cells_number_of_tubes }}
+                  </div>
+              </div>
+              <div class="row g-3">
+                  <div class="col-auto">
+                    {{ received_wsu_form.serum.errors }}
+                    <label for="{{ received_wsu_form.serum.id_for_label }}" class="col-form-label">Serum:</label>
+                    {{ received_wsu_form.serum }}
+                  </div>
+                  <div class="col-auto" id="serum_number_of_tubes_div">
+                    {{ received_wsu_form.serum_number_of_tubes.errors }}
+                    <label for="{{ received_wsu_form.serum_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
+                    {{ received_wsu_form.serum_number_of_tubes }}
+                  </div>
+              </div>
               {% for blood in caregiver_bloods %}
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
