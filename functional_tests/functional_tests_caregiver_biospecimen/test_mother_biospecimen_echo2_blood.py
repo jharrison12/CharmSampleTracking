@@ -105,9 +105,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
         shipped_date_time.send_keys('777777')
 
-        number_of_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-number_of_tubes")
-        number_of_tubes.send_keys(5)
-
         logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
         logged_date_time.send_keys('2023-09-27 12:52:26')
 
@@ -115,20 +112,23 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         courier.send_keys('FedEx')
 
         #User sees a bunch of check boxes without number of tubes
-        body = self.browser.find_element(By.ID, 'body').text
-        time.sleep(5)
-        self.assertNotIn('Number of Tubes:', body)
-        self.assertIn('Plasma', body)
-        self.assertIn('Whole Blood', body)
-        self.assertIn('Serum', body)
-        self.assertIn('Red Blood Cells', body)
-        self.assertIn('Buffy Coat', body)
+        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
 
-        whole_blood_checkbox = self.browser.find_element(By.ID,"id_blood_form-whole_blood")
+        self.assertNotIn('Number of Tubes:', shipped_div)
+        self.assertIn('Plasma', shipped_div)
+        self.assertIn('Whole Blood', shipped_div)
+        self.assertIn('Serum', shipped_div)
+        self.assertIn('Red Blood Cells', shipped_div)
+        self.assertIn('Buffy Coat', shipped_div)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood")
         whole_blood_checkbox.click()
 
-        whole_blood_tubes = self.browser.find_element(By.ID,"id_blood_form-whole_blood_number_of_tubes")
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
         whole_blood_tubes.send_keys(3)
+
+        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
+        self.assertIn('Number of Tubes:', shipped_div)
 
         ##TODO implement code check that tubes match number of tubes previously entered
         ##TODO implement code that sends email or alerts staff if this happens?
@@ -144,13 +144,32 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn("Blood",needed_div)
 
         #User sees received date time at
-        #user submits shipped to WSu form
+        #user submits received at WSU form
         received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
         received_date_time.clear()
         received_date_time.send_keys('2023-09-27 12:52:26')
 
+        #User sees a bunch of check boxes without number of tubes
+        received_div = self.browser.find_element(By.ID, 'received_at_wsu_information_form').text
+        whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood_number_of_tubes").text
+
+        self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
+        self.assertIn('Plasma', received_div)
+        self.assertIn('Whole Blood', received_div)
+        self.assertIn('Serum', received_div)
+        self.assertIn('Red Blood Cells', received_div)
+        self.assertIn('Buffy Coat', received_div)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood")
+        whole_blood_checkbox.click()
+
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(3)
+
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
-        submit.click()
+        self.browser.execute_script("arguments[0].scrollIntoView();",submit)
+        self.browser.execute_script("arguments[0].click();",submit)
+        #submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
@@ -161,8 +180,23 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         shipped_echo_date_time.clear()
         shipped_echo_date_time.send_keys('2023-09-27 12:52:26')
 
+        whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes").text
+        self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
+        self.assertIn('Plasma', received_div)
+        self.assertIn('Whole Blood', received_div)
+        self.assertIn('Serum', received_div)
+        self.assertIn('Red Blood Cells', received_div)
+        self.assertIn('Buffy Coat', received_div)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood")
+        whole_blood_checkbox.click()
+
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(3)
+
         submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
-        submit.click()
+        self.browser.execute_script("arguments[0].scrollIntoView();", submit)
+        self.browser.execute_script("arguments[0].click();", submit)
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Shipped Date Time: Sept. 27, 2023, 12:52 p.m.', body)

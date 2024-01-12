@@ -8,7 +8,7 @@ from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBio
     ShippedBiospecimenForm, ReceivedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
     ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm, \
     ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
-    CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm,ShippedtoMSUForm,CollectedBiospecimenHairSalivaForm
+    CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm,ShippedtoMSUForm,CollectedBiospecimenHairSalivaForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm
 from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -596,16 +596,26 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         new_status.save()
         return caregiver_bio.pk
 
-    def blood_collected_form_send(self, primary_key, type, false_or_true):
-        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/', data={f'blood_form-{type}': false_or_true,
-                                                                                              f'blood_form-{type}_number_of_tubes': 5,
+    def blood_collected_form_send(self, primary_key, type_of_blood, false_or_true):
+        if false_or_true:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/', data={f'blood_form-{type_of_blood}': false_or_true,
+                                                                                              f'blood_form-{type_of_blood}_number_of_tubes': 5,
                                                                                                'blood_form-collected_date_time': timezone.datetime(
                                                                                                    2023, 5, 5, 5, 5, 5),
                                                                                                'blood_form-processed_date_time': timezone.datetime(
                                                                                                    2023, 5, 5, 5, 5, 5),
                                                                                                'blood_form-stored_date_time': timezone.datetime(
                                                                                                    2023, 5, 5, 5, 5, 5),
-                                                                                               'blood_form-number_of_tubes': 5})
+                                                                                               })
+        else:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/', data={f'blood_form-{type_of_blood}': false_or_true,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               })
         return response
 
     def blood_initial_send_form(self, primary_key,c_n_or_x):
@@ -621,22 +631,43 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         return response
 
-    def blood_shipped_to_wsu(self,primary_key):
+    def blood_shipped_to_wsu(self,primary_key, false_or_true,type_of_blood):
         response =  self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_wsu/post/',
                                     data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
                                           'shipped_to_wsu_form-tracking_number':555,
-                                          'shipped_to_wsu_form-number_of_tubes':5,
+                                          f'shipped_to_wsu_form-{type_of_blood}': false_or_true,
+                                          f'shipped_to_wsu_form-{type_of_blood}_number_of_tubes': 5,
                                           'shipped_to_wsu_form-logged_date_time': timezone.datetime(
                                                   2023, 12, 5, 5, 5, 5),
                                           'shipped_to_wsu_form-courier': 'F'})
 
         return response
 
-    def blood_received_at_wsu(self,primary_key):
-        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/received_wsu/post/',
-                                    data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+    def blood_received_at_wsu(self,primary_key,type_of_blood,false_or_true):
+        if false_or_true:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/received_wsu/post/',
+                                        data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                              f'received_at_wsu_form-{type_of_blood}':type_of_blood,
+                                              f'received_at_wsu_form-{type_of_blood}_number_of_tubes': 5})
+        else:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/received_wsu/post/',
+                                        data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
 
         return response
+
+    def shipped_to_echo_send_form(self,primary_key,type_of_blood, false_or_true):
+        if false_or_true:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_echo/post/',
+                         data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5),
+                               f'shipped_to_echo_form-{type_of_blood}':type_of_blood,
+                               f'shipped_to_echo_form-{type_of_blood}_number_of_tubes':5})
+        else:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_echo/post/',
+                         data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
+
+
+        return response
+
 
     #Template Tests
 
@@ -680,10 +711,71 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key,'plasma',false_or_true=True)
         self.blood_incentive_form_send(primary_key)
-        response = self.blood_shipped_to_wsu(primary_key)
+        response = self.blood_shipped_to_wsu(primary_key,type_of_blood='plasma',false_or_true=True)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(response.content.decode())
         self.assertContains(response, '<input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>')
+
+    def test_blood_collected_creates_row_in_component_that_links_to_blood_collected(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
+                                               caregiver_biospecimen_fk__trimester_fk__trimester='S',
+                                               component_type=Component.ComponentType.SERUM)
+        logging.debug(component_test)
+        self.assertEqual(component_test.collected_fk, caregiver_bio.status_fk.collected_fk)
+
+    def test_blood_collected_creates_row_in_component_that_links_to_blood_shipped_wsu(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key,type_of_blood='serum',false_or_true=True)
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
+                                               caregiver_biospecimen_fk__trimester_fk__trimester='S',
+                                               component_type=Component.ComponentType.SERUM)
+        logging.debug(component_test)
+        self.assertEqual(component_test.shipped_wsu_fk, caregiver_bio.status_fk.shipped_wsu_fk)
+
+    def test_blood_collected_creates_row_in_component_that_links_to_blood_received_at_wsu(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key,type_of_blood='serum',false_or_true=True)
+        self.blood_received_at_wsu(primary_key,type_of_blood='serum',false_or_true=True)
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
+                                               caregiver_biospecimen_fk__trimester_fk__trimester='S',
+                                               component_type=Component.ComponentType.SERUM)
+        logging.debug(component_test)
+        self.assertEqual(component_test.received_wsu_fk, caregiver_bio.status_fk.received_wsu_fk)
+
+    def test_blood_collected_creates_row_in_component_that_links_to_blood_shipped_to_echo(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key,type_of_blood='serum',false_or_true=True)
+        self.blood_received_at_wsu(primary_key,type_of_blood='serum',false_or_true=True)
+        self.shipped_to_echo_send_form(primary_key,type_of_blood='serum',false_or_true=True)
+        blood = Collection.objects.get(collection_type='B')
+        caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
+                                                         collection_fk=blood,project_fk__project_name__contains='ECHO2',trimester_fk__trimester='S')
+        component_test = Component.objects.get(caregiver_biospecimen_fk=caregiver_bio,
+                                               caregiver_biospecimen_fk__trimester_fk__trimester='S',
+                                               component_type=Component.ComponentType.SERUM)
+        logging.debug(component_test)
+        self.assertEqual(component_test.shipped_echo_fk, caregiver_bio.status_fk.shipped_echo_fk)
 
     # Redirection tests
 
@@ -724,7 +816,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, "serum", True)
         self.blood_incentive_form_send(primary_key)
-        response = self.blood_shipped_to_wsu(primary_key)
+        response = self.blood_shipped_to_wsu(primary_key,type_of_blood='serum',false_or_true=True)
 
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
@@ -734,8 +826,8 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, "serum", True)
         self.blood_incentive_form_send(primary_key)
-        self.blood_shipped_to_wsu(primary_key)
-        response = self.blood_received_at_wsu(primary_key)
+        self.blood_shipped_to_wsu(primary_key,type_of_blood='serum',false_or_true=True)
+        response = self.blood_received_at_wsu(primary_key,type_of_blood='serum',false_or_true=True)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
     #View has form tests
@@ -764,7 +856,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_incentive_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(response.content.decode())
-        self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
+        self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUFormBlood)
 
     def test_echo2_bio_page_shows_received_at_wsu_form_if_shipped_at_wsu_not_null(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
@@ -772,10 +864,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key,'plasma',5)
         self.blood_incentive_form_send(primary_key)
-        response = self.blood_shipped_to_wsu(primary_key)
+        response = self.blood_shipped_to_wsu(primary_key,type_of_blood='serum',false_or_true=True)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(response.content.decode())
-        self.assertIsInstance(response.context['received_wsu_form'], ReceivedatWSUForm)
+        self.assertIsInstance(response.context['received_wsu_form'], ReceivedatWSUBloodForm)
 
     #View updates data tests
 
