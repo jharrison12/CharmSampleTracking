@@ -6,7 +6,7 @@ from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBi
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
 ReceivedatWSUForm,InitialBioFormPeriNatal,CollectedBiospecimenPlacentaForm,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,\
-ReceivedatWSUBloodForm
+ReceivedatWSUBloodForm,ShippedtoEchoBloodForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -43,8 +43,9 @@ def check_for_object_or_return_none(object_name,filter,parameter):
 def return_caregiver_bloods(caregiver_bio):
     return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio,number_of_tubes__isnull=False)
 
-def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,collected_fk,shipped_wsu_fk=None, received_wsu_fk=None,project='ECHO2'):
-        logging.critical(f"What is caregiver_bio {caregiver_bio}\n")
+def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,collected_fk=None,shipped_wsu_fk=None, received_wsu_fk=None,shipped_to_echo_fk=None,project='ECHO2'):
+        logging.debug(f"What is caregiver_bio {caregiver_bio}\n")
+        logging.critical(f"What is form data {form_data}\n")
         project_object = Project.objects.get(project_name=project)
         try:
             components = Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio)
@@ -59,6 +60,8 @@ def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,col
                         blood_collection_component.shipped_wsu_fk = shipped_wsu_fk
                     elif received_wsu_fk:
                         blood_collection_component.received_wsu_fk =received_wsu_fk
+                    elif shipped_to_echo_fk:
+                        blood_collection_component.shipped_echo_fk = shipped_to_echo_fk
                     blood_collection_component.save()
                     caregiver_bio.save()
                     logging.debug(f"did blood collection component work {blood_collection_component}")
@@ -481,7 +484,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
         and (not shipped_to_echo_item.exists() or shipped_to_echo_item.filter(shipped_date_time__isnull=True)):
         logging.debug(f"in shipped to echo if statement")
-        shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
+        shipped_echo_form = ShippedtoEchoBloodForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry_blood.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                         'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                         'caregiver_bio': caregiver_bio,
@@ -658,8 +661,8 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
         if collection_type in BLOOD_TYPES:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.critical(f"form is valid {form.is_valid()}  form errors {form.errors}")
-            logging.critical(f"caregiver bloods {caregiver_bloods}")
+            logging.debug(f"form is valid {form.is_valid()}  form errors {form.errors}")
+            logging.debug(f"caregiver bloods {caregiver_bloods}")
             if form.is_valid():
                 update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user,collection_type=collection_type)
                 create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
@@ -791,7 +794,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
         if collection_type in BLOOD_TYPES:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             logging.debug(f"post is {request.POST}")
-            form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
+            form = ShippedtoEchoBloodForm(data=request.POST, prefix='shipped_to_echo_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_echo_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
@@ -799,6 +802,8 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
                 caregiver_bio.status_fk.shipped_echo_fk = shipped_echo_item
                 caregiver_bio.status_fk.save()
                 caregiver_bio.save()
+                create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
+                                                  form_data=form.cleaned_data,shipped_to_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         else:

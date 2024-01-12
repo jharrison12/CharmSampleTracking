@@ -226,6 +226,6 @@ class ComponentBioModelTest(DatabaseSetup):
         test_status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
         component_test.collected_fk=test_status.collected_fk
         component_test.save()
-        logging.critical(component_test)
-        logging.critical(Status.objects.get(caregiverbiospecimen=caregiver_bio))
+        logging.debug(component_test)
+        logging.debug(Status.objects.get(caregiverbiospecimen=caregiver_bio))
         self.assertEqual(component_test.collected_fk, caregiver_bio.status_fk.collected_fk)
