@@ -14,13 +14,13 @@ import random
 
 logging.basicConfig(level=logging.CRITICAL)
 
-blood_dict = {'Whole Blood':'whole_blood',
+BLOOD_DICT = {'Whole Blood': 'whole_blood',
               'Serum':'serum',
               'Plasma':'plasma',
               'Red Blood Cells':'red_blood_cells',
               'Buffy Coat':'buffy_coat'}
 
-blood_dict_form = {'whole_blood':'W',
+BLOOD_DICT_FORM = {'whole_blood': 'W',
                    'serum':'S',
                    'plasma':'P',
                    'red_blood_cells':'R',
@@ -60,10 +60,10 @@ def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,col
         project_object = Project.objects.get(project_name=project)
         try:
             components = Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio)
-            form_components = {k: form_data[k] for k in (blood_dict_form.keys())}
+            form_components = {k: form_data[k] for k in (BLOOD_DICT_FORM.keys())}
             for component in form_components:
                 if component:
-                    blood_collection_component = components.get(component_type=blood_dict_form[component])
+                    blood_collection_component = components.get(component_type=BLOOD_DICT_FORM[component])
                     blood_collection_component.number_of_tubes = form_data[f"{component}_number_of_tubes"]
                     if collected_fk:
                         blood_collection_component.collected_fk = collected_fk
@@ -92,13 +92,7 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in,collection_typ
         shipped_to_wsu = ShippedWSU()
         status_bio.shipped_wsu_fk = shipped_to_wsu
         logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
-    shipped_to_wsu.shipped_date_time = bound_form.cleaned_data['shipped_date_and_time']
-    shipped_to_wsu.tracking_number = bound_form.cleaned_data['tracking_number']
-    if collection_type not in BLOOD_TYPES:
-        shipped_to_wsu.number_of_tubes = bound_form.cleaned_data['number_of_tubes']
-    shipped_to_wsu.courier = bound_form.cleaned_data['courier']
-    shipped_to_wsu.logged_date_time = bound_form.cleaned_data['logged_date_time']
-    shipped_to_wsu.shipped_by = user_logged_in
+    shipped_to_wsu.save_shipped_wsu(bound_form,user_logged_in,collection_type)
     received_object = ReceivedWSU.objects.create()
     status_bio.received_wsu_fk = received_object
     status_bio.received_wsu_fk.save()
@@ -485,12 +479,12 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                          f"Is collected date time null {collected_item.filter(collected_date_time__isnull=True).exists()}\n")
         logging.critical(f"in Collected form if statement")
         collected_form = CollectedBloodForm(prefix='blood_form')
-        logging.critical(blood_dict.get(collection_type))
+        logging.critical(BLOOD_DICT.get(collection_type))
         # disable whatever check box you used to pull the data
         logging.critical(f"collection type {collection_type}")
         if collection_type!=Collection.CollectionType.BLOOD:
-            collected_form.fields[str(blood_dict.get(collection_type))].initial = True
-            collected_form.fields[str(blood_dict.get(collection_type))].disabled = True
+            collected_form.fields[str(BLOOD_DICT.get(collection_type))].initial = True
+            collected_form.fields[str(BLOOD_DICT.get(collection_type))].disabled = True
         # collected_form.fields[str(blood_dict.get(collection_type))].widget.attrs['readonly'] = True
     else:
         logging.debug(f"Collected form is none")
@@ -682,11 +676,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             form = ShippedtoWSUFormPlacenta(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_wsu_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-                shipped_wsu_item.tracking_number = form.cleaned_data['tracking_number']
-                shipped_wsu_item.courier = form.cleaned_data['courier']
-                shipped_wsu_item.shipped_by = request.user
-                shipped_wsu_item.save()
+                shipped_wsu_item.save_shipped_wsu(form,request.user)
                 caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
                 caregiver_bio.status_fk.shipped_wsu_fk.save()
                 caregiver_bio.status_fk.save()
@@ -699,13 +689,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_wsu_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-                shipped_wsu_item.tracking_number = form.cleaned_data['tracking_number']
-                shipped_wsu_item.number_of_tubes = form.cleaned_data['number_of_tubes']
-                shipped_wsu_item.logged_date_time = form.cleaned_data['logged_date_time']
-                shipped_wsu_item.courier = form.cleaned_data['courier']
-                shipped_wsu_item.shipped_by = request.user
-                shipped_wsu_item.save()
+                shipped_wsu_item.save_shipped_wsu(form,request.user,'U')
                 caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
                 caregiver_bio.status_fk.shipped_wsu_fk.save()
                 caregiver_bio.status_fk.save()

@@ -7,6 +7,10 @@ logging.basicConfig(level=logging.debug)
 
 # Create your models here.
 
+BLOOD_TYPES = ["S","P","D","W","F","R","B"]
+PERINATAL = ["C","X"]
+URINE = ["U"]
+
 class User(AbstractUser):
     pass
 
@@ -124,6 +128,15 @@ class ShippedWSU(models.Model):
         DHL = 'D', _('DHL')
 
     courier = models.CharField(max_length=1,choices=CourierChoices.choices,null=True,blank=True)
+
+    def save_shipped_wsu(self,form,user,collection_type=None):
+        self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+        self.tracking_number = form.cleaned_data['tracking_number']
+        self.courier = form.cleaned_data['courier']
+        self.shipped_by = user
+        if collection_type in URINE:
+            self.number_of_tubes = form.cleaned_data['number_of_tubes']
+        self.save()
 
     def __str__(self):
         return f"shippedwus  {self.pk}"
