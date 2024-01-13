@@ -41,6 +41,11 @@ class Incentive(models.Model):
     incentive_date = models.DateField(blank=True,null=True)
     incentive_amount =models.IntegerField(null=True)
 
+    def save_incentive(self,form,user):
+        self.incentive_date = form.cleaned_data['incentive_date']
+        self.logged_by = user
+        self.save()
+
     def __str__(self):
         return f"{self.incentive_type}: {self.incentive_amount}"
 
@@ -55,6 +60,33 @@ class Collected(models.Model):
     placed_in_formalin_date_time = models.DateTimeField(null=True,blank=True)
     received_date = models.DateField(null=True,blank=True)
     number_of_cards = models.IntegerField(null=True,blank=True)
+
+    def resolve(self,user):
+        self.logged_by = user
+        self.save()
+        return self
+
+    def save_urine(self,form,user):
+        self.collected_date_time = form.cleaned_data['collected_date_time']
+        self.processed_date_time = form.cleaned_data['processed_date_time']
+        self.stored_date_time = form.cleaned_data['stored_date_time']
+        self.number_of_tubes = form.cleaned_data['number_of_tubes']
+        self.logged_by = user
+        self.save()
+
+    def save_hair_saliva(self,form,user):
+        self.collected_date_time = form.cleaned_data['date_collected']
+        self.in_person_remote = form.cleaned_data['in_person_remote']
+        self.logged_by = user
+        self.save()
+
+
+    def save_placenta(self,form,user):
+        self.collected_date_time = form.cleaned_data['collected_date_time']
+        self.processed_date_time = form.cleaned_data['processed_date_time']
+        self.placed_in_formalin_date_time = form.cleaned_data['placed_in_formalin']
+        self.logged_by = user
+        self.save()
 
     class InpersonRemoteChoices(models.TextChoices):
         IN_PERSON = 'I', _('In Person')
@@ -104,6 +136,10 @@ class ShippedECHO(models.Model):
 
 class KitSent(models.Model):
     kit_sent_date = models.DateField(null=True,blank=True)
+
+    def save_form(self,form):
+        self.kit_sent_date = form.cleaned_data['kit_sent_date']
+        self.save()
 
     def __str__(self):
         return f"kit sent {self.kit_sent_date}"

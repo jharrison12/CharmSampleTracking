@@ -256,8 +256,8 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             new_status.save()
             caregiver_bio.save()
             if form.cleaned_data['collected_not_collected']=='C':
-                new_collected = Collected.objects.create(logged_by=request.user)
-                new_status.collected_fk = new_collected
+                  new_collected = Collected.objects.create(logged_by=request.user).resolve(user=request.user)
+                  new_status.collected_fk = new_collected
             elif form.cleaned_data['collected_not_collected']=='N':
                 new_not_collected = NotCollected.objects.create()
                 new_status.not_collected_fk = new_not_collected
@@ -360,10 +360,8 @@ def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio
     if request.method == "POST" and collection_type in HAIR_SALIVA:
         form = KitSentForm(data=request.POST, prefix='kit_sent_form')
         if form.is_valid():
-            kit_sent_data = KitSent.objects.get(status__caregiverbiospecimen=caregiver_bio)
-            kit_sent_data.kit_sent_date = form.cleaned_data['kit_sent_date']
+            kit_sent_data = KitSent.objects.get(status__caregiverbiospecimen=caregiver_bio).save_form(form)
             caregiver_bio.biospecimen_id = form.cleaned_data['echo_biospecimen_id']
-            kit_sent_data.save()
             collected_item = Collected.objects.create()
             caregiver_bio.status_fk.collected_fk = collected_item
             caregiver_bio.status_fk.collected_fk.save()
@@ -537,12 +535,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             form = CollectedBiospecimenUrineForm(data=request.POST, prefix='urine_form')
             if form.is_valid():
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                collected_urine.collected_date_time = form.cleaned_data['collected_date_time']
-                collected_urine.processed_date_time = form.cleaned_data['processed_date_time']
-                collected_urine.stored_date_time = form.cleaned_data['stored_date_time']
-                collected_urine.number_of_tubes = form.cleaned_data['number_of_tubes']
-                collected_urine.logged_by = request.user
-                collected_urine.save()
+                collected_urine.save_urine(form,request.user)
                 incentive = Incentive.objects.create()
                 caregiver_bio.incentive_fk = incentive
                 caregiver_bio.incentive_fk.save()
@@ -552,11 +545,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             form = CollectedBiospecimenHairSalivaForm(data=request.POST, prefix='hair_saliva_form')
             if form.is_valid():
                 hair_or_saliva = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                hair_or_saliva.collected_date_time = form.cleaned_data['date_collected']
-                hair_or_saliva.in_person_remote = form.cleaned_data['in_person_remote']
-                hair_or_saliva.logged_by = request.user
-                hair_or_saliva.save()
-                caregiver_bio.save()
+                hair_or_saliva.save_hair_saliva(form,request.user)
                 incentive = Incentive.objects.create()
                 caregiver_bio.incentive_fk = incentive
                 caregiver_bio.incentive_fk.save()
@@ -567,11 +556,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             form = CollectedBiospecimenPlacentaForm(data=request.POST, prefix='placenta_form')
             if form.is_valid():
                 placenta = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                placenta.collected_date_time = form.cleaned_data['collected_date_time']
-                placenta.processed_date_time = form.cleaned_data['processed_date_time']
-                placenta.placed_in_formalin_date_time = form.cleaned_data['placed_in_formalin']
-                placenta.logged_by = request.user
-                placenta.save()
+                placenta.save_placenta(form,request.user)
                 caregiver_bio.save()
                 incentive = Incentive.objects.create()
                 caregiver_bio.incentive_fk = incentive
@@ -616,9 +601,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
-                incentive_item.incentive_date = form.cleaned_data['incentive_date']
-                incentive_item.logged_by = request.user
-                incentive_item.save()
+                incentive_item.save_incentive(form,request.user)
                 caregiver_bio.save()
             else:
                 form.errors
@@ -629,10 +612,8 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
                 #create shipped wsu so logic skips shipped choice form
                 #refactor this at some point
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
-                incentive_item.incentive_date = form.cleaned_data['incentive_date']
-                incentive_item.logged_by = request.user
+                incentive_item.save_incentive(form,request.user)
                 caregiver_bio.status_fk.save()
-                incentive_item.save()
                 caregiver_bio.save()
             else:
                 form.errors
