@@ -141,6 +141,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Courier: FedEx',needed_div)
 
         #user sees that whole blood check box is clicked
+
         self.assertIn("Blood",needed_div)
 
         #User sees received date time at
@@ -247,3 +248,83 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
         self.assertIn('Declined', body_text)
+
+    def test_user_can_submited_blood_collected_information_and_then_leaves_and_returns_and_incentive_form_is_there(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
+
+        # user sees initial form and submits collected
+        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+
+        self.assertIn('Initial Form', body_text)
+
+        collected_not_collected = Select(self.browser.find_element(By.ID, 'id_initial_form-collected_not_collected'))
+        collected_not_collected.select_by_visible_text('Collected')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        # user sees collected form on next page
+
+        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Collected Form', form)
+
+        # user submits form and sees data
+        collected = self.browser.find_element(By.ID, "id_blood_form-collected_date_time")
+        collected.clear()
+        collected.send_keys('2023-09-27 12:52:26')
+
+        stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
+        stored.send_keys('2023-09-27 12:52:26')
+
+        processed = self.browser.find_element(By.ID, "id_blood_form-processed_date_time")
+        processed.send_keys('2023-09-27 12:52:26')
+
+        # user sees a ton of checkboxes for all the bloods possible
+        # user does not see whole blood number of tubes until whole blood is checked
+
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+
+        self.assertNotIn('Number of Tubes:', body)
+        self.assertIn('Plasma', body)
+        self.assertIn('Whole Blood', body)
+        self.assertIn('Serum', body)
+        self.assertIn('Red Blood Cells', body)
+        self.assertIn('Buffy Coat', body)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID, "id_blood_form-whole_blood")
+        whole_blood_checkbox.click()
+
+        whole_blood_tubes = self.browser.find_element(By.ID, "id_blood_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(3)
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information_form"]/form/input[2]')
+        submit.click()
+
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Whole Blood Number of Tubes: 3', body)
+        self.assertNotIn('Plasma Number of Tubes', body)
+
+        # user sees incentive form
+
+        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Incentive Form', form)
+
+        incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-09-03')
+        self.browser.get(f'{self.live_server_url}/biospecimen/')
+
+        time.sleep(5)
+        self.browser.get(f'{self.live_server_url}/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
+        time.sleep(3)
+        # is incentive form still there?
+
+        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        self.assertIn('Incentive Form', form)
+
+        incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
+        incentive_date.clear()
+        incentive_date.send_keys('2023-09-03')

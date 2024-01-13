@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import random
 
-logging.basicConfig(level=logging.debug)
+logging.basicConfig(level=logging.CRITICAL)
 
 blood_dict = {'Whole Blood':'whole_blood',
               'Serum':'serum',
@@ -40,12 +40,23 @@ def check_for_object_or_return_none(object_name,filter,parameter):
     except object_name.DoesNotExist:
         return None
 
-def return_caregiver_bloods(caregiver_bio):
-    return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio,number_of_tubes__isnull=False)
+def return_caregiver_bloods(caregiver_bio,collected_fk=None,shipped_wsu_fk=None,received_wsu_fk=None,shipped_echo_fk=None):
+    logging.critical(f"in caregiver bloods collected")
+    if collected_fk:
+        return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio,number_of_tubes__isnull=False,collected_fk=collected_fk)
+    elif shipped_wsu_fk:
+        return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio, number_of_tubes__isnull=False,
+                                        shipped_wsu_fk=shipped_wsu_fk)
+    elif received_wsu_fk:
+        return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio, number_of_tubes__isnull=False,
+                                        received_wsu_fk=received_wsu_fk)
+    elif shipped_echo_fk:
+        return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio, number_of_tubes__isnull=False,
+                                        shipped_echo_fk=shipped_echo_fk)
 
 def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,collected_fk=None,shipped_wsu_fk=None, received_wsu_fk=None,shipped_to_echo_fk=None,project='ECHO2'):
         logging.debug(f"What is caregiver_bio {caregiver_bio}\n")
-        logging.critical(f"What is form data {form_data}\n")
+        logging.debug(f"What is form data {form_data}\n")
         project_object = Project.objects.get(project_name=project)
         try:
             components = Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio)
@@ -449,7 +460,19 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    caregiver_bloods = return_caregiver_bloods(caregiver_bio)
+    caregiver_bloods_collected = None
+    caregiver_bloods_shipped_wsu = None
+    caregiver_bloods_received_wsu = None
+    caregiver_bloods_shipped_echo = None
+    if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk:
+        caregiver_bloods_collected = return_caregiver_bloods(caregiver_bio,collected_fk=caregiver_bio.status_fk.collected_fk)
+        logging.critical(f"caregiver bloods collected {caregiver_bloods_collected}")
+    if caregiver_bio.status_fk and caregiver_bio.status_fk.shipped_wsu_fk:
+        caregiver_bloods_shipped_wsu = return_caregiver_bloods(caregiver_bio,shipped_wsu_fk=caregiver_bio.status_fk.shipped_wsu_fk)
+    if caregiver_bio.status_fk and caregiver_bio.status_fk.received_wsu_fk:
+        caregiver_bloods_received_wsu = return_caregiver_bloods(caregiver_bio,received_wsu_fk=caregiver_bio.status_fk.received_wsu_fk)
+    if caregiver_bio.status_fk and caregiver_bio.status_fk.shipped_echo_fk:
+        caregiver_bloods_shipped_echo = return_caregiver_bloods(caregiver_bio,shipped_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -458,15 +481,15 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_echo_form = None
     incentive_form = None
     received_wsu_form = None
-    logging.debug(f"Caregiver bio is {caregiver_bio}")
+    logging.critical(f"Caregiver bio is {caregiver_bio}")
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
-        logging.debug(f"Does collected_item exist? {collected_item.exists()}\n\n"
+        logging.critical(f"Does collected_item exist? {collected_item.exists()}\n\n"
                          f"Is collected date time null {collected_item.filter(collected_date_time__isnull=True).exists()}\n")
-        logging.debug(f"in Collected form if statement")
+        logging.critical(f"in Collected form if statement")
         collected_form = CollectedBloodForm(prefix='blood_form')
-        logging.debug(blood_dict.get(collection_type))
+        logging.critical(blood_dict.get(collection_type))
         # disable whatever check box you used to pull the data
-        logging.debug(f"collection type {collection_type}")
+        logging.critical(f"collection type {collection_type}")
         if collection_type!=Collection.CollectionType.BLOOD:
             collected_form.fields[str(blood_dict.get(collection_type))].initial = True
             collected_form.fields[str(blood_dict.get(collection_type))].disabled = True
@@ -475,6 +498,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         logging.debug(f"Collected form is none")
         collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not caregiver_bio.incentive_fk:
+        logging.critical(f"in incentive form if block")
         incentive_form = IncentiveForm(prefix='incentive_form')
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
             and not (caregiver_bio.status_fk.shipped_wsu_fk):
@@ -495,7 +519,10 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'shipped_echo_form': shipped_echo_form,
                                                                                                         'incentive_form':incentive_form,
                                                                                                         'received_wsu_form':received_wsu_form,
-                                                                                                        'caregiver_bloods':caregiver_bloods
+                                                                                                        'caregiver_bloods_collected':caregiver_bloods_collected,
+                                                                                                        'caregiver_bloods_shipped_wsu':caregiver_bloods_shipped_wsu,
+                                                                                                        'caregiver_bloods_received_wsu':caregiver_bloods_received_wsu,
+                                                                                                        'caregiver_bloods_shipped_echo':caregiver_bloods_shipped_echo,
                                                                                                         })
 
 @login_required
