@@ -35,7 +35,7 @@ class Echo2BioPage(FunctionalTest):
         self.assertNotIn('4702', body)
 
         self.browser.find_element(By.ID, '4100_button').click()
-        ##TODO remove this sleep.  Currently needed for modeal to appear.
+        ##TODO remove this sleep.  Currently needed for modal to appear.
         time.sleep(1)
         # User sees modal asking for confirmation of bio id
         self.browser.find_element(By.LINK_TEXT, 'Confirm').click()
@@ -43,6 +43,7 @@ class Echo2BioPage(FunctionalTest):
         # user sees a list or biospecimen for 4100
         # user also sees trimesters listed
         body = self.webpage_text()
+        time.sleep(1)
         self.assertIn('Trimester 2', body)
         trimester_2_list = self.browser.find_element(By.ID, 'trimester_2_list').text
 
