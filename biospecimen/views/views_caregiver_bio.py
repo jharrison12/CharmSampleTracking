@@ -553,7 +553,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             if form.is_valid():
                 placenta = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 placenta.save_placenta(form,request.user)
-                caregiver_bio.save()
                 incentive = Incentive.objects.create()
                 caregiver_bio.incentive_fk = incentive
                 caregiver_bio.incentive_fk.save()
@@ -569,18 +568,12 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 #disabled fields are not passed through the post request, so you have to do it manually :/
                 #form.cleaned_data[str(blood_dict.get(collection_type))] = True
                 logging.debug(f"Did form cleaned data update work {form.cleaned_data} ")
-
+                blood_item = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 create_or_update_component_values(caregiver_bio=caregiver_bio,
                                                   logged_in_user=request.user,
                                                   form_data=form.cleaned_data,
-                                                  collected_fk=caregiver_bio.status_fk.collected_fk,shipped_wsu_fk=None,received_wsu_fk=None)
-                caregiver_bio.status_fk.collected_fk.collected_date_time = form.cleaned_data['collected_date_time']
-                caregiver_bio.status_fk.collected_fk.processed_date_time = form.cleaned_data['processed_date_time']
-                caregiver_bio.status_fk.collected_fk.stored_date_time = form.cleaned_data['stored_date_time']
-                caregiver_bio.status_fk.collected_fk.logged_by = request.user
-                caregiver_bio.status_fk.collected_fk.save()
-                caregiver_bio.status_fk.save()
-                caregiver_bio.save()
+                                                  collected_fk=blood_item,shipped_wsu_fk=None,received_wsu_fk=None)
+                blood_item.save_blood(form,request.user)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError

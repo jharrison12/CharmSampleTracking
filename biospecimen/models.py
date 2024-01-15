@@ -92,6 +92,13 @@ class Collected(models.Model):
         self.logged_by = user
         self.save()
 
+    def save_blood(self,form,user):
+        self.collected_date_time = form.cleaned_data['collected_date_time']
+        self.processed_date_time = form.cleaned_data['processed_date_time']
+        self.stored_date_time = form.cleaned_data['stored_date_time']
+        self.logged_by = user
+        self.save()
+
     class InpersonRemoteChoices(models.TextChoices):
         IN_PERSON = 'I', _('In Person')
         REMOTE = 'R', _('Remote')
