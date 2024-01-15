@@ -356,14 +356,9 @@ def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio
     if request.method == "POST" and collection_type in HAIR_SALIVA:
         form = KitSentForm(data=request.POST, prefix='kit_sent_form')
         if form.is_valid():
-            kit_sent_data = KitSent.objects.get(status__caregiverbiospecimen=caregiver_bio).save_form(form)
+            KitSent.objects.get(status__caregiverbiospecimen=caregiver_bio).save_form(form)
             caregiver_bio.biospecimen_id = form.cleaned_data['echo_biospecimen_id']
-            collected_item = Collected.objects.create()
-            caregiver_bio.status_fk.collected_fk = collected_item
-            caregiver_bio.status_fk.collected_fk.save()
-            caregiver_bio.status_fk.save()
-            caregiver_bio.save()
-
+            Collected.objects.create().create_collected_and_set_status_fk(caregiver_bio=caregiver_bio)
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
     else:
@@ -532,20 +527,14 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             if form.is_valid():
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 collected_urine.save_urine(form,request.user)
-                incentive = Incentive.objects.create()
-                caregiver_bio.incentive_fk = incentive
-                caregiver_bio.incentive_fk.save()
-                caregiver_bio.save()
+                Incentive.objects.create().save_fk(caregiver_bio=caregiver_bio)
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in HAIR_SALIVA:
             form = CollectedBiospecimenHairSalivaForm(data=request.POST, prefix='hair_saliva_form')
             if form.is_valid():
                 hair_or_saliva = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 hair_or_saliva.save_hair_saliva(form,request.user)
-                incentive = Incentive.objects.create()
-                caregiver_bio.incentive_fk = incentive
-                caregiver_bio.incentive_fk.save()
-                caregiver_bio.save()
+                Incentive.objects.create().save_fk(caregiver_bio=caregiver_bio)
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in PERINATAL:
@@ -553,10 +542,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             if form.is_valid():
                 placenta = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 placenta.save_placenta(form,request.user)
-                incentive = Incentive.objects.create()
-                caregiver_bio.incentive_fk = incentive
-                caregiver_bio.incentive_fk.save()
-                caregiver_bio.save()
+                Incentive.objects.create().save_fk(caregiver_bio=caregiver_bio)
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in BLOOD:
@@ -602,8 +588,6 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
                 #refactor this at some point
                 incentive_item =Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
                 incentive_item.save_incentive(form,request.user)
-                caregiver_bio.status_fk.save()
-                caregiver_bio.save()
             else:
                 form.errors
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)

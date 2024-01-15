@@ -50,6 +50,11 @@ class Incentive(models.Model):
         self.logged_by = user
         self.save()
 
+    def save_fk(self,caregiver_bio):
+        caregiver_bio.incentive_fk = self
+        caregiver_bio.save()
+        self.save()
+
     def __str__(self):
         return f"{self.incentive_type}: {self.incentive_amount}"
 
@@ -69,6 +74,11 @@ class Collected(models.Model):
         self.logged_by = user
         self.save()
         return self
+
+    def create_collected_and_set_status_fk(self,caregiver_bio):
+        caregiver_bio.status_fk.collected_fk = self
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
 
     def save_urine(self,form,user):
         self.collected_date_time = form.cleaned_data['collected_date_time']
