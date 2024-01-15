@@ -93,12 +93,11 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in,collection_typ
         shipped_to_wsu = ShippedWSU()
         status_bio.shipped_wsu_fk = shipped_to_wsu
         logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
-    shipped_to_wsu.save_shipped_wsu(bound_form,user_logged_in,collection_type)
+    shipped_to_wsu.save_shipped_wsu(bound_form,user_logged_in,caregiver_bio,collection_type)
     received_object = ReceivedWSU.objects.create()
     status_bio.received_wsu_fk = received_object
     status_bio.received_wsu_fk.save()
     shipped_to_wsu.save()
-    status_bio.save()
     status_bio.save()
     caregiver_bio.save()
     logging.debug(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
@@ -655,11 +654,11 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             form = ShippedtoWSUFormPlacenta(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_wsu_item.save_shipped_wsu(form,request.user)
-                caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
-                caregiver_bio.status_fk.shipped_wsu_fk.save()
-                caregiver_bio.status_fk.save()
-                caregiver_bio.save()
+                shipped_wsu_item.save_shipped_wsu(form,request.user,caregiver_bio)
+                # caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
+                # caregiver_bio.status_fk.shipped_wsu_fk.save()
+                # caregiver_bio.status_fk.save()
+                # caregiver_bio.save()
                 logging.debug(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
@@ -668,11 +667,11 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_wsu_item.save_shipped_wsu(form,request.user,'U')
-                caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
-                caregiver_bio.status_fk.shipped_wsu_fk.save()
-                caregiver_bio.status_fk.save()
-                caregiver_bio.save()
+                shipped_wsu_item.save_shipped_wsu(form,request.user,caregiver_bio,'U',)
+                # caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
+                # caregiver_bio.status_fk.shipped_wsu_fk.save()
+                # caregiver_bio.status_fk.save()
+                # caregiver_bio.save()
                 logging.debug(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
@@ -768,11 +767,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
             form = ShippedtoEchoBloodForm(data=request.POST, prefix='shipped_to_echo_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_echo_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-                shipped_echo_item.save()
-                caregiver_bio.status_fk.shipped_echo_fk = shipped_echo_item
-                caregiver_bio.status_fk.save()
-                caregiver_bio.save()
+                shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,caregiver_bio=caregiver_bio)
                 create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
                                                   form_data=form.cleaned_data,shipped_to_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
@@ -782,12 +777,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
             form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_echo_item.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-                shipped_echo_item.save()
-                caregiver_bio.status_fk.shipped_echo_fk = shipped_echo_item
-                caregiver_bio.status_fk.shipped_echo_fk.save()
-                caregiver_bio.status_fk.save()
-                caregiver_bio.save()
+                shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,caregiver_bio=caregiver_bio)
                 logging.debug(f"shipped echo saved")
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                     caregiver_bio_pk=caregiver_bio_pk)
