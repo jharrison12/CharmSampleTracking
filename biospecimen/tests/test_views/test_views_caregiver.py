@@ -830,6 +830,14 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.blood_received_at_wsu(primary_key,type_of_blood='serum',false_or_true=True)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
+    def test_echo2_initial_page_redirect_if_there_is_collected_fk(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, "serum", True)
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/initial/')
+        self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
+
+
     #View has form tests
 
     def test_echo_2_bio_entry_whole_blood_shows_initial_form_for_collected(self):

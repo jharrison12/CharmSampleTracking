@@ -27,11 +27,12 @@ BLOOD_DICT_FORM = {'whole_blood': 'W',
                    'buffy_coat':'F',
                    }
 
-
-BLOOD_TYPES = ["S","P","D","W","F","R","B"]
+BLOOD = ["B"]
+BLOOD_TYPES = ["S","P","D","W","F","R"]
 URINE = "U"
 HAIR_SALIVA = ["H","L"]
 PERINATAL = ["C","X"]
+
 
 
 def check_for_object_or_return_none(object_name,filter,parameter):
@@ -213,21 +214,22 @@ def child_biospecimen_page(request,child_charm_id):
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    logging.debug(f"collection type {collection_type} "
-                     f"{HAIR_SALIVA}"
-                     f"collection type in hair saliva? {collection_type in HAIR_SALIVA}"
-                     f"collection type in hair saliva? {collection_type in HAIR_SALIVA}")
-                     # f"{collection_type.objects.filter(id=HAIR_SALIVA.id).exists()}")
-    if caregiver_bio.status_fk==None and collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
-        logging.debug(f"made it to INCORRECT initial bio form")
-        initial_bio_form = InitialBioForm(prefix="initial_form")
-    elif caregiver_bio.status_fk==None and collection_type in PERINATAL:
-        initial_bio_form = InitialBioFormPeriNatal(prefix="initial_form")
-    elif caregiver_bio.status_fk==None and collection_type in HAIR_SALIVA:
-        logging.debug(f"made it to correct initial bio form")
-        initial_bio_form = InitialBioFormPostNatal(prefix="initial_form")
+    if caregiver_bio.status_fk==None:
+        if  collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
+            logging.debug(f"made it to INCORRECT initial bio form")
+            initial_bio_form = InitialBioForm(prefix="initial_form")
+        elif collection_type in PERINATAL:
+            initial_bio_form = InitialBioFormPeriNatal(prefix="initial_form")
+        elif collection_type in HAIR_SALIVA:
+            logging.debug(f"made it to correct initial bio form")
+            initial_bio_form = InitialBioFormPostNatal(prefix="initial_form")
+        else:
+            return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     else:
-        return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        if collection_type in BLOOD:
+            return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
+        elif collection_type:
+            return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
     return render(request, template_name='biospecimen/caregiver_biospecimen_initial.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,
@@ -260,7 +262,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                 new_status.declined_fk = new_declined
             new_status.save()
             caregiver_bio.save()
-            if collection_type in BLOOD_TYPES:
+            if collection_type in BLOOD:
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
             else:
@@ -558,7 +560,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 caregiver_bio.save()
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type in BLOOD_TYPES:
+        elif collection_type in BLOOD:
             logging.debug(f"in the blood if statement")
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
             logging.debug(f"is form valid {form.is_valid()} \n\nform errors {form.errors} \n\nform {form.data} \n\nrequest.post{request.POST}")
@@ -612,7 +614,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
             else:
                 form.errors
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
-        elif collection_type in BLOOD_TYPES:
+        elif collection_type in BLOOD:
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
                 create_or_update_incentive(caregiver_bio.pk,form)
@@ -643,7 +645,7 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
                 status.save()
                 logging.debug(f'Shipped to echo saved')
             caregiver_bio.save()
-            if collection_type in BLOOD_TYPES:
+            if collection_type in BLOOD:
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
             else:
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
@@ -660,7 +662,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     shipped_wsu_item = ShippedWSU.objects.create()
     logging.debug(f"In wsu post")
     if request.method == "POST":
-        if collection_type in BLOOD_TYPES:
+        if collection_type in BLOOD:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"form is valid {form.is_valid()}  form errors {form.errors}")
@@ -709,7 +711,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
     shipped_wsu_fk = ShippedWSU.objects.get(status=status)
     logging.debug(f"In received wsu post")
     if request.method == "POST":
-        if collection_type in BLOOD_TYPES:
+        if collection_type in BLOOD:
             finished_form = ReceivedatWSUBloodForm(data=request.POST, prefix='received_at_wsu_form')
             update_received_wsu(caregiver_bio_pk=caregiver_bio.pk, data=request.POST, user_logged_in=request.user,bound_form=finished_form)
             create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
@@ -783,7 +785,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
     shipped_echo_item = ShippedECHO.objects.create()
     logging.debug(f"In echo post")
     if request.method == "POST":
-        if collection_type in BLOOD_TYPES:
+        if collection_type in BLOOD:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             logging.debug(f"post is {request.POST}")
             form = ShippedtoEchoBloodForm(data=request.POST, prefix='shipped_to_echo_form')
