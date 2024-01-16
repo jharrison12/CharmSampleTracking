@@ -517,7 +517,6 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     logging.debug(f"collection type {collection_type} caregiver {caregiver_bio.caregiver_fk.charm_project_identifier}"
                      f"")
     if request.method=="POST":
@@ -614,12 +613,10 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
                 shipped_to_wsu = ShippedWSU.objects.create(shipped_by=request.user)
                 status.shipped_wsu_fk = shipped_to_wsu
                 status.save()
-                logging.debug(f'Shipped to wsu saved')
             if form.cleaned_data['shipped_to_wsu_or_echo'] == 'E':
                 shipped_to_echo = ShippedECHO.objects.create()
                 status.shipped_echo_fk = shipped_to_echo
                 status.save()
-                logging.debug(f'Shipped to echo saved')
             caregiver_bio.save()
             if collection_type in BLOOD:
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
@@ -634,15 +631,12 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_wsu_item = ShippedWSU.objects.create()
     logging.debug(f"In wsu post")
     if request.method == "POST":
         if collection_type in BLOOD:
-            caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"form is valid {form.is_valid()}  form errors {form.errors}")
-            logging.debug(f"caregiver bloods {caregiver_bloods}")
             if form.is_valid():
                 update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user,collection_type=collection_type)
                 create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
@@ -655,11 +649,6 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_wsu_item.save_shipped_wsu(form,request.user,caregiver_bio)
-                # caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
-                # caregiver_bio.status_fk.shipped_wsu_fk.save()
-                # caregiver_bio.status_fk.save()
-                # caregiver_bio.save()
-                logging.debug(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in URINE:
@@ -668,11 +657,6 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_wsu_item.save_shipped_wsu(form,request.user,caregiver_bio,'U',)
-                # caregiver_bio.status_fk.shipped_wsu_fk = shipped_wsu_item
-                # caregiver_bio.status_fk.shipped_wsu_fk.save()
-                # caregiver_bio.status_fk.save()
-                # caregiver_bio.save()
-                logging.debug(f"shipped wsu saved")
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError
@@ -707,21 +691,13 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
 def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-    shipped_to_msu_item = ShippedMSU.objects.create(status=status)
-    logging.debug(f"In msu post")
     if request.method == "POST":
         if collection_type in HAIR_SALIVA:
-            logging.debug(f"post is {request.POST}")
             form = ShippedtoMSUForm(data=request.POST, prefix='shipped_to_msu_form')
             logging.debug(f"is shipped to msu form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_to_msu_item.shipped_date_time = form.cleaned_data['shipped_date_time']
-                status.shipped_msu_fk = shipped_to_msu_item
-                shipped_to_msu_item.save()
-                status.save()
-                caregiver_bio.save()
-                logging.debug(f"shipped msu saved")
+                shipped_to_msu_item = ShippedMSU.objects.create()
+                shipped_to_msu_item.save_msu_item(form=form,caregiver_bio=caregiver_bio)
                 return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
@@ -731,21 +707,14 @@ def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_
 @login_required
 def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    received_msu_item = ReceivedMSU.objects.create(status=status)
-    logging.debug(f"In received msu post")
     if request.method == "POST":
         if collection_type in HAIR_SALIVA:
             form = ReceivedatMSUForm(data=request.POST,prefix='received_at_msu_form')
             logging.debug(f"is received to msu form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                received_msu_item.received_date_time = form.cleaned_data['received_date_time']
-                status.received_msu_fk = received_msu_item
-                received_msu_item.save()
-                status.save()
-                caregiver_bio.save()
-                logging.debug(f"shipped msu saved")
+                received_msu_item = ReceivedMSU.objects.create()
+                received_msu_item.save_received_msu_item(form=form,caregiver_bio=caregiver_bio)
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,

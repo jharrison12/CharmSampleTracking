@@ -200,11 +200,25 @@ class ReceivedWSU(models.Model):
 class ShippedMSU(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
 
+    def save_msu_item(self,form,caregiver_bio):
+        self.shipped_date_time = form.cleaned_data['shipped_date_time']
+        caregiver_bio.status_fk.shipped_msu_fk = self
+        self.save()
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
+
     def __str__(self):
         return f"shipped {self.shipped_date_time}"
 
 class ReceivedMSU(models.Model):
     received_date_time = models.DateTimeField(null=True, blank=True)
+
+    def save_received_msu_item(self,form,caregiver_bio):
+        self.received_date_time = form.cleaned_data['received_date_time']
+        caregiver_bio.status_fk.received_msu_fk = self
+        self.save()
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
 
     def __str__(self):
         return f"received {self.received_date_time}"
