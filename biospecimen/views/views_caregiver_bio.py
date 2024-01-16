@@ -128,18 +128,6 @@ def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in):
             caregiver_bio.status_fk.save()
             caregiver_bio.save()
 
-def update_shipped_echo(caregiver_bio_pk, bound_form):
-    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-    try:
-        shipped_to_echo = ShippedECHO.objects.get(status=status_bio)
-    except ShippedECHO.DoesNotExist:
-        shipped_to_echo = ShippedECHO()
-        status_bio.shipped_echo_fk = shipped_to_echo
-    shipped_to_echo.shipped_date_time = bound_form.cleaned_data['shipped_date_and_time']
-    shipped_to_echo.save()
-    status_bio.save()
-    caregiver_bio.save()
 
 def create_or_update_incentive(caregiver_bio_pk, bound_form):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -562,7 +550,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
     if request.method=="POST":
         if collection_type in HAIR_SALIVA or collection_type==URINE:
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
