@@ -248,6 +248,11 @@ class Status(models.Model):
         else:
             return None
 
+    def save_status(self,caregiver_bio):
+        caregiver_bio.status_fk = self
+        self.save()
+        caregiver_bio.save()
+
     def __str__(self):
         return f"Status {self.pk}"
 
