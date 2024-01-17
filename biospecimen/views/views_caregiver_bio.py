@@ -95,38 +95,21 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in,collection_typ
         logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
     shipped_to_wsu.save_shipped_wsu(bound_form,user_logged_in,caregiver_bio,collection_type)
     received_object = ReceivedWSU.objects.create()
-    status_bio.received_wsu_fk = received_object
-    status_bio.received_wsu_fk.save()
-    shipped_to_wsu.save()
-    status_bio.save()
-    caregiver_bio.save()
+    received_object.save_received_wsu(caregiver_bio=caregiver_bio)
     logging.debug(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
 
 def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in):
-    logging.debug(data)
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    status_bio = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     try:
-        #
         received_at_wsu = ReceivedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
         if bound_form.is_valid():
-            received_at_wsu.received_date_time = bound_form.cleaned_data['received_date_time']
-            logging.debug(f"form is valid {bound_form.is_valid()}  form errors {bound_form.errors} {bound_form.cleaned_data}")
-            received_at_wsu.save()
-            # bound_form.save()
-            caregiver_bio.save()
-            logging.debug(f"received at wsu found {received_at_wsu} status_bio:{status_bio} is received datetime saved {received_at_wsu.received_date_time}")
+            received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,form=bound_form)
     except ReceivedWSU.DoesNotExist:
-        logging.debug(f"received at wsu doesn't exist")
         received_at_wsu = ReceivedWSU.objects.create()
-        finished_form = ReceivedatWSUForm(data=data,prefix='received_at_wsu_form')
-        if finished_form.is_valid():
-            caregiver_bio.status_fk.received_wsu_fk = received_at_wsu
-            caregiver_bio.status_fk.received_wsu_fk.received_date_time = finished_form.cleaned_data['received_date_time']
-            received_at_wsu.save()
-            caregiver_bio.status_fk.received_wsu_fk.save()
-            caregiver_bio.status_fk.save()
-            caregiver_bio.save()
+        #finished_form = ReceivedatWSUForm(data=data,prefix='received_at_wsu_form')
+        #why did you bind the form a second time?
+        if bound_form.is_valid():
+            received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,form=bound_form)
 
 
 def create_or_update_incentive(caregiver_bio_pk, bound_form):

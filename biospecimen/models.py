@@ -194,6 +194,15 @@ class Declined(models.Model):
 class ReceivedWSU(models.Model):
     received_date_time = models.DateTimeField(null=True,blank=True)
 
+    def save_received_wsu(self,caregiver_bio,form=None):
+        if form:
+            self.received_date_time = form.cleaned_data['received_date_time']
+        caregiver_bio.status_fk.received_wsu_fk = self
+        caregiver_bio.status_fk.received_wsu_fk.save()
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
+
+
     def __str__(self):
         return f"received date time {self.received_date_time}"
 
