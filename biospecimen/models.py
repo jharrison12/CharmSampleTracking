@@ -5,11 +5,7 @@ from django.contrib.auth.models import AbstractUser
 import logging
 logging.basicConfig(level=logging.debug)
 
-# Create your models here.
-
-BLOOD_TYPES = ["S","P","D","W","F","R","B"]
-PERINATAL = ["C","X"]
-URINE = ["U"]
+URINE = "U"
 
 class User(AbstractUser):
     pass
@@ -151,7 +147,7 @@ class ShippedWSU(models.Model):
         self.tracking_number = form.cleaned_data['tracking_number']
         self.courier = form.cleaned_data['courier']
         self.shipped_by = user
-        if collection_type in URINE:
+        if collection_type==URINE:
             self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.save()
         caregiver_bio.status_fk.shipped_wsu_fk = self

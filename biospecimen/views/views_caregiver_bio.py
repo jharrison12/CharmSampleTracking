@@ -1,7 +1,7 @@
 import logging
 
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Collection, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
-    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,PregnancyTrimester,Child,Component
+    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,PregnancyTrimester,Child,Component,URINE
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
@@ -29,7 +29,7 @@ BLOOD_DICT_FORM = {'whole_blood': 'W',
 
 BLOOD = ["B"]
 BLOOD_TYPES = ["S","P","D","W","F","R"]
-URINE = "U"
+# URINE = "U"
 HAIR_SALIVA = ["H","L"]
 PERINATAL = ["C","X"]
 
