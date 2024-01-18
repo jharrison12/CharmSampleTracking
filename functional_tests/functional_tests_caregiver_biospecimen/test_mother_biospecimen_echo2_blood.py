@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-
+import datetime as dt
 from functional_tests.base import FunctionalTest
 from biospecimen.models import CaregiverBiospecimen,Caregiver
 import time
@@ -11,6 +11,8 @@ import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
 logging.basicConfig(level=logging.debug)
+
+TODAY = dt.datetime.now().strftime('%b. %d, %Y')
 
 class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
@@ -24,18 +26,12 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         return caregiverbio.pk
 
     def choose_flatpickr_day(self,number_of_css_selector):
-        # flatpickr_class = WebDriverWait(self.browser, 50).until(expected_conditions.elements_to_be_clickable((By.CSS_SELECTOR,'span.flatpickr-day.today').get(number_of_css_selector)))
-            # 'div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft.div.flatpickr-innerContainer.div.div.flatpickr-days.div.span.flatpickr-day.today')))
-        # flatpickr_class = self.browser.find_element(By.CSS_SELECTOR, 'span.flatpickr-day.today')
-        # self.browser.implicitly_wait(1)
         flatpickr_class = self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')[number_of_css_selector]
         flatpickr_class.click()
         #find element body will click in the middle of the page and choose a different date lol
         self.browser.find_element(By.TAG_NAME,'h1').click()
-    #     /html/body/div[5]/div[2]/div/div[2]/div/span[19]
-    # body > div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft
-    # body > div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft.div.flatpickr-innerContainer.div.div.flatpickr-days.div.span.flatpickr-day.today
-    # body > div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft > div.flatpickr-innerContainer > div > div.flatpickr-days > div > span.flatpickr-day.today
+        number_of_css_selector+=1
+        return number_of_css_selector
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees blood
@@ -62,15 +58,17 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         #user submits form and sees data
         collected = self.browser.find_element(By.ID,"id_blood_form-collected_date_time")
-        collected.clear()
-        collected.send_keys('2023-09-27 12:52:26')
-
-        stored = self.browser.find_element(By.ID,"id_blood_form-stored_date_time")
-        stored.send_keys('2023-09-27 12:52:26')
+        collected.click()
+        number_of_elements = self.choose_flatpickr_day(0)
+        time.sleep(1)
 
         processed = self.browser.find_element(By.ID,"id_blood_form-processed_date_time")
-        processed.send_keys('2023-09-27 12:52:26')
+        processed.click()
+        number_of_elements = self.choose_flatpickr_day(number_of_elements)
 
+        stored = self.browser.find_element(By.ID,"id_blood_form-stored_date_time")
+        stored.click()
+        number_of_elements = self.choose_flatpickr_day(number_of_elements)
 
         #user sees a ton of checkboxes for all the bloods possible
         #user does not see whole blood number of tubes until whole blood is checked
@@ -104,26 +102,27 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Incentive Form',form)
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-03')
+        incentive_date.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Incentive Date: Sept. 3, 2023', body)
+        self.assertIn(f"Incentive Date: {dt.datetime.now().strftime('%b. %d, %Y')}", body)
 
         #user submits shipped to WSu form
 
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
-        shipped_date_time.clear()
-        shipped_date_time.send_keys('2023-09-27 12:52:26')
+        shipped_date_time.click()
+        number_of_elements = self.choose_flatpickr_day(0)
 
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
         shipped_date_time.send_keys('777777')
 
         logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
-        logged_date_time.send_keys('2023-09-27 12:52:26')
+        logged_date_time.click()
+        self.choose_flatpickr_day(number_of_elements)
 
         courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
         courier.send_keys('FedEx')
@@ -164,8 +163,8 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         #User sees received date time at
         #user submits received at WSU form
         received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
-        received_date_time.clear()
-        received_date_time.send_keys('2023-09-27 12:52:26')
+        received_date_time.click()
+        self.choose_flatpickr_day(0)
 
         #User sees a bunch of check boxes without number of tubes
         received_div = self.browser.find_element(By.ID, 'received_at_wsu_information_form').text
@@ -190,13 +189,13 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         #submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
+        self.assertIn(f'Received at WSU {TODAY}', body)
 
         #User sees shipped to Echo form
 
         shipped_echo_date_time = self.browser.find_element(By.ID,'id_shipped_to_echo_form-shipped_date_and_time')
-        shipped_echo_date_time.clear()
-        shipped_echo_date_time.send_keys('2023-09-27 12:52:26')
+        shipped_echo_date_time.click()
+        self.choose_flatpickr_day(0)
 
         whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes").text
         self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
@@ -217,7 +216,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.browser.execute_script("arguments[0].click();", submit)
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Shipped Date Time: Sept. 27, 2023, 12:52 p.m.', body)
+        self.assertIn(f'Shipped Date Time: {TODAY}',body)
 
 
     def test_user_can_choose_status_of_blood_information_chooses_not_collected(self):
@@ -292,15 +291,15 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         collected = self.browser.find_element(By.ID, "id_blood_form-collected_date_time")
         collected.click()
         time.sleep(2)
-        self.choose_flatpickr_day(number_of_css_selector=0)
+        new_selector  = self.choose_flatpickr_day(number_of_css_selector=0)
 
         processed = self.browser.find_element(By.ID, "id_blood_form-processed_date_time")
         processed.click()
-        self.choose_flatpickr_day(number_of_css_selector=1)
+        new_selector=self.choose_flatpickr_day(number_of_css_selector=new_selector)
 
         stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
         stored.click()
-        self.choose_flatpickr_day(number_of_css_selector=2)
+        self.choose_flatpickr_day(number_of_css_selector=new_selector)
 
         # user sees a ton of checkboxes for all the bloods possible
         # user does not see whole blood number of tubes until whole blood is checked
