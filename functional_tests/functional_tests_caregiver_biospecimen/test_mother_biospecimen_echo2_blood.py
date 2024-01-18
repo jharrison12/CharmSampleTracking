@@ -1,6 +1,9 @@
 import logging
-
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
 from functional_tests.base import FunctionalTest
 from biospecimen.models import CaregiverBiospecimen,Caregiver
 import time
@@ -19,6 +22,20 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
                                                         trimester_fk__trimester=trimester,
                                                         project_fk__project_name=project)
         return caregiverbio.pk
+
+    def choose_flatpickr_day(self,number_of_css_selector):
+        # flatpickr_class = WebDriverWait(self.browser, 50).until(expected_conditions.elements_to_be_clickable((By.CSS_SELECTOR,'span.flatpickr-day.today').get(number_of_css_selector)))
+            # 'div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft.div.flatpickr-innerContainer.div.div.flatpickr-days.div.span.flatpickr-day.today')))
+        # flatpickr_class = self.browser.find_element(By.CSS_SELECTOR, 'span.flatpickr-day.today')
+        # self.browser.implicitly_wait(1)
+        flatpickr_class = self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')[number_of_css_selector]
+        flatpickr_class.click()
+        #find element body will click in the middle of the page and choose a different date lol
+        self.browser.find_element(By.TAG_NAME,'h1').click()
+    #     /html/body/div[5]/div[2]/div/div[2]/div/span[19]
+    # body > div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft
+    # body > div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft.div.flatpickr-innerContainer.div.div.flatpickr-days.div.span.flatpickr-day.today
+    # body > div.flatpickr-calendar.hasTime.animate.open.arrowTop.arrowLeft > div.flatpickr-innerContainer > div > div.flatpickr-days > div > span.flatpickr-day.today
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees blood
@@ -273,14 +290,17 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         # user submits form and sees data
         collected = self.browser.find_element(By.ID, "id_blood_form-collected_date_time")
-        collected.clear()
-        collected.send_keys('2023-09-27 12:52:26')
-
-        stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
-        stored.send_keys('2023-09-27 12:52:26')
+        collected.click()
+        time.sleep(2)
+        self.choose_flatpickr_day(number_of_css_selector=0)
 
         processed = self.browser.find_element(By.ID, "id_blood_form-processed_date_time")
-        processed.send_keys('2023-09-27 12:52:26')
+        processed.click()
+        self.choose_flatpickr_day(number_of_css_selector=1)
+
+        stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
+        stored.click()
+        self.choose_flatpickr_day(number_of_css_selector=2)
 
         # user sees a ton of checkboxes for all the bloods possible
         # user does not see whole blood number of tubes until whole blood is checked
@@ -308,23 +328,24 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertNotIn('Plasma Number of Tubes', body)
 
         # user sees incentive form
-
+        self.browser.implicitly_wait(2)
         form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Incentive Form', form)
+        time.sleep(2)
 
         incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-03')
+
+        # incentive_date.send_keys('2023-09-03')
         self.browser.get(f'{self.live_server_url}/biospecimen/')
 
-        time.sleep(5)
+        time.sleep(2)
         self.browser.get(f'{self.live_server_url}/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        time.sleep(3)
+        time.sleep(2)
         # is incentive form still there?
 
         form = self.browser.find_element(By.TAG_NAME, 'form').text
         self.assertIn('Incentive Form', form)
 
         incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-03')
+        incentive_date.click()
+        self.choose_flatpickr_day(0)
