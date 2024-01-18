@@ -3,6 +3,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import datetime as dt
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Collected,PregnancyTrimester,ShippedWSU,ShippedECHO,KitSent,AgeCategory,\
     User,Caregiver,Incentive,Project,\
     Child,Pregnancy
@@ -37,6 +38,16 @@ class FunctionalTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def choose_flatpickr_day(self,number_of_css_selector):
+        logging.critical(f"number of flat picker days {len(self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today'))}")
+        logging.critical(f"flat picker days {self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')}")
+        flatpickr_class = self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')[number_of_css_selector]
+        flatpickr_class.click()
+        #find element body will click in the middle of the page and choose a different date lol
+        self.browser.find_element(By.TAG_NAME,'h1').click()
+        number_of_css_selector+=1
+        return number_of_css_selector
+
 
 def wait_for_element(browser,myelement):
     #logging.debug(browser,myelement)
@@ -48,3 +59,5 @@ def wait_for_element(browser,myelement):
         raise AssertionError
 
     return element
+
+TODAY = dt.datetime.now().strftime('%b. %d, %Y')

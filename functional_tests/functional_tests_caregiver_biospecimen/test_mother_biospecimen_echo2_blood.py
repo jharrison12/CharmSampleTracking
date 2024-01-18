@@ -25,13 +25,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
                                                         project_fk__project_name=project)
         return caregiverbio.pk
 
-    def choose_flatpickr_day(self,number_of_css_selector):
-        flatpickr_class = self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')[number_of_css_selector]
-        flatpickr_class.click()
-        #find element body will click in the middle of the page and choose a different date lol
-        self.browser.find_element(By.TAG_NAME,'h1').click()
-        number_of_css_selector+=1
-        return number_of_css_selector
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
         # User visits the caregiver biospecimen page and sees blood
@@ -164,6 +157,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         #user submits received at WSU form
         received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
         received_date_time.click()
+        time.sleep(10)
         self.choose_flatpickr_day(0)
 
         #User sees a bunch of check boxes without number of tubes
@@ -334,7 +328,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
 
-        # incentive_date.send_keys('2023-09-03')
         self.browser.get(f'{self.live_server_url}/biospecimen/')
 
         time.sleep(2)

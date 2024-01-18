@@ -1,7 +1,7 @@
 import logging
 
 from selenium.webdriver.common.by import By
-from functional_tests.base import FunctionalTest
+from functional_tests.base import FunctionalTest, TODAY
 from biospecimen.models import CaregiverBiospecimen,Caregiver
 import time
 import datetime
@@ -42,14 +42,16 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         #user submits form and sees data
         collected = self.browser.find_element(By.ID,"id_urine_form-collected_date_time")
-        collected.clear()
-        collected.send_keys('2023-09-27 12:52:26')
-
-        stored = self.browser.find_element(By.ID,"id_urine_form-stored_date_time")
-        stored.send_keys('2023-09-27 12:52:26')
+        collected.click()
+        new_num = self.choose_flatpickr_day(0)
 
         processed = self.browser.find_element(By.ID,"id_urine_form-processed_date_time")
-        processed.send_keys('2023-09-27 12:52:26')
+        processed.click()
+        new_num1 = self.choose_flatpickr_day(new_num)
+
+        stored = self.browser.find_element(By.ID,"id_urine_form-stored_date_time")
+        stored.click()
+        self.choose_flatpickr_day(new_num1)
 
         number_of_tubes = self.browser.find_element(By.ID,"id_urine_form-number_of_tubes")
         number_of_tubes.send_keys(5)
@@ -67,14 +69,14 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         #User sees incentive form
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-27')
+        incentive_date.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Incentive Date: Sept. 27, 2023', body)
+        self.assertIn(f'Incentive Date: {TODAY}', body)
 
         #user sees shipped to wsu form
 
@@ -83,8 +85,8 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         #user submits shipped to WSu form
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
-        shipped_date_time.clear()
-        shipped_date_time.send_keys('2023-09-27 12:52:26')
+        shipped_date_time.click()
+        new_num = self.choose_flatpickr_day(0)
 
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
         shipped_date_time.send_keys('777777')
@@ -93,7 +95,8 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         number_of_tubes.send_keys(5)
 
         logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
-        logged_date_time.send_keys('2023-09-27 12:52:26')
+        logged_date_time.click()
+        self.choose_flatpickr_day(new_num)
 
         courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
         courier.send_keys('FedEx')
@@ -112,14 +115,14 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         #User sees received date time at
         #user submits shipped to WSu form
         received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
-        received_date_time.clear()
-        received_date_time.send_keys('2023-09-27 12:52:26')
+        received_date_time.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
+        self.assertIn(f'Received at WSU {TODAY}', body)
 
         #user sees shipped to echo form
 
@@ -127,14 +130,14 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.assertIn('Shipped to ECHO Form',body)
 
         shipped_date_time = self.browser.find_element(By.ID, 'id_shipped_to_echo_form-shipped_date_and_time')
-        shipped_date_time.clear()
-        shipped_date_time.send_keys('2023-09-28 12:52:26')
+        shipped_date_time.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Shipped Date Time: Sept. 28, 2023, 12:52 p.m.', body)
+        self.assertIn(f'Shipped Date Time: {TODAY}', body)
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine

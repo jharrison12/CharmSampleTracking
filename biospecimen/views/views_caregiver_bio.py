@@ -42,7 +42,7 @@ def check_for_object_or_return_none(object_name,filter,parameter):
         return None
 
 def return_caregiver_bloods(caregiver_bio,collected_fk=None,shipped_wsu_fk=None,received_wsu_fk=None,shipped_echo_fk=None):
-    logging.critical(f"in caregiver bloods collected")
+    logging.debug(f"in caregiver bloods collected")
     if collected_fk:
         return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio,number_of_tubes__isnull=False,collected_fk=collected_fk)
     elif shipped_wsu_fk:
@@ -419,7 +419,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     caregiver_bloods_shipped_echo = None
     if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk:
         caregiver_bloods_collected = return_caregiver_bloods(caregiver_bio,collected_fk=caregiver_bio.status_fk.collected_fk)
-        logging.critical(f"caregiver bloods collected {caregiver_bloods_collected}")
+        logging.debug(f"caregiver bloods collected {caregiver_bloods_collected}")
     if caregiver_bio.status_fk and caregiver_bio.status_fk.shipped_wsu_fk:
         caregiver_bloods_shipped_wsu = return_caregiver_bloods(caregiver_bio,shipped_wsu_fk=caregiver_bio.status_fk.shipped_wsu_fk)
     if caregiver_bio.status_fk and caregiver_bio.status_fk.received_wsu_fk:
@@ -434,15 +434,15 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_echo_form = None
     incentive_form = None
     received_wsu_form = None
-    logging.critical(f"Caregiver bio is {caregiver_bio}")
+    logging.debug(f"Caregiver bio is {caregiver_bio}")
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
-        logging.critical(f"Does collected_item exist? {collected_item.exists()}\n\n"
+        logging.debug(f"Does collected_item exist? {collected_item.exists()}\n\n"
                          f"Is collected date time null {collected_item.filter(collected_date_time__isnull=True).exists()}\n")
-        logging.critical(f"in Collected form if statement")
+        logging.debug(f"in Collected form if statement")
         collected_form = CollectedBloodForm(prefix='blood_form')
-        logging.critical(BLOOD_DICT.get(collection_type))
+        logging.debug(BLOOD_DICT.get(collection_type))
         # disable whatever check box you used to pull the data
-        logging.critical(f"collection type {collection_type}")
+        logging.debug(f"collection type {collection_type}")
         if collection_type!=Collection.CollectionType.BLOOD:
             collected_form.fields[str(BLOOD_DICT.get(collection_type))].initial = True
             collected_form.fields[str(BLOOD_DICT.get(collection_type))].disabled = True
@@ -451,7 +451,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         logging.debug(f"Collected form is none")
         collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not caregiver_bio.incentive_fk:
-        logging.critical(f"in incentive form if block")
+        logging.debug(f"in incentive form if block")
         incentive_form = IncentiveForm(prefix='incentive_form')
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
             and not (caregiver_bio.status_fk.shipped_wsu_fk):

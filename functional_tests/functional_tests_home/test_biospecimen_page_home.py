@@ -88,14 +88,17 @@ class Echo2BioPage(FunctionalTest):
 
         # user submits form and sees data
         collected = self.browser.find_element(By.ID, "id_blood_form-collected_date_time")
-        collected.clear()
-        collected.send_keys('2023-09-27 12:52:26')
-
-        stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
-        stored.send_keys('2023-09-27 12:52:26')
+        collected.click()
+        number_of_element = self.choose_flatpickr_day(0)
 
         processed = self.browser.find_element(By.ID, "id_blood_form-processed_date_time")
-        processed.send_keys('2023-09-27 12:52:26')
+        processed.click()
+        number_of_element1=self.choose_flatpickr_day(number_of_element)
+
+        stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
+        stored.click()
+        self.choose_flatpickr_day(number_of_element1)
+
 
         # user sees a ton of checkboxes for all the bloods possible
         # user does not see whole blood number of tubes until whole blood is checked
@@ -126,5 +129,5 @@ class Echo2BioPage(FunctionalTest):
         self.assertIn('Incentive Form',form)
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-03')
+        incentive_date.click()
+        self.choose_flatpickr_day(0)
