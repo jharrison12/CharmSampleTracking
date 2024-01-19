@@ -25,8 +25,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
                                                         project_fk__project_name=project)
         return caregiverbio.pk
 
-
-    def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
+    def user_inputs_first_portion_of_blood_page(self):
         # User visits the caregiver biospecimen page and sees blood
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.browser.get(self.live_server_url)
@@ -132,6 +131,10 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood")
         whole_blood_checkbox.click()
+
+
+    def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
+        self.user_inputs_first_portion_of_blood_page()
 
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
         whole_blood_tubes.send_keys(3)
@@ -341,3 +344,13 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
         incentive_date.click()
         self.choose_flatpickr_day(0)
+
+
+    def test_user_submits_incorrect_number_of_tubes_and_error_is_thrown(self):
+        self.user_inputs_first_portion_of_blood_page()
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(4)
+
+
+
+        body = self.browser.find_element(By.TAG_NAME,'Body')
