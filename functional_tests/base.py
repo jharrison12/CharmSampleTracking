@@ -39,13 +39,18 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.quit()
 
     def choose_flatpickr_day(self,number_of_css_selector):
-        logging.critical(f"number of flat picker days {len(self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today'))}")
-        logging.critical(f"flat picker days {self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')}")
-        flatpickr_class = self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')[number_of_css_selector]
-        flatpickr_class.click()
-        #find element body will click in the middle of the page and choose a different date lol
-        self.browser.find_element(By.TAG_NAME,'h1').click()
-        number_of_css_selector+=1
+        try:
+            WebDriverWait(self.browser,20).until(EC.presence_of_element_located((By.CSS_SELECTOR,'span.flatpickr-day.today')))
+            flatpickr_class = self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')[number_of_css_selector]
+            flatpickr_class.click()
+            #find element body will click in the middle of the page and choose a different date lol
+            self.browser.find_element(By.TAG_NAME,'h1').click()
+            number_of_css_selector+=1
+        except IndexError:
+            logging.critical(
+                f"number of flat picker days {len(self.browser.find_elements(By.CSS_SELECTOR, 'span.flatpickr-day.today'))}")
+            logging.critical(
+                f"flat picker days {self.browser.find_elements(By.CSS_SELECTOR, 'span.flatpickr-day.today')}")
         return number_of_css_selector
 
 

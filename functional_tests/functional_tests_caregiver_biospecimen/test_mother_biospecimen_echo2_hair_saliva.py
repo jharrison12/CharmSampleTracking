@@ -1,7 +1,7 @@
 import logging
 
 from selenium.webdriver.common.by import By
-from functional_tests.base import FunctionalTest,wait_for_element
+from functional_tests.base import FunctionalTest,wait_for_element,TODAY
 from biospecimen.models import CaregiverBiospecimen,Caregiver
 import time
 import datetime
@@ -61,8 +61,8 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertIn('Kit sent date:', body_text)
 
         kit_sent_date = self.browser.find_element(By.ID,"id_kit_sent_form-kit_sent_date")
-        kit_sent_date.clear()
-        kit_sent_date.send_keys('2023-09-27')
+        kit_sent_date.click()
+        self.choose_flatpickr_day(0)
 
         biospecimen_id = self.browser.find_element(By.ID,'id_kit_sent_form-echo_biospecimen_id')
         biospecimen_id.send_keys('5555555')
@@ -71,7 +71,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         submit.click()
 
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Sept. 27, 2023',body_text)
+        self.assertIn(f'{TODAY}',body_text)
 
         #user sees collected form on next page
 
@@ -85,14 +85,14 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         in_person_remote.select_by_visible_text('In Person')
 
         collected = self.browser.find_element(By.ID,"id_hair_saliva_form-date_collected")
-        collected.clear()
-        collected.send_keys('2023-09-27')
+        collected.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Collected Date Time: Sept. 27, 2023', body)
+        self.assertIn(f'Collected Date Time: {TODAY}', body)
 
         #User sees incentive form
 
@@ -100,14 +100,14 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertIn('Incentive Form',form)
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-03')
+        incentive_date.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Incentive Date: Sept. 3, 2023', body)
+        self.assertIn(f'Incentive Date: {TODAY}', body)
 
         #user sees shipped to msu form
 
@@ -117,7 +117,8 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertNotIn('Shipped to WSU',form)
         self.assertNotIn('Shipped to Echo',form)
         date_time_shipped = self.browser.find_element(By.ID,'id_shipped_to_msu_form-shipped_date_time')
-        date_time_shipped.send_keys('2023-10-20 09:17:07')
+        date_time_shipped.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_msu"]/form/input[2]')
 
@@ -126,7 +127,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         #user sees shipped to echo data
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Shipped Date Time: Oct. 20, 2023, 9:17 a.m.', body)
+        self.assertIn(f'Shipped Date Time: {TODAY}', body)
 
         #use sees received at MSU Form
 
@@ -136,7 +137,8 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertNotIn('Shipped to WSU',form)
         self.assertNotIn('Shipped to Echo',form)
         date_time_received = self.browser.find_element(By.ID,'id_received_at_msu_form-received_date_time')
-        date_time_received.send_keys('2023-10-20 09:17:07')
+        date_time_received.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="received_at_msu"]/form/input[2]')
 
@@ -144,7 +146,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         #user sees received at MSU data
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Received Date Time: Oct. 20, 2023, 9:17 a.m.', body)
+        self.assertIn(f'Received Date Time: {TODAY}', body)
 
         #user sees shipped to echo form
 
@@ -154,15 +156,15 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertIn('Shipped to ECHO Form',needed_div)
 
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_echo_form-shipped_date_and_time")
-        shipped_date_time.clear()
-        shipped_date_time.send_keys('2023-10-20 09:17:07')
+        shipped_date_time.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_echo_form"]/form/input[2]')
 
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Shipped Date Time: Oct. 20, 2023, 9:17 a.m.',body)
+        self.assertIn(f'Shipped Date Time: {TODAY}',body)
 
 
     def test_user_can_choose_status_of_hair_or_salvia_information_chooses_not_collected_hope(self):

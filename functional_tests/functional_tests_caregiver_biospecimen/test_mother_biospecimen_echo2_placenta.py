@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from functional_tests.base import FunctionalTest
+from functional_tests.base import FunctionalTest,TODAY
 from biospecimen.models import CaregiverBiospecimen,Caregiver,Project
 import time
 import datetime
@@ -40,14 +40,16 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         #user submits form and sees data
         collected = self.browser.find_element(By.ID,"id_placenta_form-collected_date_time")
-        collected.clear()
-        collected.send_keys('2023-09-27 12:52:26')
+        collected.click()
+        new_num = self.choose_flatpickr_day(0)
 
         processed = self.browser.find_element(By.ID,"id_placenta_form-processed_date_time")
-        processed.send_keys('2023-09-27 12:52:26')
+        processed.click()
+        new_num1 = self.choose_flatpickr_day(new_num)
 
         placed_in_formalin = self.browser.find_element(By.ID,"id_placenta_form-placed_in_formalin")
-        placed_in_formalin.send_keys('2023-09-27 12:52:26')
+        placed_in_formalin.click()
+        self.choose_flatpickr_day(new_num1)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
@@ -55,24 +57,23 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         #user sees some of the information just entered
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Placed in Formalin: Sept. 27, 2023, 12:52 p.m.', body)
+        self.assertIn(f'Placed in Formalin: {TODAY}', body)
 
         self.assertIn('Logged By: testuser',body)
 
         #User sees incentive form
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        incentive_date.clear()
-        incentive_date.send_keys('2023-09-27')
+        incentive_date.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Incentive Date: Sept. 27, 2023', body)
+        self.assertIn(f'Incentive Date: {TODAY}', body)
 
         #user does not see shipped choice form
-
 
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertNotIn('Shipped Choice Form',form)
@@ -84,8 +85,8 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         #user submits shipped to WSu form
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
-        shipped_date_time.clear()
-        shipped_date_time.send_keys('2023-09-27 12:52:26')
+        shipped_date_time.click()
+        new_num = self.choose_flatpickr_day(0)
 
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
         shipped_date_time.send_keys('777777')
@@ -107,26 +108,26 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         #User sees received form
         received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
-        received_date_time.clear()
-        received_date_time.send_keys('2023-09-27 12:52:26')
+        received_date_time.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Received at WSU Sept. 27, 2023, 12:52 p.m.', body)
+        self.assertIn(f'Received at WSU {TODAY}', body)
 
         #User sees shipped to echo form
         shipped_echo_date_time = self.browser.find_element(By.ID,"id_shipped_to_echo_form-shipped_date_and_time")
-        shipped_echo_date_time.clear()
-        shipped_echo_date_time.send_keys('2023-09-27 12:52:26')
+        shipped_echo_date_time.click()
+        self.choose_flatpickr_day(0)
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
         submit.click()
 
         #User sees shipped to echo data
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Shipped Date Time: Sept. 27, 2023, 12:52 p.m.',body)
+        self.assertIn(f'Shipped Date Time: {TODAY}',body)
 
 
 
