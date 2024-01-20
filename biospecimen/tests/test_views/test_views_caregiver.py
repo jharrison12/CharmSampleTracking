@@ -631,12 +631,12 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         return response
 
-    def blood_shipped_to_wsu(self,primary_key, false_or_true,type_of_blood):
+    def blood_shipped_to_wsu(self,primary_key, false_or_true,type_of_blood,number_of_tubes=5):
         response =  self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_wsu/post/',
                                     data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
                                           'shipped_to_wsu_form-tracking_number':555,
                                           f'shipped_to_wsu_form-{type_of_blood}': false_or_true,
-                                          f'shipped_to_wsu_form-{type_of_blood}_number_of_tubes': 5,
+                                          f'shipped_to_wsu_form-{type_of_blood}_number_of_tubes': number_of_tubes,
                                           'shipped_to_wsu_form-logged_date_time': timezone.datetime(
                                                   2023, 12, 5, 5, 5, 5),
                                           'shipped_to_wsu_form-courier': 'F'})
@@ -760,7 +760,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         logging.debug(component_test)
         self.assertEqual(component_test.received_wsu_fk, caregiver_bio.status_fk.received_wsu_fk)
 
-    def test_blood_collected_creates_row_in_component_that_links_to_blood_shipped_to_echo(self):
+    def test_blood_shipped_creates_row_in_component_that_links_to_blood_shipped_to_echo(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key,'serum',false_or_true=True)
@@ -776,6 +776,15 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                                component_type=Component.ComponentType.SERUM)
         logging.debug(component_test)
         self.assertEqual(component_test.shipped_echo_fk, caregiver_bio.status_fk.shipped_echo_fk)
+
+    def test_blood_entering_in_component_number_that_doesnt_match_previous_chain_of_custody_fails(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, 'serum', false_or_true=True)
+        self.blood_incentive_form_send(primary_key)
+        with self.assertRaises(AssertionError):
+           self.blood_shipped_to_wsu(primary_key, type_of_blood='serum', false_or_true=True,
+                                                 number_of_tubes=4)
 
     # Redirection tests
 

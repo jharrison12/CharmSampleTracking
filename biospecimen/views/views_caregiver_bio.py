@@ -58,7 +58,6 @@ def return_caregiver_bloods(caregiver_bio,collected_fk=None,shipped_wsu_fk=None,
 def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,collected_fk=None,shipped_wsu_fk=None, received_wsu_fk=None,shipped_to_echo_fk=None,project='ECHO2'):
         logging.debug(f"What is caregiver_bio {caregiver_bio}\n")
         logging.debug(f"What is form data {form_data}\n")
-        project_object = Project.objects.get(project_name=project)
         try:
             components = Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio)
             form_components = {k: form_data[k] for k in (BLOOD_DICT_FORM.keys())}
@@ -513,9 +512,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
             logging.debug(f"is form valid {form.is_valid()} \n\nform errors {form.errors} \n\nform {form.data} \n\nrequest.post{request.POST}")
             if form.is_valid():
-                #I'm disabling field that references the collection type of the page
-                #disabled fields are not passed through the post request, so you have to do it manually :/
-                #form.cleaned_data[str(blood_dict.get(collection_type))] = True
                 logging.debug(f"Did form cleaned data update work {form.cleaned_data} ")
                 blood_item = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 create_or_update_component_values(caregiver_bio=caregiver_bio,

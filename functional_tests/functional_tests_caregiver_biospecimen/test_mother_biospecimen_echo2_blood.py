@@ -351,6 +351,14 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
         whole_blood_tubes.send_keys(4)
 
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
+        submit.click()
 
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+
+        self.assertIn('Incorrect number of tubes',body)
+
+        time.sleep(50)
+        self.assertTrue(False)
 
         body = self.browser.find_element(By.TAG_NAME,'Body')
