@@ -2,10 +2,26 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
+
 import logging
 logging.basicConfig(level=logging.debug)
 
 URINE = "U"
+BLOOD_DICT_FORM = {'whole_blood': 'W',
+                   'serum':'S',
+                   'plasma':'P',
+                   'red_blood_cells':'R',
+                   'buffy_coat':'F',
+                   }
+
+BLOOD_DICT = {'Whole Blood': 'whole_blood',
+              'Serum':'serum',
+              'Plasma':'plasma',
+              'Red Blood Cells':'red_blood_cells',
+              'Buffy Coat':'buffy_coat'}
+
+class ComponentError(Exception):
+    pass
 
 class User(AbstractUser):
     pass
@@ -105,6 +121,19 @@ class Collected(models.Model):
         self.logged_by = user
         self.save()
 
+    def component_check(self,components,form):
+        logging.critical(f"{form.cleaned_data}")
+        for component in components:
+            logging.critical(f"{component} {component.number_of_tubes} {component.component_type} {component.get_component_type_display()}")
+            try:
+                if form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}"] and\
+                    form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}"] == BLOOD_DICT.get(component.get_component_type_display):
+                    if form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}_number_of_tubes"] != component.number_of_tubes:
+                        raise ComponentError
+            except KeyError:
+                pass
+
+
     class InpersonRemoteChoices(models.TextChoices):
         IN_PERSON = 'I', _('In Person')
         REMOTE = 'R', _('Remote')
@@ -151,6 +180,7 @@ class ShippedWSU(models.Model):
             self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.save()
         caregiver_bio.status_fk.shipped_wsu_fk = self
+        caregiver_bio.status_fk.shipped_wsu_fk.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
 
