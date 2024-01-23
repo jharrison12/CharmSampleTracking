@@ -1,7 +1,7 @@
 import logging
 
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Collection, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
-    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,PregnancyTrimester,Child,Component,URINE,BLOOD_DICT_FORM,BLOOD_DICT
+    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,PregnancyTrimester,Child,Component,URINE,BLOOD_DICT_FORM,BLOOD_DICT,ComponentError
 from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm, ReceivedBiospecimenForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
@@ -112,6 +112,23 @@ def create_or_update_incentive(caregiver_bio_pk, bound_form):
     incentive_item.save()
     caregiver_bio.save()
 
+
+def compare_form_component(component_values,form):
+    for component in component_values:
+        logging.critical(
+            f"{component} {component.number_of_tubes} {component.component_type} {component.get_component_type_display()} form {form.cleaned_data}")
+        for value in BLOOD_DICT.keys():
+            logging.critical(f"blood dict key {value} blood dict return value {BLOOD_DICT[value]}")
+            logging.critical(f"{form.cleaned_data[BLOOD_DICT[value]]}")
+            logging.critical(f"{BLOOD_DICT.get(component.get_component_type_display())}")
+            try:
+                if form.cleaned_data[f"{BLOOD_DICT[value]}"] and\
+                    (BLOOD_DICT[value] == BLOOD_DICT.get(component.get_component_type_display())):
+                    logging.critical(f"In form cleaned data check")
+                    if form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}_number_of_tubes"] != component.number_of_tubes:
+                        raise ComponentError
+            except KeyError:
+                pass
 
 #################################################
 # Views
@@ -442,7 +459,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         incentive_form = IncentiveForm(prefix='incentive_form')
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
             and not (caregiver_bio.status_fk.shipped_wsu_fk):
-        shipped_wsu_form = ShippedtoWSUFormBlood(prefix="shipped_to_wsu_form")
+        shipped_wsu_form = ShippedtoWSUFormBlood(prefix="shipped_to_wsu_form",caregiver_bio=caregiver_bio)
     elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and received_at_wsu_item.filter(received_date_time__isnull=True):
         received_wsu_form = ReceivedatWSUBloodForm(prefix="received_at_wsu_form")
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
@@ -579,37 +596,25 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    logging.debug(f"In wsu post")
     if request.method == "POST":
         if collection_type in BLOOD:
-            form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.debug(f"form is valid {form.is_valid()}  form errors {form.errors}")
+            form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form',caregiver_bio=caregiver_bio)
             if form.is_valid():
-                collected_component_values = Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio)
-                blood_collected = caregiver_bio.status_fk.collected_fk
-                blood_collected.component_check(components=collected_component_values,form=form)
-                logging.critical(f"collected component values {collected_component_values}")
-                # shipped_wsu_item = ShippedWSU.objects.create()
                 update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user,collection_type=collection_type)
                 shipped_wsu_item = ShippedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                logging.critical(f"shipped wsu fk {shipped_wsu_item}")
                 create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
                                                   collected_fk=None,shipped_wsu_fk=shipped_wsu_item)
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in PERINATAL:
-            logging.debug(f"post is {request.POST}")
             form = ShippedtoWSUFormPlacenta(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_wsu_item = ShippedWSU.objects.create()
                 shipped_wsu_item.save_shipped_wsu(form,request.user,caregiver_bio)
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in URINE:
-            logging.debug(f"post is {request.POST}")
             form = ShippedtoWSUForm(data=request.POST, prefix='shipped_to_wsu_form')
-            logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_wsu_item = ShippedWSU.objects.create()
                 shipped_wsu_item.save_shipped_wsu(form,request.user,caregiver_bio,'U',)

@@ -355,10 +355,10 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-
+        time.sleep(200)
         self.assertIn('Incorrect number of tubes',body)
 
-        time.sleep(50)
+
         self.assertTrue(False)
 
         body = self.browser.find_element(By.TAG_NAME,'Body')

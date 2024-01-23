@@ -2,11 +2,14 @@ import datetime
 
 from django import forms
 from django.forms import TextInput
-
-from biospecimen.models import CaregiverBiospecimen,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU,Incentive
+import logging
+from biospecimen.models import CaregiverBiospecimen,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU,Incentive,Component,BLOOD_DICT_FORM,BLOOD_DICT
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
+
+
+logging.basicConfig(level=logging.CRITICAL)
 
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
@@ -159,6 +162,27 @@ class ShippedtoWSUFormBlood(forms.Form):
     red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
     serum = forms.BooleanField(required=False)
     serum_number_of_tubes = forms.IntegerField(required=False)
+
+    def __init__(self, *args,**kwargs):
+        self.caregiver_bio = kwargs.pop('caregiver_bio')
+        super(ShippedtoWSUFormBlood,self).__init__(*args,**kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
+        whole_blood_number_of_tubes = cleaned_data.get("whole_blood_number_of_tubes")
+        logging.critical(f"component values{component_values}")
+        # for component in component_values:
+        #     for blood_value in BLOOD_DICT.keys():
+        #         try:
+        #             if cleaned_data[f"{BLOOD_DICT[blood_value]}"] and \
+        #                     (BLOOD_DICT[blood_value] == BLOOD_DICT.get(component.get_component_type_display())):
+        #                 logging.critical(f"In form cleaned data check")
+        #                 if cleaned_data[
+        #                     f"{BLOOD_DICT.get(component.get_component_type_display())}_number_of_tubes"] != component.number_of_tubes:
+        #                     raise ValidationError
+        #         except KeyError:
+        #             pass
 
 class ReceivedatWSUBloodForm(forms.Form):
     received_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))

@@ -122,16 +122,8 @@ class Collected(models.Model):
         self.save()
 
     def component_check(self,components,form):
-        logging.critical(f"{form.cleaned_data}")
-        for component in components:
-            logging.critical(f"{component} {component.number_of_tubes} {component.component_type} {component.get_component_type_display()}")
-            try:
-                if form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}"] and\
-                    form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}"] == BLOOD_DICT.get(component.get_component_type_display):
-                    if form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}_number_of_tubes"] != component.number_of_tubes:
-                        raise ComponentError
-            except KeyError:
-                pass
+        logging.debug(f"{form.cleaned_data}")
+
 
 
     class InpersonRemoteChoices(models.TextChoices):

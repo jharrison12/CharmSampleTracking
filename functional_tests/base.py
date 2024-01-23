@@ -47,9 +47,9 @@ class FunctionalTest(StaticLiveServerTestCase):
             self.browser.find_element(By.TAG_NAME,'h1').click()
             number_of_css_selector+=1
         except IndexError:
-            logging.critical(
+            logging.debug(
                 f"number of flat picker days {len(self.browser.find_elements(By.CSS_SELECTOR, 'span.flatpickr-day.today'))}")
-            logging.critical(
+            logging.debug(
                 f"flat picker days {self.browser.find_elements(By.CSS_SELECTOR, 'span.flatpickr-day.today')}")
         return number_of_css_selector
 
