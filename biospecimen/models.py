@@ -20,6 +20,12 @@ BLOOD_DICT = {'Whole Blood': 'whole_blood',
               'Red Blood Cells':'red_blood_cells',
               'Buffy Coat':'buffy_coat'}
 
+BLOOD_DICT_DISPLAY = {'whole_blood':'Whole Blood',
+              'serum':'Serum',
+              'plasma':'Plasma',
+              'red_blood_cells':'Red Blood Cells',
+              'buffy_coat':'Buffy Coat'}
+
 class ComponentError(Exception):
     pass
 

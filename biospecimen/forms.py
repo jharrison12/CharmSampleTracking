@@ -3,7 +3,7 @@ import datetime
 from django import forms
 from django.forms import TextInput
 import logging
-from biospecimen.models import CaregiverBiospecimen,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU,Incentive,Component,BLOOD_DICT_FORM,BLOOD_DICT
+from biospecimen.models import CaregiverBiospecimen,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU,Incentive,Component,BLOOD_DICT_FORM,BLOOD_DICT,BLOOD_DICT_DISPLAY
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
@@ -21,6 +21,27 @@ KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
+
+
+def check_component_tubes(component_values, form_data,cleaned_data):
+    for blood_item in form_data.items():
+        for component in component_values:
+            try:
+                logging.critical(f"blood is {blood_item[0]}")
+                logging.critical(f"is data true or false is {blood_item[1]}")
+                logging.critical(f"component is data is {BLOOD_DICT[component.get_component_type_display()]}")
+                if blood_item[1] and (blood_item[0] == BLOOD_DICT[component.get_component_type_display()]):
+                    logging.critical("made it into tube check")
+                    number_of_tubes = cleaned_data[blood_item[0] + "_number_of_tubes"]
+                    logging.critical(
+                        f"blood logging {blood_item[0]} form data: {number_of_tubes} component number of tubes {component.number_of_tubes}")
+                    if number_of_tubes != component.number_of_tubes:
+                        raise ValidationError(
+                            _("%(component)s number of tubes entered %(form_tubes)s does not match number of %(component)s collected tubes: %(component_tube)s"),
+                            params={"component": BLOOD_DICT_DISPLAY[blood_item[0]],
+                                    "component_tube": component.number_of_tubes, "form_tubes": number_of_tubes})
+            except KeyError:
+                pass
 
 class ReceivedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
@@ -172,25 +193,24 @@ class ShippedtoWSUFormBlood(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
-        whole_blood_number_of_tubes = cleaned_data.get("whole_blood_number_of_tubes")
         logging.critical(f"component values{component_values}")
         test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
-        for blood_item in test_data.items():
-            for component in component_values:
-                try:
-                    logging.critical(f"blood is {blood_item[0]}")
-                    logging.critical(f"is data true or false is {blood_item[1]}")
-                    # logging.critical(f"cleaned data is {cleaned_data}")
-                    logging.critical(f"component is data is {BLOOD_DICT[component.get_component_type_display()]}")
-                    if blood_item[1] and (blood_item[0] == BLOOD_DICT[component.get_component_type_display()]):
-                        logging.critical("made it into tube check")
-                        number_of_tubes = cleaned_data[blood_item[0]+ "_number_of_tubes"]
-                        logging.critical(f"blood logging {blood_item[0]} form data: {number_of_tubes} component number of tubes {component.number_of_tubes}")
-                        if number_of_tubes != component.number_of_tubes:
-                            raise ValidationError(_("Component tube number %(component_tube)s does not match number of collected %(form_tubes)s"),
-                                                  params={"component_tube":component.number_of_tubes,"form_tubes":number_of_tubes })
-                except KeyError:
-                    pass
+        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data)
+        # for blood_item in test_data.items():
+        #     for component in component_values:
+        #         try:
+        #             logging.critical(f"blood is {blood_item[0]}")
+        #             logging.critical(f"is data true or false is {blood_item[1]}")
+        #             logging.critical(f"component is data is {BLOOD_DICT[component.get_component_type_display()]}")
+        #             if blood_item[1] and (blood_item[0] == BLOOD_DICT[component.get_component_type_display()]):
+        #                 logging.critical("made it into tube check")
+        #                 number_of_tubes = cleaned_data[blood_item[0]+ "_number_of_tubes"]
+        #                 logging.critical(f"blood logging {blood_item[0]} form data: {number_of_tubes} component number of tubes {component.number_of_tubes}")
+        #                 if number_of_tubes != component.number_of_tubes:
+        #                     raise ValidationError(_("%(component)s number of tubes entered %(form_tubes)s does not match number of %(component)s collected tubes: %(component_tube)s"),
+        #                                           params={"component":BLOOD_DICT_DISPLAY[blood_item[0]],"component_tube":component.number_of_tubes,"form_tubes":number_of_tubes })
+        #         except KeyError:
+        #             pass
 
 
             # if data:
@@ -218,6 +238,18 @@ class ReceivedatWSUBloodForm(forms.Form):
     red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
     serum = forms.BooleanField(required=False)
     serum_number_of_tubes = forms.IntegerField(required=False)
+
+    def __init__(self, *args,**kwargs):
+        self.caregiver_bio = kwargs.pop('caregiver_bio')
+        super(ReceivedatWSUBloodForm,self).__init__(*args,**kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
+        logging.critical(f"component values{component_values}")
+        test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
+        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data)
+
 
 class ShippedtoEchoBloodForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
