@@ -147,7 +147,32 @@
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
               <h2>Shipped to WSU Form</h2>
-            {{ shipped_wsu_form.non_field_errors }}
+              {{ shipped_wsu_form.non_field_errors }}
+              {{ shipped_wsu_form.has_error }}
+              {{ shipped_wsu_form.errors }}
+              {% if messages %}
+                    {% for message in messages %}
+                        <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Component Error</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">{{ message }}</div>
+                                      <div class="modal-footer">
+                                          <a type="button" id='modal-link' class="btn btn-secondary btn-lg">Confirm</a>
+                                          <button type="button" class="btn btn-primary btn-lg" data-bs-dismiss="modal">Cancel</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                {#  Below is needed to reload javascript when user hits back button (which I imagine will happen)  #}
+                                {#  https://stackoverflow.com/questions/9046184/reload-the-site-when-reached-via-browsers-back-button  #}
+                                <input type="hidden" id="refresh" value="no">
+                    {% endfor %}
+              {% endif %}
               <div class="form-group">
                 {{ shipped_wsu_form.shipped_date_and_time.errors }}
                 <label for="{{ shipped_wsu_form.shipped_date_and_time.id_for_label }}" class="form-label">Shipped Date Time:</label>

@@ -7,6 +7,7 @@ from biospecimen.models import CaregiverBiospecimen,Status,Declined,ReceivedWSU,
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -163,6 +164,7 @@ class ShippedtoWSUFormBlood(forms.Form):
     serum = forms.BooleanField(required=False)
     serum_number_of_tubes = forms.IntegerField(required=False)
 
+    # https://stackoverflow.com/questions/24251141/pass-data-to-django-forms-field-clean-method
     def __init__(self, *args,**kwargs):
         self.caregiver_bio = kwargs.pop('caregiver_bio')
         super(ShippedtoWSUFormBlood,self).__init__(*args,**kwargs)
@@ -172,8 +174,28 @@ class ShippedtoWSUFormBlood(forms.Form):
         component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
         whole_blood_number_of_tubes = cleaned_data.get("whole_blood_number_of_tubes")
         logging.critical(f"component values{component_values}")
-        # for component in component_values:
-        #     for blood_value in BLOOD_DICT.keys():
+        test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
+        for blood_item in test_data.items():
+            for component in component_values:
+                try:
+                    logging.critical(f"blood is {blood_item[0]}")
+                    logging.critical(f"is data true or false is {blood_item[1]}")
+                    # logging.critical(f"cleaned data is {cleaned_data}")
+                    logging.critical(f"component is data is {BLOOD_DICT[component.get_component_type_display()]}")
+                    if blood_item[1] and (blood_item[0] == BLOOD_DICT[component.get_component_type_display()]):
+                        logging.critical("made it into tube check")
+                        number_of_tubes = cleaned_data[blood_item[0]+ "_number_of_tubes"]
+                        logging.critical(f"blood logging {blood_item[0]} form data: {number_of_tubes} component number of tubes {component.number_of_tubes}")
+                        if number_of_tubes != component.number_of_tubes:
+                            raise ValidationError(_("Component tube number %(component_tube)s does not match number of collected %(form_tubes)s"),
+                                                  params={"component_tube":component.number_of_tubes,"form_tubes":number_of_tubes })
+                except KeyError:
+                    pass
+
+
+            # if data:
+
+        #    for blood_value in BLOOD_DICT.keys():
         #         try:
         #             if cleaned_data[f"{BLOOD_DICT[blood_value]}"] and \
         #                     (BLOOD_DICT[blood_value] == BLOOD_DICT.get(component.get_component_type_display())):

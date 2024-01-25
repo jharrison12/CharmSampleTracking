@@ -69,6 +69,14 @@ $('#id_shipped_to_echo_form-red_blood_cells').click(function() {
   $('#red_blood_cells_number_of_tubes_div')[this.checked ? "show" : "hide"]();
 });
 
+// Pop up modal if messages
+// const exampleModal = document.getElementById('modal_component_message')
+$(document).ready(function() {
+if ( $('#exampleModal').length ) { // if there is an DOM that has class has-error
+     $('#exampleModal').modal('show'); // Show Modal
+  }
+});
+
 
 // Reload javascript if user hits back button.
 $(document).ready(function(e) {

@@ -11,6 +11,7 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import random
+from django.contrib import messages
 
 logging.basicConfig(level=logging.CRITICAL)
 
@@ -599,13 +600,19 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     if request.method == "POST":
         if collection_type in BLOOD:
             form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form',caregiver_bio=caregiver_bio)
+            logging.critical(f"IN views shipped wsu post")
             if form.is_valid():
+                logging.critical(f"Shipped to wsu form valid")
                 update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user,collection_type=collection_type)
                 shipped_wsu_item = ShippedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
                                                   collected_fk=None,shipped_wsu_fk=shipped_wsu_item)
-                return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+            else:
+                logging.critical(f"form errors? {form.errors}")
+                messages.info(request, f"{form.non_field_errors()}")
+            return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
+
         elif collection_type in PERINATAL:
             form = ShippedtoWSUFormPlacenta(data=request.POST, prefix='shipped_to_wsu_form')
             if form.is_valid():
