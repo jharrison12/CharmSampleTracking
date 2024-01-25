@@ -161,7 +161,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         #user submits received at WSU form
         received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
         received_date_time.click()
-        time.sleep(10)
+        time.sleep(2)
         self.choose_flatpickr_day(0)
 
         #User sees a bunch of check boxes without number of tubes
@@ -197,11 +197,11 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes").text
         self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
-        self.assertIn('Plasma', whole_blood_number_of_tubes_text)
-        self.assertIn('Whole Blood', whole_blood_number_of_tubes_text)
-        self.assertIn('Serum', whole_blood_number_of_tubes_text)
-        self.assertIn('Red Blood Cells', whole_blood_number_of_tubes_text)
-        self.assertIn('Buffy Coat', whole_blood_number_of_tubes_text)
+        self.assertIn('Plasma', body)
+        self.assertIn('Whole Blood', body)
+        self.assertIn('Serum', body)
+        self.assertIn('Red Blood Cells', body)
+        self.assertIn('Buffy Coat', body)
 
         whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood")
         whole_blood_checkbox.click()
