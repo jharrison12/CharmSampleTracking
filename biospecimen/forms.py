@@ -23,23 +23,23 @@ SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
 
 
-def check_component_tubes(component_values, form_data,cleaned_data):
+def check_component_tubes(component_values, form_data,cleaned_data,chain_of_custody):
     for blood_item in form_data.items():
         for component in component_values:
             try:
-                logging.critical(f"blood is {blood_item[0]}")
-                logging.critical(f"is data true or false is {blood_item[1]}")
-                logging.critical(f"component is data is {BLOOD_DICT[component.get_component_type_display()]}")
+                logging.debug(f"blood is {blood_item[0]}")
+                logging.debug(f"is data true or false is {blood_item[1]}")
+                logging.debug(f"component is data is {BLOOD_DICT[component.get_component_type_display()]}")
                 if blood_item[1] and (blood_item[0] == BLOOD_DICT[component.get_component_type_display()]):
-                    logging.critical("made it into tube check")
+                    logging.debug("made it into tube check")
                     number_of_tubes = cleaned_data[blood_item[0] + "_number_of_tubes"]
-                    logging.critical(
+                    logging.debug(
                         f"blood logging {blood_item[0]} form data: {number_of_tubes} component number of tubes {component.number_of_tubes}")
                     if number_of_tubes != component.number_of_tubes:
                         raise ValidationError(
-                            _("%(component)s number of tubes entered %(form_tubes)s does not match number of %(component)s collected tubes: %(component_tube)s"),
+                            _("%(component)s number of tubes entered %(form_tubes)s does not match number of %(component)s %(chain_of_custody)s tubes: %(component_tube)s"),
                             params={"component": BLOOD_DICT_DISPLAY[blood_item[0]],
-                                    "component_tube": component.number_of_tubes, "form_tubes": number_of_tubes})
+                                    "component_tube": component.number_of_tubes, "form_tubes": number_of_tubes,"chain_of_custody":chain_of_custody})
             except KeyError:
                 pass
 
@@ -193,9 +193,9 @@ class ShippedtoWSUFormBlood(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
-        logging.critical(f"component values{component_values}")
+        logging.debug(f"component values{component_values}")
         test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
-        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data)
+        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data,chain_of_custody='collected')
 
 class ReceivedatWSUBloodForm(forms.Form):
     received_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
@@ -217,9 +217,9 @@ class ReceivedatWSUBloodForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
-        logging.critical(f"component values{component_values}")
+        logging.debug(f"component values{component_values}")
         test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
-        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data)
+        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data,chain_of_custody='shipped to wsu')
 
 
 class ShippedtoEchoBloodForm(forms.Form):
@@ -242,9 +242,9 @@ class ShippedtoEchoBloodForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
-        logging.critical(f"component values{component_values}")
+        logging.debug(f"component values{component_values}")
         test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
-        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data)
+        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data,chain_of_custody='received at wsu')
 
 class ShippedtoWSUFormPlacenta(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))

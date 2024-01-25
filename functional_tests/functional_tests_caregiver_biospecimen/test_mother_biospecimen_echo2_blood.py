@@ -1,8 +1,9 @@
 import logging
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support import expected_conditions as EC
 import datetime as dt
 from functional_tests.base import FunctionalTest
 from biospecimen.models import CaregiverBiospecimen,Caregiver
@@ -351,14 +352,81 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
         whole_blood_tubes.send_keys(4)
 
+        #check that modal text isn't in body
+        body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertNotIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood collected tubes: 3',
+                      body_text)
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
+        submit.click()
+        WebDriverWait(self.browser,5).until(EC.visibility_of_element_located((By.ID
+                                                                                  ,'exampleModal')))
+        modal_text = self.browser.find_element(By.ID,'exampleModal').text
+
+        self.assertIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood collected tubes: 3',modal_text)
+
+        #user clicks cancel
+        time.sleep(2)
+        self.browser.find_element(By.ID,'modal_cancel_button').click()
+
+        #user submits shipped to WSu form
+
+        shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
+        shipped_date_time.click()
+        number_of_elements = self.choose_flatpickr_day(0)
+
+        shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
+        shipped_date_time.send_keys('777777')
+
+        logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
+        logged_date_time.click()
+        self.choose_flatpickr_day(number_of_elements)
+
+        courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
+        courier.send_keys('FedEx')
+
+        #User sees a bunch of check boxes without number of tubes
+        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
+
+        self.assertNotIn('Number of Tubes:', shipped_div)
+        self.assertIn('Plasma', shipped_div)
+        self.assertIn('Whole Blood', shipped_div)
+        self.assertIn('Serum', shipped_div)
+        self.assertIn('Red Blood Cells', shipped_div)
+        self.assertIn('Buffy Coat', shipped_div)
+
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood")
+        whole_blood_checkbox.click()
+
+        whole_blood_tubes = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(3)
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
         submit.click()
 
-        body = self.browser.find_element(By.TAG_NAME,'body').text
-        time.sleep(200)
-        self.assertIn('Incorrect number of tubes',body)
+        #user submits wrong number to received at WSU form and sees modal
 
+        whole_blood_checkbox = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood")
+        whole_blood_checkbox.click()
 
-        self.assertTrue(False)
+        whole_blood_tubes = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood_number_of_tubes")
+        whole_blood_tubes.send_keys(4)
 
+        #check that modal text isn't in body
+        body_text = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertNotIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood shipped to wsu tubes: 3',
+                      body_text)
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
+        self.browser.execute_script("arguments[0].scrollIntoView();",submit)
+        self.browser.execute_script("arguments[0].click();",submit)
+
+        WebDriverWait(self.browser,5).until(EC.visibility_of_element_located((By.ID
+                                                                                  ,'exampleModal')))
+        modal_text = self.browser.find_element(By.ID,'exampleModal').text
+
+        self.assertIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood shipped to wsu tubes: 3',
+                      modal_text)
+
+        time.sleep(50)
         body = self.browser.find_element(By.TAG_NAME,'Body')

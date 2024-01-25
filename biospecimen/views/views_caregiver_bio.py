@@ -116,16 +116,16 @@ def create_or_update_incentive(caregiver_bio_pk, bound_form):
 
 def compare_form_component(component_values,form):
     for component in component_values:
-        logging.critical(
+        logging.debug(
             f"{component} {component.number_of_tubes} {component.component_type} {component.get_component_type_display()} form {form.cleaned_data}")
         for value in BLOOD_DICT.keys():
-            logging.critical(f"blood dict key {value} blood dict return value {BLOOD_DICT[value]}")
-            logging.critical(f"{form.cleaned_data[BLOOD_DICT[value]]}")
-            logging.critical(f"{BLOOD_DICT.get(component.get_component_type_display())}")
+            logging.debug(f"blood dict key {value} blood dict return value {BLOOD_DICT[value]}")
+            logging.debug(f"{form.cleaned_data[BLOOD_DICT[value]]}")
+            logging.debug(f"{BLOOD_DICT.get(component.get_component_type_display())}")
             try:
                 if form.cleaned_data[f"{BLOOD_DICT[value]}"] and\
                     (BLOOD_DICT[value] == BLOOD_DICT.get(component.get_component_type_display())):
-                    logging.critical(f"In form cleaned data check")
+                    logging.debug(f"In form cleaned data check")
                     if form.cleaned_data[f"{BLOOD_DICT.get(component.get_component_type_display())}_number_of_tubes"] != component.number_of_tubes:
                         raise ComponentError
             except KeyError:
@@ -600,15 +600,15 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     if request.method == "POST":
         if collection_type in BLOOD:
             form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form',caregiver_bio=caregiver_bio)
-            logging.critical(f"IN views shipped wsu post")
+            logging.debug(f"IN views shipped wsu post")
             if form.is_valid():
-                logging.critical(f"Shipped to wsu form valid")
+                logging.debug(f"Shipped to wsu form valid")
                 update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,user_logged_in=request.user,collection_type=collection_type)
                 shipped_wsu_item = ShippedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
                                                   collected_fk=None,shipped_wsu_fk=shipped_wsu_item)
             else:
-                logging.critical(f"form errors? {form.errors}")
+                logging.debug(f"form errors? {form.errors}")
                 messages.info(request, f"{form.non_field_errors()}")
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
@@ -647,7 +647,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
                                                   form_data=form.cleaned_data,
                                                   collected_fk=None, shipped_wsu_fk=None, received_wsu_fk=caregiver_bio.status_fk.received_wsu_fk)
             else:
-                logging.critical(f"form errors? {form.errors}")
+                logging.debug(f"form errors? {form.errors}")
                 messages.info(request, f"{form.non_field_errors()}")
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
@@ -713,7 +713,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
                 create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
                                                   form_data=form.cleaned_data,shipped_to_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
             else:
-                logging.critical(f"form errors? {form.errors}")
+                logging.debug(f"form errors? {form.errors}")
                 messages.info(request, f"{form.non_field_errors()}")
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
