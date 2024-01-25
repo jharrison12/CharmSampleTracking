@@ -782,7 +782,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, 'serum', false_or_true=True)
         self.blood_incentive_form_send(primary_key)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
            self.blood_shipped_to_wsu(primary_key, type_of_blood='serum', false_or_true=True,
                                                  number_of_tubes=4)
 

@@ -196,35 +196,6 @@ class ShippedtoWSUFormBlood(forms.Form):
         logging.critical(f"component values{component_values}")
         test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
         check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data)
-        # for blood_item in test_data.items():
-        #     for component in component_values:
-        #         try:
-        #             logging.critical(f"blood is {blood_item[0]}")
-        #             logging.critical(f"is data true or false is {blood_item[1]}")
-        #             logging.critical(f"component is data is {BLOOD_DICT[component.get_component_type_display()]}")
-        #             if blood_item[1] and (blood_item[0] == BLOOD_DICT[component.get_component_type_display()]):
-        #                 logging.critical("made it into tube check")
-        #                 number_of_tubes = cleaned_data[blood_item[0]+ "_number_of_tubes"]
-        #                 logging.critical(f"blood logging {blood_item[0]} form data: {number_of_tubes} component number of tubes {component.number_of_tubes}")
-        #                 if number_of_tubes != component.number_of_tubes:
-        #                     raise ValidationError(_("%(component)s number of tubes entered %(form_tubes)s does not match number of %(component)s collected tubes: %(component_tube)s"),
-        #                                           params={"component":BLOOD_DICT_DISPLAY[blood_item[0]],"component_tube":component.number_of_tubes,"form_tubes":number_of_tubes })
-        #         except KeyError:
-        #             pass
-
-
-            # if data:
-
-        #    for blood_value in BLOOD_DICT.keys():
-        #         try:
-        #             if cleaned_data[f"{BLOOD_DICT[blood_value]}"] and \
-        #                     (BLOOD_DICT[blood_value] == BLOOD_DICT.get(component.get_component_type_display())):
-        #                 logging.critical(f"In form cleaned data check")
-        #                 if cleaned_data[
-        #                     f"{BLOOD_DICT.get(component.get_component_type_display())}_number_of_tubes"] != component.number_of_tubes:
-        #                     raise ValidationError
-        #         except KeyError:
-        #             pass
 
 class ReceivedatWSUBloodForm(forms.Form):
     received_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
@@ -263,6 +234,17 @@ class ShippedtoEchoBloodForm(forms.Form):
     red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
     serum = forms.BooleanField(required=False)
     serum_number_of_tubes = forms.IntegerField(required=False)
+
+    def __init__(self, *args,**kwargs):
+        self.caregiver_bio = kwargs.pop('caregiver_bio')
+        super(ShippedtoEchoBloodForm,self).__init__(*args,**kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
+        logging.critical(f"component values{component_values}")
+        test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
+        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data)
 
 class ShippedtoWSUFormPlacenta(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))

@@ -466,7 +466,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
         and (not shipped_to_echo_item.exists() or shipped_to_echo_item.filter(shipped_date_time__isnull=True)):
         logging.debug(f"in shipped to echo if statement")
-        shipped_echo_form = ShippedtoEchoBloodForm(prefix="shipped_to_echo_form")
+        shipped_echo_form = ShippedtoEchoBloodForm(prefix="shipped_to_echo_form",caregiver_bio=caregiver_bio)
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry_blood.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                         'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                         'caregiver_bio': caregiver_bio,
@@ -706,12 +706,15 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
         if collection_type in BLOOD:
             caregiver_bloods = return_caregiver_bloods(caregiver_bio)
             logging.debug(f"post is {request.POST}")
-            form = ShippedtoEchoBloodForm(data=request.POST, prefix='shipped_to_echo_form')
+            form = ShippedtoEchoBloodForm(data=request.POST, prefix='shipped_to_echo_form',caregiver_bio=caregiver_bio)
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,caregiver_bio=caregiver_bio)
                 create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
                                                   form_data=form.cleaned_data,shipped_to_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
+            else:
+                logging.critical(f"form errors? {form.errors}")
+                messages.info(request, f"{form.non_field_errors()}")
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
         else:
