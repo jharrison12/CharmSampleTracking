@@ -1,11 +1,19 @@
+import logging
 import unittest
 
+# from django.core.exceptions import ValidationError
+from biospecimen.forms import ValidationError
 from django.test import TestCase
+from django.utils import timezone
+
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
 ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm,\
-    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm
+    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood
+from biospecimen.models import Caregiver, CaregiverBiospecimen
+from biospecimen.tests.test_views.test_views_caregiver import CaregiverEcho2BiospecimenPageBlood as BL
+from biospecimen.tests.db_setup import DatabaseSetup
 import datetime
 
 class CaregiverBioFormTest(TestCase):
@@ -242,3 +250,89 @@ class CaregiverBloodCollectedForm(TestCase):
         form = CollectedBloodForm()
         self.assertIn('<input type="checkbox" name="serum', form.as_p())
 
+class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester,
+                                                        project_fk__project_name=project)
+        return caregiverbio.pk
+
+    def blood_initial_send_form(self, primary_key,c_n_or_x):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/initial/post/',
+                                    data={"initial_form-collected_not_collected": c_n_or_x,
+                                          })
+        return response
+
+    def blood_collected_form_send(self, primary_key, type_of_blood, false_or_true):
+        if false_or_true:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/', data={f'blood_form-{type_of_blood}': false_or_true,
+                                                                                              f'blood_form-{type_of_blood}_number_of_tubes': 5,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               })
+        else:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/', data={f'blood_form-{type_of_blood}': false_or_true,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               })
+        return response
+
+    def blood_incentive_form_send(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/incentive/post/',
+                                    data={"incentive_form-incentive_date": '2023-09-03',
+                                          })
+
+        return response
+
+    def blood_shipped_to_wsu(self, primary_key, type_of_blood, false_or_true, number_of_tubes=5):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_wsu/post/',
+                                    data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5,
+                                                                                                         5, 5),
+                                          'shipped_to_wsu_form-tracking_number': 555,
+                                          f'shipped_to_wsu_form-{type_of_blood}': false_or_true,
+                                          f'shipped_to_wsu_form-{type_of_blood}_number_of_tubes': number_of_tubes,
+                                          'shipped_to_wsu_form-logged_date_time': timezone.datetime(
+                                              2023, 12, 5, 5, 5, 5),
+                                          'shipped_to_wsu_form-courier': 'F'})
+
+        return response
+
+    def test_caregiver_blood_shipped_to_wsu_form(self):
+        primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        logging.critical(f'{primary_key}')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key,'serum',True)
+        self.blood_incentive_form_send(primary_key)
+        form = ShippedtoWSUFormBlood(caregiver_bio=caregiver_bio,data={'shipped_date_and_time': timezone.datetime(2023, 12, 5, 5,
+                                                       5, 5),
+                                          'tracking_number': 555,
+                                          f'serum': True,
+                                          f'serum_number_of_tubes': 3,
+                                          'logged_date_time': timezone.datetime(
+                                              2023, 12, 5, 5, 5, 5),
+                                          'courier': 'F'})
+        #
+        with self.assertRaises(ValidationError) as cm:
+            form.is_valid()
+
+            # logging.critical(form.errors.as_data())
+        logging.critical(f"exception raidsed? {cm}")
+
+
+
+
+        # form = CollectedBiospecimenHairSalivaForm(data={'':''})
+        # self.assertFalse(form.is_valid())
+        # self.assertIn('This field is required',form.errors['date_collected'][0])
