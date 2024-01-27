@@ -10,10 +10,10 @@
             </tr>
           </thead>
           <tbody>
-          {% for caregiver_biospecimen in caregiver_biospecimens %}
+          {% for caregiver in caregivers %}
               <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                  <td><a href={% url "biospecimen:list_of_bio_ids" caregiver_biospecimen.caregiver_fk__charm_project_identifier %}>{{ caregiver_biospecimen.caregiver_fk__charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" caregiver.charm_project_identifier %}>{{ caregiver.charm_project_identifier }}</a></td>
               </tr>
           {% endfor %}
 

@@ -1,7 +1,7 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404,redirect
-from biospecimen.models import CaregiverBiospecimen
+from biospecimen.models import CaregiverBiospecimen,Caregiver
 from django.db.models import Prefetch
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -24,7 +24,7 @@ def biospecimen_report(request):
 
 @login_required
 def no_specimen_report(request):
-    caregiver_biospecimens = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=True).values('caregiver_fk__charm_project_identifier').distinct()
-    logging.critical(f"caregiver biospecimens {caregiver_biospecimens}")
-    return render(request=request,template_name='reports/no_specimen_report.html',context={'caregiver_biospecimens':caregiver_biospecimens,
+    caregivers = Caregiver.objects.filter(caregiverbiospecimen__status_fk__isnull=True).exclude(caregiverbiospecimen__status_fk__isnull=False)
+    caregivers_distinct = caregivers.values('charm_project_identifier').distinct()
+    return render(request=request,template_name='reports/no_specimen_report.html',context={'caregivers':caregivers_distinct,
                                                                                            'caregiver_biospecimen_list':MOTHER_BIOS})
