@@ -85,7 +85,8 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.get(f'{self.browser.current_url}no_specimen_report/')
+
+        self.browser.find_element(By.LINK_TEXT, 'Charm IDS with no biospecimen').click()
 
         text = self.webpage_text()
 
@@ -117,3 +118,5 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertNotIn('4100',text)
+
+
