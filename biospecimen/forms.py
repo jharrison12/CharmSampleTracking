@@ -38,7 +38,7 @@ def check_component_tubes(component_values, form_data,cleaned_data,chain_of_cust
                     if number_of_tubes != component.number_of_tubes:
                         raise ValidationError(
                             _("%(component)s number of tubes entered %(form_tubes)s does not match number of %(component)s %(chain_of_custody)s tubes: %(component_tube)s"),
-                            code="invalid",
+                            code="ValidationError",
                             params={"component": BLOOD_DICT_DISPLAY[blood_item[0]],
                                     "component_tube": component.number_of_tubes, "form_tubes": number_of_tubes,"chain_of_custody":chain_of_custody})
             except KeyError:

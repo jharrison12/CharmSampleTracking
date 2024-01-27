@@ -2,6 +2,8 @@ import logging
 import unittest
 
 # from django.core.exceptions import ValidationError
+from django.core.exceptions import NON_FIELD_ERRORS
+
 from biospecimen.forms import ValidationError
 from django.test import TestCase
 from django.utils import timezone
@@ -10,7 +12,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedB
 ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
 ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm,\
-    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood
+    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm,ShippedtoEchoBloodForm
 from biospecimen.models import Caregiver, CaregiverBiospecimen
 from biospecimen.tests.test_views.test_views_caregiver import CaregiverEcho2BiospecimenPageBlood as BL
 from biospecimen.tests.db_setup import DatabaseSetup
@@ -308,7 +310,19 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
 
         return response
 
-    def test_caregiver_blood_shipped_to_wsu_form(self):
+    def blood_received_at_wsu(self,primary_key,type_of_blood,false_or_true,number_of_tubes=5):
+        if false_or_true:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/received_wsu/post/',
+                                        data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                              f'received_at_wsu_form-{type_of_blood}':type_of_blood,
+                                              f'received_at_wsu_form-{type_of_blood}_number_of_tubes': number_of_tubes})
+        else:
+            response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/received_wsu/post/',
+                                        data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+
+        return response
+
+    def test_caregiver_blood_shipped_to_wsu_form_fails_if_component_doesnt_match(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         logging.critical(f'{primary_key}')
@@ -323,12 +337,42 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
                                           'logged_date_time': timezone.datetime(
                                               2023, 12, 5, 5, 5, 5),
                                           'courier': 'F'})
-        #
-        with self.assertRaises(ValidationError) as cm:
-            form.is_valid()
+        #the context manager with self.assertRaises(ValidationError) didn't work probably due to custom error message
+        self.assertTrue(form.has_error(NON_FIELD_ERRORS,'ValidationError'))
 
-            # logging.critical(form.errors.as_data())
-        logging.critical(f"exception raidsed? {cm}")
+    def test_caregiver_blood_received_at_wsu_form_fails_if_doesnt_match(self):
+        primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        logging.critical(f'{primary_key}')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, 'serum', True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key,'serum',True)
+        form = ReceivedatWSUBloodForm(caregiver_bio=caregiver_bio,
+                                     data={'received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                              f'serum':True,
+                                              f'serum_number_of_tubes': 3})
+        # the context manager with self.assertRaises(ValidationError) didn't work probably due to custom error message
+        self.assertTrue(form.has_error(NON_FIELD_ERRORS, 'ValidationError'))
+
+    def test_caregiver_blood_received_at_wsu_form_fails_if_doesnt_match(self):
+        primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        logging.critical(f'{primary_key}')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key, 'serum', True)
+        self.blood_incentive_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key, 'serum', True)
+        self.blood_received_at_wsu(primary_key,'serum',True)
+        # the context manager with self.assertRaises(ValidationError) didn't work probably due to custom error message
+        form = ShippedtoEchoBloodForm(caregiver_bio=caregiver_bio,
+                                      data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5,
+                                                                                                          5, 5),
+                                          f'serum': True,
+                                          f'serum_number_of_tubes': 3})
+
+        self.assertTrue(form.has_error(NON_FIELD_ERRORS, 'ValidationError'))
+
 
 
 
