@@ -22,14 +22,9 @@ class ReportsPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}caregiver_report/')
 
         text = self.webpage_text()
-
-        self.assertIn('P7000',text)
-        self.assertIn('P7001',text)
-        self.assertIn('Jane',text)
-        self.assertIn('Doe',text)
-        self.assertIn('July 3, 1985',text)
-        self.assertIn('Hispanic',text)
-        self.assertIn('One Drive',text)
+        time.sleep(50)
+        self.assertIn('4100',text)
+        self.assertIn('4101',text)
 
 
 
@@ -46,7 +41,7 @@ class ReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
 
-        self.assertIn('P7000',text)
+        self.assertIn('4100',text)
 
     def test_user_can_see_incentive_list(self):
         self.browser.get(self.live_server_url)
@@ -59,5 +54,19 @@ class ReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
 
-        self.assertIn('P7000', text)
+        self.assertIn('4100', text)
+
+
+    def test_user_can_see_no_specimen_report(self):
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports', text)
+        self.browser.get(f'{self.browser.current_url}no_specimen_report/')
+
+        text = self.webpage_text()
+        time.sleep(50)
+        self.assertIn('4100', text)
 

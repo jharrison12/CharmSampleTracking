@@ -1,0 +1,23 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}No Biospecimen Report:{% endblock %}
+{% block section %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Charm ID</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for caregiver_biospecimen in caregiver_biospecimens %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href={% url "biospecimen:caregiver_biospecimen" caregiver_biospecimen.caregiver_fk.charm_project_identifier  %}>{{ caregiver_biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+              </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+{% endblock %}

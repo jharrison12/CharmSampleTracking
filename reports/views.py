@@ -21,3 +21,9 @@ def biospecimen_report(request):
     caregiver_biospecimens = CaregiverBiospecimen.objects.all().prefetch_related('caregiver_fk')
     return render(request=request,template_name='reports/biospecimen_report.html',context={'caregiver_biospecimens':caregiver_biospecimens,
                                                                                            'caregiver_biospecimen_list':MOTHER_BIOS})
+
+@login_required
+def no_specimen_report(request):
+    caregiver_biospecimens = CaregiverBiospecimen.objects.all().prefetch_related('caregiver_fk')
+    return render(request=request,template_name='reports/no_specimen_report.html',context={'caregiver_biospecimens':caregiver_biospecimens,
+                                                                                           'caregiver_biospecimen_list':MOTHER_BIOS})

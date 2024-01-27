@@ -23,4 +23,5 @@ app_name = "reports"
 urlpatterns = [
     re_path(r"^$", reports.home_page, name='reports_home'),
     re_path(r"^biospecimen_report/$", reports.biospecimen_report, name='biospecimen_report'),
+    re_path(r"^no_specimen_report/$", reports.no_specimen_report, name='no_specimen_report'),
 ]
