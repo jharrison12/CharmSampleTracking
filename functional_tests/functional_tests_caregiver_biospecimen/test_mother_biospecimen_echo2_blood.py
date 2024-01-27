@@ -45,7 +45,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit.click()
 
         #user sees collected form on next page
-        time.sleep(50)
+        time.sleep(1)
         form = self.browser.find_element(By.TAG_NAME,'form').text
         self.assertIn('Collected Form',form)
 
@@ -351,7 +351,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.user_inputs_first_portion_of_blood_page()
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
         whole_blood_tubes.send_keys(4)
-        time.sleep(5000)
+
         #check that modal text isn't in body
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood collected tubes: 3',
@@ -506,4 +506,4 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.browser.execute_script("arguments[0].click();", submit)
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Shipped Date Time: Jan. 25, 2024',body)
+        self.assertIn(f'Shipped Date Time: {TODAY}',body)
