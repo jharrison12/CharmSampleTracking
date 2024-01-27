@@ -13,7 +13,7 @@
           {% for caregiver_biospecimen in caregiver_biospecimens %}
               <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                  <td><a href={% url "biospecimen:caregiver_biospecimen" caregiver_biospecimen.caregiver_fk.charm_project_identifier  %}>{{ caregiver_biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" caregiver_biospecimen.caregiver_fk__charm_project_identifier %}>{{ caregiver_biospecimen.caregiver_fk__charm_project_identifier }}</a></td>
               </tr>
           {% endfor %}
 

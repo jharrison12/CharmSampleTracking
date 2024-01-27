@@ -67,6 +67,12 @@ class ReportsPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}no_specimen_report/')
 
         text = self.webpage_text()
-        time.sleep(50)
+
         self.assertIn('4100', text)
+
+        self.browser.find_element(By.LINK_TEXT,'4100').click()
+
+        text = self.webpage_text()
+
+        self.assertIn('Trimester',text)
 

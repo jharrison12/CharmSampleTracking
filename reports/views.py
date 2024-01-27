@@ -24,6 +24,7 @@ def biospecimen_report(request):
 
 @login_required
 def no_specimen_report(request):
-    caregiver_biospecimens = CaregiverBiospecimen.objects.all().prefetch_related('caregiver_fk')
+    caregiver_biospecimens = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=True).values('caregiver_fk__charm_project_identifier').distinct()
+    logging.critical(f"caregiver biospecimens {caregiver_biospecimens}")
     return render(request=request,template_name='reports/no_specimen_report.html',context={'caregiver_biospecimens':caregiver_biospecimens,
                                                                                            'caregiver_biospecimen_list':MOTHER_BIOS})
