@@ -115,10 +115,12 @@ class ReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
 
-        self.assertIn('4100',text)
+        self.assertIn('4101',text)
 
         #user sees a urine that is collected
 
-        self.assertIn('12UR410001',text)
+        self.assertIn('12UR410101',text)
+        time.sleep(50)
+        self.assertIn('Number of Tubes')
 
 
