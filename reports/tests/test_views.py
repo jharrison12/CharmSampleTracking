@@ -19,7 +19,7 @@ class CaregiverBiospecimenReportPageTest(DatabaseSetup):
         response = self.client.get(f'/reports/biospecimen_report/')
         self.assertContains(response,'Biospecimen Report')
 
-class CaregiverBiospcimenIDSwithNoLoggedSpecimens(DatabaseSetup):
+class CaregiverBiospcimenIDSwithNoLoggedSpecimensTest(DatabaseSetup):
 
     def test_page_with_no_specimens_logged_returns_correct_html(self):
         response = self.client.get(f'/reports/no_specimen_report/')
@@ -28,3 +28,13 @@ class CaregiverBiospcimenIDSwithNoLoggedSpecimens(DatabaseSetup):
     def test_page_with_no_specimens_logged_shows_report(self):
         response = self.client.get(f'/reports/no_specimen_report/')
         self.assertContains(response,'No Biospecimen Report')
+
+class CollectedReportTest(DatabaseSetup):
+
+    def test_page_with_no_specimens_logged_returns_correct_html(self):
+        response = self.client.get(f'/reports/collected_report/')
+        self.assertTemplateUsed(response, 'reports/collected_report.html')
+
+    def test_page_with_no_specimens_logged_shows_report(self):
+        response = self.client.get(f'/reports/collected_report/')
+        self.assertContains(response,'Collected Report')

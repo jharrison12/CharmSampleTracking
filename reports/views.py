@@ -28,3 +28,7 @@ def no_specimen_report(request):
     caregivers_distinct = caregivers.values('charm_project_identifier').distinct()
     return render(request=request,template_name='reports/no_specimen_report.html',context={'caregivers':caregivers_distinct,
                                                                                            'caregiver_biospecimen_list':MOTHER_BIOS})
+
+@login_required
+def collected_report(request):
+    return render(request=request,template_name='reports/collected_report.html',context={})
