@@ -31,4 +31,6 @@ def no_specimen_report(request):
 
 @login_required
 def collected_report(request):
+    collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True)
+    logging.critical(f'collected biospecimen objects {collected_biospecimen}')
     return render(request=request,template_name='reports/collected_report.html',context={})
