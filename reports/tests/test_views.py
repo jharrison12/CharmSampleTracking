@@ -32,10 +32,10 @@ class CaregiverBiospcimenIDSwithNoLoggedSpecimensTest(DatabaseSetup):
 class CollectedReportTest(DatabaseSetup):
 
     def test_page_with_no_specimens_logged_returns_correct_html(self):
-        response = self.client.get(f'/reports/collected_report/')
+        response = self.client.get(f'/reports/collected_report/urine/')
         self.assertTemplateUsed(response, 'reports/collected_report.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/collected_report/')
+        response = self.client.get(f'/reports/collected_report/urine/')
         self.assertContains(response,'Collected Report')
 

@@ -9,6 +9,7 @@
               <th scope="col">#</th>
               <th scope="col">Charm ID</th>
               <th scope="col">Biospecimen ID</th>
+              <th scope="col">Trimester</th>
               <th scope="col">Collected Date</th>
               <th scope="col">Processed Date</th>
               <th scope="col">Stored Date</th>
@@ -21,6 +22,7 @@
                 <th scope="row">{{ forloop.counter }}</th>
                   <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                  <td>{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                   <td>{{ biospecimen.status_fk.collected_fk.collected_date_time }}</td>
                   <td>{{ biospecimen.status_fk.collected_fk.processed_date_time }}</td>
                   <td>{{ biospecimen.status_fk.collected_fk.stored_date_time }}</td>
