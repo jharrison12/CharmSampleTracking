@@ -29,13 +29,22 @@ class CaregiverBiospcimenIDSwithNoLoggedSpecimensTest(DatabaseSetup):
         response = self.client.get(f'/reports/no_specimen_report/')
         self.assertContains(response,'No Biospecimen Report')
 
-class CollectedReportTest(DatabaseSetup):
+class CollectedReportUrineTest(DatabaseSetup):
 
     def test_page_with_no_specimens_logged_returns_correct_html(self):
         response = self.client.get(f'/reports/collected_report/urine/')
-        self.assertTemplateUsed(response, 'reports/collected_report.html')
+        self.assertTemplateUsed(response, 'reports/collected_report_urine.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
         response = self.client.get(f'/reports/collected_report/urine/')
         self.assertContains(response,'Collected Report')
 
+class CollectedReportBloodTest(DatabaseSetup):
+
+    def test_page_with_no_specimens_logged_returns_correct_html(self):
+        response = self.client.get(f'/reports/collected_report/blood/')
+        self.assertTemplateUsed(response, 'reports/collected_report_blood.html')
+
+    def test_page_with_no_specimens_logged_shows_report(self):
+        response = self.client.get(f'/reports/collected_report/blood/')
+        self.assertContains(response,'Collected Report')

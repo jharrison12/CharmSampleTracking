@@ -1,7 +1,7 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404,redirect
-from biospecimen.models import CaregiverBiospecimen,Caregiver
+from biospecimen.models import CaregiverBiospecimen,Caregiver,Component
 from django.db.models import Prefetch
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -31,6 +31,16 @@ def no_specimen_report(request):
 
 @login_required
 def collected_report_urine(request):
-    collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True)
+    collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
     logging.critical(f'collected biospecimen objects {collected_biospecimen}')
-    return render(request=request,template_name='reports/collected_report.html',context={'collected_biospecimen':collected_biospecimen})
+    return render(request=request,template_name='reports/collected_report_urine.html',context={'collected_biospecimen':collected_biospecimen})
+
+@login_required
+def collected_report_blood(request):
+    collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+    components = Component.objects.prefetch_related('caregiver_biospecimen_fk').all()
+    collected_biospecimen.prefetch_related('component_set').all()
+    logging.critical(f'prefetch related {components.values}')
+    # logging.critical(f'prefetch related using collected bio {components2}')
+    logging.critical(f'collected biospecimen objects {collected_biospecimen}')
+    return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_biospecimen':collected_biospecimen})

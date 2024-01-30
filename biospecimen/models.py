@@ -427,5 +427,8 @@ class Component(models.Model):
             models.UniqueConstraint(fields=['caregiver_biospecimen_fk','component_type',], name='component unique constraint')
         ]
 
+    def whole_blood_number_of_tubes(self):
+        pass
+
     def __str__(self):
         return f"{self.component_type}"
