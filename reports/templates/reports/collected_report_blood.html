@@ -21,12 +21,47 @@
           </thead>
           <tbody>
           {% for biospecimen in collected_biospecimen %}
+              {{ biospecimen }}
               <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                   <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                   <td>{{ biospecimen.trimester_fk.get_trimester_display }}</td>
-                    {{ biospecimen.component_set.values }}
+                  <td>{{ biospecimen.status_fk.collected_fk.collected_date_time }}</td>
+                {{ biospecimen.component_set.all }}
+                {{ biospecimen.component_set }}
+              {% debug %}
+
+              {% if biospecimen.component_set.values.component_type == 'W' %}
+                  <td>{{ biospecimen.component_set.values.component_type.number_of_tubes }}</td>
+              {% else %}
+                  <td>None</td>
+              {% endif %}
+              {% if biospecimen.component_set.values.component_type == 'P' %}
+                  <td>{{ biospecimen.component_set.values.component_type.number_of_tubes }}</td>
+              {% else %}
+                  <td>None</td>
+              {% endif %}
+              {% if biospecimen.component_set.values.component_type == 'S' %}
+                  <td>{{ biospecimen.component_set.values.component_type.number_of_tubes }}</td>
+              {% else %}
+                  <td>None</td>
+              {% endif %}
+              {% if biospecimen.component_set.values.component_type == 'F' %}
+                  <td>{{ biospecimen.component_set.values.component_type.number_of_tubes }}</td>
+              {% else %}
+                  <td>None</td>
+              {% endif %}
+              {% if biospecimen.component_set.values.component_type == 'R' %}
+                  <td>{{ biospecimen.component_set.values.component_type.number_of_tubes }}</td>
+              {% else %}
+                  <td>None</td>
+              {% endif %}
+              {% if biospecimen.component_set.values.component_type == 'D' %}
+                  <td>{{ biospecimen.component_set.values.component_type.number_of_tubes }}</td>
+              {% else %}
+                  <td>None</td>
+              {% endif %}
               </tr>
           {% endfor %}
 

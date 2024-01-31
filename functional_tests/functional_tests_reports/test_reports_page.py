@@ -112,7 +112,7 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports',text)
-        self.browser.find_element(By.LINK_TEXT, 'Collected Report').click()
+        self.browser.find_element(By.LINK_TEXT, 'Collected Report Urine').click()
 
         text = self.webpage_text()
 
