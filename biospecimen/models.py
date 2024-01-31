@@ -431,4 +431,4 @@ class Component(models.Model):
         pass
 
     def __str__(self):
-        return f"{self.component_type}"
+        return f"{self.get_component_type_display()}"
