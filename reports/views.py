@@ -39,8 +39,8 @@ def collected_report_urine(request):
 def collected_report_blood(request):
     collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
     components = Component.objects.prefetch_related('caregiver_biospecimen_fk').all()
-    collected_biospecimen.prefetch_related('component_set').all().order_by('component__component_type')
+    collected_biospecimen.prefetch_related('status_fk__collected_fk__component_set').all().order_by('component__component_type')
     logging.critical(f'prefetch related {components.values}')
     # logging.critical(f'prefetch related using collected bio {components2}')
-    logging.critical(f'collected biospecimen objects {collected_biospecimen}')
+    # logging.critical(f'collected biospecimen objects {collected_biospecimen.component_set}')
     return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_biospecimen':collected_biospecimen})
