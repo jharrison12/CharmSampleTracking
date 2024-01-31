@@ -59,8 +59,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
-    def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
-        self.user_submits_urine_collected()
+    def user_submits_urine_shipped_to_wsu(self):
 
         #user sees some of the information just entered
 
@@ -106,6 +105,10 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
         submit.click()
+
+    def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
+        self.user_submits_urine_collected()
+        self.user_submits_urine_shipped_to_wsu()
 
         #user sees shipped WSU data
         body = self.browser.find_element(By.TAG_NAME,'body').text

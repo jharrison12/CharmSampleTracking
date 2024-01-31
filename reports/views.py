@@ -40,7 +40,10 @@ def collected_report_blood(request):
     collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
     components = Component.objects.prefetch_related('caregiver_biospecimen_fk').all()
     collected_biospecimen.prefetch_related('status_fk__collected_fk__component_set').all().order_by('component__component_type')
-    logging.critical(f'prefetch related {components.values}')
-    # logging.critical(f'prefetch related using collected bio {components2}')
-    # logging.critical(f'collected biospecimen objects {collected_biospecimen.component_set}')
     return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_biospecimen':collected_biospecimen})
+
+@login_required
+def shipped_to_wsu_report_urine(request):
+    shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
+    logging.critical(f'collected biospecimen objects {shipped_to_wsu_biospecimen}')
+    return render(request=request,template_name='reports/shipped_to_wsu_report_urine.html',context={'shipped_to_wsu_biospecimen':shipped_to_wsu_biospecimen})

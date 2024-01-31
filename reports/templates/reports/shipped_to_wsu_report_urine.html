@@ -1,0 +1,36 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}Shipped to WSU Report:{% endblock %}
+{% block section %}
+
+        <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Charm ID</th>
+              <th scope="col">Biospecimen ID</th>
+              <th scope="col">Trimester</th>
+              <th scope="col">Shipped Date</th>
+              <th scope="col">Number of Tubes</th>
+              <th scope="col">Courier</th>
+              <th scope="col">Tracking Number</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for biospecimen in shipped_to_wsu_biospecimen %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                  <td>{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.shipped_date_time }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.number_of_tubes }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.get_courier_display }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.tracking_number }}</td>
+              </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+{% endblock %}
