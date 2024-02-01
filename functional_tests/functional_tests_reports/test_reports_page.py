@@ -179,7 +179,9 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('12UR410101', text)
 
         self.assertIn('Number of Tubes', text)
-        time.sleep(50)
+        self.assertIn('5', text)
+
+
         ##TODO implement search bar
         ##TODO implement print function
 
