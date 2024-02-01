@@ -120,8 +120,6 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         caregiver_bio.save()
         self.assertEqual(caregiver_bio.status_fk.received_msu_fk, received_msu)
 
-
-
 class ChildBiospecimenModelTest(DatabaseSetup):
 
     def test_child_links_to_biospecimen(self):

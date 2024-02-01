@@ -168,7 +168,6 @@ class CaregiverBioInitialStatusForm(TestCase):
         self.assertIn('No Consent',form.as_p())
         self.assertNotIn('Declined',form.as_p())
 
-
 class CaregiverBioShippedChoiceForm(TestCase):
 
     def test_bio_shipped_choice_form_has_shipped_to_wsu(self):
@@ -213,6 +212,10 @@ class ReceivedatWSUFormTest(TestCase):
     def test_declined_form_has_declined_date(self):
         form = ReceivedatWSUForm()
         self.assertIn('Received date time', form.as_p())
+
+    def test_declined_form_has_declined_date(self):
+        form = ReceivedatWSUForm()
+        self.assertIn('Number of tubes', form.as_p())
 
 class ShippedtoMSUFormTest(TestCase):
 
@@ -373,10 +376,3 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
 
         self.assertTrue(form.has_error(NON_FIELD_ERRORS, 'ValidationError'))
 
-
-
-
-
-        # form = CollectedBiospecimenHairSalivaForm(data={'':''})
-        # self.assertFalse(form.is_valid())
-        # self.assertIn('This field is required',form.errors['date_collected'][0])
