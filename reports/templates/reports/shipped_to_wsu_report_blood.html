@@ -28,7 +28,7 @@
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                   <td>{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                   <td>{{ biospecimen.status_fk.shipped_wsu_fk.shipped_date_time }}</td>
-                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.courier }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.get_courier_display }}</td>
                   <td>{{ biospecimen.status_fk.shipped_wsu_fk.tracking_number }}</td>
               {% debug %}
               {% for component in biospecimen.component_set.all %}

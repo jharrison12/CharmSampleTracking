@@ -82,8 +82,8 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in,collection_typ
         # status_bio.shipped_wsu_fk = shipped_to_wsu
         logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
     shipped_to_wsu.save_shipped_wsu(form=bound_form,user=user_logged_in,caregiver_bio=caregiver_bio,collection_type=collection_type)
-    received_object = ReceivedWSU.objects.create()
-    received_object.save_received_wsu(caregiver_bio=caregiver_bio)
+    # received_object = ReceivedWSU.objects.create()
+    # received_object.save_received_wsu(caregiver_bio=caregiver_bio)
     logging.debug(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
 
 def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in):
@@ -461,7 +461,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
             and not (caregiver_bio.status_fk.shipped_wsu_fk):
         shipped_wsu_form = ShippedtoWSUFormBlood(prefix="shipped_to_wsu_form",caregiver_bio=caregiver_bio)
-    elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and received_at_wsu_item.filter(received_date_time__isnull=True):
+    elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not (caregiver_bio.status_fk.received_wsu_fk):
         received_wsu_form = ReceivedatWSUBloodForm(prefix="received_at_wsu_form",caregiver_bio=caregiver_bio)
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
         and (not shipped_to_echo_item.exists() or shipped_to_echo_item.filter(shipped_date_time__isnull=True)):

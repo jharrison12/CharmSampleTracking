@@ -5,7 +5,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import expected_conditions as EC
 import datetime as dt
-from functional_tests.base import FunctionalTest
+from functional_tests.base import FunctionalTest,TODAY
 from biospecimen.models import CaregiverBiospecimen,Caregiver
 import time
 import datetime
@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import Select
 from django.utils import timezone
 logging.basicConfig(level=logging.debug)
 
-TODAY = dt.datetime.now().strftime('%b. %d, %Y')
+
 
 class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
@@ -102,7 +102,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn(f"Incentive Date: {dt.datetime.now().strftime('%b. %d, %Y')}", body)
+        self.assertIn(f"Incentive Date: {TODAY}", body)
 
         # user submits shipped to WSu form
 
@@ -164,7 +164,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn(f"Incentive Date: {dt.datetime.now().strftime('%b. %d, %Y')}", body)
+        self.assertIn(f"Incentive Date: {TODAY}", body)
 
         #user submits shipped to WSu form
 
