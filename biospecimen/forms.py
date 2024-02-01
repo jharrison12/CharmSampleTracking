@@ -44,13 +44,6 @@ def check_component_tubes(component_values, form_data,cleaned_data,chain_of_cust
             except KeyError:
                 pass
 
-class ReceivedBiospecimenForm(forms.Form):
-    outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
-    quantity = forms.IntegerField()
-    received_date_time = forms.DateTimeField(initial=timezone.now())
-    logged_date_time = forms.DateTimeField()
-    storage_location = forms.CharField()
-
 class ShippedBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
     shipping_number = forms.CharField()
@@ -58,7 +51,6 @@ class ShippedBiospecimenForm(forms.Form):
     shipped_date_time = forms.DateTimeField(initial=timezone.now())
     logged_date_time = forms.DateTimeField()
     courier = forms.CharField()
-
 
 class StoredBiospecimenForm(forms.Form):
     outcome_fk = forms.ChoiceField(widget=forms.Select,choices=CHOICES)
@@ -255,6 +247,9 @@ class ShippedtoWSUFormPlacenta(forms.Form):
 class ShippedtoWSUFormChild(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
+class ReceivedatWSUFormChild(forms.Form):
+    receive_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+
 class ShippedtoEchoForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
@@ -318,7 +313,7 @@ class DeclinedForm(forms.ModelForm):
 class ReceivedatWSUForm(forms.ModelForm):
     class Meta:
         model = ReceivedWSU
-        fields = ['received_date_time']
+        fields = ['received_date_time','number_of_tubes','logged_by']
 
     def __init__(self, *args, **kwargs):
         super(ReceivedatWSUForm, self).__init__(*args, **kwargs)

@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedBiospecimenForm,StoredBiospecimenForm,\
-ShippedBiospecimenForm,ReceivedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
+ShippedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
 ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm,\
     InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm,ShippedtoEchoBloodForm
@@ -58,16 +58,6 @@ class ShippedBioFormTest(TestCase):
 
     def test_form_validation_for_blank_items_shipped(self):
         form = ShippedBiospecimenForm(data={'':''})
-        self.assertFalse(form.is_valid())
-        self.assertIn('This field is required',form.errors['outcome_fk'][0])
-
-class ReceivedBioFormTest(TestCase):
-    def test_form_renders_shipped_for_input_received(self):
-        form = ReceivedBiospecimenForm()
-        self.assertIn('Received', form.as_p())
-
-    def test_form_validation_for_blank_items_received(self):
-        form = ReceivedBiospecimenForm(data={'':''})
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required',form.errors['outcome_fk'][0])
 

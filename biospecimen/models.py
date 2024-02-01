@@ -217,6 +217,8 @@ class Declined(models.Model):
 
 class ReceivedWSU(models.Model):
     received_date_time = models.DateTimeField(null=True,blank=True)
+    number_of_tubes = models.IntegerField(default=None, null=True, blank=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
 
     def save_received_wsu(self,caregiver_bio,form=None):
         if form:
