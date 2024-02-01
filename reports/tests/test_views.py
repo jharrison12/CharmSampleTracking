@@ -49,6 +49,16 @@ class ShippedtoWSUReportUrineTest(DatabaseSetup):
         response = self.client.get(f'/reports/shipped_to_wsu_report/urine/')
         self.assertContains(response,'Shipped to WSU Report')
 
+class ReceivedatWSUReportUrineTest(DatabaseSetup):
+
+    def test_page_with_no_specimens_logged_returns_correct_html(self):
+        response = self.client.get(f'/reports/received_at_wsu_report/urine/')
+        self.assertTemplateUsed(response, 'reports/received_at_wsu_report_urine.html')
+
+    def test_page_with_no_specimens_logged_shows_report(self):
+        response = self.client.get(f'/reports/received_at_wsu_report/urine/')
+        self.assertContains(response,'Received at WSU Report')
+
 class CollectedReportBloodTest(DatabaseSetup):
 
     def test_page_with_no_specimens_logged_returns_correct_html(self):
@@ -66,5 +76,16 @@ class ShippedtoWSUReportBloodTest(DatabaseSetup):
         self.assertTemplateUsed(response, 'reports/shipped_to_wsu_report_blood.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/shipped_to_wsu_report/urine/')
+        response = self.client.get(f'/reports/shipped_to_wsu_report/blood/')
         self.assertContains(response,'Shipped to WSU Report')
+
+
+class ReceivedatWSUReportBloodTest(DatabaseSetup):
+
+    def test_page_with_no_specimens_logged_returns_correct_html(self):
+        response = self.client.get(f'/reports/received_at_wsu/blood/')
+        self.assertTemplateUsed(response, 'reports/received_at_wsu_report_blood.html')
+
+    def test_page_with_no_specimens_logged_shows_report(self):
+        response = self.client.get(f'/reports/received_at_wsu/blood/')
+        self.assertContains(response,'Received at WSU Report')

@@ -106,21 +106,19 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
         submit.click()
 
-    def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
-        self.user_submits_urine_collected()
-        self.user_submits_urine_shipped_to_wsu()
-
         #user sees shipped WSU data
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Courier: FedEx',body)
         self.assertIn('Shipped By: testuser',body)
 
-        body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Received at WSU Form',body)
 
-        #User sees received date time at
-        #user submits shipped to WSu form
-        received_date_time = self.browser.find_element(By.ID,"id_received_at_wsu_form-received_date_time")
+    def user_submits_urine_received_at_wsu(self):
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Received at WSU Form', body)
+
+        # User sees received date time at
+        # user submits shipped to WSu form
+        received_date_time = self.browser.find_element(By.ID, "id_received_at_wsu_form-received_date_time")
         received_date_time.click()
         self.choose_flatpickr_day(0)
 
@@ -130,7 +128,13 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn(f'Received at WSU {TODAY}', body)
 
-        #user sees shipped to echo form
+        # user sees shipped to echo form
+
+    def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
+        self.user_submits_urine_collected()
+        self.user_submits_urine_shipped_to_wsu()
+        self.user_submits_urine_received_at_wsu()
+
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Shipped to ECHO Form',body)
