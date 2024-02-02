@@ -85,18 +85,18 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,user_logged_in,collection_typ
     # received_object.save_received_wsu(caregiver_bio=caregiver_bio)
     logging.debug(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
 
-def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in):
+def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in,request):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
         received_at_wsu = ReceivedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
         if bound_form.is_valid():
-            received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,form=bound_form)
+            received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,request=request,form=bound_form)
     except ReceivedWSU.DoesNotExist:
         received_at_wsu = ReceivedWSU.objects.create()
         #finished_form = ReceivedatWSUForm(data=data,prefix='received_at_wsu_form')
         #why did you bind the form a second time?
         if bound_form.is_valid():
-            received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,form=bound_form)
+            received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,request=request,form=bound_form)
 
 
 def create_or_update_incentive(caregiver_bio_pk, bound_form):
@@ -641,7 +641,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
         if collection_type in BLOOD:
             form = ReceivedatWSUBloodForm(data=request.POST, prefix='received_at_wsu_form',caregiver_bio=caregiver_bio)
             if form.is_valid():
-                update_received_wsu(caregiver_bio_pk=caregiver_bio.pk, data=request.POST, user_logged_in=request.user,bound_form=form)
+                update_received_wsu(caregiver_bio_pk=caregiver_bio.pk, data=request.POST,request=request, user_logged_in=request.user,bound_form=form)
                 create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
                                                   form_data=form.cleaned_data,
                                                   collected_fk=None, shipped_wsu_fk=None, received_wsu_fk=caregiver_bio.status_fk.received_wsu_fk)
@@ -653,7 +653,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
         elif collection_type==URINE or collection_type in PERINATAL:
             form = ReceivedatWSUForm(data=request.POST, prefix='received_at_wsu_form')
             if form.is_valid():
-                update_received_wsu(caregiver_bio_pk=caregiver_bio_pk,data=request.POST,user_logged_in=request.user,bound_form=form)
+                update_received_wsu(caregiver_bio_pk=caregiver_bio_pk,data=request.POST,request=request,user_logged_in=request.user,bound_form=form)
                 return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
     return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,

@@ -122,6 +122,10 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         received_date_time.click()
         self.choose_flatpickr_day(0)
 
+
+        number_of_tubes = self.browser.find_element(By.ID,'id_received_at_wsu_form-number_of_tubes')
+        number_of_tubes.send_keys(5)
+        time.sleep(5)
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
         submit.click()
 

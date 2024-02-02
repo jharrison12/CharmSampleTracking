@@ -220,9 +220,11 @@ class ReceivedWSU(models.Model):
     number_of_tubes = models.IntegerField(default=None, null=True, blank=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
 
-    def save_received_wsu(self,caregiver_bio,form=None):
+    def save_received_wsu(self,caregiver_bio,request,form=None):
         if form:
             self.received_date_time = form.cleaned_data['received_date_time']
+            self.number_of_tubes = form.cleaned_data['number_of_tubes']
+            self.logged_by = request.user
         caregiver_bio.status_fk.received_wsu_fk = self
         caregiver_bio.status_fk.received_wsu_fk.save()
         caregiver_bio.status_fk.save()

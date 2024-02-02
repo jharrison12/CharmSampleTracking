@@ -300,6 +300,15 @@ class CollectedChildBloodSpotHairFormOneYear(forms.Form):
 class CollectedChildToothForm(forms.Form):
     date_collected =forms.DateField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datepicker"}))
 
+class ReceivedatWSUForm(forms.Form):
+    received_date_time = forms.DateTimeField(initial=timezone.now(),
+                                             widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    number_of_tubes = forms.IntegerField(required=False)
+
+    def __str__(self):
+        return f"{self.received_date_time}"
+
+
 class DeclinedForm(forms.ModelForm):
     class Meta:
         model = Declined
@@ -310,15 +319,6 @@ class DeclinedForm(forms.ModelForm):
         self.fields['declined_date'].widget = TextInput(attrs={
             'class': 'datepicker'})
 
-class ReceivedatWSUForm(forms.ModelForm):
-    class Meta:
-        model = ReceivedWSU
-        fields = ['received_date_time','number_of_tubes','logged_by']
-
-    def __init__(self, *args, **kwargs):
-        super(ReceivedatWSUForm, self).__init__(*args, **kwargs)
-        self.fields['received_date_time'].widget = TextInput(attrs={
-            'class': 'datetimepicker'})
 
 class ShippedtoMSUForm(forms.ModelForm):
     class Meta:
