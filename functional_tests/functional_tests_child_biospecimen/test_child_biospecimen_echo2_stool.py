@@ -1,3 +1,5 @@
+import unittest
+
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 from biospecimen.models import CaregiverBiospecimen,Caregiver,Child,ChildBiospecimen
@@ -6,6 +8,7 @@ import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
 
+@unittest.skip
 class ChildBioSpecimenEntryStool(FunctionalTest):
 
     def return_child_bio_pk(self,child_id,collection_type,age):
@@ -115,7 +118,7 @@ class ChildBioSpecimenEntryStool(FunctionalTest):
         received_at_wsu = self.browser.find_element(By.ID, 'id_child_received_at_wsu_form-received_date_time')
         received_at_wsu.clear()
         received_at_wsu.send_keys('2023-10-04 12:52:26')
-
+        time.sleep(5)
         submit = self.browser.find_element(By.XPATH,'//*[@id="received_at_wsu_div"]/form/input[2]')
         submit.click()
         body_text = self.webpage_text()

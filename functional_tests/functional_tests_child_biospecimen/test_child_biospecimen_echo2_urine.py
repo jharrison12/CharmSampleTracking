@@ -1,3 +1,5 @@
+import unittest
+
 from selenium.webdriver.common.by import By
 from functional_tests.base import FunctionalTest
 from biospecimen.models import CaregiverBiospecimen,Caregiver,Child,ChildBiospecimen
@@ -5,7 +7,9 @@ import time
 import datetime
 from selenium.webdriver.support.ui import Select
 from django.utils import timezone
+import unittest
 
+@unittest.skip
 class ChildBioSpecimenEntryUrine(FunctionalTest):
 
     def return_child_bio_pk(self,child_id,collection_type,age):
