@@ -83,9 +83,9 @@ class ShippedtoWSUReportBloodTest(DatabaseSetup):
 class ReceivedatWSUReportBloodTest(DatabaseSetup):
 
     def test_page_with_no_specimens_logged_returns_correct_html(self):
-        response = self.client.get(f'/reports/received_at_wsu/blood/')
+        response = self.client.get(f'/reports/received_at_wsu_report/blood/')
         self.assertTemplateUsed(response, 'reports/received_at_wsu_report_blood.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/received_at_wsu/blood/')
+        response = self.client.get(f'/reports/received_at_wsu_report/blood/')
         self.assertContains(response,'Received at WSU Report')
