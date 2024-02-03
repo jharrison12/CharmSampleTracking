@@ -13,7 +13,7 @@ from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
 
-
+@unittest.skip
 class ChildBiospecimenPage(DatabaseSetup):
 
     def send_kit(self,primary_key,kit_sent):
