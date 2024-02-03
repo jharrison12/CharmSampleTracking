@@ -134,12 +134,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         # user sees shipped to echo form
 
-    def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
-        self.user_submits_urine_collected()
-        self.user_submits_urine_shipped_to_wsu()
-        self.user_submits_urine_received_at_wsu()
-
-
+    def user_submits_urine_shipped_to_echo(self):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Shipped to ECHO Form',body)
 
@@ -152,6 +147,12 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn(f'Shipped Date Time: {TODAY}', body)
+
+    def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
+        self.user_submits_urine_collected()
+        self.user_submits_urine_shipped_to_wsu()
+        self.user_submits_urine_received_at_wsu()
+        self.user_submits_urine_shipped_to_echo()
 
     def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees urine
