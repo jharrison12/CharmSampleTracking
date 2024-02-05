@@ -6,9 +6,11 @@ import datetime
 from django.utils import timezone
 from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBiospecimenForm, \
     ShippedBiospecimenForm, CollectedBiospecimenUrineForm, InitialBioForm, ShippedChoiceForm, \
-    ShippedtoWSUForm, ShippedtoEchoForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm, \
-    ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,InitialBioFormChildTooth,\
-    CollectedChildToothForm,DeclinedForm,ReceivedatWSUForm,ShippedtoMSUForm,CollectedBiospecimenHairSalivaForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm
+    ShippedtoWSUForm, ShippedtoEchoForm, InitialBioFormPostNatal, KitSentForm, CollectedChildUrineStoolForm, \
+    ShippedChoiceEchoForm, CollectedChildBloodSpotForm, CollectedChildBloodSpotHairFormOneYear, ShippedtoWSUFormChild, \
+    InitialBioFormChildTooth, \
+    CollectedChildToothForm, DeclinedForm, ReceivedatWSUForm, ShippedtoMSUForm, CollectedBiospecimenHairSalivaForm, \
+    ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoUrineForm
 from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -265,7 +267,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.shipped_to_wsu_send_form(primary_key)
         self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
+        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoUrineForm)
 
 class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
 

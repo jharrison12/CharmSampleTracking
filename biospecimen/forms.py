@@ -253,6 +253,10 @@ class ReceivedatWSUFormChild(forms.Form):
 class ShippedtoEchoForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
+class ShippedtoEchoUrineForm(forms.Form):
+    shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    number_of_tubes = forms.IntegerField(required=True)
+
 class CollectedBloodForm(forms.Form):
     collected_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     processed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))

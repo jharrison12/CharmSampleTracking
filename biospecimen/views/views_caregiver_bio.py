@@ -2,10 +2,13 @@ import logging
 
 from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Collection, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,PregnancyTrimester,Child,Component,URINE,BLOOD_DICT_FORM,BLOOD_DICT,ComponentError
-from biospecimen.forms import CaregiverBiospecimenForm,IncentiveForm,CollectedBiospecimenUrineForm,InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
-    ShippedtoEchoForm,CollectedBloodForm,CollectedBiospecimenHairSalivaForm,ShippedChoiceEchoForm,InitialBioFormPostNatal,KitSentForm,\
-ReceivedatWSUForm,InitialBioFormPeriNatal,CollectedBiospecimenPlacentaForm,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,\
-ReceivedatWSUBloodForm,ShippedtoEchoBloodForm
+from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
+    ShippedChoiceForm, ShippedtoWSUForm, \
+    ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
+    InitialBioFormPostNatal, KitSentForm, \
+    ReceivedatWSUForm, InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm, ShippedtoWSUFormPlacenta, \
+    ShippedtoMSUForm, ReceivedatMSUForm, ShippedtoWSUFormBlood, \
+    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoUrineForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -397,7 +400,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
                 and (not shipped_to_echo_item.exists() or shipped_to_echo_item.filter(shipped_date_time__isnull=True)):
             logging.debug(f"in shipped to echo if statement")
-            shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
+            shipped_echo_form = ShippedtoEchoUrineForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,
@@ -700,15 +703,12 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_echo_item = ShippedECHO.objects.create()
-    logging.debug(f"In echo post")
     if request.method == "POST":
         if collection_type in BLOOD:
-            caregiver_bloods = return_caregiver_bloods(caregiver_bio)
-            logging.debug(f"post is {request.POST}")
             form = ShippedtoEchoBloodForm(data=request.POST, prefix='shipped_to_echo_form',caregiver_bio=caregiver_bio)
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,caregiver_bio=caregiver_bio)
+                shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,request=request,caregiver_bio=caregiver_bio)
                 create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
                                                   form_data=form.cleaned_data,shipped_to_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
             else:
@@ -718,10 +718,13 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
                             caregiver_bio_pk=caregiver_bio_pk)
         else:
             logging.debug(f"post is {request.POST}")
-            form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
+            if collection_type in URINE:
+                form  = ShippedtoEchoUrineForm(data=request.POST,prefix='shipped_to_echo_form')
+            else:
+                form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
-                shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,caregiver_bio=caregiver_bio)
+                shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,request=request,caregiver_bio=caregiver_bio)
                 logging.debug(f"shipped echo saved")
             return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                     caregiver_bio_pk=caregiver_bio_pk)

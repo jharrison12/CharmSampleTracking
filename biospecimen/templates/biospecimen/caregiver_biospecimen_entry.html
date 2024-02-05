@@ -153,7 +153,8 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Received at WSU</button>
             </div>
             <div class="col-8">
-                <div>Received at WSU {{ caregiver_bio.status_fk.received_wsu_fk.received_date_time }}</div>
+                <div>Received at WSU: {{ caregiver_bio.status_fk.received_wsu_fk.received_date_time }}</div>
+                <div>Number of Tubes: {{ caregiver_bio.status_fk.received_wsu_fk.number_of_tubes }}</div>
             </div>
         </div>
     {% endif %}
@@ -175,6 +176,7 @@
             </div>
             <div class="col-8">
                 <div>Shipped Date Time: {{ caregiver_bio.status_fk.shipped_echo_fk.shipped_date_time }}</div>
+                <div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_echo_fk.number_of_tubes }}</div>
             </div>
         </div>
     {% endif %}
