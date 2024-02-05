@@ -72,6 +72,6 @@ def received_at_wsu_report_blood(request):
 
 @login_required
 def shipped_to_echo_report_urine(request):
-    shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='U')
+    shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='U')
     logging.critical(f'collected biospecimen objects {shipped_to_echo_biospecimen}')
     return render(request=request,template_name='reports/shipped_to_echo_report_urine.html',context={'shipped_to_echo_biospecimen':shipped_to_echo_biospecimen})

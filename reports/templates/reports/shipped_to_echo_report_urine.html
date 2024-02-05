@@ -21,8 +21,8 @@
                   <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                   <td>{{ biospecimen.trimester_fk.get_trimester_display }}</td>
-                  <td>{{ biospecimen.status_fk.shipped_to_echo.received_date_time }}</td>
-                  <td>{{ biospecimen.status_fk.shipped_to_echo.number_of_tubes }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_echo_fk.shipped_date_time }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_echo_fk.number_of_tubes }}</td>
               </tr>
           {% endfor %}
 

@@ -202,7 +202,7 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Urine Report').click()
 
         text = self.webpage_text()
-        time.sleep(50)
+        time.sleep(5)
         self.assertIn('4101', text)
 
         # user sees a urine that is collected

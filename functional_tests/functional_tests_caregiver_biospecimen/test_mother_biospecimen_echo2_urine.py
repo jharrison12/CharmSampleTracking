@@ -151,7 +151,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn(f'Shipped Date Time: {TODAY}', body)
-        time.sleep(4)
+        time.sleep(1)
         self.assertIn(f'Number of Tubes: 5', body)
 
     def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
