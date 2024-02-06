@@ -101,3 +101,13 @@ class ReceivedatWSUReportBloodTest(DatabaseSetup):
     def test_page_with_no_specimens_logged_shows_report(self):
         response = self.client.get(f'/reports/received_at_wsu_report/blood/')
         self.assertContains(response,'Received at WSU Report')
+
+class ShippedtoEchoReportBloodTest(DatabaseSetup):
+
+    def test_page_with_no_specimens_logged_returns_correct_html(self):
+        response = self.client.get(f'/reports/shipped_to_echo_report/blood/')
+        self.assertTemplateUsed(response, 'reports/shipped_to_echo_report_blood.html')
+
+    def test_page_with_no_specimens_logged_shows_report(self):
+        response = self.client.get(f'/reports/shipped_to_echo_report/blood/')
+        self.assertContains(response,'Shipped to Echo Report')

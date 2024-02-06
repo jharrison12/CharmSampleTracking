@@ -31,5 +31,6 @@ urlpatterns = [
     re_path(r"^received_at_wsu_report/urine/$", reports.received_at_wsu_report_urine, name='received_at_wsu_report_urine'),
     re_path(r"^received_at_wsu_report/blood/$", reports.received_at_wsu_report_blood, name='received_at_wsu_report_blood'),
     re_path(r"^shipped_to_echo_report/urine/$", reports.shipped_to_echo_report_urine,name='shipped_to_echo_report_urine'),
+    re_path(r"^shipped_to_echo_report/blood/$", reports.shipped_to_echo_report_blood,name='shipped_to_echo_report_blood'),
 
 ]

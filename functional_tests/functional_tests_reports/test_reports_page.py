@@ -295,3 +295,32 @@ class ReportsPageTest(FunctionalTest):
 
         ##todo implement search bar
         ##TODO implement print function
+
+    def test_user_can_see_shipped_to_echo_blood_report(self):
+        motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_shipped_to_wsu_blood(self)
+        motherblood.user_inputs_received_at_wsu_blood(self)
+        motherblood.user_inputs_shipped_echo_blood_page(self)
+        # User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports', text)
+        self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Report Blood').click()
+
+        text = self.webpage_text()
+
+        self.assertIn('4100', text)
+
+        # user sees a urine that is collected
+
+        self.assertIn('12BL410001', text)
+
+        self.assertIn('Whole Blood', text)
+        self.assertIn('Shipped to Echo at WSU Report', text)
+
+        ##todo implement search bar
+        ##TODO implement print function
