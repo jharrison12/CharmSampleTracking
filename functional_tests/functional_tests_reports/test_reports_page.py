@@ -292,6 +292,7 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertIn('Whole Blood', text)
         self.assertIn('Received at WSU Report', text)
+        self.assertIn('5', text)
 
         ##todo implement search bar
         ##TODO implement print function
@@ -321,6 +322,7 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertIn('Whole Blood', text)
         self.assertIn('Shipped to Echo Report', text)
+        self.assertIn('5', text)
 
         ##todo implement search bar
         ##TODO implement print function
