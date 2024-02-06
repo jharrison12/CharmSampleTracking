@@ -309,7 +309,7 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Report Blood').click()
+        self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Blood Report').click()
 
         text = self.webpage_text()
 
@@ -320,7 +320,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('12BL410001', text)
 
         self.assertIn('Whole Blood', text)
-        self.assertIn('Shipped to Echo at WSU Report', text)
+        self.assertIn('Shipped to Echo Report', text)
 
         ##todo implement search bar
         ##TODO implement print function

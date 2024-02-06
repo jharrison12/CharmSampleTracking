@@ -1,5 +1,5 @@
 {% extends "biospecimen/base.html" %}
-{% block header %}Received at WSU Report{% endblock %}
+{% block header %}Shipped to Echo Report{% endblock %}
 {% block section %}
 
         <div class="table-responsive">
@@ -11,7 +11,7 @@
               <th scope="col">Biospecimen ID</th>
               <th scope="col">Trimester</th>
               <th scope="col">Received Date</th>
-                {% for biospecimen in received_at_wsu_biospecimen %}
+                {% for biospecimen in shipped_to_echo_report_blood %}
                     {% for component in biospecimen.component_set.all %}
                         <th scope="col">{{ component }} Number of Tubes:</th>
                     {% endfor %}
@@ -19,7 +19,7 @@
             </tr>
           </thead>
           <tbody>
-          {% for biospecimen in received_at_wsu_biospecimen %}
+          {% for biospecimen in shipped_to_echo_report_blood %}
               <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                   <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
