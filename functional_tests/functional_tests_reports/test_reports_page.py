@@ -237,7 +237,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('12BL410001', text)
 
         self.assertIn('Whole Blood', text)
-
+        time.sleep(50)
         ##todo implement search bar
         ##TODO implement print function
 

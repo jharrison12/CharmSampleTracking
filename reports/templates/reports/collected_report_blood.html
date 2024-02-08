@@ -3,21 +3,14 @@
 {% block section %}
 
         <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table table-hover d-print-table">
           <thead>
-            <tr>
+            <tr class="d-print-table-row">
               <th scope="col">#</th>
               <th scope="col">Charm ID</th>
               <th scope="col">Biospecimen ID</th>
-              <th scope="col">Trimester</th>
-              <th scope="col">Collected Date</th>
-{#                <th scope="col">Serum Number of Tubes</th>#}
-{#                <th scope="col">Whole Blood Number of Tubes</th>#}
-{#                <th scope="col">Blood Spot Number of Tubes</th>#}
-{#                <th scope="col">Buffy Coat Number of Tubes</th>#}
-{#                <th scope="col">Plasma Number of Tubes</th>#}
-{#                <th scope="col">Red Blood Cells Number of Tubes</th>#}
- {#                is it possible that the table headers will get out of order when compared to data??? #}
+              <th scope="col" class="d-print-none">Trimester</th>
+              <th scope="col" class="d-print-none">Collected Date</th>
                 {% for biospecimen in collected_biospecimen %}
                     {% for component in biospecimen.component_set.all %}
                         <th scope="col">{{ component }} Number of Tubes:</th>
@@ -27,12 +20,12 @@
           </thead>
           <tbody>
           {% for biospecimen in collected_biospecimen %}
-              <tr>
+              <tr class="d-print-table-row">
                 <th scope="row">{{ forloop.counter }}</th>
                   <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
-                  <td>{{ biospecimen.trimester_fk.get_trimester_display }}</td>
-                  <td>{{ biospecimen.status_fk.collected_fk.collected_date_time }}</td>
+                  <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  <td class="d-print-none">{{ biospecimen.status_fk.collected_fk.collected_date_time }}</td>
               {% debug %}
               {% for component in biospecimen.component_set.all %}
                   <td>{{ component.number_of_tubes }}</td>
