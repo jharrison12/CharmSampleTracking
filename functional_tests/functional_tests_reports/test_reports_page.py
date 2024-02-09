@@ -125,7 +125,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('Number of Tubes',text)
 
         ##TODO implement search bar
-        ##TODO implement print function
+
 
     def test_user_can_see_shipped_to_wsu_urine_report(self):
         motherurine.user_submits_urine_collected(self)
@@ -152,7 +152,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('Number of Tubes', text)
 
         ##TODO implement search bar
-        ##TODO implement print function
+
 
 
     def test_user_can_see_recieved_at_wsu_urine_report(self):
@@ -182,7 +182,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('5', text)
 
         ##TODO implement search bar
-        ##TODO implement print function
+
 
     def test_user_can_see_shipped_to_echo_urine_report(self):
         motherurine.user_submits_urine_collected(self)
@@ -212,7 +212,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('5', text)
 
         ##TODO implement search bar
-        ##TODO implement print function
+
 
     def test_user_can_see_collected_blood_report(self):
         motherblood.user_input_collected_blood(self)
@@ -238,7 +238,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('Whole Blood', text)
 
         ##todo implement search bar
-        ##TODO implement print function
+
 
     def test_user_can_see_shipped_to_wsu_blood_report(self):
         motherblood.user_input_collected_blood(self)
@@ -265,7 +265,6 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('Shipped to WSU Report', text)
 
         ##todo implement search bar
-        ##TODO implement print function
 
     def test_user_can_see_received_at_wsu_blood_report(self):
         motherblood.user_input_collected_blood(self)
@@ -294,7 +293,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('3', text)
 
         ##todo implement search bar
-        ##TODO implement print function
+
 
     def test_user_can_see_shipped_to_echo_blood_report(self):
         motherblood.user_input_collected_blood(self)
@@ -324,4 +323,3 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('5', text)
 
         ##todo implement search bar
-        ##TODO implement print function
