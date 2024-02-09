@@ -5,15 +5,16 @@
 
     @media print {
         @page {
-            size:  landscape;
-            margin: 0;
-            background-color: #0b5ed7;
+            size:  letter portrait;
+            margin-left:auto;
+            margin-right:auto;
+            width:auto;
         }
-        body {
-            margin:0;
-            color: #000;
-            {#changing this doesn't work.  WHY#}
-            background-color: #0b5ed7;
+        body{
+            width:fit-content;
+        }
+        .table-responsive{
+            width:fit-content;
         }
     }
     </style>
