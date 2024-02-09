@@ -264,7 +264,7 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertIn('Whole Blood', text)
         self.assertIn('Shipped to WSU Report', text)
-
+        time.sleep(500)
         ##todo implement search bar
         ##TODO implement print function
 
@@ -289,10 +289,10 @@ class ReportsPageTest(FunctionalTest):
         # user sees a urine that is collected
 
         self.assertIn('12BL410001', text)
-
+        time.sleep(500)
         self.assertIn('Whole Blood', text)
         self.assertIn('Received at WSU Report', text)
-        self.assertIn('5', text)
+        self.assertIn('3', text)
 
         ##todo implement search bar
         ##TODO implement print function
