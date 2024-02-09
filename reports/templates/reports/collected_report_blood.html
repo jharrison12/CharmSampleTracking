@@ -1,5 +1,24 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Collected Report:{% endblock %}
+{% block json_script %}
+    <style>
+
+    @media print {
+        @page {
+            size:  landscape;
+            margin: 0;
+            background-color: #0b5ed7;
+        }
+        body {
+            margin:0;
+            color: #000;
+            {#changing this doesn't work.  WHY#}
+            background-color: #0b5ed7;
+        }
+    }
+    </style>
+{#    <link rel="stylesheet" type="text/css" media="print" href="bootstrap.min.css">#}
+{% endblock %}
 {% block section %}
 
         <div class="table-responsive">
