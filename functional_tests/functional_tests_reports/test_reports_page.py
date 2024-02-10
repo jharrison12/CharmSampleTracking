@@ -116,7 +116,7 @@ class ReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
         self.assertIn('Collected Report',text)
-        time.sleep(500)
+
         self.assertIn('4101',text)
 
         #user sees a urine that is collected
@@ -173,7 +173,7 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-
+        time.sleep(500)
         self.assertIn('4101', text)
         self.assertIn('Received at WSU Report', text)
 
@@ -204,7 +204,7 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-
+        time.sleep(500)
         self.assertIn('4101', text)
         self.assertIn('Shipped to Echo Report', text)
         # user sees a urine that is collected
