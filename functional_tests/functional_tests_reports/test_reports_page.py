@@ -115,7 +115,7 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-
+        self.assertIn('Collected Report',text)
         self.assertIn('4101',text)
 
         #user sees a urine that is collected
@@ -123,7 +123,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('12UR410101',text)
 
         self.assertIn('Number of Tubes',text)
-        time.sleep(500)
+
         ##TODO implement search bar
 
 
@@ -139,11 +139,12 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Shipped to WSU Urine Report').click()
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
 
         self.assertIn('4101', text)
+        self.assertIn('Shipped to WSU Report', text)
 
         # user sees a urine that is collected
 
@@ -168,11 +169,12 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Received at WSU Urine Report').click()
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
 
         self.assertIn('4101', text)
+        self.assertIn('Received at WSU Report', text)
 
         # user sees a urine that is collected
 
@@ -198,12 +200,12 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Urine Report').click()
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-        time.sleep(5)
-        self.assertIn('4101', text)
 
+        self.assertIn('4101', text)
+        self.assertIn('Shipped to Echo Report', text)
         # user sees a urine that is collected
 
         self.assertIn('12UR410101', text)
