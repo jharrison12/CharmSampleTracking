@@ -1,7 +1,8 @@
 {% extends "biospecimen/base.html" %}
-{% block header %}Collected Report:{% endblock %}
+{% block javascript_block %}<script type="text/javascript" src="/static/reports/js/urine_report.js" async></script>{% endblock %}
 {% block section %}
-        <div class="table-responsive d-print-table">
+    <h1 id="collected_report_header">Collected Report</h1>
+        <div class="table-responsive d-print-table" id="collected_urine_report">
         <table class="table table-hover d-print-table">
           <thead>
             <tr class="d-print-table-row">

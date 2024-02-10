@@ -116,6 +116,7 @@ class ReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
         self.assertIn('Collected Report',text)
+        time.sleep(500)
         self.assertIn('4101',text)
 
         #user sees a urine that is collected
@@ -212,7 +213,7 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertIn('Number of Tubes', text)
         self.assertIn('5', text)
-
+        time.sleep(500)
         ##TODO implement search bar
 
 

@@ -7,7 +7,7 @@ $('#buffy_coat_number_of_tubes_div').hide();
 
 console.log('reached this')
 
-//TODO turn this into object
+
 $('#id_blood_form-whole_blood').click(function() {
   $('#whole_blood_number_of_tubes_div')[this.checked ? "show" : "hide"]();
 });
