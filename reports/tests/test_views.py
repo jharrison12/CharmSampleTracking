@@ -31,45 +31,31 @@ class CaregiverBiospcimenIDSwithNoLoggedSpecimensTest(DatabaseSetup):
 
 class CollectedReportUrineTest(DatabaseSetup):
 
-    def test_page_with_no_specimens_logged_returns_correct_html(self):
-        response = self.client.get(f'/reports/collected_report/urine/')
+    def test_collected_urine_report_returns_correct_html(self):
+        response = self.client.get(f'/reports/biospecimen_report/urine/')
         self.assertTemplateUsed(response, 'reports/biospecimen_report_urine.html')
 
-    def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/collected_report/urine/')
+    def test_collected_urine_report_shows_report_header(self):
+        response = self.client.get(f'/reports/biospecimen_report/urine/')
         self.assertContains(response,'Collected Report')
 
 class ShippedtoWSUReportUrineTest(DatabaseSetup):
 
-    def test_page_with_no_specimens_logged_returns_correct_html(self):
-        response = self.client.get(f'/reports/shipped_to_wsu_report/urine/')
-        self.assertTemplateUsed(response, 'reports/shipped_to_wsu_report_urine.html')
-
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/shipped_to_wsu_report/urine/')
+        response = self.client.get(f'/reports/biospecimen_report/urine/')
         self.assertContains(response,'Shipped to WSU Report')
 
 class ReceivedatWSUReportUrineTest(DatabaseSetup):
 
-    def test_page_with_no_specimens_logged_returns_correct_html(self):
-        response = self.client.get(f'/reports/received_at_wsu_report/urine/')
-        self.assertTemplateUsed(response, 'reports/received_at_wsu_report_urine.html')
-
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/received_at_wsu_report/urine/')
+        response = self.client.get(f'/reports/biospecimen_report/urine/')
         self.assertContains(response,'Received at WSU Report')
-
 
 class ShippedtoEchoReportUrineTest(DatabaseSetup):
 
-    def test_page_with_no_specimens_logged_returns_correct_html(self):
-        response = self.client.get(f'/reports/shipped_to_echo_report/urine/')
-        self.assertTemplateUsed(response, 'reports/shipped_to_echo_report_urine.html')
-
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/shipped_to_echo_report/urine/')
+        response = self.client.get(f'/reports/biospecimen_report/urine/')
         self.assertContains(response,'Shipped to Echo Report')
-
 
 class CollectedReportBloodTest(DatabaseSetup):
 
