@@ -33,7 +33,7 @@ class CollectedReportUrineTest(DatabaseSetup):
 
     def test_page_with_no_specimens_logged_returns_correct_html(self):
         response = self.client.get(f'/reports/collected_report/urine/')
-        self.assertTemplateUsed(response, 'reports/collected_report_urine.html')
+        self.assertTemplateUsed(response, 'reports/biospecimen_report_urine.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
         response = self.client.get(f'/reports/collected_report/urine/')

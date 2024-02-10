@@ -112,7 +112,7 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports',text)
-        self.browser.find_element(By.LINK_TEXT, 'Collected Report Urine').click()
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
 
@@ -123,7 +123,7 @@ class ReportsPageTest(FunctionalTest):
         self.assertIn('12UR410101',text)
 
         self.assertIn('Number of Tubes',text)
-
+        time.sleep(500)
         ##TODO implement search bar
 
 

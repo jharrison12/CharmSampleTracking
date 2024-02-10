@@ -5,13 +5,10 @@
         <li><a href="#">Child Report</a></li>
         <li><a href="#">Biospecimen Report</a></li>
         <li><a href={% url 'reports:no_specimen_report' %}>Charm IDS with no biospecimen</a></li>
-        <li><a href={% url 'reports:collected_report_urine' %}>Collected Report Urine</a></li>
-        <li><a href={% url 'reports:shipped_to_wsu_report_urine' %}>Shipped to WSU Urine Report</a></li>
+        <li><a href={% url 'reports:biospecimen_report_urine' %}>Biospecimen Report Urine</a></li>
         <li><a href={% url 'reports:collected_report_blood' %}>Collected Report Blood</a></li>
         <li><a href={% url 'reports:shipped_to_wsu_report_blood' %}>Shipped to WSU Report Blood</a></li>
-        <li><a href={% url 'reports:received_at_wsu_report_urine' %}>Received at WSU Urine Report</a></li>
         <li><a href={% url 'reports:received_at_wsu_report_blood' %}>Received at WSU Report Blood</a></li>
-        <li><a href={% url 'reports:shipped_to_echo_report_urine' %}>Shipped to Echo Urine Report</a></li>
         <li><a href={% url 'reports:shipped_to_echo_report_blood' %}>Shipped to Echo Blood Report</a></li>
     </ul>
 {% endblock %}
