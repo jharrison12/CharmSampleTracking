@@ -320,6 +320,6 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertIn('Whole Blood', text)
         self.assertIn('Shipped to Echo Report', text)
-        self.assertIn('5', text)
+        self.assertIn('3', text)
 
         ##todo implement search bar

@@ -115,7 +115,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn(f'Received at WSU {TODAY}', body)
+        self.assertIn(f'Received at WSU: {TODAY}', body)
 
         #User sees shipped to echo form
         shipped_echo_date_time = self.browser.find_element(By.ID,"id_shipped_to_echo_form-shipped_date_and_time")
