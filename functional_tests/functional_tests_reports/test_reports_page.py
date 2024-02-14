@@ -117,13 +117,23 @@ class ReportsPageTest(FunctionalTest):
         text = self.webpage_text()
         self.assertIn('Collected Report',text)
 
+        #4101 Should not be seen because it is hidden by javascript
+        self.assertNotIn('4101',text)
+        self.assertNotIn('12UR410101',text)
+
+        #User clicks on the header and it shows report
+        self.browser.find_element(By.ID,'collected_report_header').click()
+        text = self.webpage_text()
         self.assertIn('4101',text)
-
-        #user sees a urine that is collected
-
         self.assertIn('12UR410101',text)
-
         self.assertIn('Number of Tubes',text)
+        self.assertIn('5',text)
+
+        #User clicks on header to hide report
+        self.browser.find_element(By.ID,'collected_report_header').click()
+        text = self.webpage_text()
+        self.assertNotIn('4101',text)
+        self.assertNotIn('12UR410101',text)
 
         ##TODO implement search bar
 
@@ -173,7 +183,7 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-        time.sleep(500)
+        time.sleep(3)
         self.assertIn('4101', text)
         self.assertIn('Received at WSU Report', text)
 
@@ -204,7 +214,7 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-        time.sleep(500)
+        
         self.assertIn('4101', text)
         self.assertIn('Shipped to Echo Report', text)
         # user sees a urine that is collected
@@ -213,7 +223,7 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertIn('Number of Tubes', text)
         self.assertIn('5', text)
-        time.sleep(500)
+        
         ##TODO implement search bar
 
 
