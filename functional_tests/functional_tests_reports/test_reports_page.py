@@ -10,19 +10,18 @@ from selenium.webdriver.support.ui import Select
 from functional_tests.functional_tests_caregiver_biospecimen.test_mother_biospecimen_echo2_urine import MotherBioSpecimenEcho2EntryTestUrine as motherurine
 from functional_tests.functional_tests_caregiver_biospecimen.test_mother_biospecimen_echo2_blood import MotherBioSpecimenEcho2EntryTestBlood as motherblood
 
-class ReportsPageTest(FunctionalTest):
 
+class ReportsPageTest(FunctionalTest):
     def webpage_text(self):
         return self.browser.find_element(By.TAG_NAME, 'body').text
 
-    def return_caregiver_bio_pk(self,charm_id,collection_type,trimester):
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         logging.debug(f"{mother_one}")
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
                                                         collection_fk__collection_type=collection_type,
                                                         trimester_fk__trimester=trimester)
         return caregiverbio.pk
-
 
     def test_user_can_see_biospecimen_report(self):
         #User visits the page for P7000
@@ -101,6 +100,19 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertNotIn('4100',text)
 
+class UrineReportsPageTest(FunctionalTest):
+
+    def webpage_text(self):
+        return self.browser.find_element(By.TAG_NAME, 'body').text
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        logging.debug(f"{mother_one}")
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester)
+        return caregiverbio.pk
+
     def test_user_can_see_collected_urine_report(self):
         motherurine.user_submits_urine_collected(self)
 
@@ -173,7 +185,6 @@ class ReportsPageTest(FunctionalTest):
         self.assertNotIn('5', text)
 
     ##TODO implement search bar
-
 
 
     def test_user_can_see_recieved_at_wsu_urine_report(self):
@@ -251,6 +262,18 @@ class ReportsPageTest(FunctionalTest):
         
         ##TODO implement search bar
 
+class BloodReportsPageTest(FunctionalTest):
+
+    def webpage_text(self):
+        return self.browser.find_element(By.TAG_NAME, 'body').text
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        logging.debug(f"{mother_one}")
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester)
+        return caregiverbio.pk
 
     def test_user_can_see_collected_blood_report(self):
         motherblood.user_input_collected_blood(self)
