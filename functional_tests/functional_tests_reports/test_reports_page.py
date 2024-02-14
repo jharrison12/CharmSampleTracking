@@ -221,15 +221,24 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-        
+        self.assertIn('Received at WSU Report', text)
+        self.assertNotIn('4101', text)
+        self.assertNotIn('12UR410101', text)
+
+        self.browser.find_element(By.ID, 'shipped_to_echo_report_header').click()
+
+        text = self.webpage_text()
         self.assertIn('4101', text)
-        self.assertIn('Shipped to Echo Report', text)
-        # user sees a urine that is collected
-
         self.assertIn('12UR410101', text)
-
         self.assertIn('Number of Tubes', text)
         self.assertIn('5', text)
+
+        self.browser.find_element(By.ID, 'shipped_to_echo_report_header').click()
+        text = self.webpage_text()
+        self.assertNotIn('4101', text)
+        self.assertNotIn('12UR410101', text)
+        self.assertNotIn('Number of Tubes', text)
+        self.assertNotIn('5', text)
         
         ##TODO implement search bar
 
