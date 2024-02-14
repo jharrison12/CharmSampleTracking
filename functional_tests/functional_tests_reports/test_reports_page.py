@@ -173,7 +173,6 @@ class ReportsPageTest(FunctionalTest):
         motherurine.user_submits_urine_received_at_wsu(self)
 
         # User visits the page for P7000
-        ## Is there a better way of navigating using selenium?
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}reports/')
 
@@ -183,16 +182,24 @@ class ReportsPageTest(FunctionalTest):
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
 
         text = self.webpage_text()
-        time.sleep(3)
-        self.assertIn('4101', text)
         self.assertIn('Received at WSU Report', text)
+        self.assertNotIn('4101', text)
+        self.assertNotIn('12UR410101', text)
 
-        # user sees a urine that is collected
+        self.browser.find_element(By.ID,'received_at_wsu_report_header').click()
 
+        text = self.webpage_text()
+        self.assertIn('4101', text)
         self.assertIn('12UR410101', text)
-
         self.assertIn('Number of Tubes', text)
         self.assertIn('5', text)
+
+        self.browser.find_element(By.ID,'received_at_wsu_report_header').click()
+        text = self.webpage_text()
+        self.assertNotIn('4101', text)
+        self.assertNotIn('12UR410101', text)
+        self.assertNotIn('Number of Tubes', text)
+        self.assertNotIn('5', text)
 
         ##TODO implement search bar
 
