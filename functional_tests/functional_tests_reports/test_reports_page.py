@@ -125,7 +125,7 @@ class UrineReportsPageTest(FunctionalTest):
 
         self.assertIn('Reports',text)
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
-        time.sleep(500)
+
         text = self.webpage_text()
         self.assertIn('Collected Report',text)
 
