@@ -11,4 +11,14 @@
     .table-responsive{
         width:fit-content;
     }
+
+    div#collected_urine_report_container,
+    div#shipped_to_wsu_urine_report_container,
+    div#received_at_wsu_urine_report_container,
+    div#shipped_to_echo_urine_report_container
+    {
+        page-break-after: always;
+        border-style:none !important;
+    }
+
 }

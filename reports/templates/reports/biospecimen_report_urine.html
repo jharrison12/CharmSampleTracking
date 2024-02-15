@@ -1,7 +1,7 @@
 {% extends "biospecimen/base.html" %}
 {% block javascript_block %}<script type="text/javascript" src="/static/reports/js/urine_report.js" async></script>{% endblock %}
 {% block section %}
-    <div class="row border border-2 border-primary p-3 rounded mb-2">
+    <div class="row border border-2 border-primary p-3 rounded mb-2" id="collected_urine_report_container">
         <h1 id="collected_report_header">Collected Report</h1>
             <div class="table-responsive d-print-table" id="collected_urine_report">
             <table class="table table-hover d-print-table">
@@ -35,7 +35,7 @@
             </table>
         </div>
     </div>
-    <div class="row border border-2 border-primary p-3 rounded mb-2">
+    <div class="row border border-2 border-primary p-3 rounded mb-2" id="shipped_to_wsu_urine_report_container">
         <h1 id="shipped_to_wsu_report_header">Shipped to WSU Report</h1>
             <div class="table-responsive d-print-table" id="shipped_to_wsu_urine_report">
                 <table class="table table-hover d-print-table">
@@ -69,7 +69,7 @@
                 </table>
             </div>
     </div>
-    <div class="row border border-2 border-primary p-3 rounded mb-2">
+    <div class="row border border-2 border-primary p-3 rounded mb-2" id="received_at_wsu_urine_report_container">
         <h1 id="received_at_wsu_report_header">Received at WSU Report</h1>
         <div class="table-responsive d-print-table" id="received_at_wsu_urine_report">
             <table class="table table-hover">
@@ -99,7 +99,7 @@
             </table>
         </div>
     </div>
-    <div class="row border border-2 border-primary p-3 rounded mb-2">
+    <div class="row border border-2 border-primary p-3 rounded mb-2" id="shipped_to_echo_urine_report_container">
         <h1 id="shipped_to_echo_report_header">Shipped to Echo Report</h1>
         <div class="table-responsive d-print-table" id="shipped_to_echo_urine_report">
             <table class="table table-hover d-print-table">
