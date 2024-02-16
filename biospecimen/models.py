@@ -332,6 +332,15 @@ class Collection(models.Model):
 class Caregiver(models.Model):
     charm_project_identifier = models.CharField(default='', max_length=6,unique=True)
 
+    class Cohort(models.TextChoices):
+        DETROIT = 'D',_('Detroit')
+        TRAVERSE_CITY = 'T',_('Traverse City')
+
+    location = models.CharField(max_length=1,choices=Cohort.choices)
+
+    def save(self, *args, **kwargs):
+        if self.charm_project_identifier:
+
     def __str__(self):
         return self.charm_project_identifier
 
