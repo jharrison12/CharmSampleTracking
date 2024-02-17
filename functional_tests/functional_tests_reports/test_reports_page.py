@@ -183,12 +183,8 @@ class StaffUrineReportPageTest(FunctionalTest):
         self.assertNotIn('12UR410101', text)
         self.assertNotIn('Number of Tubes', text)
         self.assertNotIn('5', text)
-        time.sleep(5000)
-
-
 
     ##TODO implement search bar
-
 
     def test_user_can_see_recieved_at_wsu_urine_report(self):
         motherurine.user_submits_urine_collected(self)
@@ -226,7 +222,6 @@ class StaffUrineReportPageTest(FunctionalTest):
 
         ##TODO implement search bar
 
-
     def test_user_can_see_shipped_to_echo_urine_report(self):
         motherurine.user_submits_urine_collected(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
@@ -263,6 +258,53 @@ class StaffUrineReportPageTest(FunctionalTest):
         self.assertNotIn('Number of Tubes', text)
         self.assertNotIn('5', text)
         
+        ##TODO implement search bar
+
+class StaffBloodReportPageTest(FunctionalTest):
+
+    def webpage_text(self):
+        return self.browser.find_element(By.TAG_NAME, 'body').text
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        logging.debug(f"{mother_one}")
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester)
+        return caregiverbio.pk
+
+    def test_user_can_see_collected_blood_report(self):
+        motherurine.user_submits_urine_collected(self)
+
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports',text)
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Blood').click()
+
+        text = self.webpage_text()
+        self.assertIn('Collected Report',text)
+
+        #4101 Should not be seen because it is hidden by javascript
+        self.assertNotIn('4100',text)
+        self.assertNotIn('12BL410001',text)
+
+        #User clicks on the header and it shows report
+        self.browser.find_element(By.ID,'collected_report_header').click()
+        text = self.webpage_text()
+        self.assertIn('4100',text)
+        self.assertIn('12BL410001',text)
+        self.assertIn('3',text)
+
+        #User clicks on header to hide report
+        self.browser.find_element(By.ID,'collected_report_header').click()
+        text = self.webpage_text()
+        self.assertNotIn('4100',text)
+        self.assertNotIn('12BL410001',text)
+        self.assertIn('3',text)
+
         ##TODO implement search bar
 
 class UrineReportsPageTest(FunctionalTest):
