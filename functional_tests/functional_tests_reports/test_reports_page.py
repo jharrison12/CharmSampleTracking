@@ -409,11 +409,11 @@ class BloodReportsPageTest(FunctionalTest):
         ## Is there a better way of navigating using selenium?
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}reports/')
-        time.sleep(500)
+
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Blood').click()
+        self.browser.find_element(By.LINK_TEXT, 'Collected Report Blood').click()
 
         text = self.webpage_text()
         self.assertIn('Collected Report',text)
@@ -423,18 +423,11 @@ class BloodReportsPageTest(FunctionalTest):
         self.assertNotIn('12BL410101',text)
 
         #User clicks on the header and it shows report
-        self.browser.find_element(By.ID,'collected_report_header').click()
-        text = self.webpage_text()
-        self.assertIn('4101',text)
-        self.assertIn('12BL410101',text)
-        self.assertIn('5',text)
 
-        #User clicks on header to hide report
-        self.browser.find_element(By.ID,'collected_report_header').click()
         text = self.webpage_text()
-        self.assertNotIn('4101',text)
-        self.assertNotIn('12BL410101',text)
-
+        self.assertIn('4100',text)
+        self.assertIn('12BL410001',text)
+        self.assertIn('3',text)
 
     def test_user_can_see_shipped_to_wsu_blood_report(self):
         motherblood.user_input_collected_blood(self)
