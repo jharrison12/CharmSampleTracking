@@ -274,7 +274,7 @@ class StaffBloodReportPageTest(FunctionalTest):
         return caregiverbio.pk
 
     def test_user_can_see_collected_blood_report(self):
-        motherurine.user_submits_urine_collected(self)
+        motherblood.user_input_collected_blood(self)
 
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}reports/')
