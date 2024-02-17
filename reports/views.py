@@ -74,7 +74,7 @@ def biospecimen_report_blood(request):
     shipped_to_echo_report_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='B')
     shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_echo_fk__component_set').all().order_by(
         'component__component_type')
-    return render(request=request,template_name='reports/biospecimen_report_urine.html',context={'collected_blood':collected_blood,
+    return render(request=request,template_name='reports/biospecimen_report_blood.html',context={'collected_blood':collected_blood,
                                                                                                'shipped_to_wsu_biospecimen_blood':shipped_to_wsu_biospecimen_blood,
                                                                                                'received_at_wsu_biospecimen':received_at_wsu_biospecimen,
                                                                                                'shipped_to_echo_report_blood':shipped_to_echo_report_blood})
