@@ -81,7 +81,6 @@ def shipped_to_echo_report_urine(request):
     logging.critical(f'collected biospecimen objects {shipped_to_echo_biospecimen}')
     return render(request=request,template_name='reports/shipped_to_echo_report_urine.html',context={'shipped_to_echo_biospecimen':shipped_to_echo_biospecimen})
 
-
 @login_required
 def collected_report_blood(request):
     collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
@@ -105,9 +104,10 @@ def received_at_wsu_report_blood(request):
     return render(request=request, template_name='reports/received_at_wsu_report_blood.html',
                   context={'received_at_wsu_biospecimen': received_at_wsu_biospecimen})
 
+@login_required
 def shipped_to_echo_report_blood(request):
     shipped_to_echo_report_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='B')
-    shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
+    shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_echo_fk__component_set').all().order_by(
         'component__component_type')
     logging.critical(f'collected biospecimen objects {shipped_to_echo_report_blood}')
     return render(request=request, template_name='reports/shipped_to_echo_report_blood.html',
