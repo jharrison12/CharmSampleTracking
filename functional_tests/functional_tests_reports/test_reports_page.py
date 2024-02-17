@@ -100,7 +100,7 @@ class ReportsPageTest(FunctionalTest):
 
         self.assertNotIn('4100',text)
 
-class UrineReportsPageTest(FunctionalTest):
+class StaffUrineReportPageTest(FunctionalTest):
 
     def webpage_text(self):
         return self.browser.find_element(By.TAG_NAME, 'body').text
@@ -183,6 +183,9 @@ class UrineReportsPageTest(FunctionalTest):
         self.assertNotIn('12UR410101', text)
         self.assertNotIn('Number of Tubes', text)
         self.assertNotIn('5', text)
+        time.sleep(5000)
+
+
 
     ##TODO implement search bar
 
@@ -262,6 +265,130 @@ class UrineReportsPageTest(FunctionalTest):
         
         ##TODO implement search bar
 
+class UrineReportsPageTest(FunctionalTest):
+
+    def webpage_text(self):
+        return self.browser.find_element(By.TAG_NAME, 'body').text
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        logging.debug(f"{mother_one}")
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester)
+        return caregiverbio.pk
+
+    def test_user_can_see_collected_urine_report(self):
+        motherurine.user_submits_urine_collected(self)
+
+        #User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports',text)
+        self.browser.find_element(By.LINK_TEXT, 'Collected Report Urine').click()
+
+        text = self.webpage_text()
+
+        self.assertIn('4101',text)
+
+        #user sees a urine that is collected
+
+        self.assertIn('12UR410101',text)
+
+        self.assertIn('Number of Tubes',text)
+
+        ##TODO implement search bar
+
+
+    def test_user_can_see_shipped_to_wsu_urine_report(self):
+        motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_shipped_to_wsu(self)
+
+        # User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports', text)
+        self.browser.find_element(By.LINK_TEXT, 'Shipped to WSU Urine Report').click()
+
+        text = self.webpage_text()
+
+        self.assertIn('4101', text)
+
+        # user sees a urine that is collected
+
+        self.assertIn('12UR410101', text)
+
+        self.assertIn('Number of Tubes', text)
+
+        ##TODO implement search bar
+
+    def test_user_can_see_recieved_at_wsu_urine_report(self):
+        motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_shipped_to_wsu(self)
+        motherurine.user_submits_urine_received_at_wsu(self)
+
+        # User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports', text)
+        self.browser.find_element(By.LINK_TEXT, 'Received at WSU Urine Report').click()
+
+        text = self.webpage_text()
+
+        self.assertIn('4101', text)
+
+        # user sees a urine that is collected
+
+        self.assertIn('12UR410101', text)
+
+        self.assertIn('Number of Tubes', text)
+        self.assertIn('5', text)
+
+        ##TODO implement search bar
+
+
+    def test_user_can_see_shipped_to_echo_urine_report(self):
+        motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_shipped_to_wsu(self)
+        motherurine.user_submits_urine_received_at_wsu(self)
+        motherurine.user_submits_urine_shipped_to_echo(self)
+
+        # User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports', text)
+        self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Urine Report').click()
+
+        text = self.webpage_text()
+        time.sleep(5)
+        self.assertIn('4101', text)
+
+        # user sees a urine that is collected
+
+        self.assertIn('12UR410101', text)
+
+        self.assertIn('Number of Tubes', text)
+        self.assertIn('5', text)
+
+        ##TODO implement search bar
+
+
 class BloodReportsPageTest(FunctionalTest):
 
     def webpage_text(self):
@@ -282,7 +409,7 @@ class BloodReportsPageTest(FunctionalTest):
         ## Is there a better way of navigating using selenium?
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}reports/')
-
+        time.sleep(500)
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
@@ -332,6 +459,7 @@ class BloodReportsPageTest(FunctionalTest):
 
         self.assertIn('Whole Blood', text)
         self.assertIn('Shipped to WSU Report', text)
+        time.sleep(5000)
 
         ##todo implement search bar
 

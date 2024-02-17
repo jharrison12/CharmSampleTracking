@@ -45,6 +45,9 @@ def no_specimen_report_pdf(request):
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename="hello.pdf")
 
+
+
+
 @login_required
 def biospecimen_report_urine(request):
     collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
@@ -55,6 +58,11 @@ def biospecimen_report_urine(request):
                                                                                                'shipped_to_wsu_urine':shipped_to_wsu_urine,
                                                                                                'received_at_wsu_urine':received_at_wsu_urine,
                                                                                                'shipped_to_echo_urine':shipped_to_echo_urine})
+@login_required
+def collected_report_urine(request):
+    collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
+    return render(request=request,template_name='reports/biospecimen_report_urine.html',context={'collected_urine':collected_urine})
+
 
 @login_required
 def collected_report_blood(request):
