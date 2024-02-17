@@ -61,7 +61,25 @@ def biospecimen_report_urine(request):
 @login_required
 def collected_report_urine(request):
     collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
-    return render(request=request,template_name='reports/biospecimen_report_urine.html',context={'collected_urine':collected_urine})
+    return render(request=request,template_name='reports/collected_report_urine.html',context={'collected_urine':collected_urine})
+
+@login_required
+def shipped_to_wsu_report_urine(request):
+    shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
+    logging.critical(f'collected biospecimen objects {shipped_to_wsu_biospecimen}')
+    return render(request=request,template_name='reports/shipped_to_wsu_report_urine.html',context={'shipped_to_wsu_biospecimen':shipped_to_wsu_biospecimen})
+
+@login_required
+def received_at_wsu_report_urine(request):
+    received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='U')
+    logging.critical(f'collected biospecimen objects {received_at_wsu_biospecimen}')
+    return render(request=request,template_name='reports/received_at_wsu_report_urine.html',context={'received_at_wsu_biospecimen':received_at_wsu_biospecimen})
+
+@login_required
+def shipped_to_echo_report_urine(request):
+    shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='U')
+    logging.critical(f'collected biospecimen objects {shipped_to_echo_biospecimen}')
+    return render(request=request,template_name='reports/shipped_to_echo_report_urine.html',context={'shipped_to_echo_biospecimen':shipped_to_echo_biospecimen})
 
 
 @login_required
