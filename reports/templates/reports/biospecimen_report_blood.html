@@ -1,0 +1,146 @@
+{% extends "biospecimen/base.html" %}
+{% block javascript_block %}<script type="text/javascript" src="/static/reports/js/urine_report.js" async></script>{% endblock %}
+{% block section %}
+        <div class="table-responsive">
+        <table class="table table-hover d-print-table">
+          <thead>
+            <tr class="d-print-table-row">
+              <th scope="col">#</th>
+              <th scope="col">Charm ID</th>
+              <th scope="col">Biospecimen ID</th>
+              <th scope="col" class="d-print-none">Trimester</th>
+              <th scope="col" class="d-print-none">Collected Date</th>
+                {% for biospecimen in collected_biospecimen %}
+                    {% for component in biospecimen.component_set.all %}
+                        <th scope="col">{{ component }} Number of Tubes:</th>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+          {% for biospecimen in collected_biospecimen %}
+              <tr class="d-print-table-row">
+                <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                  <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  <td class="d-print-none">{{ biospecimen.status_fk.collected_fk.collected_date_time }}</td>
+              {% debug %}
+              {% for component in biospecimen.component_set.all %}
+                  <td>{{ component.number_of_tubes }}</td>
+                 {% endfor %}
+                  </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Charm ID</th>
+              <th scope="col">Biospecimen ID</th>
+              <th scope="col" class="d-print-none">Trimester</th>
+              <th scope="col">Shipped Date</th>
+              <th scope="col">Courier</th>
+              <th scope="col">Tracking Number</th>
+                {% for biospecimen in shipped_to_wsu_biospecimen_blood %}
+                    {% for component in biospecimen.component_set.all %}
+                        <th scope="col">{{ component }} Number of Tubes:</th>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+          {% for biospecimen in shipped_to_wsu_biospecimen_blood %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                  <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.shipped_date_time }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.get_courier_display }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_wsu_fk.tracking_number }}</td>
+              {% debug %}
+              {% for component in biospecimen.component_set.all %}
+                  <td>{{ component.number_of_tubes }}</td>
+                 {% endfor %}
+                  </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+
+        <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Charm ID</th>
+              <th scope="col">Biospecimen ID</th>
+              <th scope="col" class="d-print-none">Trimester</th>
+              <th scope="col">Received Date</th>
+                {% for biospecimen in received_at_wsu_biospecimen %}
+                    {% for component in biospecimen.component_set.all %}
+                        <th scope="col">{{ component }} Number of Tubes:</th>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+          {% for biospecimen in received_at_wsu_biospecimen %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                  <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  <td>{{ biospecimen.status_fk.received_wsu_fk.received_date_time }}</td>
+              {% debug %}
+              {% for component in biospecimen.component_set.all %}
+                  <td>{{ component.number_of_tubes }}</td>
+                 {% endfor %}
+                  </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Charm ID</th>
+              <th scope="col">Biospecimen ID</th>
+              <th scope="col" class="d-print-none">Trimester</th>
+              <th scope="col">Shipped Date</th>
+                {% for biospecimen in shipped_to_echo_report_blood %}
+                    {% for component in biospecimen.component_set.all %}
+                        <th scope="col">{{ component }} Number of Tubes:</th>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+          {% for biospecimen in shipped_to_echo_report_blood %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                  <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  <td>{{ biospecimen.status_fk.shipped_echo_fk.shipped_date_time }}</td>
+              {% debug %}
+              {% for component in biospecimen.component_set.all %}
+                  <td>{{ component.number_of_tubes }}</td>
+                 {% endfor %}
+                  </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+{% endblock %}

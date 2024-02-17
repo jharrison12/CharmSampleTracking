@@ -25,6 +25,7 @@ urlpatterns = [
     re_path(r"^biospecimen_report/$", reports.biospecimen_report, name='biospecimen_report'),
     re_path(r"^no_specimen_report/$", reports.no_specimen_report, name='no_specimen_report'),
     re_path(r"^biospecimen_report/urine/$", reports.biospecimen_report_urine, name='biospecimen_report_urine'),
+    re_path(r"^biospecimen_report/blood/$", reports.biospecimen_report_blood, name='biospecimen_report_blood'),
     re_path(r"^collected_report/urine/$", reports.collected_report_urine, name='collected_report_urine'),
     re_path(r"^shipped_to_wsu_report/urine/$", reports.shipped_to_wsu_report_urine, name='shipped_to_wsu_report_urine'),
     re_path(r"^received_at_wsu_report/urine/$", reports.received_at_wsu_report_urine, name='received_at_wsu_report_urine'),
