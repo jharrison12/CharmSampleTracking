@@ -316,7 +316,7 @@ class UrineReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Shipped to WSU Urine Report').click()
+        self.browser.find_element(By.LINK_TEXT, 'Shipped to WSU Report Urine').click()
 
         text = self.webpage_text()
 
@@ -343,7 +343,7 @@ class UrineReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Received at WSU Urine Report').click()
+        self.browser.find_element(By.LINK_TEXT, 'Received at WSU Report Urine').click()
 
         text = self.webpage_text()
 
@@ -373,7 +373,7 @@ class UrineReportsPageTest(FunctionalTest):
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Urine Report').click()
+        self.browser.find_element(By.LINK_TEXT, 'Shipped to Echo Report Urine').click()
 
         text = self.webpage_text()
         time.sleep(5)

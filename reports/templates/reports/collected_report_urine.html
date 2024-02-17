@@ -17,7 +17,7 @@
             </tr>
           </thead>
           <tbody>
-          {% for biospecimen in collected_biospecimen %}
+          {% for biospecimen in collected_urine %}
               <tr class="d-print-table-row">
                 <th scope="row">{{ forloop.counter }}</th>
                   <td class="d-print-table-cell"><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
