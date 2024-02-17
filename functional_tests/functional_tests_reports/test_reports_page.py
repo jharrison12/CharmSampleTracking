@@ -146,7 +146,7 @@ class StaffUrineReportPageTest(FunctionalTest):
         text = self.webpage_text()
         self.assertNotIn('4101',text)
         self.assertNotIn('12UR410101',text)
-        time.sleep(500)
+        
         ##TODO implement search bar
 
 
@@ -450,7 +450,7 @@ class UrineReportsPageTest(FunctionalTest):
         self.assertIn('12UR410101',text)
 
         self.assertIn('Number of Tubes',text)
-        time.sleep(500)
+        
         ##TODO implement search bar
 
 
@@ -477,7 +477,7 @@ class UrineReportsPageTest(FunctionalTest):
         self.assertIn('12UR410101', text)
 
         self.assertIn('Number of Tubes', text)
-        time.sleep(500)
+        
         ##TODO implement search bar
 
     def test_user_can_see_recieved_at_wsu_urine_report(self):
@@ -505,7 +505,7 @@ class UrineReportsPageTest(FunctionalTest):
 
         self.assertIn('Number of Tubes', text)
         self.assertIn('5', text)
-        time.sleep(500)
+        
         ##TODO implement search bar
 
 
@@ -535,7 +535,7 @@ class UrineReportsPageTest(FunctionalTest):
 
         self.assertIn('Number of Tubes', text)
         self.assertIn('5', text)
-        time.sleep(500)
+        
         ##TODO implement search bar
 
 
@@ -578,7 +578,7 @@ class BloodReportsPageTest(FunctionalTest):
         self.assertIn('4100',text)
         self.assertIn('12BL410001',text)
         self.assertIn('3',text)
-        time.sleep(500)
+        
 
     def test_user_can_see_shipped_to_wsu_blood_report(self):
         motherblood.user_input_collected_blood(self)
@@ -604,7 +604,7 @@ class BloodReportsPageTest(FunctionalTest):
         self.assertIn('Whole Blood', text)
         self.assertIn('Shipped to WSU Report', text)
         self.assertIn('Shipped Date', text)
-        time.sleep(500)
+        
 
         ##todo implement search bar
 
@@ -633,7 +633,7 @@ class BloodReportsPageTest(FunctionalTest):
         self.assertIn('Whole Blood', text)
         self.assertIn('Received at WSU Report', text)
         self.assertIn('3', text)
-        time.sleep(500)
+        
         ##todo implement search bar
 
 
@@ -663,5 +663,5 @@ class BloodReportsPageTest(FunctionalTest):
         self.assertIn('Whole Blood', text)
         self.assertIn('Shipped to Echo Report', text)
         self.assertIn('3', text)
-        time.sleep(500)
+        
         ##todo implement search bar
