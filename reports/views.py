@@ -58,6 +58,27 @@ def biospecimen_report_urine(request):
                                                                                                'shipped_to_wsu_urine':shipped_to_wsu_urine,
                                                                                                'received_at_wsu_urine':received_at_wsu_urine,
                                                                                                'shipped_to_echo_urine':shipped_to_echo_urine})
+
+@login_required
+def biospecimen_report_blood(request):
+    collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,
+                                                                status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+    collected_blood.prefetch_related('status_fk__collected_fk__component_set').all().order_by(
+        'component__component_type')
+    shipped_to_wsu_biospecimen_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+    shipped_to_wsu_biospecimen_blood.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
+        'component__component_type')
+    received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='B')
+    received_at_wsu_biospecimen.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
+        'component__component_type')
+    shipped_to_echo_report_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='B')
+    shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_echo_fk__component_set').all().order_by(
+        'component__component_type')
+    return render(request=request,template_name='reports/biospecimen_report_urine.html',context={'collected_blood':collected_blood,
+                                                                                               'shipped_to_wsu_biospecimen_blood':shipped_to_wsu_biospecimen_blood,
+                                                                                               'received_at_wsu_biospecimen':received_at_wsu_biospecimen,
+                                                                                               'shipped_to_echo_report_blood':shipped_to_echo_report_blood})
+
 @login_required
 def collected_report_urine(request):
     collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
@@ -83,10 +104,9 @@ def shipped_to_echo_report_urine(request):
 
 @login_required
 def collected_report_blood(request):
-    collected_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
-    components = Component.objects.prefetch_related('caregiver_biospecimen_fk').all()
-    collected_biospecimen.prefetch_related('status_fk__collected_fk__component_set').all().order_by('component__component_type')
-    return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_biospecimen':collected_biospecimen})
+    collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+    collected_blood.prefetch_related('status_fk__collected_fk__component_set').all().order_by('component__component_type')
+    return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_blood':collected_blood})
 
 @login_required
 def shipped_to_wsu_report_blood(request):

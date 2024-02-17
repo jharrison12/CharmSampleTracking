@@ -10,7 +10,7 @@
               <th scope="col">Biospecimen ID</th>
               <th scope="col" class="d-print-none">Trimester</th>
               <th scope="col" class="d-print-none">Collected Date</th>
-                {% for biospecimen in collected_biospecimen %}
+                {% for biospecimen in collected_blood %}
                     {% for component in biospecimen.component_set.all %}
                         <th scope="col">{{ component }} Number of Tubes:</th>
                     {% endfor %}
@@ -18,7 +18,7 @@
             </tr>
           </thead>
           <tbody>
-          {% for biospecimen in collected_biospecimen %}
+          {% for biospecimen in collected_blood %}
               <tr class="d-print-table-row">
                 <th scope="row">{{ forloop.counter }}</th>
                   <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
