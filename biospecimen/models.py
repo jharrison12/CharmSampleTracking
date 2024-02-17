@@ -62,10 +62,11 @@ class Incentive(models.Model):
     incentive_type = models.CharField(max_length=1,choices=IncentiveType.choices)
     incentive_date = models.DateField(blank=True,null=True)
     incentive_amount =models.IntegerField(null=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
-    def save_incentive(self,form,user):
+    def save_incentive(self,form,request):
         self.incentive_date = form.cleaned_data['incentive_date']
-        self.logged_by = user
+        self.logged_by = request.user
         self.save()
 
     def save_fk(self,caregiver_bio):
@@ -88,49 +89,41 @@ class Collected(models.Model):
     received_date = models.DateField(null=True,blank=True)
     number_of_cards = models.IntegerField(null=True,blank=True)
 
-    def resolve(self,user):
-        self.logged_by = user
-        self.save()
-        return self
-
     def create_collected_and_set_status_fk(self,caregiver_bio):
         caregiver_bio.status_fk.collected_fk = self
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
 
-    def save_urine(self,form,user):
+    def save_urine(self,form,request):
         self.collected_date_time = form.cleaned_data['collected_date_time']
         self.processed_date_time = form.cleaned_data['processed_date_time']
         self.stored_date_time = form.cleaned_data['stored_date_time']
         self.number_of_tubes = form.cleaned_data['number_of_tubes']
-        self.logged_by = user
+        self.logged_by = request.user
         self.save()
 
-    def save_hair_saliva(self,form,user):
+    def save_hair_saliva(self,form,request):
         self.collected_date_time = form.cleaned_data['date_collected']
         self.in_person_remote = form.cleaned_data['in_person_remote']
-        self.logged_by = user
+        self.logged_by = request.user
         self.save()
 
-
-    def save_placenta(self,form,user):
+    def save_placenta(self,form,request):
         self.collected_date_time = form.cleaned_data['collected_date_time']
         self.processed_date_time = form.cleaned_data['processed_date_time']
         self.placed_in_formalin_date_time = form.cleaned_data['placed_in_formalin']
-        self.logged_by = user
+        self.logged_by = request.user
         self.save()
 
-    def save_blood(self,form,user):
+    def save_blood(self,form,request):
         self.collected_date_time = form.cleaned_data['collected_date_time']
         self.processed_date_time = form.cleaned_data['processed_date_time']
         self.stored_date_time = form.cleaned_data['stored_date_time']
-        self.logged_by = user
+        self.logged_by = request.user
         self.save()
 
     def component_check(self,components,form):
         logging.debug(f"{form.cleaned_data}")
-
-
 
     class InpersonRemoteChoices(models.TextChoices):
         IN_PERSON = 'I', _('In Person')
@@ -145,12 +138,14 @@ class Collected(models.Model):
 
 class NotCollected(models.Model):
     not_collected_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return f"collected {self.status_set}"
 
 class NoConsent(models.Model):
     no_consent_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return f"collected {self.status_set}"
@@ -169,11 +164,11 @@ class ShippedWSU(models.Model):
 
     courier = models.CharField(max_length=1,choices=CourierChoices.choices,null=True,blank=True)
 
-    def save_shipped_wsu(self,form,user,caregiver_bio,collection_type=None):
+    def save_shipped_wsu(self,form,request,caregiver_bio,collection_type=None):
         self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
         self.tracking_number = form.cleaned_data['tracking_number']
         self.courier = form.cleaned_data['courier']
-        self.shipped_by = user
+        self.shipped_by = request.user
         if collection_type==URINE:
             self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.save()
@@ -209,9 +204,11 @@ class ShippedECHO(models.Model):
 
 class KitSent(models.Model):
     kit_sent_date = models.DateField(null=True,blank=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
-    def save_form(self,form):
+    def save_form(self,form,request):
         self.kit_sent_date = form.cleaned_data['kit_sent_date']
+        self.logged_by = request.user
         self.save()
 
     def __str__(self):
@@ -219,6 +216,7 @@ class KitSent(models.Model):
 
 class Declined(models.Model):
     declined_date = models.DateField(null=True,blank=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return f"declined date {self.declined_date}"
@@ -247,9 +245,11 @@ class ReceivedWSU(models.Model):
 
 class ShippedMSU(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
-    def save_msu_item(self,form,caregiver_bio):
+    def save_msu_item(self,form,caregiver_bio,request):
         self.shipped_date_time = form.cleaned_data['shipped_date_time']
+        self.logged_by = request.user
         caregiver_bio.status_fk.shipped_msu_fk = self
         self.save()
         caregiver_bio.status_fk.save()
@@ -260,9 +260,11 @@ class ShippedMSU(models.Model):
 
 class ReceivedMSU(models.Model):
     received_date_time = models.DateTimeField(null=True, blank=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
-    def save_received_msu_item(self,form,caregiver_bio):
+    def save_received_msu_item(self,form,caregiver_bio,request):
         self.received_date_time = form.cleaned_data['received_date_time']
+        self.logged_by = request.user
         caregiver_bio.status_fk.received_msu_fk = self
         self.save()
         caregiver_bio.status_fk.save()
