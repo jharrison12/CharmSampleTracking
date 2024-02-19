@@ -299,10 +299,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
 def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     kit_sent_item = KitSent.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     collected_form = None
     shipped_choice = None
     shipped_wsu_form = None

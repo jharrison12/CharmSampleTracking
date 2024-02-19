@@ -5,7 +5,7 @@ from biospecimen.models import CaregiverBiospecimen,Caregiver,Component
 from django.db.models import Prefetch
 import io
 from django.http import FileResponse
-from reportlab.pdfgen import canvas
+
 
 
 logging.basicConfig(level=logging.CRITICAL)
