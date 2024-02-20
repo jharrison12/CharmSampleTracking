@@ -324,11 +324,21 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
-        #user sees collected form on next page
+        # user sees declined form on next page
+        time.sleep(50)
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Declined Form', body_text)
 
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertNotIn('<form>', body_text)
+        declined_date_time = self.browser.find_element(By.ID, 'id_declined_form-declined_date_time')
+
+        declined_date_time.click()
+        self.choose_flatpickr_day(0)
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="declined_form"]/form/input[2]')
+        submit.click()
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Declined', body_text)
+        self.assertIn('Logged By: testuser', body_text)
 
     def test_user_can_submited_blood_collected_information_and_then_leaves_and_returns_and_incentive_form_is_there(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
