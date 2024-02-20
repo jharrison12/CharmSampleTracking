@@ -267,11 +267,15 @@ def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiv
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     kit_sent_item = KitSent.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    declined_item = Declined.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     collected_form = None
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
     kit_sent_form = None
+    declined_form = None
+    if declined_item.exists() and declined_item.filter(declined_date__isnull=True):
+        declined_form = DeclinedForm(prefix='declined_form')
     if kit_sent_item.exists() and collection_type in HAIR_SALIVA:
         kit_sent_form = KitSentForm(prefix="kit_sent_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
@@ -282,7 +286,9 @@ def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiv
                                                                                                   'shipped_choice_form': shipped_choice,
                                                                                                   'shipped_wsu_form': shipped_wsu_form,
                                                                                                   'shipped_echo_form':shipped_echo_form,
-                                                                                                  'kit_sent_form':kit_sent_form
+                                                                                                  'kit_sent_form':kit_sent_form,
+                                                                                                  'declined_form':declined_form,
+                                                                                                  'declined_item':declined_item
                                                                                                   })
 @login_required()
 def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio_pk):

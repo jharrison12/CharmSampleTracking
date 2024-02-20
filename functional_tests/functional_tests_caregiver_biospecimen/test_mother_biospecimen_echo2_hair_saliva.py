@@ -212,8 +212,18 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
-        #user sees collected form on next page
+        # user sees declined form on next page
 
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertNotIn('<form>', body_text)
-        self.assertIn('Declined', body_text)
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Declined Form', body_text)
+
+        declined_date_time = self.browser.find_element(By.ID, 'id_declined_form-declined_date_time')
+
+        declined_date_time.click()
+        self.choose_flatpickr_day(0)
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="declined_form"]/form/input[2]')
+        submit.click()
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn(f'Declined Date Time: {TODAY}', body_text)
+        self.assertIn('Logged By: testuser', body_text)
