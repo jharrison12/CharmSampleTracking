@@ -303,6 +303,42 @@ class Status(models.Model):
         self.save()
         caregiver_bio.save()
 
+    def save_initial_form(self,form,caregiver_bio,request):
+        logging.critical(f"form name {request.POST}")
+        if request.POST.__contains__('initial_form-collected_not_collected'):
+            if form.cleaned_data['collected_not_collected'] == 'C':
+                new_collected = Collected.objects.create()
+                self.collected_fk = new_collected
+            elif form.cleaned_data['collected_not_collected'] == 'N':
+                new_not_collected = NotCollected.objects.create()
+                self.not_collected_fk = new_not_collected
+            elif form.cleaned_data['collected_not_collected'] == 'X':
+                new_declined = Declined.objects.create()
+                self.declined_fk = new_declined
+        elif request.POST.__contains__('initial_form-collected_not_collected_kit_sent'):
+            if form.cleaned_data['collected_not_collected_kit_sent'] == 'K':
+                new_kit_sent = KitSent.objects.create()
+                self.kit_sent_fk = new_kit_sent
+            elif form.cleaned_data['collected_not_collected_kit_sent'] == 'N':
+                new_not_collected = NotCollected.objects.create()
+                self.not_collected_fk = new_not_collected
+            elif form.cleaned_data['collected_not_collected_kit_sent'] == 'X':
+                new_declined = Declined.objects.create()
+                self.declined_fk = new_declined
+        elif request.POST.__contains__('initial_form-collected_not_collected_no_consent'):
+            if form.cleaned_data['collected_not_collected_no_consent'] == 'O':
+                new_no_consent = NoConsent.objects.create()
+                self.no_consent_fk = new_no_consent
+            elif form.cleaned_data['collected_not_collected_no_consent'] == 'C':
+                    new_collected = Collected.objects.create()
+                    self.collected_fk = new_collected
+            elif form.cleaned_data['collected_not_collected_no_consent'] == 'N':
+                    new_not_collected = NotCollected.objects.create()
+                    self.not_collected_fk = new_not_collected
+        else:
+            raise KeyError
+        self.save_status(caregiver_bio=caregiver_bio)
+
     def __str__(self):
         return f"Status {self.pk}"
 
