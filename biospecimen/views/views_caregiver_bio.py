@@ -225,7 +225,6 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
                          f"\n\n is collection_type in PERINATAL {collection_type in PERINATAL}")
         if form.is_valid():
             new_status = Status.objects.create()
-            new_status.save_status(caregiver_bio=caregiver_bio)
             if form.cleaned_data['collected_not_collected']=='C':
                 new_collected = Collected.objects.create()
                 new_status.collected_fk = new_collected
@@ -235,8 +234,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             elif form.cleaned_data['collected_not_collected']=='X':
                 new_declined = Declined.objects.create()
                 new_status.declined_fk = new_declined
-            new_status.save()
-            caregiver_bio.save()
+            new_status.save_status(caregiver_bio=caregiver_bio)
             if collection_type in BLOOD:
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
@@ -250,7 +248,6 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         logging.debug(f"is form valid {form} {form.is_valid()}")
         if form.is_valid():
             new_status = Status.objects.create()
-            new_status.save_status(caregiver_bio=caregiver_bio)
             if form.cleaned_data['collected_not_collected_kit_sent'] == 'X':
                 new_declined = Declined.objects.create()
                 new_status.declined_fk = new_declined
@@ -260,8 +257,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             elif form.cleaned_data['collected_not_collected_kit_sent'] == 'K':
                 new_kit_sent = KitSent.objects.create()
                 new_status.kit_sent_fk = new_kit_sent
-            new_status.save()
-            caregiver_bio.save()
+            new_status.save_status(caregiver_bio=caregiver_bio)
             return redirect("biospecimen:caregiver_biospecimen_entry_hair_saliva", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
         else:
@@ -272,7 +268,6 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         logging.debug(f"is form valid {form} {form.is_valid()}")
         if form.is_valid():
             new_status = Status.objects.create()
-            new_status.save_status(caregiver_bio=caregiver_bio)
             if form.cleaned_data['collected_not_collected_no_consent'] == 'O':
                 new_no_consent = NoConsent.objects.create()
                 new_status.no_consent_fk = new_no_consent
@@ -282,8 +277,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
             elif form.cleaned_data['collected_not_collected_no_consent'] == 'C':
                 new_collected = Collected.objects.create()
                 new_status.collected_fk = new_collected
-            new_status.save()
-            caregiver_bio.save()
+            new_status.save_status(caregiver_bio=caregiver_bio)
             return redirect("biospecimen:caregiver_biospecimen_entry",
                             caregiver_charm_id=caregiver_charm_id,
                             caregiver_bio_pk=caregiver_bio_pk)
