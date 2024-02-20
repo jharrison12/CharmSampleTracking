@@ -13,10 +13,27 @@
         <div id="not_collected_information" class="row border border-primary p-3 rounded">
         Not Collected
         </div>
-    {% elif caregiver_bio.status_fk.declined_fk %}
-        <div id="declined_information" class="row border border-primary p-3 rounded">
-        Declined
-        </div>
+    {% elif declined_item %}
+        {% if declined_form %}
+            <div id="declined_form" class="row border border-primary p-3 rounded">
+              <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_declined_post' charm_project_identifier caregiver_bio_pk %}>
+              {% csrf_token %}
+                  <h2>Declined Form</h2>
+                    {{ declined_form.as_p }}
+              <input type="submit" value="Submit" />
+              </form>
+            </div>
+        {% else %}
+            <div id="declined_information" class="row border border-primary p-3 rounded">
+                <div class="col-4">
+                    <button type="button" class="btn btn-primary" disabled aria-disabled="true">Declined</button>
+                </div>
+                <div class="col-8">
+                    <div>Declined Date Time: {{ caregiver_bio.status_fk.declined_fk.declined_date }}</div>
+                    <div>Logged By: {{ caregiver_bio.status_fk.declined_fk.logged_by }}</div>
+                </div>
+            </div>
+        {% endif %}
     {#  Potential bug because collected date time is not required but you have to null it to create it        #}
     {% elif caregiver_bio.status_fk.no_consent_fk %}
         <div id="declined_information" class="row border border-primary p-3 rounded">

@@ -313,15 +313,13 @@ class ReceivedatWSUForm(forms.Form):
         return f"{self.received_date_time}"
 
 
-class DeclinedForm(forms.ModelForm):
-    class Meta:
-        model = Declined
-        fields = ['declined_date']
+class DeclinedForm(forms.Form):
+    declined_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
-    def __init__(self, *args, **kwargs):
-        super(DeclinedForm, self).__init__(*args, **kwargs)
-        self.fields['declined_date'].widget = TextInput(attrs={
-            'class': 'datepicker'})
+    # def __init__(self, *args, **kwargs):
+    #     super(DeclinedForm, self).__init__(*args, **kwargs)
+    #     self.fields['declined_date'].widget = TextInput(attrs={
+    #         'class': 'datepicker'})
 
 
 class ShippedtoMSUForm(forms.ModelForm):

@@ -203,5 +203,15 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         #user sees collected form on next page
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertNotIn('<form>', body_text)
+        self.assertIn('Declined Form', body_text)
+
+        declined_date_time = self.browser.find_element(By.ID, 'id_declined_form-declined_date_time')
+
+        declined_date_time.click()
+        self.choose_flatpickr_day(0)
+        time.sleep(50)
+        submit = self.browser.find_element(By.XPATH,'//*[@id="declined_form"]/form/input[2]')
+        submit.click()
+
         self.assertIn('Declined', body_text)
+        self.assertIn('Logged By: testuser', body_text )

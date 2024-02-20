@@ -8,7 +8,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Collected
     InitialBioFormPostNatal, KitSentForm, \
     ReceivedatWSUForm, InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm, ShippedtoWSUFormPlacenta, \
     ShippedtoMSUForm, ReceivedatMSUForm, ShippedtoWSUFormBlood, \
-    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoUrineForm
+    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoUrineForm,DeclinedForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -192,7 +192,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if caregiver_bio.status_fk==None:
-        if  collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
+        if collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
             logging.debug(f"made it to INCORRECT initial bio form")
             initial_bio_form = InitialBioForm(prefix="initial_form")
         elif collection_type in PERINATAL:
@@ -312,6 +312,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_msu_item = ShippedMSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_msu_item = ReceivedMSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    declined_item = Declined.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     collected_form = None
     shipped_choice = None
     shipped_wsu_form = None
@@ -320,7 +321,11 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_at_wsu_form = None
     shipped_to_msu_form = None
     received_msu_form = None
+    declined_form = None
     logging.debug(f"Collection type is {collection_type}")
+    logging.critical(f"Declined item {declined_item}")
+    if declined_item.exists() and declined_item.filter(declined_date__isnull=True):
+        declined_form = DeclinedForm(prefix='declined_form')
     if collection_type in HAIR_SALIVA:
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
@@ -377,6 +382,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'received_at_wsu_form':received_at_wsu_form,
                                                                                                   'shipped_to_msu_form':shipped_to_msu_form,
                                                                                                   'received_msu_form':received_msu_form,
+                                                                                                  'declined_form': declined_form,
+                                                                                                  'declined_item': declined_item
                                                                                                   })
 
 @login_required
@@ -692,3 +699,15 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
 
     else:
         raise AssertionError
+
+@login_required
+def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    declined_item = Declined.objects.get(status__caregiverbiospecimen=caregiver_bio)
+    if request.method=="POST":
+        form = DeclinedForm(data=request.POST, prefix='declined_form')
+        if form.is_valid():
+            declined_item.save_declined(form=form,request=request,caregiver_bio=caregiver_bio)
+    return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
+

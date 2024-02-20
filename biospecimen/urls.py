@@ -36,6 +36,7 @@ urlpatterns = [
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/received_msu/post/$", caregiver_biospecimen.caregiver_biospecimen_received_at_msu_post, name='caregiver_biospecimen_received_at_msu_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/received_wsu/post/$", caregiver_biospecimen.caregiver_biospecimen_received_wsu_post, name='caregiver_biospecimen_received_wsu_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/shipped_echo/post/$", caregiver_biospecimen.caregiver_biospecimen_shipped_echo_post, name='caregiver_biospecimen_shipped_echo_post'),
+    re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/declined/post/$", caregiver_biospecimen.caregiver_biospecimen_declined_post, name='caregiver_biospecimen_declined_post'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/$", caregiver_biospecimen.caregiver_biospecimen_entry, name='caregiver_biospecimen_entry'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/hairandsaliva/$", caregiver_biospecimen.caregiver_biospecimen_entry_hair_saliva, name='caregiver_biospecimen_entry_hair_saliva'),
     re_path(r"^caregiver/(?P<caregiver_charm_id>\w+)/(?P<caregiver_bio_pk>[\d]+)/entry/blood/$", caregiver_biospecimen.caregiver_biospecimen_entry_blood, name='caregiver_biospecimen_entry_blood'),

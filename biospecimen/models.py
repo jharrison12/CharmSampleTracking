@@ -218,6 +218,15 @@ class Declined(models.Model):
     declined_date = models.DateField(null=True,blank=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
+    def save_declined(self,form,request,caregiver_bio):
+        self.declined_date = form.cleaned_data['declined_date_time']
+        self.logged_by = request.user
+        caregiver_bio.status_fk.declined_fk = self
+        self.save()
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
+
+
     def __str__(self):
         return f"declined date {self.declined_date}"
 

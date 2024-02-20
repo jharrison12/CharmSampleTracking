@@ -269,6 +269,12 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoUrineForm)
 
+    def test_echo2_bio_page_shows_declined_form_if_initial_form_is_declined(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'X')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
+        self.assertIsInstance(response.context['declined_form'], DeclinedForm)
+
 class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
