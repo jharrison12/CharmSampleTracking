@@ -407,12 +407,16 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    declined_item = Declined.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
     incentive_form = None
     received_wsu_form = None
+    declined_form= None
     logging.debug(f"Caregiver bio is {caregiver_bio}")
+    if declined_item.exists() and declined_item.filter(declined_date__isnull=True):
+        declined_form = DeclinedForm(prefix='declined_form')
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
         logging.debug(f"Does collected_item exist? {collected_item.exists()}\n\n"
                          f"Is collected date time null {collected_item.filter(collected_date_time__isnull=True).exists()}\n")
@@ -454,6 +458,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'caregiver_bloods_shipped_wsu':caregiver_bloods_shipped_wsu,
                                                                                                         'caregiver_bloods_received_wsu':caregiver_bloods_received_wsu,
                                                                                                         'caregiver_bloods_shipped_echo':caregiver_bloods_shipped_echo,
+                                                                                                        'declined_form':declined_form,
+                                                                                                        'declined_item':declined_item
                                                                                                         })
 
 @login_required

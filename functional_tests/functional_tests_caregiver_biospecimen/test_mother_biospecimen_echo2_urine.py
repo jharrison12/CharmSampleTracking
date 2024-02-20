@@ -213,5 +213,5 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="declined_form"]/form/input[2]')
         submit.click()
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Declined', body_text)
+        self.assertIn(f'Declined Date Time: {TODAY}', body_text)
         self.assertIn('Logged By: testuser', body_text )

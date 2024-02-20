@@ -325,7 +325,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit.click()
 
         # user sees declined form on next page
-        time.sleep(50)
+
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn('Declined Form', body_text)
 
@@ -337,7 +337,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit = self.browser.find_element(By.XPATH, '//*[@id="declined_form"]/form/input[2]')
         submit.click()
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Declined', body_text)
+        self.assertIn(f'Declined Date Time: {TODAY}', body_text)
         self.assertIn('Logged By: testuser', body_text)
 
     def test_user_can_submited_blood_collected_information_and_then_leaves_and_returns_and_incentive_form_is_there(self):
