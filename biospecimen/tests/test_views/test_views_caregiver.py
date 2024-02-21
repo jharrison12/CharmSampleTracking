@@ -87,6 +87,11 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
         return response
 
+    def send_declined_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/declined/post/',
+                                    data={'declined_form-declined_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+        return response
+
     #TEMPLATES
 
     def test_echo2_initial_bio_page_returns_correct_template(self):
@@ -173,9 +178,15 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.initial_send_form(primary_key,'N')
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
-    def test_echo2_bio_urine_initial_posts_to_initial_post_view_denied(self):
+    def test_echo2_bio_urine_initial_posts_to_initial_post_view_declined(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'X')
+        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
+
+    def test_echo2_bio_urine_test_that_declined_form_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.initial_send_form(primary_key,'X')
+        response = self.send_declined_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
     def test_echo2_urine_incentive_form_redirects_to_entry(self):
@@ -358,6 +369,12 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
 
         return response
 
+
+    def send_declined_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/declined/post/',
+                                    data={'declined_form-declined_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+        return response
+
     #TEMPLATES
 
     def test_echo2_bio_page_hair_uses_correct_template(self):
@@ -385,6 +402,7 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
 
     #REDIRECTS
+        #HAIR
 
     def test_echo2_bio_page_hair_redirects_after_initial_kit_sent_submission(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None,age_category='ZF')
@@ -452,8 +470,14 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         response = self.shipped_to_echo_send_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
+    def test_echo2_bio_page_hair_redirects_after_declined_submission(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None,age_category='ZF')
+        self.initial_send_form_hair_saliva(primary_key,'X')
+        response = self.send_declined_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/")
+
     #REDIRECTS
-        #SALIV
+        #SALIVA
     
     def test_echo2_bio_page_saliva_redirects_after_initial_kit_sent_submission(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'L', trimester=None,age_category='ZF')
@@ -530,6 +554,12 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         response = self.shipped_to_msu_form(primary_key)
         self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
+    def test_echo2_bio_page_saliva_redirects_after_declined_submission(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'L', trimester=None,age_category='ZF')
+        self.initial_send_form_hair_saliva(primary_key,'X')
+        response = self.send_declined_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/")
+
     #FORMS
         #HAIR
 
@@ -567,6 +597,12 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         self.incentive_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_to_msu_form'], ShippedtoMSUForm)
+
+    def test_echo2_bio_page_shows_declined_form_if_hair_or_saliva(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None,age_category='ZF')
+        self.initial_send_form_hair_saliva(primary_key,'X')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
+        self.assertIsInstance(response.context['declined_form'], DeclinedForm)
 
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
@@ -676,6 +712,10 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
         return response
 
+    def send_declined_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/declined/post/',
+                                    data={'declined_form-declined_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+        return response
 
     #Template Tests
 
@@ -897,6 +937,12 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/initial/')
         self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
+    def test_echo2_declined_form_redirects_after_submission(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'X')
+        response = self.send_declined_form(primary_key)
+        self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
+
 
     #View has form tests
 
@@ -936,6 +982,13 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(response.content.decode())
         self.assertIsInstance(response.context['received_wsu_form'], ReceivedatWSUBloodForm)
+
+    def test_echo2_bio_page_shows_declined_form_if_initial_declined_submitted_for_blood(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        response = self.blood_initial_send_form(primary_key, 'X')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
+        self.assertIsInstance(response.context['declined_form'], DeclinedForm)
 
     #View updates data tests
 

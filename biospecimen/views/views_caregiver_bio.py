@@ -716,10 +716,14 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
 def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     declined_item = Declined.objects.get(status__caregiverbiospecimen=caregiver_bio)
+    collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method=="POST":
         form = DeclinedForm(data=request.POST, prefix='declined_form')
         if form.is_valid():
             declined_item.save_declined(form=form,request=request,caregiver_bio=caregiver_bio)
+    if collection_type in BLOOD:
+        return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
     return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
 

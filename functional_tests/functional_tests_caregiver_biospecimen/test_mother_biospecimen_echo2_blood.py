@@ -333,7 +333,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         declined_date_time.click()
         self.choose_flatpickr_day(0)
-
+        time.sleep(5)
         submit = self.browser.find_element(By.XPATH, '//*[@id="declined_form"]/form/input[2]')
         submit.click()
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
