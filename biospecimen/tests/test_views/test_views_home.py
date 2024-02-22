@@ -41,7 +41,11 @@ class CaregiverEcho2BiospecimenHome(DatabaseSetup):
         response = self.client.get(f'/biospecimen/charm_ids/4100/')
         self.assertTemplateUsed(response, 'biospecimen/list_of_mother_bio_ids.html')
 
+class UserTypeChecks(DatabaseSetup):
 
+    def test_user_detroit_cannot_see_flint_participant(self):
+        response = self.client.get(f'/biospecimen/charm_ids/')
+        self.assertNotContains(response,'4400')
 
     #REDIRECTS
 

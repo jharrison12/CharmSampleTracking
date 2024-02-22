@@ -1014,3 +1014,13 @@ class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
     def test_that_login_required_for_biospecimen_child_entry_page(self):
         response = self.client.get(f'/biospecimen/child/4100/1/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
+
+    def test_that_detroit_user_cannot_see_flint_id(self):
+        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_detroit_user_trying_to_view_wrong_sampleid_redirects_to_home(self):
+        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        self.assertRedirects(response,f"/biospecimen/caregiver/error/")

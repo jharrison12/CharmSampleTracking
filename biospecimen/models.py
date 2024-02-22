@@ -30,7 +30,13 @@ class ComponentError(Exception):
     pass
 
 class User(AbstractUser):
-    pass
+    class RecruitmentLocation(models.TextChoices):
+        DETROIT = 'D', _('Detroit')
+        TRAVERSE_CITY = 'T', _('Traverse City')
+        FLINT = 'F', _('Flint')
+
+    recruitment_location = models.CharField(max_length=1,choices=RecruitmentLocation.choices)
+    is_staff = models.BooleanField('staff status',default=False)
 
 class Project(models.Model):
     project_name = models.CharField(null=False, blank=False, max_length=255,unique=True)
@@ -62,6 +68,7 @@ class Incentive(models.Model):
     incentive_type = models.CharField(max_length=1,choices=IncentiveType.choices)
     incentive_date = models.DateField(blank=True,null=True)
     incentive_amount =models.IntegerField(null=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
 
     def save_incentive(self,form,user):
         self.incentive_date = form.cleaned_data['incentive_date']
@@ -335,11 +342,9 @@ class Caregiver(models.Model):
     class Cohort(models.TextChoices):
         DETROIT = 'D',_('Detroit')
         TRAVERSE_CITY = 'T',_('Traverse City')
+        FLINT = 'F',_('Flint')
 
-    location = models.CharField(max_length=1,choices=Cohort.choices)
-
-    def save(self, *args, **kwargs):
-        if self.charm_project_identifier:
+    recruitment_location = models.CharField(max_length=1,choices=Cohort.choices)
 
     def __str__(self):
         return self.charm_project_identifier
