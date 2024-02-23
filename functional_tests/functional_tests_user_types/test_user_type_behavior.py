@@ -29,13 +29,13 @@ class UserTypeBehaviorTest(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
 
         self.browser.get(f'{self.browser.current_url}biospecimen/charm_ids/')
-
+        time.sleep(500)
         # user looks for 4100 and clicks on the link
         body = self.webpage_text()
         self.assertIn('Charm ID', body)
         self.assertIn('4100', body)
         self.assertNotIn('4400', body)
-        self.assertNotIn('470000', body)
+        self.assertNotIn('4700', body)
 
         search_bar = self.browser.find_element(By.ID, "myInput")
         search_bar.clear()

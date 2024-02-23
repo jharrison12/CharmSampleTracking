@@ -147,7 +147,11 @@ def biospecimen_entry(request):
 
 @login_required
 def charm_identifiers(request):
-    list_of_charm_ids = Caregiver.objects.all()
+    if request.user.is_staff:
+        list_of_charm_ids = Caregiver.objects.all()
+    else:
+        location = request.user.recruitment_location
+        list_of_charm_ids = Caregiver.objects.filter(recruitment_location=location)
     return render(request,template_name='biospecimen/charm_identifiers.html',context={'list_of_charm_ids':list_of_charm_ids})
 
 @login_required
@@ -167,6 +171,7 @@ def list_of_bio_ids(request,caregiver_charm_id):
 
 @login_required
 def caregiver_biospecimen(request,caregiver_charm_id):
+    #TODO: What is this view used for??????
     #TODO: Fix this so you're iterating over one queryset and not 15
     caregiver = get_object_or_404(Caregiver,charm_project_identifier=caregiver_charm_id)
     caregiver_collection_query = CaregiverBiospecimen.objects.values('collection_fk__collection_type')
@@ -190,6 +195,10 @@ def child_biospecimen_page(request,child_charm_id):
 @login_required
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if caregiver_bio.status_fk==None:
         if  collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
@@ -217,6 +226,10 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
 @login_required
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method=="POST" and collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
         form = InitialBioForm(data=request.POST, prefix='initial_form')
@@ -298,6 +311,10 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
 @login_required
 def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     kit_sent_item = KitSent.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -323,6 +340,10 @@ def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiv
 @login_required()
 def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method == "POST" and collection_type in HAIR_SALIVA:
         form = KitSentForm(data=request.POST, prefix='kit_sent_form')
@@ -340,6 +361,10 @@ def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio
 @login_required
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     incentive_item = Incentive.objects.filter(caregiverbiospecimen=caregiver_bio)
@@ -418,6 +443,10 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
 @login_required
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     caregiver_bloods_collected = None
@@ -488,6 +517,10 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
 @login_required
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     logging.debug(f"collection type {collection_type} caregiver {caregiver_bio.caregiver_fk.charm_project_identifier}"
                      f"")
@@ -536,6 +569,10 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
 @login_required()
 def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method=="POST":
         if collection_type in HAIR_SALIVA or collection_type==URINE:
@@ -570,6 +607,10 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
 @login_required
 def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     if request.method=="POST":
@@ -598,6 +639,10 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
 @login_required
 def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method == "POST":
         if collection_type in BLOOD:
@@ -636,6 +681,10 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
 @login_required
 def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     shipped_wsu_fk = ShippedWSU.objects.get(status=status)
@@ -665,6 +714,10 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
 @login_required
 def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method == "POST":
         if collection_type in HAIR_SALIVA:
@@ -682,6 +735,10 @@ def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_
 @login_required
 def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method == "POST":
         if collection_type in HAIR_SALIVA:
@@ -700,8 +757,11 @@ def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregi
 @login_required
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
     shipped_echo_item = ShippedECHO.objects.create()
     if request.method == "POST":
         if collection_type in BLOOD:
@@ -731,3 +791,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
 
     else:
         raise AssertionError
+
+@login_required
+def error(request):
+    return render(request=request,template_name='biospecimen/error.html')

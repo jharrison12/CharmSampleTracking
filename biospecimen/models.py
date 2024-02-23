@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
@@ -413,6 +414,15 @@ class CaregiverBiospecimen(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['caregiver_fk','collection_fk','trimester_fk'], name='caregiver biospecimen unique constraint')
         ]
+
+    def check_recruitment(self,request,caregiver_bio):
+        logging.critical('in check recruitment function')
+        logging.critical(f" is user staff {request.user.is_staff} does location match {caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location}")
+        logging.critical(f"{caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location}")
+        if (request.user.is_staff) or caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location:
+            return True
+        elif caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location:
+            raise PermissionError
 
     def __str__(self):
         return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"

@@ -46,7 +46,13 @@ class UserTypeChecks(DatabaseSetup):
     def test_user_detroit_cannot_see_flint_participant(self):
         response = self.client.get(f'/biospecimen/charm_ids/')
         self.assertNotContains(response,'4400')
+        self.assertContains(response,'4100')
 
+    def test_staff_can_see_all_sampleids(self):
+        response = self.client.get(f'/biospecimen/charm_ids/')
+        self.assertContains(response,'4400')
+        self.assertContains(response,'4100')
+        self.assertFalse(True,'create function that logs out user and logs in staff')
     #REDIRECTS
 
 
