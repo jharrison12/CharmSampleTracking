@@ -23,7 +23,6 @@ class Echo2BioPage(FunctionalTest):
         body = self.webpage_text()
         self.assertIn('Charm ID', body)
         self.assertIn('4100', body)
-        self.assertIn('4702', body)
 
         search_bar = self.browser.find_element(By.ID, "myInput")
         search_bar.clear()

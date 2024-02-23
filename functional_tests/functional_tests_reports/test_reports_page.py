@@ -284,7 +284,7 @@ class BloodReportsPageTest(FunctionalTest):
         self.browser.get(f'{self.browser.current_url}reports/')
 
         text = self.webpage_text()
-
+        time.sleep(50)
         self.assertIn('Reports', text)
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Blood').click()
 

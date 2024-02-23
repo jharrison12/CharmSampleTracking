@@ -29,7 +29,7 @@ class UserTypeBehaviorTest(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
 
         self.browser.get(f'{self.browser.current_url}biospecimen/charm_ids/')
-        time.sleep(500)
+
         # user looks for 4100 and clicks on the link
         body = self.webpage_text()
         self.assertIn('Charm ID', body)
@@ -41,8 +41,11 @@ class UserTypeBehaviorTest(FunctionalTest):
         search_bar.clear()
         search_bar.send_keys('4100')
 
-    def test_user_tries_to_visit_a_sample_id_for_which_they_dont_have_access_and_fail(self):
+    def test_detroit_user_tries_to_visit_flint_sample_and_fail(self):
         pass
 
     def test_staff_user_can_see_all_sampleids(self):
+        pass
+
+    def test_user_cannot_type_in_url_sampleid_that_doesnt_match_caregiverbio_fk(self):
         pass

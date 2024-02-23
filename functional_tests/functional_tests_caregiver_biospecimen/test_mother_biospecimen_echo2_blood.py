@@ -292,7 +292,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 
@@ -311,11 +311,11 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         # User visits the caregiver biospecimen page and sees blood
         primary_key = self.return_caregiver_bio_pk('4100', 'B',trimester='S')
         self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/P7000/{primary_key}/initial/')
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
 
         #user sees initial form and submits collected
         header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: P7000', [item.text for item in header_text])
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
 

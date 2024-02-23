@@ -201,7 +201,7 @@ def child_biospecimen_page(request,child_charm_id):
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         logging.error('in permission error')
         return redirect('biospecimen:error_page')
@@ -233,7 +233,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -318,7 +318,7 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
 def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -347,7 +347,7 @@ def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiv
 def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -368,7 +368,7 @@ def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -450,7 +450,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -524,7 +524,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
 def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -576,7 +576,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -614,7 +614,7 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
 def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -646,7 +646,7 @@ def caregiver_shipped_choice_post(request,caregiver_charm_id,caregiver_bio_pk):
 def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -688,7 +688,7 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
 def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
@@ -721,7 +721,7 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
 def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -742,7 +742,7 @@ def caregiver_biospecimen_shipped_msu_post(request,caregiver_charm_id,caregiver_
 def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
@@ -764,7 +764,7 @@ def caregiver_biospecimen_received_at_msu_post(request,caregiver_charm_id,caregi
 def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     try:
-        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type

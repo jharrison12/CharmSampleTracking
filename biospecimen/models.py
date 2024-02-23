@@ -421,15 +421,15 @@ class CaregiverBiospecimen(models.Model):
             models.UniqueConstraint(fields=['caregiver_fk','collection_fk','trimester_fk'], name='caregiver biospecimen unique constraint')
         ]
 
-    def check_recruitment(self,request,caregiver_bio=None,caregiver=None):
-        logging.critical('in check recruitment function')
-        logging.critical(f'{caregiver_bio.caregiver_fk.recruitment_location} {request.user.recruitment_location}')
-        logging.critical(f" is user staff {request.user.is_staff} does location match {caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location}")
-        logging.critical(f"{caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location}")
+    def check_recruitment(self,request,caregiver_bio=None,caregiver_charm_id=None):
+        caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+        if(caregiver_bio.caregiver_fk.charm_project_identifier!=caregiver_charm_id):
+            raise PermissionError
         if (request.user.is_staff) or (caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location) \
                 or (caregiver.recruitment_location==request.user.recruitment_location):
             return True
-        elif (caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location) or (caregiver.recruitment_location!=request.user.recruitment_location):
+        elif (caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location) \
+                or (caregiver.recruitment_location!=request.user.recruitment_location):
             raise PermissionError
 
     def __str__(self):
