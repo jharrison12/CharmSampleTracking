@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
@@ -30,7 +31,13 @@ class ComponentError(Exception):
     pass
 
 class User(AbstractUser):
-    pass
+    class RecruitmentLocation(models.TextChoices):
+        DETROIT = 'D', _('Detroit')
+        TRAVERSE_CITY = 'T', _('Traverse City')
+        FLINT = 'F', _('Flint')
+
+    recruitment_location = models.CharField(max_length=1,choices=RecruitmentLocation.choices)
+    is_staff = models.BooleanField('staff status',default=False)
 
 class Project(models.Model):
     project_name = models.CharField(null=False, blank=False, max_length=255,unique=True)
@@ -63,6 +70,7 @@ class Incentive(models.Model):
     incentive_date = models.DateField(blank=True,null=True)
     incentive_amount =models.IntegerField(null=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+
 
     def save_incentive(self,form,request):
         self.incentive_date = form.cleaned_data['incentive_date']
@@ -379,6 +387,19 @@ class Collection(models.Model):
 class Caregiver(models.Model):
     charm_project_identifier = models.CharField(default='', max_length=6,unique=True)
 
+    class Cohort(models.TextChoices):
+        DETROIT = 'D',_('Detroit')
+        TRAVERSE_CITY = 'T',_('Traverse City')
+        FLINT = 'F',_('Flint')
+
+    recruitment_location = models.CharField(max_length=1,choices=Cohort.choices)
+
+    def check_recruitment(self,request,caregiver=None):
+        if (request.user.is_staff) or (caregiver.recruitment_location==request.user.recruitment_location):
+            return True
+        elif (caregiver.recruitment_location!=request.user.recruitment_location):
+            raise PermissionError
+
     def __str__(self):
         return self.charm_project_identifier
 
@@ -446,6 +467,17 @@ class CaregiverBiospecimen(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['caregiver_fk','collection_fk','trimester_fk'], name='caregiver biospecimen unique constraint')
         ]
+
+    def check_recruitment(self,request,caregiver_bio=None,caregiver_charm_id=None):
+        caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+        if(caregiver_bio.caregiver_fk.charm_project_identifier!=caregiver_charm_id):
+            raise PermissionError
+        if (request.user.is_staff) or (caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location) \
+                or (caregiver.recruitment_location==request.user.recruitment_location):
+            return True
+        elif (caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location) \
+                or (caregiver.recruitment_location!=request.user.recruitment_location):
+            raise PermissionError
 
     def __str__(self):
         return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"
