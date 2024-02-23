@@ -347,6 +347,12 @@ class Caregiver(models.Model):
 
     recruitment_location = models.CharField(max_length=1,choices=Cohort.choices)
 
+    def check_recruitment(self,request,caregiver=None):
+        if (request.user.is_staff) or (caregiver.recruitment_location==request.user.recruitment_location):
+            return True
+        elif (caregiver.recruitment_location!=request.user.recruitment_location):
+            raise PermissionError
+
     def __str__(self):
         return self.charm_project_identifier
 
@@ -415,14 +421,15 @@ class CaregiverBiospecimen(models.Model):
             models.UniqueConstraint(fields=['caregiver_fk','collection_fk','trimester_fk'], name='caregiver biospecimen unique constraint')
         ]
 
-    def check_recruitment(self,request,caregiver_bio):
+    def check_recruitment(self,request,caregiver_bio=None,caregiver=None):
         logging.critical('in check recruitment function')
         logging.critical(f'{caregiver_bio.caregiver_fk.recruitment_location} {request.user.recruitment_location}')
         logging.critical(f" is user staff {request.user.is_staff} does location match {caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location}")
         logging.critical(f"{caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location}")
-        if (request.user.is_staff) or caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location:
+        if (request.user.is_staff) or (caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location) \
+                or (caregiver.recruitment_location==request.user.recruitment_location):
             return True
-        elif caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location:
+        elif (caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location) or (caregiver.recruitment_location!=request.user.recruitment_location):
             raise PermissionError
 
     def __str__(self):

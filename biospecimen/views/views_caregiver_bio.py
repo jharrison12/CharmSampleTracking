@@ -157,6 +157,11 @@ def charm_identifiers(request):
 @login_required
 def list_of_bio_ids(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    try:
+        caregiver.check_recruitment(request=request,caregiver=caregiver)
+    except PermissionError:
+        logging.error('in permission error')
+        return redirect('biospecimen:error_page')
     list_of_biospecimen_ids = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver)
     trimester_2_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver,trimester_fk__trimester=PregnancyTrimester.TrimesterChoices.SECOND)
     trimester_3_biospecimens = CaregiverBiospecimen.objects.filter(caregiver_fk=caregiver,trimester_fk__trimester=PregnancyTrimester.TrimesterChoices.THIRD)
