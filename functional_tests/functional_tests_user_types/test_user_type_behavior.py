@@ -40,3 +40,9 @@ class UserTypeBehaviorTest(FunctionalTest):
         search_bar = self.browser.find_element(By.ID, "myInput")
         search_bar.clear()
         search_bar.send_keys('4100')
+
+    def test_user_tries_to_visit_a_sample_id_for_which_they_dont_have_access_and_fail(self):
+        pass
+
+    def test_staff_user_can_see_all_sampleids(self):
+        pass

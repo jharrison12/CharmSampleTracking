@@ -198,6 +198,7 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     try:
         caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio)
     except PermissionError:
+        logging.error('in permission error')
         return redirect('biospecimen:error_page')
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if caregiver_bio.status_fk==None:

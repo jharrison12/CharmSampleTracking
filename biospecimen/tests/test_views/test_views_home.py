@@ -53,7 +53,7 @@ class UserTypeChecks(DatabaseSetup):
         self.assertContains(response,'4400')
         self.assertContains(response,'4100')
         self.assertFalse(True,'create function that logs out user and logs in staff')
-    #REDIRECTS
 
+    #REDIRECTS
 
     #FORMS

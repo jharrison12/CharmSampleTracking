@@ -417,6 +417,7 @@ class CaregiverBiospecimen(models.Model):
 
     def check_recruitment(self,request,caregiver_bio):
         logging.critical('in check recruitment function')
+        logging.critical(f'{caregiver_bio.caregiver_fk.recruitment_location} {request.user.recruitment_location}')
         logging.critical(f" is user staff {request.user.is_staff} does location match {caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location}")
         logging.critical(f"{caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location}")
         if (request.user.is_staff) or caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location:
