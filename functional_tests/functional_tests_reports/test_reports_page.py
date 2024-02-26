@@ -146,7 +146,7 @@ class StaffUrineReportPageTest(FunctionalTest):
         text = self.webpage_text()
         self.assertNotIn('4101',text)
         self.assertNotIn('12UR410101',text)
-        
+
         ##TODO implement search bar
 
 
