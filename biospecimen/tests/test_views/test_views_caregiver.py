@@ -1081,6 +1081,15 @@ class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
 
 class CheckThatUserTypesWork(DatabaseSetup):
 
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester,
+                                                        project_fk__project_name=project)
+        return caregiverbio.pk
+
+
     def login_flint(self):
         self.client.logout()
         flint_credentials = {
@@ -1097,59 +1106,96 @@ class CheckThatUserTypesWork(DatabaseSetup):
         }
         self.client.login(**traverse_credentials)
 
+    def login_staff(self):
+        self.client.logout()
+        staff_credentials = {
+            'username': 'staff',
+            'password': 'supersecret'
+        }
+        self.client.login(**staff_credentials)
+
     def test_that_detroit_user_cannot_see_flint_id(self):
-        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4400','U','S')
+        response = self.client.get(f'/biospecimen/caregiver/4400/{caregiver_bio}/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_that_detroit_user_trying_to_view_flint_sampleid_redirects_to_error(self):
-        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4400', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4400/{caregiver_bio}/initial/')
         self.assertRedirects(response,f"/biospecimen/error/")
 
     def test_that_detroit_user_cannot_see_traverse_id(self):
-        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4700', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4700/{caregiver_bio}/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_that_detroit_user_trying_to_view_traverse_sampleid_redirects_to_error(self):
-        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4700', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4700/{caregiver_bio}/initial/')
         self.assertRedirects(response,f"/biospecimen/error/")
 
     def test_that_flint_user_cannot_see_detroit_id(self):
         self.login_flint()
-        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{caregiver_bio}/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_that_flint_user_trying_to_view_detroit_sampleid_redirects_to_error(self):
         self.login_flint()
-        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{caregiver_bio}/initial/')
         self.assertRedirects(response, f"/biospecimen/error/")
 
     def test_that_flint_user_cannot_see_traverse_id(self):
         self.login_flint()
-        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4700', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4700/{caregiver_bio}/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_that_flint_user_trying_to_view_travers_sampleid_redirects_to_error(self):
         self.login_flint()
-        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4700', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4700/{caregiver_bio}/initial/')
         self.assertRedirects(response, f"/biospecimen/error/")
 
     def test_that_traverese_user_cannot_see_detroit_id(self):
         self.login_traverse()
-        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{caregiver_bio}/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_that_traverse_user_trying_to_view_detroit_sampleid_redirects_to_error(self):
         self.login_traverse()
-        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{caregiver_bio}/initial/')
         self.assertRedirects(response, f"/biospecimen/error/")
 
     def test_that_traverse_user_cannot_see_flint_id(self):
         self.login_traverse()
-        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4400', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4400/{caregiver_bio}/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
     def test_that_traverse_user_trying_to_view_flint_sampleid_redirects_to_error(self):
         self.login_traverse()
-        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        caregiver_bio = self.return_caregiver_bio_pk('4400', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4400/{caregiver_bio}/initial/')
         self.assertRedirects(response, f"/biospecimen/error/")
 
+    def test_that_staff_user_can_see_detroit_id(self):
+        self.login_staff()
+        caregiver_bio = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{caregiver_bio}/initial/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_staff_user_can_see_flint_id(self):
+        self.login_staff()
+        caregiver_bio = self.return_caregiver_bio_pk('4400', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4400/{caregiver_bio}/initial/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_staff_user_can_see_traverse_id(self):
+        self.login_staff()
+        caregiver_bio = self.return_caregiver_bio_pk('4700', 'U', 'S')
+        response = self.client.get(f'/biospecimen/caregiver/4700/{caregiver_bio}/initial/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
