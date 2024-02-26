@@ -1081,10 +1081,75 @@ class CheckthatLoginRequiredforBiospecimen(DatabaseSetup):
 
 class CheckThatUserTypesWork(DatabaseSetup):
 
+    def login_flint(self):
+        self.client.logout()
+        flint_credentials = {
+            'username': 'flint_user',
+            'password': 'super_secret'
+        }
+        self.client.login(**flint_credentials)
+
+    def login_traverse(self):
+        self.client.logout()
+        traverse_credentials = {
+            'username': 'traverse_user',
+            'password': 'super_secret'
+        }
+        self.client.login(**traverse_credentials)
+
     def test_that_detroit_user_cannot_see_flint_id(self):
         response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
         self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
 
-    def test_that_detroit_user_trying_to_view_wrong_sampleid_redirects_to_home(self):
+    def test_that_detroit_user_trying_to_view_flint_sampleid_redirects_to_error(self):
         response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
         self.assertRedirects(response,f"/biospecimen/error/")
+
+    def test_that_detroit_user_cannot_see_traverse_id(self):
+        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_detroit_user_trying_to_view_traverse_sampleid_redirects_to_error(self):
+        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        self.assertRedirects(response,f"/biospecimen/error/")
+
+    def test_that_flint_user_cannot_see_detroit_id(self):
+        self.login_flint()
+        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_flint_user_trying_to_view_detroit_sampleid_redirects_to_error(self):
+        self.login_flint()
+        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        self.assertRedirects(response, f"/biospecimen/error/")
+
+    def test_that_flint_user_cannot_see_traverse_id(self):
+        self.login_flint()
+        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_flint_user_trying_to_view_travers_sampleid_redirects_to_error(self):
+        self.login_flint()
+        response = self.client.get(f'/biospecimen/caregiver/4700/1/initial/')
+        self.assertRedirects(response, f"/biospecimen/error/")
+
+    def test_that_traverese_user_cannot_see_detroit_id(self):
+        self.login_traverse()
+        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_traverse_user_trying_to_view_detroit_sampleid_redirects_to_error(self):
+        self.login_traverse()
+        response = self.client.get(f'/biospecimen/caregiver/4100/1/initial/')
+        self.assertRedirects(response, f"/biospecimen/error/")
+
+    def test_that_traverse_user_cannot_see_flint_id(self):
+        self.login_traverse()
+        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        self.assertTemplateNotUsed(response, 'biospecimen/caregiver_biospecimen_initial.html')
+
+    def test_that_traverse_user_trying_to_view_flint_sampleid_redirects_to_error(self):
+        self.login_traverse()
+        response = self.client.get(f'/biospecimen/caregiver/4400/1/initial/')
+        self.assertRedirects(response, f"/biospecimen/error/")
+
