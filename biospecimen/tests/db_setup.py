@@ -10,3 +10,4 @@ class DatabaseSetup(TestCase):
 
     def setUp(self):
         self.client.login(username='testuser',password='secret')
+
