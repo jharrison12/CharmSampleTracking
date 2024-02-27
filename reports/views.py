@@ -81,13 +81,18 @@ def biospecimen_report_blood(request):
 
 @login_required
 def collected_report_urine(request):
-    collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
+    if request.user.is_staff:
+        collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
+    else:
+        collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
     return render(request=request,template_name='reports/collected_report_urine.html',context={'collected_urine':collected_urine})
 
 @login_required
 def shipped_to_wsu_report_urine(request):
-    shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
-    logging.critical(f'collected biospecimen objects {shipped_to_wsu_biospecimen}')
+    if request.user.is_staff:
+        shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
+    else:
+        shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
     return render(request=request,template_name='reports/shipped_to_wsu_report_urine.html',context={'shipped_to_wsu_biospecimen':shipped_to_wsu_biospecimen})
 
 @login_required

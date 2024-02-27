@@ -517,6 +517,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
         if collection_type==URINE:
             form = CollectedBiospecimenUrineForm(data=request.POST, prefix='urine_form')
             if form.is_valid():
+                logging.critical(f"Is form valie {form.is_valid()}")
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 collected_urine.save_urine(form=form,request=request)
                 Incentive.objects.create().save_fk(caregiver_bio=caregiver_bio)
