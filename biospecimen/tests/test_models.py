@@ -18,7 +18,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
 
     def test_biospecimen_urine_links_to_two_caregivers(self):
         urine_samples = CaregiverBiospecimen.objects.filter(collection_fk__collection_type='U')
-        self.assertEqual(urine_samples.count(),6)
+        self.assertEqual(urine_samples.count(),8)
 
     def test_biospecimen_links_to_incentive_table(self):
         caregiverbio_one = CaregiverBiospecimen.objects.get(caregiver_fk=Caregiver.objects.get(charm_project_identifier='4100'),

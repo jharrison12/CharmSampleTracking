@@ -1,12 +1,14 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Reports:{% endblock %}
 {% block section %}
+    {% if request.user.is_staff %}
     <h2>Staff Reports</h2>
         <ul>
             <li><a href={% url 'reports:no_specimen_report' %}>Charm IDS with no biospecimen</a></li>
             <li><a href={% url 'reports:biospecimen_report_urine' %}>Biospecimen Report Urine</a></li>
             <li><a href={% url 'reports:biospecimen_report_blood' %}>Biospecimen Report Blood</a></li>
         </ul>
+    {% endif %}
     <h2>Urine Reports</h2>
         <ul>
             <li><a href={% url 'reports:collected_report_urine' %}>Collected Report Urine</a></li>

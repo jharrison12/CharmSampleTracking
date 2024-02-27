@@ -5,8 +5,7 @@ from biospecimen.models import CaregiverBiospecimen,Caregiver,Component
 from django.db.models import Prefetch
 import io
 from django.http import FileResponse
-
-
+from django.contrib.admin.views.decorators import staff_member_required
 
 logging.basicConfig(level=logging.CRITICAL)
 
@@ -27,6 +26,7 @@ def biospecimen_report(request):
                                                                                            'caregiver_biospecimen_list':MOTHER_BIOS})
 
 @login_required
+@staff_member_required
 def no_specimen_report(request):
     caregivers = Caregiver.objects.filter(caregiverbiospecimen__status_fk__isnull=True).exclude(caregiverbiospecimen__status_fk__isnull=False)
     caregivers_distinct = caregivers.values('charm_project_identifier').distinct()
@@ -34,21 +34,7 @@ def no_specimen_report(request):
                                                                                            'caregiver_biospecimen_list':MOTHER_BIOS})
 
 @login_required
-def no_specimen_report_pdf(request):
-    caregivers = Caregiver.objects.filter(caregiverbiospecimen__status_fk__isnull=True).exclude(caregiverbiospecimen__status_fk__isnull=False)
-    caregivers_distinct = caregivers.values('charm_project_identifier').distinct()
-    buffer = io.BytesIO()
-    p = canvas.Canvas(buffer)
-    p.drawString(100,100, caregivers)
-    p.showPage()
-    p.save()
-    buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename="hello.pdf")
-
-
-
-
-@login_required
+@staff_member_required
 def biospecimen_report_urine(request):
     collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
     shipped_to_wsu_urine = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
@@ -60,6 +46,7 @@ def biospecimen_report_urine(request):
                                                                                                'shipped_to_echo_urine':shipped_to_echo_urine})
 
 @login_required
+@staff_member_required
 def biospecimen_report_blood(request):
     collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,
                                                                 status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')

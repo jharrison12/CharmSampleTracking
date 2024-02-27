@@ -146,7 +146,7 @@ class StaffUrineReportPageTest(FunctionalTest):
         text = self.webpage_text()
         self.assertNotIn('4101',text)
         self.assertNotIn('12UR410101',text)
-        time.sleep(500)
+
         ##TODO implement search bar
 
 
@@ -259,6 +259,19 @@ class StaffUrineReportPageTest(FunctionalTest):
         self.assertNotIn('5', text)
         
         ##TODO implement search bar
+
+    def test_detroit_flint_and_traverse_user_cannot_see_staff_reports(self):
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertNotIn('Biospecimen Report Urine',text)
+        self.assertNotIn('Biospecimen Report Blood',text)
+        self.assertNotIn('Charm IDS with no biospecimen',text)
+        time.sleep(500)
+        #todo add flint and traverse
+
 
 class StaffBloodReportPageTest(FunctionalTest):
 
