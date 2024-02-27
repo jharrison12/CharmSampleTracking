@@ -108,7 +108,12 @@ def received_at_wsu_report_urine(request):
 
 @login_required
 def shipped_to_echo_report_urine(request):
-    shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='U')
+    if request.user.is_staff:
+        shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False)\
+            .filter(collection_fk__collection_type='U')
+    else:
+        shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False) \
+            .filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
     logging.critical(f'collected biospecimen objects {shipped_to_echo_biospecimen}')
     return render(request=request,template_name='reports/shipped_to_echo_report_urine.html',context={'shipped_to_echo_biospecimen':shipped_to_echo_biospecimen})
 

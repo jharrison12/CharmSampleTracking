@@ -208,7 +208,15 @@ class UserRoleReportTest(DatabaseSetup):
 
     def received_at_wsu_send_form(self,primary_key,sampleid):
         response = self.client.post(f'/biospecimen/caregiver/{sampleid}/{primary_key}/received_wsu/post/',
-                                    data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+                                    data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5),
+                                          'received_at_wsu_form-number_of_tubes':5})
+
+        return response
+    
+    def shipped_to_echo_echo_send_form(self,primary_key,sampleid):
+        response = self.client.post(f'/biospecimen/caregiver/{sampleid}/{primary_key}/shipped_echo/post/',
+                         data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5),
+                               'shipped_to_echo_form-number_of_tubes':5})
 
         return response
 
@@ -394,4 +402,54 @@ class UserRoleReportTest(DatabaseSetup):
         self.received_at_wsu_send_form(primary_key,sample_id)
         self.login_traverse()
         response = self.client.get(f'/reports/received_at_wsu_report/urine/')
+        logging.critical(response.content)
+        self.assertNotContains(response,sample_id)
+
+    def test_detroit_user_cannot_see_flint_sample_in_shipped_to_echo_urine_report(self):
+        self.login_staff()
+        sample_id = '4400'
+        primary_key = self.return_caregiver_bio_pk(sample_id,'U','S')
+        logging.critical(f"Primary key {primary_key}")
+        self.initial_send_form_flint(primary_key,'C',sample_id)
+        self.collected_send_form_flint(primary_key,sample_id)
+        self.incentive_send_form(primary_key,sample_id)
+        self.shipped_to_wsu_send_form(primary_key,sample_id)
+        self.received_at_wsu_send_form(primary_key,sample_id)
+        self.shipped_to_echo_echo_send_form(primary_key,sample_id)
+        self.login_detroit()
+        response = self.client.get(f'/reports/shipped_to_echo_report/urine/')
+        logging.critical(response.content)
+        self.assertNotContains(response,sample_id)
+
+
+    def test_flint_user_cannot_see_traverse_sample_in_shipped_to_echo_urine_report(self):
+        self.login_staff()
+        sample_id = '4700'
+        primary_key = self.return_caregiver_bio_pk(sample_id,'U','S')
+        logging.critical(f"Primary key {primary_key}")
+        self.initial_send_form_flint(primary_key,'C',sample_id)
+        self.collected_send_form_flint(primary_key,sample_id)
+        self.incentive_send_form(primary_key,sample_id)
+        self.shipped_to_wsu_send_form(primary_key,sample_id)
+        self.received_at_wsu_send_form(primary_key,sample_id)
+        self.shipped_to_echo_echo_send_form(primary_key,sample_id)
+        self.login_flint()
+        response = self.client.get(f'/reports/shipped_to_echo_report/urine/')
+        logging.critical(response.content)
+        self.assertNotContains(response,sample_id)
+
+    def test_traverse_user_cannot_see_detroit_sample_in_shipped_to_echo_urine_report(self):
+        self.login_staff()
+        sample_id = '4100'
+        primary_key = self.return_caregiver_bio_pk(sample_id,'U','S')
+        logging.critical(f"Primary key {primary_key}")
+        self.initial_send_form_flint(primary_key,'C',sample_id)
+        self.collected_send_form_flint(primary_key,sample_id)
+        self.incentive_send_form(primary_key,sample_id)
+        self.shipped_to_wsu_send_form(primary_key,sample_id)
+        self.received_at_wsu_send_form(primary_key,sample_id)
+        self.shipped_to_echo_echo_send_form(primary_key,sample_id)
+        self.login_traverse()
+        response = self.client.get(f'/reports/shipped_to_echo_report/urine/')
+        logging.critical(response.content)
         self.assertNotContains(response,sample_id)

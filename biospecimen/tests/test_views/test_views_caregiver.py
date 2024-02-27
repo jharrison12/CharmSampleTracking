@@ -65,7 +65,8 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
     def shipped_to_echo_echo_send_form(self,primary_key):
         response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_echo/post/',
-                         data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5)})
+                         data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5, 5, 5),
+                               'shipped_to_echo_form_number_of_tubes':5})
 
         return response
 
