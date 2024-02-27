@@ -92,12 +92,17 @@ def shipped_to_wsu_report_urine(request):
     if request.user.is_staff:
         shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
     else:
-        shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
+        shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True)\
+            .filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
     return render(request=request,template_name='reports/shipped_to_wsu_report_urine.html',context={'shipped_to_wsu_biospecimen':shipped_to_wsu_biospecimen})
 
 @login_required
 def received_at_wsu_report_urine(request):
-    received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='U')
+    if request.user.is_staff:
+        received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='U')
+    else:
+        received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True)\
+            .filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
     logging.critical(f'collected biospecimen objects {received_at_wsu_biospecimen}')
     return render(request=request,template_name='reports/received_at_wsu_report_urine.html',context={'received_at_wsu_biospecimen':received_at_wsu_biospecimen})
 
