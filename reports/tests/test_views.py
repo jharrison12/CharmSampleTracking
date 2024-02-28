@@ -158,7 +158,7 @@ class ShippedtoEchoReportBloodTest(DatabaseSetup):
         self.assertContains(response,'Shipped to Echo Report')
 
 
-class UserRoleReportTest(DatabaseSetup):
+class UserRoleReportTestUrine(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
         logging.critical(f"charm_id {charm_id} collection_type {collection_type} trimester {trimester} age_category {age_category} project {project}")
@@ -523,3 +523,109 @@ class UserRoleReportTest(DatabaseSetup):
         self.collected_send_form_flint(primary_key, sample_id)
         response = self.client.get(f'/reports/biospecimen_report/urine/')
         self.assertContains(response,sample_id)
+
+class UserRoleReportTestBlood(DatabaseSetup):
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
+        logging.critical(f"charm_id {charm_id} collection_type {collection_type} trimester {trimester} age_category {age_category} project {project}")
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester,
+                                                        project_fk__project_name=project,
+                                                        age_category_fk__age_category=age_category)
+
+        return caregiverbio.pk
+
+    def initial_send_form(self, primary_key,c_n_or_x,sample_id):
+        response = self.client.post(f'/biospecimen/caregiver/{sample_id}/{primary_key}/initial/post/',
+                                    data={"initial_form-collected_not_collected": c_n_or_x,
+                                          })
+        logging.critical(response.status_code)
+        return response
+
+    def blood_collected_form_send(self, primary_key, sampleid, type_of_blood, false_or_true):
+        if false_or_true:
+            response = self.client.post(f'/biospecimen/caregiver/{sampleid}/{primary_key}/post/', data={f'blood_form-{type_of_blood}': false_or_true,
+                                                                                              f'blood_form-{type_of_blood}_number_of_tubes': 5,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               })
+        else:
+            response = self.client.post(f'/biospecimen/caregiver/{sampleid}/{primary_key}/post/', data={f'blood_form-{type_of_blood}': false_or_true,
+                                                                                               'blood_form-collected_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-processed_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               'blood_form-stored_date_time': timezone.datetime(
+                                                                                                   2023, 5, 5, 5, 5, 5),
+                                                                                               })
+        return response
+
+    def login_staff(self):
+        self.client.logout()
+        self.client.login(**{
+            'username': 'staff',
+            'password': 'supersecret'
+        })
+
+    def login_detroit(self):
+        self.client.logout()
+        self.client.login(**{
+            'username': 'testuser',
+            'password': 'secret'})
+
+    def login_flint(self):
+        self.client.logout()
+        self.client.login(**{
+            'username': 'flint_user',
+            'password': 'super_secret'
+        })
+
+    def login_traverse(self):
+        self.client.logout()
+        self.client.login(**{
+            'username': 'traverse_user',
+            'password': 'super_secret'
+        })
+
+
+    def test_detroit_user_cannot_see_traverese_sample_in_collected_blood_report(self):
+        self.login_staff()
+        sample_id='4700'
+        primary_key = self.return_caregiver_bio_pk(sample_id,'B','S')
+        logging.critical(f"Primary key {primary_key}")
+        self.initial_send_form(primary_key,'C',sample_id)
+        self.blood_collected_form_send(primary_key,sample_id,'serum',True)
+        self.login_detroit()
+        response = self.client.get(f'/reports/collected_report/blood/')
+        logging.critical(response.content)
+        self.assertNotContains(response,sample_id)
+
+    def test_flint_user_cannot_see_detroit_sample_in_collected_blood_report(self):
+        self.login_staff()
+        sample_id='4100'
+        primary_key = self.return_caregiver_bio_pk(sample_id,'B','S')
+        logging.critical(f"Primary key {primary_key}")
+        self.initial_send_form(primary_key,'C',sample_id)
+        self.blood_collected_form_send(primary_key,sample_id,'serum',True)
+        self.login_flint()
+        response = self.client.get(f'/reports/collected_report/blood/')
+        logging.critical(response.content)
+        self.assertNotContains(response,sample_id)
+
+    def test_traverese_user_cannot_see_flint_sample_in_collected_blood_report(self):
+        self.login_staff()
+        sample_id='4400'
+        primary_key = self.return_caregiver_bio_pk(sample_id,'B','S')
+        logging.critical(f"Primary key {primary_key}")
+        self.initial_send_form(primary_key,'C',sample_id)
+        self.blood_collected_form_send(primary_key,sample_id,'serum',True)
+        self.login_traverse()
+        response = self.client.get(f'/reports/collected_report/blood/')
+        logging.critical(response.content)
+        self.assertNotContains(response,sample_id)

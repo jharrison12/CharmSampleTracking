@@ -619,32 +619,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
                                                         project_fk__project_name=project)
         return caregiverbio.pk
 
-    def add_shipped_echo_to_biospecimen(self, biospecimen_pk):
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=biospecimen_pk)
-        new_status = Status.objects.get(caregiverbiospecimen=caregiver_bio)
-        new_echo = ShippedECHO()
-        new_status.shipped_echo_fk = new_echo
-        new_echo.save()
-        new_status.save()
-        caregiver_bio.save()
-
-    def create_bio_specimen(self,caregiver_id,collection_type,project="ECHO2"):
-        caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_id)
-        collection = Collection.objects.get(collection_type_fk__collection_type=collection_type,collection_number_fk__collection_number=None)
-        project = Project.objects.get(project_name=project)
-        caregiver_bio = CaregiverBiospecimen()
-        new_status = Status()
-        caregiver_bio.status_fk = new_status
-        caregiver_bio.caregiver_fk = caregiver
-        caregiver_bio.collection_fk = collection
-        caregiver_bio.project_fk = project
-        new_status.save()
-        caregiver_bio.save()
-        collected = Collected(logged_by=User.objects.get(pk=1))
-        new_status.collected_fk = collected
-        collected.save()
-        new_status.save()
-        return caregiver_bio.pk
 
     def blood_collected_form_send(self, primary_key, type_of_blood, false_or_true):
         if false_or_true:

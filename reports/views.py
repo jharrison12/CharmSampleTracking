@@ -106,8 +106,12 @@ def shipped_to_echo_report_urine(request):
 
 @login_required
 def collected_report_blood(request):
-    collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
-    collected_blood.prefetch_related('status_fk__collected_fk__component_set').all().order_by('component__component_type')
+    if request.user.is_staff:
+        collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+        collected_blood.prefetch_related('status_fk__collected_fk__component_set').all().order_by('component__component_type')
+    else:
+        collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True)\
+            .filter(collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
     return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_blood':collected_blood})
 
 @login_required
