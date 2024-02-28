@@ -90,7 +90,7 @@ def received_at_wsu_report_urine(request):
     else:
         received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True)\
             .filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
-    logging.critical(f'collected biospecimen objects {received_at_wsu_biospecimen}')
+    logging.debug(f'collected biospecimen objects {received_at_wsu_biospecimen}')
     return render(request=request,template_name='reports/received_at_wsu_report_urine.html',context={'received_at_wsu_biospecimen':received_at_wsu_biospecimen})
 
 @login_required
@@ -101,7 +101,7 @@ def shipped_to_echo_report_urine(request):
     else:
         shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False) \
             .filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
-    logging.critical(f'collected biospecimen objects {shipped_to_echo_biospecimen}')
+    logging.debug(f'collected biospecimen objects {shipped_to_echo_biospecimen}')
     return render(request=request,template_name='reports/shipped_to_echo_report_urine.html',context={'shipped_to_echo_biospecimen':shipped_to_echo_biospecimen})
 
 @login_required
@@ -112,29 +112,49 @@ def collected_report_blood(request):
     else:
         collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True)\
             .filter(collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
+        collected_blood.prefetch_related('status_fk__collected_fk__component_set').all().order_by(
+            'component__component_type')
     return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_blood':collected_blood})
 
 @login_required
 def shipped_to_wsu_report_blood(request):
-    shipped_to_wsu_biospecimen_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
-    shipped_to_wsu_biospecimen_blood.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
-        'component__component_type')
+    if request.user.is_staff:
+        shipped_to_wsu_biospecimen_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+        shipped_to_wsu_biospecimen_blood.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
+            'component__component_type')
+    else:
+        shipped_to_wsu_biospecimen_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True)\
+            .filter(collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
+        shipped_to_wsu_biospecimen_blood.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
+            'component__component_type')
     return render(request=request, template_name='reports/shipped_to_wsu_report_blood.html',context={'shipped_to_wsu_biospecimen_blood': shipped_to_wsu_biospecimen_blood})
 
 @login_required
 def received_at_wsu_report_blood(request):
-    received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='B')
-    received_at_wsu_biospecimen.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
-        'component__component_type')
-    logging.critical(f'collected biospecimen objects {received_at_wsu_biospecimen}')
+    if request.user.is_staff:
+        received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='B')
+        received_at_wsu_biospecimen.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
+            'component__component_type')
+    else:
+        received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,
+                                                                          status_fk__shipped_echo_fk__isnull=True).filter(
+            collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
+        received_at_wsu_biospecimen.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
+            'component__component_type')
     return render(request=request, template_name='reports/received_at_wsu_report_blood.html',
                   context={'received_at_wsu_biospecimen': received_at_wsu_biospecimen})
 
 @login_required
 def shipped_to_echo_report_blood(request):
-    shipped_to_echo_report_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='B')
-    shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_echo_fk__component_set').all().order_by(
-        'component__component_type')
-    logging.critical(f'collected biospecimen objects {shipped_to_echo_report_blood}')
+    if request.user.is_staff:
+        shipped_to_echo_report_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='B')
+        shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_echo_fk__component_set').all().order_by(
+            'component__component_type')
+    else:
+        shipped_to_echo_report_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False)\
+            .filter(collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
+        shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_echo_fk__component_set').all().order_by(
+            'component__component_type')
+
     return render(request=request, template_name='reports/shipped_to_echo_report_blood.html',
                   context={'shipped_to_echo_report_blood': shipped_to_echo_report_blood})

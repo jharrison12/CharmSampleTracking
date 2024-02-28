@@ -318,7 +318,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
     def test_caregiver_blood_shipped_to_wsu_form_fails_if_component_doesnt_match(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        logging.critical(f'{primary_key}')
+        logging.debug(f'{primary_key}')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key,'serum',True)
         self.blood_incentive_form_send(primary_key)
@@ -336,7 +336,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
     def test_caregiver_blood_received_at_wsu_form_fails_if_doesnt_match(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        logging.critical(f'{primary_key}')
+        logging.debug(f'{primary_key}')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, 'serum', True)
         self.blood_incentive_form_send(primary_key)
@@ -351,7 +351,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
     def test_caregiver_blood_received_at_wsu_form_fails_if_doesnt_match(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        logging.critical(f'{primary_key}')
+        logging.debug(f'{primary_key}')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key, 'serum', True)
         self.blood_incentive_form_send(primary_key)

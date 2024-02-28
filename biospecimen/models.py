@@ -321,7 +321,7 @@ class Status(models.Model):
         caregiver_bio.save()
 
     def save_initial_form(self,form,caregiver_bio,request):
-        logging.critical(f"form name {request.POST}")
+        logging.debug(f"form name {request.POST}")
         if request.POST.__contains__('initial_form-collected_not_collected'):
             if form.cleaned_data['collected_not_collected'] == 'C':
                 new_collected = Collected.objects.create()

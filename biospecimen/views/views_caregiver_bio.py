@@ -360,7 +360,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_msu_form = None
     declined_form = None
     logging.debug(f"Collection type is {collection_type}")
-    logging.critical(f"Declined item {declined_item}")
+    logging.debug(f"Declined item {declined_item}")
     if declined_item.exists() and declined_item.filter(declined_date__isnull=True):
         declined_form = DeclinedForm(prefix='declined_form')
     if collection_type in HAIR_SALIVA:
@@ -517,7 +517,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
         if collection_type==URINE:
             form = CollectedBiospecimenUrineForm(data=request.POST, prefix='urine_form')
             if form.is_valid():
-                logging.critical(f"Is form valie {form.is_valid()}")
+                logging.debug(f"Is form valie {form.is_valid()}")
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 collected_urine.save_urine(form=form,request=request)
                 Incentive.objects.create().save_fk(caregiver_bio=caregiver_bio)
