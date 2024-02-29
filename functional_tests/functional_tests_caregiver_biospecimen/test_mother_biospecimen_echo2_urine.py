@@ -182,6 +182,8 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertNotIn('<form>', body_text)
         self.assertIn('Not Collected', body_text)
+        self.assertIn('testuser', body_text)
+
 
     def test_user_can_choose_status_of_urine_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees urine
@@ -215,3 +217,4 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn(f'Declined Date Time: {TODAY}', body_text)
         self.assertIn('Logged By: testuser', body_text )
+

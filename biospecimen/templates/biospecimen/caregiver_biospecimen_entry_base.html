@@ -9,10 +9,15 @@
     {% if caregiver_bio.trimester_fk %}<div class="col-sm">Trimester: {{ caregiver_bio.trimester_fk.get_trimester_display }}</div>{% endif %}
         <hr/>
     </div>
-    {% if caregiver_bio.status_fk.not_collected_fk%}
-        <div id="not_collected_information" class="row border border-primary p-3 rounded">
-        Not Collected
-        </div>
+    {% if caregiver_bio.status_fk.not_collected_fk %}
+            <div id="not_collected_information" class="row border border-primary p-3 rounded">
+                <div class="col-4">
+                    <button type="button" class="btn btn-primary" disabled aria-disabled="true">Not Collected</button>
+                </div>
+                <div class="col-8">
+                    <div>Logged By: {{ caregiver_bio.status_fk.not_collected_fk.logged_by }}</div>
+                </div>
+            </div>
     {% elif declined_item %}
         {% if declined_form %}
             <div id="declined_form" class="row border border-primary p-3 rounded">

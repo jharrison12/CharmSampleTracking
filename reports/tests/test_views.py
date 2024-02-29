@@ -24,6 +24,13 @@ class CaregiverBiospecimenReportPageTest(DatabaseSetup):
 
 class CaregiverBiospcimenIDSwithNoLoggedSpecimensTest(DatabaseSetup):
 
+    def setUp(self):
+        self.client.logout()
+        self.client.login(**{
+            'username':'staff',
+            'password':'supersecret'
+        })
+
     def test_page_with_no_specimens_logged_returns_correct_html(self):
         response = self.client.get(f'/reports/no_specimen_report/')
         self.assertTemplateUsed(response, 'reports/no_specimen_report.html')
@@ -33,6 +40,13 @@ class CaregiverBiospcimenIDSwithNoLoggedSpecimensTest(DatabaseSetup):
         self.assertContains(response,'No Biospecimen Report')
 
 class UrineStaffReport(DatabaseSetup):
+
+    def setUp(self):
+        self.client.logout()
+        self.client.login(**{
+            'username':'staff',
+            'password':'supersecret'
+        })
 
     def test_staff_urine_report_returns_correct_html(self):
         response = self.client.get(f'/reports/biospecimen_report/urine/')
@@ -55,6 +69,13 @@ class UrineStaffReport(DatabaseSetup):
         self.assertContains(response,'Shipped to Echo Report')
 
 class BloodStaffReport(DatabaseSetup):
+
+    def setUp(self):
+        self.client.logout()
+        self.client.login(**{
+            'username':'staff',
+            'password':'supersecret'
+        })
 
     def test_collected_blood_report_returns_correct_html(self):
         response = self.client.get(f'/reports/biospecimen_report/blood/')
@@ -93,7 +114,7 @@ class ShippedtoWSUReportUrineTest(DatabaseSetup):
         self.assertTemplateUsed(response, 'reports/shipped_to_wsu_report_urine.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/biospecimen_report/urine/')
+        response = self.client.get(f'/reports/shipped_to_wsu_report/urine/')
         self.assertContains(response,'Shipped to WSU Report')
 
 class ReceivedatWSUReportUrineTest(DatabaseSetup):
@@ -103,7 +124,7 @@ class ReceivedatWSUReportUrineTest(DatabaseSetup):
         self.assertTemplateUsed(response, 'reports/received_at_wsu_report_urine.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/biospecimen_report/urine/')
+        response = self.client.get(f'/reports/received_at_wsu_report/urine/')
         self.assertContains(response,'Received at WSU Report')
 
 class ShippedtoEchoReportUrineTest(DatabaseSetup):
@@ -113,7 +134,7 @@ class ShippedtoEchoReportUrineTest(DatabaseSetup):
         self.assertTemplateUsed(response, 'reports/shipped_to_echo_report_urine.html')
 
     def test_page_with_no_specimens_logged_shows_report(self):
-        response = self.client.get(f'/reports/biospecimen_report/urine/')
+        response = self.client.get(f'/reports/shipped_to_echo_report/urine/')
         self.assertContains(response,'Shipped to Echo Report')
 
 class CollectedReportBloodTest(DatabaseSetup):
@@ -514,7 +535,7 @@ class UserRoleReportTestUrine(DatabaseSetup):
         logging.debug(response.content)
         self.assertRedirects(response,'/admin/login/?next=%2Freports%2Fbiospecimen_report%2Furine%2F')
 
-    def test_staff_can_see_detroit_sample_in_staff_report(self):
+    def test_staff_can_see_detroit_sample_in_staff_urine_report(self):
         self.login_staff()
         sample_id = '4100'
         primary_key = self.return_caregiver_bio_pk(sample_id,'U','S')
@@ -796,3 +817,12 @@ class UserRoleReportTestBlood(DatabaseSetup):
         self.login_traverse()
         response = self.client.get(f'/reports/shipped_to_echo_report/blood/')
         self.assertNotContains(response, sample_id)
+
+    def test_staff_can_see_detroit_sample_in_staff_blood_report(self):
+        self.login_staff()
+        sample_id = '4100'
+        primary_key = self.return_caregiver_bio_pk(sample_id,'B','S')
+        self.initial_send_form(primary_key, 'C', sample_id)
+        self.blood_collected_form_send(primary_key, sample_id, 'serum', True)
+        response = self.client.get(f'/reports/biospecimen_report/blood/')
+        self.assertContains(response,sample_id)
