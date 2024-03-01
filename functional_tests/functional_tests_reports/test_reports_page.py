@@ -23,6 +23,16 @@ class ReportsPageTest(FunctionalTest):
                                                         trimester_fk__trimester=trimester)
         return caregiverbio.pk
 
+    def logout(self):
+        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+
+    def login_staff(self):
+        self.logout()
+        self.browser.find_element(By.LINK_TEXT,'Login').click()
+        self.browser.find_element(By.ID,'id_username').send_keys('staff')
+        self.browser.find_element(By.ID,'id_password').send_keys('supersecret')
+        self.browser.find_element(By.ID,'login_button').click()
+
     def test_user_can_see_biospecimen_report(self):
         #User visits the page for P7000
         ## Is there a better way of navigating using selenium?
@@ -42,11 +52,12 @@ class ReportsPageTest(FunctionalTest):
     def test_user_can_see_no_specimen_report(self):
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}reports/')
-
+        self.login_staff()
         text = self.webpage_text()
 
         self.assertIn('Reports', text)
-        self.browser.get(f'{self.browser.current_url}no_specimen_report/')
+        self.browser.find_element(By.LINK_TEXT,'Reports').click()
+        self.browser.find_element(By.LINK_TEXT,'Charm IDS with no biospecimen').click()
 
         text = self.webpage_text()
 
@@ -60,6 +71,7 @@ class ReportsPageTest(FunctionalTest):
 
 
     def test_user_enters_specimen_and_doesnt_see_id_on_no_specimen_report(self):
+        self.login_staff()
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}reports/')
 
@@ -113,7 +125,18 @@ class StaffUrineReportPageTest(FunctionalTest):
                                                         trimester_fk__trimester=trimester)
         return caregiverbio.pk
 
+    def logout(self):
+        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+
+    def login_staff(self):
+        self.logout()
+        self.browser.find_element(By.LINK_TEXT,'Login').click()
+        self.browser.find_element(By.ID,'id_username').send_keys('staff')
+        self.browser.find_element(By.ID,'id_password').send_keys('supersecret')
+        self.browser.find_element(By.ID,'login_button').click()
+
     def test_user_can_see_staff_collected_urine_report(self):
+        self.login_staff()
         motherurine.user_submits_urine_collected(self)
 
         #User visits the page for P7000
@@ -151,6 +174,7 @@ class StaffUrineReportPageTest(FunctionalTest):
 
 
     def test_user_can_see_staff_shipped_to_wsu_urine_report(self):
+        self.login_staff()
         motherurine.user_submits_urine_collected(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
 
@@ -187,6 +211,7 @@ class StaffUrineReportPageTest(FunctionalTest):
     ##TODO implement search bar
 
     def test_user_can_see_staff_recieved_at_wsu_urine_report(self):
+        self.login_staff()
         motherurine.user_submits_urine_collected(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
         motherurine.user_submits_urine_received_at_wsu(self)
@@ -223,6 +248,7 @@ class StaffUrineReportPageTest(FunctionalTest):
         ##TODO implement search bar
 
     def test_user_can_see_staff_shipped_to_echo_urine_report(self):
+        self.login_staff()
         motherurine.user_submits_urine_collected(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
         motherurine.user_submits_urine_received_at_wsu(self)
@@ -269,7 +295,7 @@ class StaffUrineReportPageTest(FunctionalTest):
         self.assertNotIn('Biospecimen Report Urine',text)
         self.assertNotIn('Biospecimen Report Blood',text)
         self.assertNotIn('Charm IDS with no biospecimen',text)
-        time.sleep(500)
+
         #todo add flint and traverse
 
 
@@ -286,7 +312,19 @@ class StaffBloodReportPageTest(FunctionalTest):
                                                         trimester_fk__trimester=trimester)
         return caregiverbio.pk
 
+    def logout(self):
+        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+
+    def login_staff(self):
+        self.logout()
+        self.browser.find_element(By.LINK_TEXT,'Login').click()
+        self.browser.find_element(By.ID,'id_username').send_keys('staff')
+        self.browser.find_element(By.ID,'id_password').send_keys('supersecret')
+        self.browser.find_element(By.ID,'login_button').click()
+
+
     def test_user_can_see_collected_blood_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
 
         self.browser.get(self.live_server_url)
@@ -321,6 +359,7 @@ class StaffBloodReportPageTest(FunctionalTest):
         ##TODO implement search bar
 
     def test_user_can_see_shipped_to_wsu_blood_staff_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
 
@@ -356,6 +395,7 @@ class StaffBloodReportPageTest(FunctionalTest):
         ##TODO implement search bar
 
     def test_user_can_see_received_at_wsu_blood_staff_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)
@@ -392,6 +432,7 @@ class StaffBloodReportPageTest(FunctionalTest):
         ##TODO implement search bar
 
     def test_user_can_see_shipped_to_echo_blood_staff_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)
@@ -565,7 +606,18 @@ class BloodReportsPageTest(FunctionalTest):
                                                         trimester_fk__trimester=trimester)
         return caregiverbio.pk
 
+    def logout(self):
+        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+
+    def login_staff(self):
+        self.logout()
+        self.browser.find_element(By.LINK_TEXT,'Login').click()
+        self.browser.find_element(By.ID,'id_username').send_keys('staff')
+        self.browser.find_element(By.ID,'id_password').send_keys('supersecret')
+        self.browser.find_element(By.ID,'login_button').click()
+
     def test_user_can_see_collected_blood_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
 
         # User visits the page for P7000
@@ -594,6 +646,7 @@ class BloodReportsPageTest(FunctionalTest):
         
 
     def test_user_can_see_shipped_to_wsu_blood_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         # User visits the page for P7000
@@ -622,6 +675,7 @@ class BloodReportsPageTest(FunctionalTest):
         ##todo implement search bar
 
     def test_user_can_see_received_at_wsu_blood_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)
@@ -651,6 +705,7 @@ class BloodReportsPageTest(FunctionalTest):
 
 
     def test_user_can_see_shipped_to_echo_blood_report(self):
+        self.login_staff()
         motherblood.user_input_collected_blood(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)

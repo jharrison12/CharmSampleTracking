@@ -66,7 +66,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         body = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Number of Tubes: 5', body)
 
-        self.assertIn('Logged By: testuser',body)
+        self.assertIn('Logged By:',body)
 
         #User sees incentive form
 
@@ -108,8 +108,9 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         #user sees shipped WSU data
         body = self.browser.find_element(By.TAG_NAME,'body').text
+        time.sleep(1)
         self.assertIn('Courier: FedEx',body)
-        self.assertIn('Shipped By: testuser',body)
+        self.assertIn('Shipped By:',body)
 
 
     def user_submits_urine_received_at_wsu(self):
