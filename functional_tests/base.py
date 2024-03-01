@@ -65,4 +65,4 @@ def wait_for_element(browser,myelement):
 
     return element
 
-TODAY = dt.datetime.now().strftime('%b. %#d, %Y')
+TODAY = dt.datetime.now().strftime('%B %#d, %Y')
