@@ -29,7 +29,10 @@
           {% if not request.user.is_authenticated %}
               <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'login' %}">Login</a></button>
           {% else %}
-              <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'logout' %}">Logout</a></button>
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'logout' %}">Logout</a></button>
+              </form>
           {% endif %}
       </div>
     </header>
