@@ -131,7 +131,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         #use sees received at MSU Form
 
-        form = self.browser.find_element(By.TAG_NAME,'form').text
+        form = self.browser.find_element(By.ID,'received_at_msu').text
         self.assertIn('Received at MSU',form)
 
         self.assertNotIn('Shipped to WSU',form)

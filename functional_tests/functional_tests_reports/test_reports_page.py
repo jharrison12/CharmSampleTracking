@@ -313,7 +313,7 @@ class StaffBloodReportPageTest(FunctionalTest):
         return caregiverbio.pk
 
     def logout(self):
-        self.browser.find_element(By.ID,'Logout').click()
+        self.browser.find_element(By.ID,'logout_button').click()
 
     def login_staff(self):
         self.logout()

@@ -124,7 +124,7 @@ class Echo2BioPage(FunctionalTest):
 
         # go back to specimen and see incentive form is still there
 
-        form = self.browser.find_element(By.ID,'incentive_information_form').text
+        form = self.browser.find_element(By.ID,'incentive_form').text
         self.assertIn('Incentive Form',form)
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
