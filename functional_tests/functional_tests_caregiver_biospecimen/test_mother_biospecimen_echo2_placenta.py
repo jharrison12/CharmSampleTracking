@@ -35,7 +35,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
         #user sees collected form on next page
 
-        form = self.browser.find_element(By.TAG_NAME,'form').text
+        form = self.browser.find_element(By.ID,'collected_information_form').text
         self.assertIn('Collected Form',form)
 
         #user submits form and sees data

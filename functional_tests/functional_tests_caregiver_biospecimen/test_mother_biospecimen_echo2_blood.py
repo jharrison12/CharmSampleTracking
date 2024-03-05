@@ -46,8 +46,8 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         # user sees collected form on next page
         time.sleep(1)
-        form = self.browser.find_element(By.TAG_NAME, 'form').text
-        self.assertIn('Collected Form', form)
+        form = self.browser.find_element(By.ID, 'collected_information_form').text
+        self.assertIn('Collected Form',form)
 
         # user submits form and sees data
         collected = self.browser.find_element(By.ID, "id_blood_form-collected_date_time")
@@ -91,7 +91,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         # user sees incentive form
 
-        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        form = self.browser.find_element(By.ID, 'incentive_form').text
         self.assertIn('Incentive Form', form)
 
         incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
@@ -214,7 +214,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         #user sees incentive form
 
-        form = self.browser.find_element(By.TAG_NAME,'form').text
+        form = self.browser.find_element(By.ID,"incentive_form").text
         self.assertIn('Incentive Form',form)
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
@@ -359,7 +359,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         # user sees collected form on next page
 
-        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        form = self.browser.find_element(By.ID, 'collected_information_form').text
         self.assertIn('Collected Form', form)
 
         # user submits form and sees data
@@ -403,7 +403,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         # user sees incentive form
         self.browser.implicitly_wait(2)
-        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        form = self.browser.find_element(By.ID, 'incentive_form').text
         self.assertIn('Incentive Form', form)
         time.sleep(2)
 
@@ -416,7 +416,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         time.sleep(2)
         # is incentive form still there?
 
-        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        form = self.browser.find_element(By.ID, 'incentive_form').text
         self.assertIn('Incentive Form', form)
 
         incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')

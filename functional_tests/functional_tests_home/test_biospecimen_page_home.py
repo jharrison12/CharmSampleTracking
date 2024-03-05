@@ -82,7 +82,7 @@ class Echo2BioPage(FunctionalTest):
 
         # user sees collected form on next page
 
-        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        form = self.browser.find_element(By.ID, 'collected_information_form').text
         self.assertIn('Collected Form', form)
 
         # user submits form and sees data
@@ -124,7 +124,7 @@ class Echo2BioPage(FunctionalTest):
 
         # go back to specimen and see incentive form is still there
 
-        form = self.browser.find_element(By.TAG_NAME,'form').text
+        form = self.browser.find_element(By.ID,'incentive_information_form').text
         self.assertIn('Incentive Form',form)
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')

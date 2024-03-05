@@ -37,7 +37,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         # user sees collected form on next page
 
-        form = self.browser.find_element(By.TAG_NAME, 'form').text
+        form = self.browser.find_element(By.ID, 'collected_information_form').text
         self.assertIn('Collected Form', form)
 
         # user submits form and sees data
@@ -82,7 +82,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         #user sees shipped to wsu form
 
-        body = self.browser.find_element(By.TAG_NAME,'form').text
+        body = self.browser.find_element(By.ID,'shipped_to_wsu_information_form').text
         self.assertIn('Shipped to WSU Form',body)
 
         #user submits shipped to WSu form

@@ -75,7 +75,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         #user sees collected form on next page
 
-        collected_form = self.browser.find_element(By.TAG_NAME, 'form').text
+        collected_form = self.browser.find_element(By.ID, 'collected_information_form').text
         self.assertIn('Collected', collected_form)
         self.assertNotIn('Incentive date', collected_form)
 
@@ -96,7 +96,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         #User sees incentive form
 
-        form = self.browser.find_element(By.TAG_NAME,'form').text
+        form = self.browser.find_element(By.ID,'incentive_information_form').text
         self.assertIn('Incentive Form',form)
 
         incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
@@ -111,7 +111,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
         #user sees shipped to msu form
 
-        form = self.browser.find_element(By.TAG_NAME,'form').text
+        form = self.browser.find_element(By.ID,'shipped_to_msu').text
         self.assertIn('Shipped to MSU',form)
 
         self.assertNotIn('Shipped to WSU',form)

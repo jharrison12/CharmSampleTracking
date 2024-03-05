@@ -24,7 +24,7 @@ class ReportsPageTest(FunctionalTest):
         return caregiverbio.pk
 
     def logout(self):
-        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+        self.browser.find_element(By.ID,'logout_button').click()
 
     def login_staff(self):
         self.logout()
@@ -126,7 +126,7 @@ class StaffUrineReportPageTest(FunctionalTest):
         return caregiverbio.pk
 
     def logout(self):
-        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+        self.browser.find_element(By.ID,'logout_button').click()
 
     def login_staff(self):
         self.logout()
@@ -313,7 +313,7 @@ class StaffBloodReportPageTest(FunctionalTest):
         return caregiverbio.pk
 
     def logout(self):
-        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+        self.browser.find_element(By.ID,'Logout').click()
 
     def login_staff(self):
         self.logout()
@@ -607,7 +607,7 @@ class BloodReportsPageTest(FunctionalTest):
         return caregiverbio.pk
 
     def logout(self):
-        self.browser.find_element(By.LINK_TEXT,'Logout').click()
+        self.browser.find_element(By.ID,'logout_button').click()
 
     def login_staff(self):
         self.logout()
