@@ -10,7 +10,7 @@ from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBio
     ShippedChoiceEchoForm, CollectedChildBloodSpotForm, CollectedChildBloodSpotHairFormOneYear, ShippedtoWSUFormChild, \
     InitialBioFormChildTooth, \
     CollectedChildToothForm, DeclinedForm, ReceivedatWSUForm, ShippedtoMSUForm, CollectedBiospecimenHairSalivaForm, \
-    ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoUrineForm
+    ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoForm
 from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -284,7 +284,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.shipped_to_wsu_send_form(primary_key)
         self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoUrineForm)
+        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
     def test_echo2_bio_page_shows_declined_form_if_initial_form_is_declined(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')

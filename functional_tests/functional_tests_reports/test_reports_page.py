@@ -274,8 +274,7 @@ class StaffUrineReportPageTest(FunctionalTest):
         text = self.webpage_text()
         self.assertIn('4101', text)
         self.assertIn('12UR410101', text)
-        self.assertIn('Number of Tubes', text)
-        self.assertIn('5', text)
+        self.assertNotIn('Number of Tubes', text)
 
         self.browser.find_element(By.ID, 'shipped_to_echo_report_header').click()
         text = self.webpage_text()
@@ -587,8 +586,8 @@ class UrineReportsPageTest(FunctionalTest):
 
         self.assertIn('12UR410101', text)
 
-        self.assertIn('Number of Tubes', text)
-        self.assertIn('5', text)
+        self.assertNotIn('Number of Tubes', text)
+
         
         ##TODO implement search bar
 

@@ -144,16 +144,11 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         shipped_date_time.click()
         self.choose_flatpickr_day(0)
 
-        number_of_tubes = self.browser.find_element(By.ID, 'id_shipped_to_echo_form-number_of_tubes')
-        number_of_tubes.send_keys(5)
-
         submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
         submit.click()
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn(f'Shipped Date Time: {TODAY}', body)
-        time.sleep(1)
-        self.assertIn(f'Number of Tubes: 5', body)
 
     def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
         self.user_submits_urine_collected()

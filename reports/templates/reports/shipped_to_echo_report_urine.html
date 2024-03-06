@@ -10,8 +10,7 @@
               <th scope="col">Charm ID</th>
               <th scope="col">Biospecimen ID</th>
               <th scope="col" class="d-print-none">Trimester</th>
-              <th scope="col">Shipped Date</th>
-              <th scope="col">Number of Tubes</th>
+              <th scope="col">Shipped Date</th>>
             </tr>
           </thead>
           <tbody>
@@ -22,7 +21,6 @@
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                   <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                   <td>{{ biospecimen.status_fk.shipped_echo_fk.shipped_date_time }}</td>
-                  <td>{{ biospecimen.status_fk.shipped_echo_fk.number_of_tubes }}</td>
               </tr>
           {% endfor %}
 

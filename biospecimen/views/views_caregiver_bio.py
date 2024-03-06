@@ -8,7 +8,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Collected
     InitialBioFormPostNatal, KitSentForm, \
     ReceivedatWSUForm, InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm, ShippedtoWSUFormPlacenta, \
     ShippedtoMSUForm, ReceivedatMSUForm, ShippedtoWSUFormBlood, \
-    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoUrineForm,DeclinedForm
+    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoForm,DeclinedForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -406,7 +406,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
         if received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
                 and (not shipped_to_echo_item.exists() or shipped_to_echo_item.filter(shipped_date_time__isnull=True)):
             logging.debug(f"in shipped to echo if statement")
-            shipped_echo_form = ShippedtoEchoUrineForm(prefix="shipped_to_echo_form")
+            shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     return render(request, template_name='biospecimen/caregiver_biospecimen_entry.html', context={'charm_project_identifier':caregiver_charm_id,
                                                                                                   'caregiver_bio_pk':caregiver_bio_pk,
                                                                                                   'caregiver_bio': caregiver_bio,
@@ -766,7 +766,7 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
         else:
             logging.debug(f"post is {request.POST}")
             if collection_type in URINE:
-                form  = ShippedtoEchoUrineForm(data=request.POST,prefix='shipped_to_echo_form')
+                form  = ShippedtoEchoForm(data=request.POST,prefix='shipped_to_echo_form')
             else:
                 form = ShippedtoEchoForm(data=request.POST, prefix='shipped_to_echo_form')
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")

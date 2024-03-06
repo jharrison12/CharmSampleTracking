@@ -191,17 +191,13 @@ class ShippedWSU(models.Model):
 
 class ShippedECHO(models.Model):
     shipped_date_time = models.DateTimeField(null=True,blank=True)
-    number_of_tubes = models.IntegerField(default=None,null=True,blank=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
 
     def set_shipped_date_time_and_fk_and_save(self,caregiver_bio,request,form):
-        if caregiver_bio.collection_fk.collection_type == 'U':
-            self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-            self.number_of_tubes = form.cleaned_data['number_of_tubes']
-            self.logged_by = request.user
-        else:
-            self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-            self.logged_by = request.user
+        self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+        self.logged_by = request.user
+        self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
+        self.logged_by = request.user
         caregiver_bio.status_fk.shipped_echo_fk = self
         self.save()
         caregiver_bio.status_fk.save()
