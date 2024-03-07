@@ -29,7 +29,7 @@
                   <td>{{ biospecimen.status_fk.shipped_wsu_fk.shipped_date_time }}</td>
                   <td>{{ biospecimen.status_fk.shipped_wsu_fk.get_courier_display }}</td>
                   <td>{{ biospecimen.status_fk.shipped_wsu_fk.tracking_number }}</td>
-              {% debug %}
+
               {% for component in biospecimen.component_set.all %}
                   <td>{{ component.number_of_tubes }}</td>
                  {% endfor %}

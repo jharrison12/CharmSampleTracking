@@ -26,7 +26,7 @@
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                   <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                   <td>{{ biospecimen.status_fk.received_wsu_fk.received_date_time }}</td>
-              {% debug %}
+
               {% for component in biospecimen.component_set.all %}
                   <td>{{ component.number_of_tubes }}</td>
                  {% endfor %}

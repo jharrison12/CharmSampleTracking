@@ -2,7 +2,7 @@
 {% block header %}Shipped to Echo Report{% endblock %}
 {% block section %}
 
-        <div class="table-responsive">
+    <div class="table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -26,7 +26,7 @@
                   <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                   <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                   <td>{{ biospecimen.status_fk.shipped_echo_fk.shipped_date_time }}</td>
-              {% debug %}
+
               {% for component in biospecimen.component_set.all %}
                   <td>{{ component.number_of_tubes }}</td>
                  {% endfor %}
