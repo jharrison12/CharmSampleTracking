@@ -348,7 +348,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
         # the context manager with self.assertRaises(ValidationError) didn't work probably due to custom error message
         self.assertTrue(form.has_error(NON_FIELD_ERRORS, 'ValidationError'))
 
-    def test_caregiver_blood_received_at_wsu_form_fails_if_doesnt_match(self):
+    def test_caregiver_blood_shipped_to_echo_does_not_fail_if_component_not_passed(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         logging.debug(f'{primary_key}')
@@ -360,9 +360,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
         # the context manager with self.assertRaises(ValidationError) didn't work probably due to custom error message
         form = ShippedtoEchoBloodForm(caregiver_bio=caregiver_bio,
                                       data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5,
-                                                                                                          5, 5),
-                                          f'serum': True,
-                                          f'serum_number_of_tubes': 3})
+                                                                                                          5, 5)})
 
-        self.assertTrue(form.has_error(NON_FIELD_ERRORS, 'ValidationError'))
+        self.assertFalse(form.has_error(NON_FIELD_ERRORS, 'ValidationError'))
 

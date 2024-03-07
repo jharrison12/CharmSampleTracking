@@ -445,6 +445,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         caregiver_bloods_received_wsu = return_caregiver_bloods(caregiver_bio,received_wsu_fk=caregiver_bio.status_fk.received_wsu_fk)
     if caregiver_bio.status_fk and caregiver_bio.status_fk.shipped_echo_fk:
         caregiver_bloods_shipped_echo = return_caregiver_bloods(caregiver_bio,shipped_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
+        logging.critical(f"Caregiver bloods {caregiver_bloods_shipped_echo}")
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -756,8 +757,6 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
             logging.debug(f"is shipped form valid{form.is_valid()}  {form.errors} {form}")
             if form.is_valid():
                 shipped_echo_item.set_shipped_date_time_and_fk_and_save(form=form,request=request,caregiver_bio=caregiver_bio)
-                create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
-                                                  form_data=form.cleaned_data,shipped_to_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
             else:
                 logging.debug(f"form errors? {form.errors}")
                 messages.info(request, f"{form.non_field_errors()}")

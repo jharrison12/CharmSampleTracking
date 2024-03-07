@@ -217,27 +217,11 @@ class ReceivedatWSUBloodForm(forms.Form):
 
 class ShippedtoEchoBloodForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-    whole_blood = forms.BooleanField(required=False)
-    whole_blood_number_of_tubes = forms.IntegerField(required=False)
-    plasma = forms.BooleanField(required=False)
-    plasma_number_of_tubes = forms.IntegerField(required=False)
-    buffy_coat = forms.BooleanField(required=False)
-    buffy_coat_number_of_tubes = forms.IntegerField(required=False)
-    red_blood_cells = forms.BooleanField(required=False)
-    red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
-    serum = forms.BooleanField(required=False)
-    serum_number_of_tubes = forms.IntegerField(required=False)
 
     def __init__(self, *args,**kwargs):
         self.caregiver_bio = kwargs.pop('caregiver_bio')
         super(ShippedtoEchoBloodForm,self).__init__(*args,**kwargs)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
-        logging.debug(f"component values{component_values}")
-        test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
-        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data,chain_of_custody='received at wsu')
 
 class ShippedtoWSUFormPlacenta(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))

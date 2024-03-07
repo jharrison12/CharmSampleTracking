@@ -196,8 +196,6 @@ class ShippedECHO(models.Model):
     def set_shipped_date_time_and_fk_and_save(self,caregiver_bio,request,form):
         self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
         self.logged_by = request.user
-        self.shipped_date_time = form.cleaned_data['shipped_date_and_time']
-        self.logged_by = request.user
         caregiver_bio.status_fk.shipped_echo_fk = self
         self.save()
         caregiver_bio.status_fk.save()

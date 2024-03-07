@@ -363,66 +363,6 @@
                 <label for="{{ shipped_echo_form.shipped_date_and_time.id_for_label }}" class="form-label">Shipped Date Time:</label>
                 {{ shipped_echo_form.shipped_date_and_time }}
               </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ shipped_echo_form.whole_blood.errors }}
-                    <label for="{{ shipped_echo_form.whole_blood.id_for_label }}" class="col-form-label">Whole Blood:</label>
-                    {{ shipped_echo_form.whole_blood }}
-                  </div>
-                  <div class="col-auto" id="whole_blood_number_of_tubes_div">
-                    {{ shipped_echo_form.whole_blood_number_of_tubes.errors }}
-                    <label for="{{ shipped_echo_form.whole_blood_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ shipped_echo_form.whole_blood_number_of_tubes }}
-                  </div>
-              </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ shipped_echo_form.plasma.errors }}
-                    <label for="{{ shipped_echo_form.plasma.id_for_label }}" class="col-form-label">Plasma:</label>
-                    {{ shipped_echo_form.plasma }}
-                  </div>
-                  <div class="col-auto" id="plasma_number_of_tubes_div">
-                    {{ shipped_echo_form.plasma_number_of_tubes.errors }}
-                    <label for="{{ shipped_echo_form.plasma_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ shipped_echo_form.plasma_number_of_tubes }}
-                  </div>
-              </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ shipped_echo_form.buffy_coat.errors }}
-                    <label for="{{ shipped_echo_form.buffy_coat.id_for_label }}" class="col-form-label">Buffy Coat:</label>
-                    {{ shipped_echo_form.buffy_coat }}
-                  </div>
-                  <div class="col-auto" id="buffy_coat_number_of_tubes_div">
-                    {{ shipped_echo_form.buffy_coat_number_of_tubes.errors }}
-                    <label for="{{ shipped_echo_form.buffy_coat_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ shipped_echo_form.buffy_coat_number_of_tubes }}
-                  </div>
-              </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ shipped_echo_form.red_blood_cells.errors }}
-                    <label for="{{ shipped_echo_form.red_blood_cells.id_for_label }}" class="col-form-label">Red Blood Cells:</label>
-                    {{ shipped_echo_form.red_blood_cells }}
-                  </div>
-                  <div class="col-auto" id="red_blood_cells_number_of_tubes_div">
-                    {{ shipped_echo_form.red_blood_cells_number_of_tubes.errors }}
-                    <label for="{{ shipped_echo_form.red_blood_cells_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ shipped_echo_form.red_blood_cells_number_of_tubes }}
-                  </div>
-              </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ shipped_echo_form.serum.errors }}
-                    <label for="{{ shipped_echo_form.serum.id_for_label }}" class="col-form-label">Serum:</label>
-                    {{ shipped_echo_form.serum }}
-                  </div>
-                  <div class="col-auto" id="serum_number_of_tubes_div">
-                    {{ shipped_echo_form.serum_number_of_tubes.errors }}
-                    <label for="{{ shipped_echo_form.serum_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ shipped_echo_form.serum_number_of_tubes }}
-                  </div>
-              </div>
           <input type="submit" value="Submit" />
           </form>
         </div>
@@ -435,14 +375,6 @@
             </div>
             <div class="col-8">
                 <div>Shipped Date Time: {{ caregiver_bio.status_fk.shipped_echo_fk.shipped_date_time }}</div>
-                {% for blood in caregiver_bloods_shipped_echo %}
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-                      <label class="form-check-label" for="flexCheckCheckedDisabled">
-                          {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}
-                      </label>
-                    </div>
-                {% endfor %}
             </div>
         </div>
 

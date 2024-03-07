@@ -183,21 +183,12 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         shipped_echo_date_time = self.browser.find_element(By.ID, 'id_shipped_to_echo_form-shipped_date_and_time')
         shipped_echo_date_time.click()
         self.choose_flatpickr_day(0)
-
-        whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,
-                                                                     "id_shipped_to_echo_form-whole_blood_number_of_tubes").text
-        self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
-        self.assertIn('Plasma', body)
+        time.sleep(10)
+        self.assertNotIn('Plasma', body)
         self.assertIn('Whole Blood', body)
-        self.assertIn('Serum', body)
-        self.assertIn('Red Blood Cells', body)
-        self.assertIn('Buffy Coat', body)
-
-        whole_blood_checkbox = self.browser.find_element(By.ID, "id_shipped_to_echo_form-whole_blood")
-        whole_blood_checkbox.click()
-
-        whole_blood_tubes = self.browser.find_element(By.ID, "id_shipped_to_echo_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(3)
+        self.assertNotIn('Serum', body)
+        self.assertNotIn('Red Blood Cells', body)
+        self.assertNotIn('Buffy Coat', body)
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
         self.browser.execute_script("arguments[0].scrollIntoView();", submit)
@@ -257,7 +248,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         whole_blood_checkbox.click()
 
 
-    def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_wsu(self):
+    def test_user_can_choose_status_of_blood_information_chooses_collected_shipped_echo(self):
         self.user_inputs_first_portion_of_blood_page()
 
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
@@ -423,7 +414,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         incentive_date.click()
         self.choose_flatpickr_day(0)
 
-
     def test_user_submits_incorrect_number_of_tubes_and_error_is_thrown(self):
         self.user_inputs_first_portion_of_blood_page()
         whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
@@ -531,52 +521,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         shipped_echo_date_time = self.browser.find_element(By.ID,'id_shipped_to_echo_form-shipped_date_and_time')
         shipped_echo_date_time.click()
         self.choose_flatpickr_day(0)
-
-        whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes").text
-        self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
-        self.assertIn('Plasma', body_text)
-        self.assertIn('Whole Blood', body_text)
-        self.assertIn('Serum', body_text)
-        self.assertIn('Red Blood Cells', body_text)
-        self.assertIn('Buffy Coat', body_text)
-
-        whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood")
-        whole_blood_checkbox.click()
-        # user sends wrong number of tubes and gets modal
-        whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(4)
-
-        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
-        self.browser.execute_script("arguments[0].scrollIntoView();", submit)
-        self.browser.execute_script("arguments[0].click();", submit)
-
-        WebDriverWait(self.browser,5).until(EC.visibility_of_element_located((By.ID
-                                                                                  ,'exampleModal')))
-        modal_text = self.browser.find_element(By.ID,'exampleModal').text
-
-        self.assertIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood received at wsu tubes: 3',
-                      modal_text)
-
-        self.browser.find_element(By.ID, 'modal_cancel_button').click()
-
-        shipped_echo_date_time = self.browser.find_element(By.ID,'id_shipped_to_echo_form-shipped_date_and_time')
-        shipped_echo_date_time.click()
-        self.choose_flatpickr_day(0)
-
-        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes").text
-        self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
-        self.assertIn('Plasma', body_text)
-        self.assertIn('Whole Blood', body_text)
-        self.assertIn('Serum', body_text)
-        self.assertIn('Red Blood Cells', body_text)
-        self.assertIn('Buffy Coat', body_text)
-
-        whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood")
-        whole_blood_checkbox.click()
-
-        whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_echo_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(3)
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
         self.browser.execute_script("arguments[0].scrollIntoView();", submit)
