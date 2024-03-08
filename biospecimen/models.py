@@ -82,6 +82,12 @@ class Incentive(models.Model):
         caregiver_bio.save()
         self.save()
 
+    def save_incentive_blood(self,bound_form,request):
+        self.incentive_date = bound_form.cleaned_data['incentive_date']
+        self.logged_by = request.user
+        self.save()
+        self.save()
+
     def __str__(self):
         return f"{self.incentive_type}: {self.incentive_amount}"
 
@@ -224,10 +230,9 @@ class Declined(models.Model):
         self.declined_date = form.cleaned_data['declined_date_time']
         self.logged_by = request.user
         caregiver_bio.status_fk.declined_fk = self
-        self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
-
+        self.save()
 
     def __str__(self):
         return f"declined date {self.declined_date}"

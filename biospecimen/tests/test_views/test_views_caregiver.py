@@ -292,6 +292,67 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['declined_form'], DeclinedForm)
 
+    #Logged_By
+        #Urine
+
+    def test_echo2_bio_urine_collected_form_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.collected_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_urine_not_collected_post_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'N')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.not_collected_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_urine_declined_post_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'X')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.declined_fk.logged_by,'testuser')
+
+    def test_echo2_bio_urine_incentive_post_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        response = self.incentive_send_form(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.incentive_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_urine_shipped_wsu_post_saves_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.incentive_send_form(primary_key)
+        self.shipped_to_wsu_send_form(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.shipped_wsu_fk.shipped_by.username,'testuser')
+
+    def test_echo2_bio_urine_received_wsu_post_saves_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.incentive_send_form(primary_key)
+        self.shipped_to_wsu_send_form(primary_key)
+        self.received_at_wsu_send_form(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.received_wsu_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_urine_shipped_echo_post_saves_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.incentive_send_form(primary_key)
+        self.shipped_to_wsu_send_form(primary_key)
+        self.received_at_wsu_send_form(primary_key)
+        self.shipped_to_echo_echo_send_form(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.shipped_echo_fk.logged_by.username,'testuser')
+
+
 class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
@@ -874,6 +935,15 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.blood_incentive_form_send(primary_key)
 
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
+
+    def test_echo2_bio_blood_incentive_form_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key,"serum",True)
+        response = self.blood_incentive_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+
+        self.assertEqual(caregiver_bio.incentive_fk.logged_by.username,'testuser')
 
     def test_echo2_bio_blood_shipped_wsu_form_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')

@@ -102,18 +102,18 @@ def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in,request)
             received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,request=request,form=bound_form)
 
 
-def create_or_update_incentive(caregiver_bio_pk, bound_form):
-    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    try:
-        incentive_item = Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
-    except Incentive.DoesNotExist:
-        incentive_item = Incentive()
-        caregiver_bio.incentive_fk = incentive_item
-    logging.debug(f"{incentive_item}")
-    logging.debug(f"{bound_form.cleaned_data}")
-    incentive_item.incentive_date = bound_form.cleaned_data['incentive_date']
-    incentive_item.save()
-    caregiver_bio.save()
+# def create_or_update_incentive(caregiver_bio_pk, bound_form):
+#     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+#     try:
+#         incentive_item = Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
+#     except Incentive.DoesNotExist:
+#         incentive_item = Incentive()
+#         caregiver_bio.incentive_fk = incentive_item
+#     logging.debug(f"{incentive_item}")
+#     logging.debug(f"{bound_form.cleaned_data}")
+#     incentive_item.incentive_date = bound_form.cleaned_data['incentive_date']
+#     incentive_item.save()
+#     caregiver_bio.save()
 
 
 def compare_form_component(component_values,form):
@@ -585,7 +585,9 @@ def caregiver_biospecimen_incentive_post(request,caregiver_charm_id,caregiver_bi
         elif collection_type in BLOOD:
             form = IncentiveForm(data=request.POST, prefix='incentive_form')
             if form.is_valid():
-                create_or_update_incentive(caregiver_bio.pk,form)
+                incentive_item = Incentive.objects.create()
+                incentive_item.save_fk(caregiver_bio=caregiver_bio)
+                incentive_item.save_incentive_blood(bound_form=form,request=request)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
 
