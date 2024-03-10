@@ -785,6 +785,7 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     declined_item = Declined.objects.get(status__caregiverbiospecimen=caregiver_bio)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
+    logging.critical(f'{declined_item}')
     if request.method=="POST":
         form = DeclinedForm(data=request.POST, prefix='declined_form')
         if form.is_valid():
