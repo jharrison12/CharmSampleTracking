@@ -727,8 +727,10 @@ class BloodReportsPageTest(FunctionalTest):
 
         self.assertIn('12BL410001', text)
 
-        self.assertIn('Whole Blood', text)
+        self.assertNotIn('Whole Blood', text)
+        self.assertNotIn('Serum', text)
+        self.assertNotIn('Bloodspots', text)
         self.assertIn('Shipped to Echo Report', text)
-        self.assertIn('3', text)
+
         
         ##todo implement search bar
