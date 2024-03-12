@@ -66,3 +66,4 @@ def wait_for_element(browser,myelement):
     return element
 
 TODAY = dt.datetime.now().strftime('%B %#d, %Y')
+logging.critical('what')
