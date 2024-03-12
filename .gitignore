@@ -7,3 +7,4 @@ load_fixture.py
 /static
 biospecimen/__init__.py
 biospecimen/fixtures
+parameters.py

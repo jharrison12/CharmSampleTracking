@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os, logging
 from pathlib import Path
+from parameters import PASSWORD
 logging.basicConfig(level=logging.CRITICAL)
 
 if 'DJANGO_DEBUG_FALSE' in os.environ:
@@ -100,7 +101,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'charm_bio_track',
         'USER': 'root',
-        'PASSWORD': '1234',
+        'PASSWORD': PASSWORD,
         'HOST':'localhost',
         'PORT':'3306',
     }
