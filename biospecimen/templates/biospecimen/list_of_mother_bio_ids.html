@@ -1,28 +1,36 @@
 {% extends "biospecimen/base.html" %}
 {% block header %}Charm ID: {{ caregiver.charm_project_identifier }}{% endblock %}
 {% block section %}
+    {% if trimester_2_biospecimens|length > 0  %}
     <h2>Trimester 2:</h2>
         <ul id="trimester_2_list">
             {% for trimester_2_bio_id in trimester_2_biospecimens %}
                 <li><a href={% url "biospecimen:caregiver_biospecimen_initial" caregiver.charm_project_identifier trimester_2_bio_id.id %}>{{ trimester_2_bio_id.collection_fk.get_collection_type_display }} {{ caregiver.charm_project_identifier }} ({{ trimester_2_bio_id.biospecimen_id }})</a></li>
             {% endfor %}
         </ul>
+    {% endif %}
+    {% if trimester_3_biospecimens|length > 0 %}
     <h2>Trimester 3:</h2>
         <ul id="trimester_3_list">
             {% for trimester_3_bio_id in trimester_3_biospecimens %}
                 <li><a href={% url "biospecimen:caregiver_biospecimen_initial" caregiver.charm_project_identifier trimester_3_bio_id.id %}>{{ trimester_3_bio_id.collection_fk.get_collection_type_display }} {{ caregiver.charm_project_identifier }} ({{ trimester_3_bio_id.biospecimen_id }})</a></li>
             {% endfor %}
         </ul>
+    {% endif %}
+    {% if perinatal_biospecimens|length > 0 %}
     <h2>Perinatal:</h2>
         <ul id="perinatal_list">
             {% for perinatal_bio in perinatal_biospecimens %}
                 <li><a href={% url "biospecimen:caregiver_biospecimen_initial" caregiver.charm_project_identifier perinatal_bio.id %}>{{ perinatal_bio.collection_fk.get_collection_type_display }} {{ caregiver.charm_project_identifier }} ({{ perinatal_bio.biospecimen_id }})</a></li>
             {% endfor %}
         </ul>
+    {% endif %}
+    {% if postnatal_biospecimens|length > 0 %}
     <h2>Postnatal:</h2>
         <ul id="postnatal_list">
             {% for postnatal_bio in postnatal_biospecimens %}
                 <li><a href={% url "biospecimen:caregiver_biospecimen_initial" caregiver.charm_project_identifier postnatal_bio.id %}>{{ postnatal_bio.collection_fk.get_collection_type_display }} {{ caregiver.charm_project_identifier }} ({{ postnatal_bio.biospecimen_id }})</a></li>
             {% endfor %}
         </ul>
+    {% endif %}
 {% endblock %}
