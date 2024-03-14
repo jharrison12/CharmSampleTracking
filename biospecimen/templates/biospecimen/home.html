@@ -2,6 +2,8 @@
 {% block section %}
     <ul>
         <li><a href={% url "biospecimen:charm_identifiers" %}>Charm IDs</a></li>
+        {% if request.user.is_staff %}
         <li><a href={% url "biospecimen:biospecimen_entry" %}>Biospecimen Entry</a></li>
+        {% endif %}
     </ul>
 {% endblock %}
