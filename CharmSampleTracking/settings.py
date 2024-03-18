@@ -96,16 +96,30 @@ WSGI_APPLICATION = 'CharmSampleTracking.wsgi.application'
 # }
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'charm_bio_track',
-        'USER': 'root',
-        'PASSWORD': PASSWORD,
-        'HOST':'localhost',
-        'PORT':'3306',
+if 'PRODUCTION' in os.environ:
+    #Update with production connection variables
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'charm_bio_track',
+            'USER': 'root',
+            'PASSWORD': PASSWORD,
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
     }
-}
+else:
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'charm_bio_track',
+            'USER': 'root',
+            'PASSWORD': PASSWORD,
+            'HOST':'localhost',
+            'PORT':'3306',
+        }
+    }
 
 
 # Password validation
