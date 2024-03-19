@@ -1,0 +1,1311 @@
+[
+{
+  "model": "biospecimen.project",
+  "pk": 1,
+  "fields": {
+    "project_name": "MARCH"
+  }
+},
+{
+  "model": "biospecimen.project",
+  "pk": 2,
+  "fields": {
+    "project_name": "ECHO1"
+  }
+},
+{
+  "model": "biospecimen.project",
+  "pk": 3,
+  "fields": {
+    "project_name": "ECHO2"
+  }
+},
+{
+  "model": "biospecimen.agecategory",
+  "pk": 1,
+  "fields": {
+    "age_category": "EC"
+  }
+},
+{
+  "model": "biospecimen.agecategory",
+  "pk": 2,
+  "fields": {
+    "age_category": "ZF"
+  }
+},
+{
+  "model": "biospecimen.agecategory",
+  "pk": 3,
+  "fields": {
+    "age_category": "TT"
+  }
+},
+{
+  "model": "biospecimen.agecategory",
+  "pk": 4,
+  "fields": {
+    "age_category": "ST"
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 1,
+  "fields": {
+    "collection_type": "U",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 2,
+  "fields": {
+    "collection_type": "S",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 3,
+  "fields": {
+    "collection_type": "H",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 4,
+  "fields": {
+    "collection_type": "T",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 5,
+  "fields": {
+    "collection_type": "L",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 6,
+  "fields": {
+    "collection_type": "O",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 7,
+  "fields": {
+    "collection_type": "E",
+    "collection_number": 1
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 8,
+  "fields": {
+    "collection_type": "C",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 9,
+  "fields": {
+    "collection_type": "X",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.collection",
+  "pk": 10,
+  "fields": {
+    "collection_type": "B",
+    "collection_number": null
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 1,
+  "fields": {
+    "charm_project_identifier": "4100",
+    "recruitment_location": "D"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 2,
+  "fields": {
+    "charm_project_identifier": "4101",
+    "recruitment_location": "D"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 3,
+  "fields": {
+    "charm_project_identifier": "4102",
+    "recruitment_location": "D"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 4,
+  "fields": {
+    "charm_project_identifier": "4400",
+    "recruitment_location": "F"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 5,
+  "fields": {
+    "charm_project_identifier": "4401",
+    "recruitment_location": "F"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 6,
+  "fields": {
+    "charm_project_identifier": "4402",
+    "recruitment_location": "F"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 7,
+  "fields": {
+    "charm_project_identifier": "4700",
+    "recruitment_location": "T"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 8,
+  "fields": {
+    "charm_project_identifier": "4701",
+    "recruitment_location": "T"
+  }
+},
+{
+  "model": "biospecimen.caregiver",
+  "pk": 9,
+  "fields": {
+    "charm_project_identifier": "4702",
+    "recruitment_location": "T"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 1,
+  "fields": {
+    "pregnancy_fk": 1,
+    "trimester": "S"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 2,
+  "fields": {
+    "pregnancy_fk": 1,
+    "trimester": "T"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 3,
+  "fields": {
+    "pregnancy_fk": 3,
+    "trimester": "S"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 4,
+  "fields": {
+    "pregnancy_fk": 3,
+    "trimester": "T"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 5,
+  "fields": {
+    "pregnancy_fk": 4,
+    "trimester": "S"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 6,
+  "fields": {
+    "pregnancy_fk": 4,
+    "trimester": "T"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 7,
+  "fields": {
+    "pregnancy_fk": 6,
+    "trimester": "S"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 8,
+  "fields": {
+    "pregnancy_fk": 6,
+    "trimester": "T"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 9,
+  "fields": {
+    "pregnancy_fk": 10,
+    "trimester": "S"
+  }
+},
+{
+  "model": "biospecimen.pregnancytrimester",
+  "pk": 10,
+  "fields": {
+    "pregnancy_fk": 10,
+    "trimester": "T"
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 1,
+  "fields": {
+    "caregiver_fk": 1,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 2,
+  "fields": {
+    "caregiver_fk": 1,
+    "pregnancy_number": 2
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 3,
+  "fields": {
+    "caregiver_fk": 2,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 4,
+  "fields": {
+    "caregiver_fk": 2,
+    "pregnancy_number": 2
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 5,
+  "fields": {
+    "caregiver_fk": 3,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 6,
+  "fields": {
+    "caregiver_fk": 4,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 7,
+  "fields": {
+    "caregiver_fk": 4,
+    "pregnancy_number": 2
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 8,
+  "fields": {
+    "caregiver_fk": 5,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 9,
+  "fields": {
+    "caregiver_fk": 6,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 10,
+  "fields": {
+    "caregiver_fk": 7,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 11,
+  "fields": {
+    "caregiver_fk": 8,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.pregnancy",
+  "pk": 12,
+  "fields": {
+    "caregiver_fk": 9,
+    "pregnancy_number": 1
+  }
+},
+{
+  "model": "biospecimen.perinatal",
+  "pk": 1,
+  "fields": {
+    "caregiver_fk": 1,
+    "pregnancy_fk": 1
+  }
+},
+{
+  "model": "biospecimen.child",
+  "pk": 1,
+  "fields": {
+    "caregiver_fk": 1,
+    "pregnancy_fk": 1,
+    "charm_project_identifier": "4100F1"
+  }
+},
+{
+  "model": "biospecimen.child",
+  "pk": 2,
+  "fields": {
+    "caregiver_fk": 1,
+    "pregnancy_fk": 1,
+    "charm_project_identifier": "4100F2"
+  }
+},
+{
+  "model": "biospecimen.child",
+  "pk": 3,
+  "fields": {
+    "caregiver_fk": 2,
+    "pregnancy_fk": 3,
+    "charm_project_identifier": "4101F1"
+  }
+},
+{
+  "model": "biospecimen.child",
+  "pk": 4,
+  "fields": {
+    "caregiver_fk": 2,
+    "pregnancy_fk": 4,
+    "charm_project_identifier": "4101G1"
+  }
+},
+{
+  "model": "biospecimen.child",
+  "pk": 5,
+  "fields": {
+    "caregiver_fk": 4,
+    "pregnancy_fk": 6,
+    "charm_project_identifier": "4400F2"
+  }
+},
+{
+  "model": "biospecimen.child",
+  "pk": 6,
+  "fields": {
+    "caregiver_fk": 4,
+    "pregnancy_fk": 7,
+    "charm_project_identifier": "4400G1"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 1,
+  "fields": {
+    "caregiver_fk": 1,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 1,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12UR410001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 2,
+  "fields": {
+    "caregiver_fk": 1,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 1,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12BL410001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 3,
+  "fields": {
+    "caregiver_fk": 1,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 2,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13UR410001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 4,
+  "fields": {
+    "caregiver_fk": 1,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 2,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13BL410001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 5,
+  "fields": {
+    "caregiver_fk": 2,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 3,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12UR410101"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 6,
+  "fields": {
+    "caregiver_fk": 2,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 3,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12BL410101"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 7,
+  "fields": {
+    "caregiver_fk": 2,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 4,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13UR410101"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 8,
+  "fields": {
+    "caregiver_fk": 2,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 4,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13BL410101"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 9,
+  "fields": {
+    "caregiver_fk": 4,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 7,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12UR440001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 10,
+  "fields": {
+    "caregiver_fk": 4,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 7,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12BL440001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 11,
+  "fields": {
+    "caregiver_fk": 4,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 8,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13UR440001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 12,
+  "fields": {
+    "caregiver_fk": 4,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 8,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13BL440001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 13,
+  "fields": {
+    "caregiver_fk": 7,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 9,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12UR470001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 14,
+  "fields": {
+    "caregiver_fk": 7,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 9,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12BL470001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 15,
+  "fields": {
+    "caregiver_fk": 7,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "trimester_fk": 10,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13UR470001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 16,
+  "fields": {
+    "caregiver_fk": 7,
+    "status_fk": null,
+    "collection_fk": 10,
+    "incentive_fk": null,
+    "trimester_fk": 10,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "13BL470001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 17,
+  "fields": {
+    "caregiver_fk": 1,
+    "status_fk": null,
+    "collection_fk": 8,
+    "incentive_fk": null,
+    "trimester_fk": null,
+    "pregnancy_fk": 1,
+    "perinatal_fk": 1,
+    "age_category_fk": null,
+    "project_fk": 3,
+    "biospecimen_id": "12PL410001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 18,
+  "fields": {
+    "caregiver_fk": 1,
+    "status_fk": null,
+    "collection_fk": 3,
+    "incentive_fk": null,
+    "trimester_fk": null,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": 2,
+    "project_fk": 3,
+    "biospecimen_id": "12HA410001"
+  }
+},
+{
+  "model": "biospecimen.caregiverbiospecimen",
+  "pk": 19,
+  "fields": {
+    "caregiver_fk": 1,
+    "status_fk": null,
+    "collection_fk": 5,
+    "incentive_fk": null,
+    "trimester_fk": null,
+    "pregnancy_fk": null,
+    "perinatal_fk": null,
+    "age_category_fk": 2,
+    "project_fk": 3,
+    "biospecimen_id": "12SA410001"
+  }
+},
+{
+  "model": "biospecimen.childbiospecimen",
+  "pk": 1,
+  "fields": {
+    "child_fk": 1,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "age_category_fk": 2,
+    "biospecimen_id": "4100F1URZF"
+  }
+},
+{
+  "model": "biospecimen.childbiospecimen",
+  "pk": 2,
+  "fields": {
+    "child_fk": 1,
+    "status_fk": null,
+    "collection_fk": 1,
+    "incentive_fk": null,
+    "age_category_fk": 3,
+    "biospecimen_id": "4100F1URTT"
+  }
+},
+{
+  "model": "biospecimen.childbiospecimen",
+  "pk": 3,
+  "fields": {
+    "child_fk": 1,
+    "status_fk": null,
+    "collection_fk": 7,
+    "incentive_fk": null,
+    "age_category_fk": 4,
+    "biospecimen_id": "4100F1TOST"
+  }
+},
+{
+  "model": "biospecimen.childbiospecimen",
+  "pk": 4,
+  "fields": {
+    "child_fk": 1,
+    "status_fk": null,
+    "collection_fk": 6,
+    "incentive_fk": null,
+    "age_category_fk": 2,
+    "biospecimen_id": "4100F1STST"
+  }
+},
+{
+  "model": "biospecimen.childbiospecimen",
+  "pk": 5,
+  "fields": {
+    "child_fk": 1,
+    "status_fk": null,
+    "collection_fk": 3,
+    "incentive_fk": null,
+    "age_category_fk": 3,
+    "biospecimen_id": "4100F1HATT"
+  }
+},
+{
+  "model": "biospecimen.childbiospecimen",
+  "pk": 6,
+  "fields": {
+    "child_fk": 1,
+    "status_fk": null,
+    "collection_fk": 2,
+    "incentive_fk": null,
+    "age_category_fk": 2,
+    "biospecimen_id": "4100F1BSZF"
+  }
+},
+{
+  "model": "biospecimen.childbiospecimen",
+  "pk": 7,
+  "fields": {
+    "child_fk": 1,
+    "status_fk": null,
+    "collection_fk": 2,
+    "incentive_fk": null,
+    "age_category_fk": 3,
+    "biospecimen_id": "4100F1BSTT"
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 1,
+  "fields": {
+    "caregiver_biospecimen_fk": 2,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "S",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 2,
+  "fields": {
+    "caregiver_biospecimen_fk": 2,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "W",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 3,
+  "fields": {
+    "caregiver_biospecimen_fk": 2,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "D",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 4,
+  "fields": {
+    "caregiver_biospecimen_fk": 2,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "F",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 5,
+  "fields": {
+    "caregiver_biospecimen_fk": 2,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "P",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 6,
+  "fields": {
+    "caregiver_biospecimen_fk": 2,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "R",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 7,
+  "fields": {
+    "caregiver_biospecimen_fk": 4,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "S",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 8,
+  "fields": {
+    "caregiver_biospecimen_fk": 4,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "W",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 9,
+  "fields": {
+    "caregiver_biospecimen_fk": 4,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "D",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 10,
+  "fields": {
+    "caregiver_biospecimen_fk": 4,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "F",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 11,
+  "fields": {
+    "caregiver_biospecimen_fk": 4,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "P",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 12,
+  "fields": {
+    "caregiver_biospecimen_fk": 4,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "R",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 13,
+  "fields": {
+    "caregiver_biospecimen_fk": 6,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "S",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 14,
+  "fields": {
+    "caregiver_biospecimen_fk": 6,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "W",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 15,
+  "fields": {
+    "caregiver_biospecimen_fk": 6,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "D",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 16,
+  "fields": {
+    "caregiver_biospecimen_fk": 6,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "F",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 17,
+  "fields": {
+    "caregiver_biospecimen_fk": 6,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "P",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 18,
+  "fields": {
+    "caregiver_biospecimen_fk": 6,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "R",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 19,
+  "fields": {
+    "caregiver_biospecimen_fk": 10,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "S",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 20,
+  "fields": {
+    "caregiver_biospecimen_fk": 10,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "W",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 21,
+  "fields": {
+    "caregiver_biospecimen_fk": 10,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "D",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 22,
+  "fields": {
+    "caregiver_biospecimen_fk": 10,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "F",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 23,
+  "fields": {
+    "caregiver_biospecimen_fk": 10,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "P",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 24,
+  "fields": {
+    "caregiver_biospecimen_fk": 10,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "R",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 25,
+  "fields": {
+    "caregiver_biospecimen_fk": 14,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "S",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 26,
+  "fields": {
+    "caregiver_biospecimen_fk": 14,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "W",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 27,
+  "fields": {
+    "caregiver_biospecimen_fk": 14,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "D",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 28,
+  "fields": {
+    "caregiver_biospecimen_fk": 14,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "F",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 29,
+  "fields": {
+    "caregiver_biospecimen_fk": 14,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "P",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.component",
+  "pk": 30,
+  "fields": {
+    "caregiver_biospecimen_fk": 14,
+    "collected_fk": null,
+    "shipped_wsu_fk": null,
+    "received_wsu_fk": null,
+    "shipped_echo_fk": null,
+    "component_type": "R",
+    "number_of_tubes": null
+  }
+},
+{
+  "model": "biospecimen.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$yIdVNwmOTP5ggCRakCiKXC$1rMj3SoY6b/pHI1HQgFaQqhJZ4GTd1ZRhVfLbIXOxHo=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_active": true,
+    "date_joined": "2024-03-04T12:43:45.414Z",
+    "recruitment_location": "D",
+    "is_staff": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "biospecimen.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$M0sqATwKJmtWWYN7XIF1op$eOc9KkPMOZ4ceUjXtiufDdE48APrHeYah9pxFhGEFTk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "staff",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_active": true,
+    "date_joined": "2024-03-04T12:43:45.748Z",
+    "recruitment_location": "",
+    "is_staff": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "biospecimen.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$r5QTTGcfhnKQUuoguAfe5T$WXhfcC/jVVst/Ru51DURPciRCF+uAsygBZsr6s/vAsk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "flint_user",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_active": true,
+    "date_joined": "2024-03-04T12:43:45.981Z",
+    "recruitment_location": "F",
+    "is_staff": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "biospecimen.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$upbM5nLJv0pDSFTgCLU9WU$Px9sBUKAnllrrZlKfQlhsTgQz6DP7vaxYYDjAt8v3AI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "traverse_user",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_active": true,
+    "date_joined": "2024-03-04T12:43:46.226Z",
+    "recruitment_location": "T",
+    "is_staff": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "biospecimen.incentive",
+  "pk": 1,
+  "fields": {
+    "incentive_type": "G",
+    "incentive_date": null,
+    "incentive_amount": 100,
+    "logged_by": null
+  }
+},
+{
+  "model": "biospecimen.incentive",
+  "pk": 2,
+  "fields": {
+    "incentive_type": "G",
+    "incentive_date": "2023-08-04",
+    "incentive_amount": 100,
+    "logged_by": null
+  }
+}
+]
