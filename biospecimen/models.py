@@ -332,7 +332,7 @@ class Status(models.Model):
                 self.not_collected_fk = new_not_collected
                 new_not_collected.save()
             elif form.cleaned_data['collected_not_collected'] == 'X':
-                logging.critical(f"In declined form")
+                logging.debug(f"In declined form")
                 new_declined = Declined.objects.create()
                 self.declined_fk = new_declined
                 new_declined.save()

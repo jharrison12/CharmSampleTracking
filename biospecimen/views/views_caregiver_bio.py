@@ -445,7 +445,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         caregiver_bloods_received_wsu = return_caregiver_bloods(caregiver_bio,received_wsu_fk=caregiver_bio.status_fk.received_wsu_fk)
     if caregiver_bio.status_fk and caregiver_bio.status_fk.shipped_echo_fk:
         caregiver_bloods_shipped_echo = return_caregiver_bloods(caregiver_bio,shipped_echo_fk=caregiver_bio.status_fk.shipped_echo_fk)
-        logging.critical(f"Caregiver bloods {caregiver_bloods_shipped_echo}")
+        logging.debug(f"Caregiver bloods {caregiver_bloods_shipped_echo}")
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -785,7 +785,7 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     declined_item = Declined.objects.get(status__caregiverbiospecimen=caregiver_bio)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
-    logging.critical(f'{declined_item}')
+    logging.debug(f'{declined_item}')
     if request.method=="POST":
         form = DeclinedForm(data=request.POST, prefix='declined_form')
         if form.is_valid():
