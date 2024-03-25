@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os, logging
 from pathlib import Path
+
+import parameters
 from parameters import PASSWORD
 logging.basicConfig(level=logging.CRITICAL)
 
@@ -167,3 +169,12 @@ STATIC_ROOT = BASE_DIR / "static"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+
+# email configs
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'msuechonotifications@gmail.com'
+EMAIL_HOST_PASSWORD = parameters.EMAIL_PASSWORD
