@@ -125,7 +125,7 @@ class CollectedBiospecimenPlacentaForm(forms.Form):
         }
 
 class CollectedBiospecimenUrineForm(forms.Form):
-    collected_date_time = forms.DateTimeField(initial=timezone.now(), widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    collected_date_time = forms.DateTimeField( widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     processed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     stored_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     number_of_tubes = forms.IntegerField()
@@ -156,7 +156,7 @@ class ShippedChoiceEchoForm(forms.Form):
     shipped_to_wsu_or_echo = forms.ChoiceField(widget=forms.Select,choices=SHIPPED_CHOICE_ECHO)
 
 class ShippedtoWSUForm(forms.Form):
-    shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    shipped_date_and_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     tracking_number = forms.CharField()
     number_of_tubes = forms.IntegerField()
     logged_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))

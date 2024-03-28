@@ -70,7 +70,7 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         self.assertEqual(caregiver_bio.status_fk.no_consent_fk,no_consent)
 
     def test_caregiver_biospecimen_links_to_shippedwsu(self):
-        shipped_wsu = ShippedWSU.objects.create(shipped_by=User.objects.get(pk=1))
+        shipped_wsu = ShippedWSU.objects.create(shipped_by=User.objects.get(username='staff'))
         placenta = Collection.objects.get(collection_type='C', collection_number=None)
         caregiver_bio = CaregiverBiospecimen.objects.get(caregiver_fk__charm_project_identifier='4100',
                                                          collection_fk=placenta,project_fk__project_name__contains='ECHO2')
