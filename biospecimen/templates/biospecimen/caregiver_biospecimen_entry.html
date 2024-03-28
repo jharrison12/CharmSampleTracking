@@ -62,7 +62,7 @@
     {% elif caregiver_bio.incentive_fk and  caregiver_bio.incentive_fk.incentive_date and caregiver_bio.status_fk.collected_fk.collected_date_time %}
         <div id="incentive_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
-                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive Date:</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive</button>
             </div>
             <div class="col-8">
                 <div>Incentive Date: {{ caregiver_bio.incentive_fk.incentive_date }}</div>

@@ -23,6 +23,14 @@ class FunctionalTest(StaticLiveServerTestCase):
         staging_server = os.environ.get('STAGING_SERVER')
         if staging_server:
             self.live_server_url = 'http://' + staging_server
+            self.browser.get(self.live_server_url)
+            self.browser.get(f'{self.browser.current_url}/accounts/login/')
+            username = self.browser.find_element(By.ID, 'id_username')
+            username.send_keys('testuser')
+            password = self.browser.find_element(By.ID, 'id_password')
+            password.send_keys('secret')
+            login = self.browser.find_element(By.ID, 'login_button')
+            login.click()
             return
 
         self.browser.get(self.live_server_url)
