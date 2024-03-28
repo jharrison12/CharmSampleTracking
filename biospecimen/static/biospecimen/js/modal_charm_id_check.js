@@ -16,7 +16,7 @@ if (exampleModal) {
     console.log(modalLink)
 
     modalTitle.textContent = 'Confirm'
-    modalBody.textContent = `Please confirm charm id ${recipient}`;
+    modalBody.textContent = `Please confirm Charm ID ${recipient}`;
     //Tried to use Django links but apparently that is bad practice
     //https://stackoverflow.com/questions/37311042/call-django-urls-inside-javascript-on-click-event
     modalLink.setAttribute('href',`/biospecimen/charm_ids/${recipient}/`)
