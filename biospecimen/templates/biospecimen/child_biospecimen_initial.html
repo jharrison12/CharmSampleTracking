@@ -5,7 +5,6 @@
     <div class="col-sm">Biospecimen ID: {{ child_bio.biospecimen_id|default:"" }}</div>
     <div class="col-sm">Type: {{ collection_type_display }}</div>
     {#  Not sure what the below object was in the SRO version of this device    #}
-    <div class="col-sm">Log Status: {{ childbio }}</div>
         <hr/>
     </div>
     {% if not child_bio.status_fk %}
