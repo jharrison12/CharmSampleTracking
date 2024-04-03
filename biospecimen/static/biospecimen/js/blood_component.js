@@ -1,4 +1,4 @@
-//Hid component if not clicked
+//Hide component if not clicked
 $('#whole_blood_number_of_tubes_div').hide();
 $('#serum_number_of_tubes_div').hide();
 $('#plasma_number_of_tubes_div').hide();

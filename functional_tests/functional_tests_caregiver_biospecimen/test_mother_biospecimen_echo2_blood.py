@@ -52,6 +52,7 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         # user submits form and sees data
         collected = self.browser.find_element(By.ID, "id_blood_form-collected_date_time")
         collected.click()
+
         number_of_elements = self.choose_flatpickr_day(0)
         time.sleep(1)
 

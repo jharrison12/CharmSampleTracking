@@ -1,7 +1,6 @@
 {% extends "biospecimen/caregiver_biospecimen_entry_base.html" %}
 {% block javascript_block %}
     <script type="text/javascript" src="/static/biospecimen/js/datetime_test.js" async></script>
-    <script src="/static/biospecimen/js/blood_component.js" async></script>
 {% endblock %}
 {% block bio_logic %}
     {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}
@@ -402,4 +401,7 @@
                                 <input type="hidden" id="refresh" value="no">
                     {% endfor %}
     {% endif %}
+{% endblock %}
+{% block second_javascript %}
+    <script type="text/javascript" src="/static/biospecimen/js/blood_component.js"></script>
 {% endblock %}
