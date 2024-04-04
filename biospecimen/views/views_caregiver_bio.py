@@ -208,7 +208,6 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if caregiver_bio.status_fk==None:
         if collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
-            logging.debug(f"made it to INCORRECT initial bio form")
             initial_bio_form = InitialBioForm(prefix="initial_form")
         elif collection_type in PERINATAL:
             initial_bio_form = InitialBioFormPeriNatal(prefix="initial_form")
@@ -239,9 +238,6 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method=="POST" and collection_type not in HAIR_SALIVA and collection_type not in PERINATAL:
         form = InitialBioForm(data=request.POST, prefix='initial_form')
-        logging.debug(f"{form.is_valid()} {form} {form.errors} collection type {collection_type} "
-                         f"\n\nperinatal {PERINATAL}"
-                         f"\n\n is collection_type in PERINATAL {collection_type in PERINATAL}")
         if form.is_valid():
             new_status = Status.objects.create()
             new_status.save_initial_form(form=form,caregiver_bio=caregiver_bio,request=request)

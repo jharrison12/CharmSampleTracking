@@ -88,9 +88,9 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
         return response
 
-    def send_declined_form(self,primary_key):
-        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/declined/post/',
-                                    data={'declined_form-declined_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+    def send_not_collected_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/not_collected/post/',
+                                    data={'not_collected_form-refusal': True})
         return response
 
     #TEMPLATES
@@ -184,15 +184,10 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.initial_send_form(primary_key,'N')
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
-    def test_echo2_bio_urine_initial_posts_to_initial_post_view_declined(self):
+    def test_echo2_bio_urine_test_that_not_collected_form_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key,'X')
-        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
-
-    def test_echo2_bio_urine_test_that_declined_form_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key,'X')
-        response = self.send_declined_form(primary_key)
+        response = self.initial_send_form(primary_key,'N')
+        response = self.send_not_collected_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
     def test_echo2_urine_incentive_form_redirects_to_entry(self):
@@ -286,11 +281,11 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoForm)
 
-    def test_echo2_bio_page_shows_declined_form_if_initial_form_is_declined(self):
+    def test_echo2_bio_page_shows_not_collected_form_if_user_chooses_not_collected(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        self.initial_send_form(primary_key,'X')
+        self.initial_send_form(primary_key,'N')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        self.assertIsInstance(response.context['declined_form'], DeclinedForm)
+        self.assertIsInstance(response.context['not_collected_form'], NotCollectedForm)
 
     #Logged_By
         #Urine

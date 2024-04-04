@@ -331,11 +331,6 @@ class Status(models.Model):
                 new_not_collected.logged_by = request.user
                 self.not_collected_fk = new_not_collected
                 new_not_collected.save()
-            elif form.cleaned_data['collected_not_collected'] == 'X':
-                logging.debug(f"In declined form")
-                new_declined = Declined.objects.create()
-                self.declined_fk = new_declined
-                new_declined.save()
         elif request.POST.__contains__('initial_form-collected_not_collected_kit_sent'):
             if form.cleaned_data['collected_not_collected_kit_sent'] == 'K':
                 new_kit_sent = KitSent.objects.create()

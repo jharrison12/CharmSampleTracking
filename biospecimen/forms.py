@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.CRITICAL)
 
 CHOICES = [('C','Complete')]
 IN_PERSON_REMOTE = [('I','In Person'),('R','Remote')]
-COLLECTED_NOT_COLLECTED_DECLINED = [('C', 'Collected'), ('N', 'Not Collected'), ('X', 'Declined')]
+COLLECTED_NOT_COLLECTED = [('C', 'Collected'), ('N', 'Not Collected')]
 COLLECTED_NOT_COLLECTED_NO_CONSENT = [('C', 'Collected'), ('N', 'Not Collected'), ('O', 'No Consent')]
 KIT_SENT_NOT_COLLECTED_DECLINED = [('K', 'Kit Sent'), ('N', 'Not Collected'), ('X', 'Declined')]
 KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
@@ -138,7 +138,7 @@ class CollectedBiospecimenUrineForm(forms.Form):
         }
 
 class InitialBioForm(forms.Form):
-    collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED_DECLINED)
+    collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED)
 
 class InitialBioFormPostNatal(forms.Form):
     collected_not_collected_kit_sent = forms.ChoiceField(widget=forms.Select, choices=KIT_SENT_NOT_COLLECTED_DECLINED)

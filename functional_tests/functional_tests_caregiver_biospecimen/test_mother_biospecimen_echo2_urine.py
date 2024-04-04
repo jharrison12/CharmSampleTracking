@@ -167,6 +167,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.assertIn('Charm ID: 4101', [item.text for item in header_text])
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
         self.assertIn('Initial Form',body_text)
+        self.assertNotIn('Declined',body_text)
 
         collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
         collected_not_collected.select_by_visible_text('Not Collected')
@@ -176,41 +177,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         #user sees collected form on next page
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertNotIn('<form>', body_text)
+        self.assertIn('<form>', body_text)
         self.assertIn('Not Collected', body_text)
-        self.assertIn('testuser', body_text)
-
-
-    def test_user_can_choose_status_of_urine_information_chooses_declined(self):
-        # User visits the caregiver biospecimen page and sees urine
-        primary_key = self.return_caregiver_bio_pk('4101', 'U', 'S')
-        self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/initial/')
-
-        #user sees initial form and submits collected
-        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: 4101', [item.text for item in header_text])
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Initial Form',body_text)
-
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
-        collected_not_collected.select_by_visible_text('Declined')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
-        submit.click()
-
-        #user sees declined form on next page
-
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Declined Form', body_text)
-
-        declined_date_time = self.browser.find_element(By.ID, 'id_declined_form-declined_date_time')
-
-        declined_date_time.click()
-        self.choose_flatpickr_day(0)
-
-        submit = self.browser.find_element(By.XPATH,'//*[@id="declined_form"]/form/input[2]')
-        submit.click()
-        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn(f'Declined Date Time: {TODAY}', body_text)
-        self.assertIn('Logged By: testuser', body_text )
-
+        self.assertIn('Refused', body_text)
+        self.assertIn('Other', body_text)
