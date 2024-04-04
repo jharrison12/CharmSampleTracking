@@ -90,9 +90,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
     def send_not_collected_form(self,primary_key):
         response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/not_collected/post/',
-                                    data={'not_collected_form-refusal': True,
-                                          'not_collected_form-other_specify':False,
-                                          'not_collected_form-other_specify_reason':'',
+                                    data={'not_collected_form-refused_or_other': 'R',
                                           })
         return response
 
@@ -191,7 +189,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'N')
         response = self.send_not_collected_form(primary_key)
-        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
+        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/initial/",status_code=302,target_status_code=302)
 
     def test_echo2_urine_incentive_form_redirects_to_entry(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')

@@ -800,6 +800,7 @@ def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregive
         form = NotCollectedForm(data=request.POST, prefix='not_collected_form')
         if form.is_valid():
             not_collected_item.save_not_collected(form=form, request=request)
+    logging.critical(f'made it here not collected saved')
     return redirect("biospecimen:caregiver_biospecimen_initial", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
 def error(request):

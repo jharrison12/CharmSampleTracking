@@ -174,10 +174,11 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
-        #user sees collected form on next page
+        #user sees not collected form on next page
 
         body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('<form>', body_text)
+
         self.assertIn('Not Collected', body_text)
         self.assertIn('Refused', body_text)
         self.assertIn('Other', body_text)
+        ##todo update ft to pass
