@@ -3,7 +3,7 @@ import datetime
 from django import forms
 from django.forms import TextInput
 import logging
-from biospecimen.models import CaregiverBiospecimen,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU,Incentive,Component,BLOOD_DICT_FORM,BLOOD_DICT,BLOOD_DICT_DISPLAY
+from biospecimen.models import CaregiverBiospecimen,Status,Declined,ReceivedWSU,ShippedMSU,ReceivedMSU,Incentive,Component,BLOOD_DICT_FORM,BLOOD_DICT,BLOOD_DICT_DISPLAY,NotCollected
 from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils import timezone
@@ -306,8 +306,8 @@ class NotCollectedForm(forms.Form):
         ('1', 'Refused'),
         ('2', 'Other'),
     ]
-    refused_other = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES,label='')
-    other_specify = forms.CharField(widget=forms.TextInput(attrs={'id': 'other_specify_input'}))
+    refused_or_other = forms.ChoiceField(widget=forms.RadioSelect, choices=NotCollected.RefusedOrOther.choices,label='')
+    other_specify = forms.CharField(widget=forms.TextInput(attrs={'id': 'other_specify_input'}),required=False)
 
 
 class ShippedtoMSUForm(forms.ModelForm):

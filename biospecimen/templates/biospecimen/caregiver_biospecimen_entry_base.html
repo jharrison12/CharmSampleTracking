@@ -24,6 +24,10 @@
                     <button type="button" class="btn btn-primary" disabled aria-disabled="true">Not Collected</button>
                 </div>
                 <div class="col-8">
+                    <div>Refused or other: {{ caregiver_bio.status_fk.not_collected_fk.get_refused_or_other_display }}</div>
+                    {% if caregiver_bio.status_fk.not_collected_fk.refused_or_other == 'O' %}
+                        <div>Other Reason: {{ caregiver_bio.status_fk.not_collected_fk.other_specify_reason }}</div>
+                    {% endif %}
                     <div>Logged By: {{ caregiver_bio.status_fk.not_collected_fk.logged_by }}</div>
                 </div>
             </div>

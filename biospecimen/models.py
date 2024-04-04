@@ -151,16 +151,19 @@ class Collected(models.Model):
         return f"collected {self.status_set}"
 
 class NotCollected(models.Model):
-    refused = models.BooleanField(blank=True,null=True)
-    other_specify = models.BooleanField(blank=True,null=True)
+    class RefusedOrOther(models.TextChoices):
+        REFUSED = 'R', _('Refused')
+        OTHER = 'O', _('Other')
+    refused_or_other = models.CharField(max_length=1,choices=RefusedOrOther.choices,null=True,blank=True)
     other_specify_reason = models.TextField(blank=True,null=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
     def save_not_collected(self,form,request):
-        self.refused = form.cleaned_data['refused']
-        self.other_specify = form.cleaned_data['other_specify']
-        self.other_specify_reason = form.cleaned_data['other_specify_reason']
+        self.refused_or_other = form.cleaned_data['refused_or_other']
+        if form.cleaned_data['refused_or_other']=='O':
+            self.other_specify_reason = form.cleaned_data['other_specify']
         self.logged_by = request.user
+        self.save()
 
     def __str__(self):
         return f"collected {self.status_set}"

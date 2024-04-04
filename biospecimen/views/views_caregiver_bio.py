@@ -355,7 +355,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     shipped_to_msu_form = None
     received_msu_form = None
     not_collected_form = None
-    if not_collected_item.exists() and not_collected_item.filter(refused__isnull=True,other_specify__isnull=True):
+    if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True):
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collection_type in HAIR_SALIVA:
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
