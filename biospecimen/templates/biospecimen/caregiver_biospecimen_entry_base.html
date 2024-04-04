@@ -8,7 +8,17 @@
     {% if caregiver_bio.trimester_fk %}<div class="col-sm">Trimester: {{ caregiver_bio.trimester_fk.get_trimester_display }}</div>{% endif %}
         <hr/>
     </div>
-    {% if caregiver_bio.status_fk.not_collected_fk %}
+    {% if not_collected_item %}
+        {% if not_collected_form %}
+            <div id="not_collected_form" class="row border border-primary p-3 rounded">
+              <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_not_collected_post' charm_project_identifier caregiver_bio_pk %}>
+              {% csrf_token %}
+                  <h2>Not Collected Form</h2>
+                    {{ not_collected_form.as_p }}
+              <input type="submit" value="Submit" />
+              </form>
+            </div>
+        {% else %}
             <div id="not_collected_information" class="row border border-primary p-3 rounded">
                 <div class="col-4">
                     <button type="button" class="btn btn-primary" disabled aria-disabled="true">Not Collected</button>
@@ -17,6 +27,7 @@
                     <div>Logged By: {{ caregiver_bio.status_fk.not_collected_fk.logged_by }}</div>
                 </div>
             </div>
+        {% endif %}
     {% elif declined_item %}
         {% if declined_form %}
             <div id="declined_form" class="row border border-primary p-3 rounded">

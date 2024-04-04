@@ -151,8 +151,16 @@ class Collected(models.Model):
         return f"collected {self.status_set}"
 
 class NotCollected(models.Model):
-    not_collected_datetime = models.DateTimeField(default=timezone.now,blank=True,null=True)
+    refused = models.BooleanField(blank=True,null=True)
+    other_specify = models.BooleanField(blank=True,null=True)
+    other_specify_reason = models.TextField(blank=True,null=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+
+    def save_not_collected(self,form,request):
+        self.refused = form.cleaned_data['refused']
+        self.other_specify = form.cleaned_data['other_specify']
+        self.other_specify_reason = form.cleaned_data['other_specify_reason']
+        self.logged_by = request.user
 
     def __str__(self):
         return f"collected {self.status_set}"

@@ -10,7 +10,7 @@ from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBio
     ShippedChoiceEchoForm, CollectedChildBloodSpotForm, CollectedChildBloodSpotHairFormOneYear, ShippedtoWSUFormChild, \
     InitialBioFormChildTooth, \
     CollectedChildToothForm, DeclinedForm, ReceivedatWSUForm, ShippedtoMSUForm, CollectedBiospecimenHairSalivaForm, \
-    ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoForm
+    ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoForm, NotCollectedForm
 from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -90,7 +90,10 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
     def send_not_collected_form(self,primary_key):
         response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/not_collected/post/',
-                                    data={'not_collected_form-refusal': True})
+                                    data={'not_collected_form-refusal': True,
+                                          'not_collected_form-other_specify':False,
+                                          'not_collected_form-other_specify_reason':'',
+                                          })
         return response
 
     #TEMPLATES
@@ -302,13 +305,6 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.initial_send_form(primary_key,'N')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.not_collected_fk.logged_by.username,'testuser')
-
-    def test_echo2_bio_urine_declined_post_saved_logged_by(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        self.initial_send_form(primary_key,'X')
-        self.send_declined_form(primary_key)
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        self.assertEqual(caregiver_bio.status_fk.declined_fk.logged_by.username,'testuser')
 
     def test_echo2_bio_urine_incentive_post_saved_logged_by(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
@@ -661,12 +657,6 @@ class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_to_msu_form'], ShippedtoMSUForm)
 
-    def test_echo2_bio_page_shows_declined_form_if_hair_or_saliva(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None,age_category='ZF')
-        self.initial_send_form_hair_saliva(primary_key,'X')
-        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        self.assertIsInstance(response.context['declined_form'], DeclinedForm)
-
 class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
@@ -959,12 +949,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/initial/')
         self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
-    def test_echo2_declined_form_redirects_after_submission(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
-        self.blood_initial_send_form(primary_key, 'X')
-        response = self.send_declined_form(primary_key)
-        self.assertRedirects(response,f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
-
 
     #View has form tests
 
@@ -1004,13 +988,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(response.content.decode())
         self.assertIsInstance(response.context['received_wsu_form'], ReceivedatWSUBloodForm)
-
-    def test_echo2_bio_page_shows_declined_form_if_initial_declined_submitted_for_blood(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        response = self.blood_initial_send_form(primary_key, 'X')
-        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        self.assertIsInstance(response.context['declined_form'], DeclinedForm)
 
     #View updates data tests
 
@@ -1069,13 +1046,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'N')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.not_collected_fk.logged_by.username,'testuser')
-
-    def test_echo2_bio_blood_declined_saves_logged_by(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
-        self.blood_initial_send_form(primary_key, 'X')
-        self.send_declined_form(primary_key)
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        self.assertEqual(caregiver_bio.status_fk.declined_fk.logged_by.username,'testuser')
 
     def test_echo2_bio_blood_collected_form_saved_logged_by(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')

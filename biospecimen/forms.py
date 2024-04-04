@@ -301,6 +301,10 @@ class DeclinedForm(forms.Form):
     #     self.fields['declined_date'].widget = TextInput(attrs={
     #         'class': 'datepicker'})
 
+class NotCollectedForm(forms.Form):
+    refused = forms.BooleanField(required=False)
+    other_specify = forms.BooleanField(required=False)
+    other_specify_reason = forms.TextInput()
 
 class ShippedtoMSUForm(forms.ModelForm):
     class Meta:

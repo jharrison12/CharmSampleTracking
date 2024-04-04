@@ -8,7 +8,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Collected
     InitialBioFormPostNatal, KitSentForm, \
     ReceivedatWSUForm, InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm, ShippedtoWSUFormPlacenta, \
     ShippedtoMSUForm, ReceivedatMSUForm, ShippedtoWSUFormBlood, \
-    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoForm,DeclinedForm
+    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoForm, DeclinedForm, NotCollectedForm
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -345,7 +345,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_msu_item = ShippedMSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_msu_item = ReceivedMSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    declined_item = Declined.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     collected_form = None
     shipped_choice = None
     shipped_wsu_form = None
@@ -354,11 +354,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_at_wsu_form = None
     shipped_to_msu_form = None
     received_msu_form = None
-    declined_form = None
-    logging.debug(f"Collection type is {collection_type}")
-    logging.debug(f"Declined item {declined_item}")
-    if declined_item.exists() and declined_item.filter(declined_date__isnull=True):
-        declined_form = DeclinedForm(prefix='declined_form')
+    not_collected_form = None
+    if not_collected_item.exists() and not_collected_item.filter(refused__isnull=True,other_specify__isnull=True):
+        not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collection_type in HAIR_SALIVA:
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
@@ -415,8 +413,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'received_at_wsu_form':received_at_wsu_form,
                                                                                                   'shipped_to_msu_form':shipped_to_msu_form,
                                                                                                   'received_msu_form':received_msu_form,
-                                                                                                  'declined_form': declined_form,
-                                                                                                  'declined_item': declined_item
+                                                                                                  'not_collected_form':not_collected_form,
+                                                                                                  'not_collected_item': not_collected_item
                                                                                                   })
 
 @login_required
@@ -792,6 +790,17 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
     return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
 
-
+@login_required
+def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    not_collected_item = NotCollected.objects.get(status__caregiverbiospecimen=caregiver_bio)
+    collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
+    logging.debug(f'{not_collected_item}')
+    if request.method == "POST":
+        form = NotCollectedForm(data=request.POST, prefix='not_collected_form')
+        if form.is_valid():
+            not_collected_item.save_not_collected(form=form, request=request)
+    return redirect("biospecimen:caregiver_biospecimen_initial", caregiver_charm_id=caregiver_charm_id,
+                    caregiver_bio_pk=caregiver_bio_pk)
 def error(request):
     return render(request=request,template_name='biospecimen/error.html')
