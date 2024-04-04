@@ -302,9 +302,13 @@ class DeclinedForm(forms.Form):
     #         'class': 'datepicker'})
 
 class NotCollectedForm(forms.Form):
-    refused = forms.BooleanField(required=False)
-    other_specify = forms.BooleanField(required=False)
-    other_specify_reason = forms.TextInput()
+    CHOICES = [
+        ('1', 'Refused'),
+        ('2', 'Other'),
+    ]
+    refused_other = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES,label='')
+    other_specify = forms.CharField(widget=forms.TextInput(attrs={'id': 'other_specify_input'}))
+
 
 class ShippedtoMSUForm(forms.ModelForm):
     class Meta:
