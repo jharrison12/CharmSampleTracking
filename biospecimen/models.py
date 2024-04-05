@@ -113,6 +113,7 @@ class Collected(models.Model):
         self.processed_date_time = form.cleaned_data['processed_date_time']
         self.stored_date_time = form.cleaned_data['stored_date_time']
         self.number_of_tubes = form.cleaned_data['number_of_tubes']
+        self.kit_distribution = 'N'
         self.logged_by = request.user
         self.save()
 
@@ -144,6 +145,11 @@ class Collected(models.Model):
         REMOTE = 'R', _('Remote')
 
     in_person_remote = models.CharField(max_length=1, choices=InpersonRemoteChoices.choices)
+
+    class KitDistributionChoices(models.TextChoices):
+        NOT_APPLICABLE = 'N', _('Not Applicable')
+
+    kit_distribution = models.CharField(max_length=1, choices=KitDistributionChoices.choices)
 
     ##todo check for formaline datetime if placenta
 
