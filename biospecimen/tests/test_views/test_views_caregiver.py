@@ -34,7 +34,9 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
                                     data={"urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
                                           "urine_form-processed_date_time": timezone.datetime(2023, 5, 5, 5, 5,5),
                                           "urine_form-stored_date_time": timezone.datetime(2023, 5, 5, 5, 5,5),
-                                          "urine_form-number_of_tubes": 5})
+                                          "urine_form-number_of_tubes": 5,
+                                          "urine_form-notes_and_deviations": 'what',
+                                          })
         return response
 
 
