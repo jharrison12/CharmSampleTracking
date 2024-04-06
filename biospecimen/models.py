@@ -115,6 +115,7 @@ class Collected(models.Model):
         self.stored_date_time = form.cleaned_data['stored_date_time']
         self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
+        self.collection_location = 'C'
         self.kit_distribution = 'N'
         self.method_of_collection = 'U'
         self.logged_by = request.user
@@ -160,6 +161,11 @@ class Collected(models.Model):
         URINE_CUP = 'U', _('Urine cup')
 
     method_of_collection = models.CharField(max_length=1,choices=MethodOfCollection.choices,null=True)
+
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C', _('Clinic')
+
+    collection_location = models.CharField(max_length=1,choices=CollectionLocation.choices,null=True)
 
     def __str__(self):
         return f"collected {self.status_set}"
