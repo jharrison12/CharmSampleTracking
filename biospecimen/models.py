@@ -102,6 +102,7 @@ class Collected(models.Model):
     placed_in_formalin_date_time = models.DateTimeField(null=True,blank=True)
     received_date = models.DateField(null=True,blank=True)
     number_of_cards = models.IntegerField(null=True,blank=True)
+    notes_and_deviations = models.TextField()
 
     def create_collected_and_set_status_fk(self,caregiver_bio):
         caregiver_bio.status_fk.collected_fk = self
@@ -113,7 +114,9 @@ class Collected(models.Model):
         self.processed_date_time = form.cleaned_data['processed_date_time']
         self.stored_date_time = form.cleaned_data['stored_date_time']
         self.number_of_tubes = form.cleaned_data['number_of_tubes']
+        self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
         self.kit_distribution = 'N'
+        self.method_of_collection = 'U'
         self.logged_by = request.user
         self.save()
 
@@ -149,9 +152,14 @@ class Collected(models.Model):
     class KitDistributionChoices(models.TextChoices):
         NOT_APPLICABLE = 'N', _('Not Applicable')
 
-    kit_distribution = models.CharField(max_length=1, choices=KitDistributionChoices.choices)
+    kit_distribution = models.CharField(max_length=1, choices=KitDistributionChoices.choices,null=True)
 
     ##todo check for formaline datetime if placenta
+
+    class MethodOfCollection(models.TextChoices):
+        URINE_CUP = 'U', _('Urine cup')
+
+    method_of_collection = models.CharField(max_length=1,choices=MethodOfCollection.choices,null=True)
 
     def __str__(self):
         return f"collected {self.status_set}"

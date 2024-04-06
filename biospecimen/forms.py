@@ -129,9 +129,10 @@ class CollectedBiospecimenUrineForm(forms.Form):
     processed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     stored_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     number_of_tubes = forms.IntegerField()
+    notes_and_deviations = forms.CharField(max_length=255)
 
     class Meta:
-        fields = ['collected_date_time','processed_date_time','stored_date_time','number_of_tubes']
+        fields = ['collected_date_time','processed_date_time','stored_date_time','number_of_tubes','notes_and_deviations']
         widgets = {
             "collected_date_time": forms.DateTimeInput,
             "processed_date_time": forms.DateTimeInput
