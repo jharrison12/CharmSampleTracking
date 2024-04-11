@@ -1,8 +1,9 @@
 import logging
+import unittest
 
 from biospecimen.models import Collection,CaregiverBiospecimen,ChildBiospecimen,Status,\
     PregnancyTrimester,NotCollected,NoConsent,ShippedWSU,ShippedECHO,KitSent,Declined,ReceivedWSU,\
-    ShippedMSU,ReceivedMSU,Caregiver,Incentive,Child,User,Component
+    ShippedMSU,ReceivedMSU,Caregiver,Incentive,Child,User,Component,Collected
 import datetime
 from biospecimen.tests.db_setup import DatabaseSetup
 from django.utils import timezone
@@ -119,6 +120,13 @@ class BioSpecimenCaregiverModelsTest(DatabaseSetup):
         caregiver_bio.status_fk = status_received_msu
         caregiver_bio.save()
         self.assertEqual(caregiver_bio.status_fk.received_msu_fk, received_msu)
+
+    @unittest.skip
+    ##TODO finish this
+    def test_caregiver_biospecimen_urine_creates_saves_collection_location(self):
+        collected_item = Collected.objects.create()
+        collected_item.save_urine(form=None,request=None)
+        self.assertEqual(collected_item.collection_location,'C')
 
 class ChildBiospecimenModelTest(DatabaseSetup):
 
