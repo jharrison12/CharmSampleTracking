@@ -96,6 +96,7 @@ class Collected(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,null=True,blank=True)
     collected_date_time = models.DateTimeField(null=True,blank=True)
+    eat_drink_datetime = models.DateTimeField(null=True,blank=True)
     processed_date_time = models.DateTimeField(null=True,blank=True)
     stored_date_time = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True)
@@ -103,6 +104,7 @@ class Collected(models.Model):
     received_date = models.DateField(null=True,blank=True)
     number_of_cards = models.IntegerField(null=True,blank=True)
     notes_and_deviations = models.TextField()
+    eat_drink_text_field = models.TextField(null=True,blank=True)
 
     def create_collected_and_set_status_fk(self,caregiver_bio):
         caregiver_bio.status_fk.collected_fk = self
@@ -110,10 +112,9 @@ class Collected(models.Model):
         caregiver_bio.save()
 
     def save_urine(self,form,request):
+        self.eat_drink_datetime = form.cleaned_data['eat_drink_datetime']
+        self.eat_drink_text_field = form.cleaned_data['eat_drink_text_field']
         self.collected_date_time = form.cleaned_data['collected_date_time']
-        self.processed_date_time = form.cleaned_data['processed_date_time']
-        self.stored_date_time = form.cleaned_data['stored_date_time']
-        self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
         self.collection_location = 'C'
         self.kit_distribution = 'N'
