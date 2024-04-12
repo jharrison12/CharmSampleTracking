@@ -41,20 +41,18 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.assertIn('Collected Form', form)
 
         # user submits form and sees data
+
+        food_eat_time = self.browser.find_element(By.ID, "id_urine_form-eat_drink_datetime")
+        food_eat_time.click()
+        self.choose_flatpickr_day(0)
+
+        food_eat_list = self.browser.find_element(By.ID, "id_urine_form-eat_drink_text_field")
+        food_eat_list.send_keys('Bread')
+
         collected = self.browser.find_element(By.ID, "id_urine_form-collected_date_time")
         collected.click()
-        new_num = self.choose_flatpickr_day(0)
-
-        processed = self.browser.find_element(By.ID, "id_urine_form-processed_date_time")
-        processed.click()
-        new_num1 = self.choose_flatpickr_day(new_num)
-
-        stored = self.browser.find_element(By.ID, "id_urine_form-stored_date_time")
-        stored.click()
-        self.choose_flatpickr_day(new_num1)
-
-        number_of_tubes = self.browser.find_element(By.ID, "id_urine_form-number_of_tubes")
-        number_of_tubes.send_keys(5)
+        time.sleep(2)
+        self.choose_flatpickr_day(1)
 
         submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
@@ -64,21 +62,26 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         #user sees some of the information just entered
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Number of Tubes: 5', body)
+        self.assertNotIn('Number of Tubes: 5', body)
+        self.assertNotIn('Processed Date Time: None',body)
+        self.assertNotIn('Stored Date Time: None', body)
+        self.assertNotIn('Number of Tubes: None', body)
 
         self.assertIn('Logged By:',body)
 
-        #User sees incentive form
+        #User does not see incentive form
 
-        incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        incentive_date.click()
-        self.choose_flatpickr_day(0)
+        self.assertNotIn('Incentive', body)
 
-        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
-        submit.click()
-
-        body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn(f'Incentive Date: {TODAY}', body)
+        # incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
+        # incentive_date.click()
+        # self.choose_flatpickr_day(0)
+        #
+        # submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
+        # submit.click()
+        #
+        # body = self.browser.find_element(By.TAG_NAME,'body').text
+        # self.assertIn(f'Incentive Date: {TODAY}', body)
 
         #user sees shipped to wsu form
 

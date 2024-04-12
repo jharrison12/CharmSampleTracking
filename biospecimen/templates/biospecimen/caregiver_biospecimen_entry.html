@@ -40,9 +40,9 @@
             </div>
             <div class="col-8">
                 <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
-                {% if collection_type not in 'H,L' %}<div>Processed Date Time: {{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>{% endif %}
-                {% if collection_type not in  'H,L' %}<div>Stored Date Time: {{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>{% endif %}
-                {% if collection_type not in  'H,L,C' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>{% endif %}
+                {% if collection_type not in 'H,L,U' %}<div>Processed Date Time: {{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>{% endif %}
+                {% if collection_type not in  'H,L,U' %}<div>Stored Date Time: {{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>{% endif %}
+                {% if collection_type not in  'H,L,C,U' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C' %}<div>Kit Distribution: {{ caregiver_bio.status_fk.collected_fk.get_kit_distribution_display }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C' %}<div>Method of Collection: {{ caregiver_bio.status_fk.collected_fk.get_method_of_collection_display }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C' %}<div>Collection Location: {{ caregiver_bio.status_fk.collected_fk.get_collection_location_display }}</div>{% endif %}
@@ -53,25 +53,6 @@
             </div>
         </div>
     {% else %}
-    {% endif %}
-    {% if caregiver_bio.incentive_fk and not caregiver_bio.incentive_fk.incentive_date and caregiver_bio.status_fk.collected_fk.collected_date_time %}
-        <div id="incentive_information_form" class="row border border-primary p-3 rounded">
-          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_incentive_post' charm_project_identifier caregiver_bio_pk %}>
-          {% csrf_token %}
-              <h2>Incentive Form</h2>
-            {{ incentive_form.as_p }}
-          <input type="submit" value="Submit" />
-          </form>
-        </div>
-    {% elif caregiver_bio.incentive_fk and  caregiver_bio.incentive_fk.incentive_date and caregiver_bio.status_fk.collected_fk.collected_date_time %}
-        <div id="incentive_information" class="row border border-primary p-3 rounded">
-            <div class="col-4">
-                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive</button>
-            </div>
-            <div class="col-8">
-                <div>Incentive Date: {{ caregiver_bio.incentive_fk.incentive_date }}</div>
-            </div>
-        </div>
     {% endif %}
     {% if shipped_to_msu_form %}
     <div id="shipped_to_msu" class="row border border-primary p-3 rounded">
