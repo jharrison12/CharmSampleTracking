@@ -73,20 +73,11 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         self.assertNotIn('Incentive', body)
 
-        # incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        # incentive_date.click()
-        # self.choose_flatpickr_day(0)
-        #
-        # submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_information_form"]/form/input[2]')
-        # submit.click()
-        #
-        # body = self.browser.find_element(By.TAG_NAME,'body').text
-        # self.assertIn(f'Incentive Date: {TODAY}', body)
-
         #user sees shipped to wsu form
 
         body = self.browser.find_element(By.ID,'shipped_to_wsu_information_form').text
-        self.assertIn('Shipped to WSU Form',body)
+        self.assertIn('Collected Questions',body)
+        self.assertIn('If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?',body)
 
         #user submits shipped to WSu form
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")

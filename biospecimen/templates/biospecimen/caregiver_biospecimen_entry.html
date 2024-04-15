@@ -96,6 +96,16 @@
             </div>
         </div>
     {% endif %}
+    {% if collected_questions_form %}
+        <div id="collected_questions_form" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:collected_questions_post' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Collected Questions Form</h2>
+            {{ collected_questions_form.as_p }}
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
+    {% endif %}
     {% if shipped_wsu_form  %}
         <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>

@@ -21,6 +21,8 @@ KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
+PROCESSED_ALIQUOTED_OFF_SITE = [('R','Refigerated'),('T','Room Temperature'),('N','Not Applicable')]
+YES_NO=[('Y','Yes'),('N','No')]
 
 
 def check_component_tubes(component_values, form_data,cleaned_data,chain_of_custody):
@@ -136,6 +138,41 @@ class CollectedBiospecimenUrineForm(forms.Form):
             "collected_date_time": forms.DateTimeInput,
             "processed_date_time": forms.DateTimeInput
         }
+
+class CollectedQuestionsFormUrine(forms.Form):
+    processed_aliquoted_off_site = forms.CharField(widget=forms.Select, choices=PROCESSED_ALIQUOTED_OFF_SITE,label='If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?')
+    processed_aliquoted_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"},label='When was the specimen received at the processing site?'))
+    total_volume_of_urine_in_collection_cup = forms.IntegerField(label='What is the total volume of urine in the collection cup?')
+    precipate_bottom_of_container = forms.CharField(widget=forms.Select,choices=YES_NO,label='Are there precipitate(s) at the bottom of the collection container?')
+    refigerated_prior_to_processing = forms.CharField(widget=forms.Select,choices=YES_NO,label='Was the collection cup placed at refrigerated temperature prior to processing?')
+    refigerated_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"},label='When was the collected cup placed at refrigerated temperature?'))
+    refigerated_removed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"},label='When was the collection cup removed from refrigerated temperature for processing?'))
+    all_18_collected = forms.CharField(widget=forms.Select,choices=YES_NO, label='Were all seven of the 1.8 mL urine aliquots collected? (orange cap)')
+    partial_aliquot_18ml_1 = forms.BooleanField(required=False)
+    partial_aliquot_18ml_1_amount = forms.FloatField(max_value=1.8,min_value=0)
+    partial_aliquot_18ml_2 = forms.BooleanField(required=False)
+    partial_aliquot_18ml_2_amount = forms.FloatField(max_value=1.8,min_value=0)
+    partial_aliquot_18ml_3 = forms.BooleanField(required=False)
+    partial_aliquot_18ml_3_amount = forms.FloatField(max_value=1.8,min_value=0)
+    partial_aliquot_18ml_4 = forms.BooleanField(required=False)
+    partial_aliquot_18ml_4_amount = forms.FloatField(max_value=1.8,min_value=0)
+    partial_aliquot_18ml_5 = forms.BooleanField(required=False)
+    partial_aliquot_18ml_5_amount = forms.FloatField(max_value=1.8,min_value=0)
+    partial_aliquot_18ml_6 = forms.BooleanField(required=False)
+    partial_aliquot_18ml_6_amount = forms.FloatField(max_value=1.8,min_value=0)
+    partial_aliquot_18ml_7 = forms.BooleanField(required=False)
+    partial_aliquot_18ml_7_amount = forms.FloatField(max_value=1.8,min_value=0)
+    all_7_collected = forms.CharField(widget=forms.Select,choices=YES_NO, label='Were all four of the 7 mL urine aliquots collected? (orange cap)')
+    partial_aliquot_7ml_1 = forms.BooleanField(required=False)
+    partial_aliquot_7ml_1_amount = forms.FloatField(max_value=7.0,min_value=0)
+    partial_aliquot_7ml_2 = forms.BooleanField(required=False)
+    partial_aliquot_7ml_2_amount = forms.FloatField(max_value=7.0,min_value=0)
+    partial_aliquot_7ml_3 = forms.BooleanField(required=False)
+    partial_aliquot_7ml_3_amount = forms.FloatField(max_value=7.0,min_value=0)
+    partial_aliquot_7ml_4 = forms.BooleanField(required=False)
+    partial_aliquot_7ml_4_amount = forms.FloatField(max_value=7.0,min_value=0)
+    notes_and_deviations = forms.CharField(max_length=255,required=False)
+
 
 class InitialBioForm(forms.Form):
     collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED)

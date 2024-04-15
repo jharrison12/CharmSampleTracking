@@ -12,7 +12,8 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedB
 ShippedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
 ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm,\
-    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm,ShippedtoEchoBloodForm
+    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm,ShippedtoEchoBloodForm,\
+CollectedQuestionsFormUrine
 from biospecimen.models import Caregiver, CaregiverBiospecimen
 from biospecimen.tests.test_views.test_views_caregiver import CaregiverEcho2BiospecimenPageBlood as BL
 from biospecimen.tests.db_setup import DatabaseSetup
@@ -163,6 +164,12 @@ class CaregiverBioShippedChoiceForm(TestCase):
     def test_bio_shipped_choice_form_has_shipped_to_wsu(self):
         form = ShippedChoiceForm()
         self.assertIn('Shipped to WSU',form.as_p())
+
+class CaregiverCollectedQuestionsFormUrine(TestCase):
+
+    def test_bio_collected_questions_form_has_shipped_to_wsu(self):
+        form = CollectedQuestionsFormUrine()
+        self.assertIn('If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?',form.as_p())
 
 
 class CaregiverShippedtoWSUForm(TestCase):
