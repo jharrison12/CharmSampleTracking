@@ -1,6 +1,7 @@
 {% extends "biospecimen/caregiver_biospecimen_entry_base.html" %}
 {% block javascript_block %}
     <script type="text/javascript" src="/static/biospecimen/js/datetime_test.js" async></script>
+    <script type="text/javascript" src="/static/biospecimen/js/urine_processed.js" async></script>
 {% endblock %}
 {% block bio_logic %}
     {% if caregiver_bio.status_fk and caregiver_bio.status_fk.kit_sent_fk and not caregiver_bio.status_fk.kit_sent_fk.kit_sent_date %}
@@ -101,7 +102,124 @@
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_processed_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
               <h2>Processed Form</h2>
-            {{ processed_form.as_p }}
+              {{ processed_form.non_field_errors }}
+              {{ processed_form.has_error }}
+              {{ processed_form.errors }}
+              <div class="form-group">
+                  {{ processed_form.processed_aliquoted_off_site.errors }}
+                 <label for="{{ processed_form.processed_aliquoted_off_site.id_for_label }}" class="form-label"> {{ processed_form.processed_aliquoted_off_site.label }}</label>
+                  {{ processed_form.processed_aliquoted_off_site }}
+              </div>
+              <div class="form-group" id="processed_aliquoted_date_time">
+                  {{ processed_form.processed_aliquoted_date_time.errors }}
+                  <label for="{{ processed_form.processed_aliquoted_off_site.id_for_label }}" class="form-label"> {{ processed_form.processed_aliquoted_date_time.label }}</label>
+                  {{ processed_form.processed_aliquoted_date_time }}
+              </div>
+              <div class="form-group" id="total_volume_of_urine_in_collection_cup">
+                  {{ processed_form.total_volume_of_urine_in_collection_cup.errors }}
+                  <label for="{{ processed_form.total_volume_of_urine_in_collection_cup.id_for_label }}" class="form-label"> {{ processed_form.total_volume_of_urine_in_collection_cup.label }}</label>
+                  {{ processed_form.total_volume_of_urine_in_collection_cup }}
+              </div>
+              <div class="form-group" id="precipate_bottom_of_container">
+                  {{ processed_form.precipate_bottom_of_container.errors }}
+                  <label for="{{ processed_form.precipate_bottom_of_container.id_for_label }}" class="form-label"> {{ processed_form.precipate_bottom_of_container.label }}</label>
+                  {{ processed_form.precipate_bottom_of_container }}
+              </div>
+              <div class="form-group" id="refigerated_prior_to_processing">
+                  {{ processed_form.refigerated_prior_to_processing.errors }}
+                  <label for="{{ processed_form.refigerated_prior_to_processing.id_for_label }}" class="form-label"> {{ processed_form.refigerated_prior_to_processing.label }}</label>
+                  {{ processed_form.refigerated_prior_to_processing }}
+              </div>
+              <div class="form-group" id="refigerated_placed_date_time">
+                  {{ processed_form.refigerated_placed_date_time.errors }}
+                  <label for="{{ processed_form.refigerated_placed_date_time.id_for_label }}" class="form-label"> {{ processed_form.refigerated_placed_date_time.label }}</label>
+                  {{ processed_form.refigerated_placed_date_time }}
+              </div>
+              <div class="form-group" id="refigerated_removed_date_time">
+                  {{ processed_form.refigerated_removed_date_time.errors }}
+                  <label for="{{ processed_form.refigerated_removed_date_time.id_for_label }}" class="form-label"> {{ processed_form.refigerated_removed_date_time.label }}</label>
+                  {{ processed_form.refigerated_removed_date_time }}
+              </div>
+              <div class="form-group" id="all_18_collected">
+                  {{ processed_form.all_18_collected.errors }}
+                  <label for="{{ processed_form.all_18_collected.id_for_label }}" class="form-label"> {{ processed_form.all_18_collected.label }}</label>
+                  {{ processed_form.all_18_collected }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_1">
+                  {{ processed_form.partial_aliquot_18ml_1.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_1.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_1.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_1 }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_1_amount">
+                  {{ processed_form.partial_aliquot_18ml_1_amount.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_1_amount.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_1_amount.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_1_amount }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_2">
+                  {{ processed_form.partial_aliquot_18ml_2.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_2.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_2.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_2 }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_2_amount">
+                  {{ processed_form.partial_aliquot_18ml_2_amount.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_2_amount.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_2_amount.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_2_amount }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_3">
+                  {{ processed_form.partial_aliquot_18ml_3.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_3.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_3.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_3 }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_3_amount">
+                  {{ processed_form.partial_aliquot_18ml_3_amount.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_3_amount.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_3_amount.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_3_amount }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_4">
+                  {{ processed_form.partial_aliquot_18ml_4.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_4.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_4.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_4 }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_4_amount">
+                  {{ processed_form.partial_aliquot_18ml_4_amount.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_4_amount.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_4_amount.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_4_amount }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_5">
+                  {{ processed_form.partial_aliquot_18ml_5.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_5.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_5.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_5 }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_5_amount">
+                  {{ processed_form.partial_aliquot_18ml_5_amount.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_5_amount.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_5_amount.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_5_amount }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_6">
+                  {{ processed_form.partial_aliquot_18ml_6.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_6.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_6.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_6 }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_6_amount">
+                  {{ processed_form.partial_aliquot_18ml_6_amount.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_6_amount.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_6_amount.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_6_amount }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_7">
+                  {{ processed_form.partial_aliquot_18ml_7.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_7.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_7.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_7 }}
+              </div>
+              <div class="form-group" id="partial_aliquot_18ml_7_amount">
+                  {{ processed_form.partial_aliquot_18ml_7_amount.errors }}
+                  <label for="{{ processed_form.partial_aliquot_18ml_7_amount.id_for_label }}" class="form-label"> {{ processed_form.partial_aliquot_18ml_7_amount.label }}</label>
+                  {{ processed_form.partial_aliquot_18ml_4_amount }}
+              </div>
+              <div class="form-group" id="all_7_collected">
+                  {{ processed_form.all_7_collected.errors }}
+                  <label for="{{ processed_form.all_7_collected.id_for_label }}" class="form-label"> {{ processed_form.all_7_collected.label }}</label>
+                  {{ processed_form.all_7_collected }}
+              </div>
           <input type="submit" value="Submit" />
           </form>
         </div>

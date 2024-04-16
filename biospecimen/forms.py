@@ -21,7 +21,7 @@ KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
-PROCESSED_ALIQUOTED_OFF_SITE = [('R','Refigerated'),('T','Room Temperature'),('N','Not Applicable')]
+PROCESSED_ALIQUOTED_OFF_SITE = [('N','Not Applicable'),('R','Refigerated'),('T','Room Temperature')]
 YES_NO=[('Y','Yes'),('N','No')]
 
 
@@ -147,22 +147,22 @@ class ProcessedFormUrine(forms.Form):
     refigerated_prior_to_processing = forms.BooleanField(label='Was the collection cup placed at refrigerated temperature prior to processing?')
     refigerated_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collected cup placed at refrigerated temperature?')
     refigerated_removed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collection cup removed from refrigerated temperature for processing?')
-    all_18_collected = forms.BooleanField(label='Were all seven of the 1.8 mL urine aliquots collected? (orange cap)')
-    partial_aliquot_18ml_1 = forms.BooleanField(required=False)
-    partial_aliquot_18ml_1_amount = forms.FloatField(max_value=1.8,min_value=0)
-    partial_aliquot_18ml_2 = forms.BooleanField(required=False)
-    partial_aliquot_18ml_2_amount = forms.FloatField(max_value=1.8,min_value=0)
-    partial_aliquot_18ml_3 = forms.BooleanField(required=False)
-    partial_aliquot_18ml_3_amount = forms.FloatField(max_value=1.8,min_value=0)
-    partial_aliquot_18ml_4 = forms.BooleanField(required=False)
-    partial_aliquot_18ml_4_amount = forms.FloatField(max_value=1.8,min_value=0)
-    partial_aliquot_18ml_5 = forms.BooleanField(required=False)
-    partial_aliquot_18ml_5_amount = forms.FloatField(max_value=1.8,min_value=0)
-    partial_aliquot_18ml_6 = forms.BooleanField(required=False)
-    partial_aliquot_18ml_6_amount = forms.FloatField(max_value=1.8,min_value=0)
-    partial_aliquot_18ml_7 = forms.BooleanField(required=False)
-    partial_aliquot_18ml_7_amount = forms.FloatField(max_value=1.8,min_value=0)
-    all_7_collected = forms.BooleanField(label='Were all four of the 7 mL urine aliquots collected? (orange cap)')
+    all_18_collected = forms.ChoiceField(label='Were all seven of the 1.8 mL urine aliquots collected? (orange cap)',choices=YES_NO)
+    partial_aliquot_18ml_1 = forms.BooleanField(required=False,label='Partial Aliquot #1')
+    partial_aliquot_18ml_1_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #1 Amount')
+    partial_aliquot_18ml_2 = forms.BooleanField(required=False,label='Partial Aliquot #2')
+    partial_aliquot_18ml_2_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #2 Amount')
+    partial_aliquot_18ml_3 = forms.BooleanField(required=False,label='Partial Aliquot #3')
+    partial_aliquot_18ml_3_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #3 Amount')
+    partial_aliquot_18ml_4 = forms.BooleanField(required=False,label='Partial Aliquot #4')
+    partial_aliquot_18ml_4_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #4 Amount')
+    partial_aliquot_18ml_5 = forms.BooleanField(required=False,label='Partial Aliquot #5')
+    partial_aliquot_18ml_5_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #5 Amount')
+    partial_aliquot_18ml_6 = forms.BooleanField(required=False,label='Partial Aliquot #6')
+    partial_aliquot_18ml_6_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #6 Amount')
+    partial_aliquot_18ml_7 = forms.BooleanField(required=False,label='Partial Aliquot #7')
+    partial_aliquot_18ml_7_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #7 Amount')
+    all_7_collected = forms.ChoiceField(label='Were all four of the 7 mL urine aliquots collected? (orange cap)', choices=YES_NO)
     partial_aliquot_7ml_1 = forms.BooleanField(required=False)
     partial_aliquot_7ml_1_amount = forms.FloatField(max_value=7.0,min_value=0)
     partial_aliquot_7ml_2 = forms.BooleanField(required=False)

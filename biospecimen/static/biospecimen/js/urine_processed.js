@@ -1,80 +1,97 @@
 //Hide component if not clicked
-$('#whole_blood_number_of_tubes_div').hide();
-$('#serum_number_of_tubes_div').hide();
-$('#plasma_number_of_tubes_div').hide();
-$('#red_blood_cells_number_of_tubes_div').hide();
-$('#buffy_coat_number_of_tubes_div').hide();
+$('#processed_aliquoted_date_time').hide();
+$('#refigerated_placed_date_time').hide();
+$('#refigerated_removed_date_time').hide();
+$('#partial_aliquot_18ml_1').hide();
+$('#partial_aliquot_18ml_1_amount').hide();
+$('#partial_aliquot_18ml_2').hide();
+$('#partial_aliquot_18ml_2_amount').hide();
+$('#partial_aliquot_18ml_3').hide();
+$('#partial_aliquot_18ml_3_amount').hide();
+$('#partial_aliquot_18ml_4').hide();
+$('#partial_aliquot_18ml_4_amount').hide();
+$('#partial_aliquot_18ml_5').hide();
+$('#partial_aliquot_18ml_5_amount').hide();
+$('#partial_aliquot_18ml_6').hide();
+$('#partial_aliquot_18ml_6_amount').hide();
+$('#partial_aliquot_18ml_7').hide();
+$('#partial_aliquot_18ml_7_amount').hide();
+
 
 console.log('reached this')
 
-
-$('#id_blood_form-whole_blood').click(function() {
-  $('#whole_blood_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_blood_form-serum').click(function() {
-  $('#serum_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_blood_form-plasma').click(function() {
-  $('#plasma_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_blood_form-buffy_coat').click(function() {
-  $('#buffy_coat_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_blood_form-red_blood_cells').click(function() {
-  $('#red_blood_cells_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_wsu_form-whole_blood').click(function() {
-  $('#whole_blood_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_wsu_form-serum').click(function() {
-  $('#serum_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_wsu_form-plasma').click(function() {
-  $('#plasma_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_wsu_form-buffy_coat').click(function() {
-  $('#buffy_coat_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_wsu_form-red_blood_cells').click(function() {
-  $('#red_blood_cells_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_received_at_wsu_form-whole_blood').click(function() {
-  $('#whole_blood_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_received_at_wsu_form-serum').click(function() {
-  $('#serum_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_received_at_wsu_form-plasma').click(function() {
-  $('#plasma_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_received_at_wsu_form-buffy_coat').click(function() {
-  $('#buffy_coat_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_received_at_wsu_form-red_blood_cells').click(function() {
-  $('#red_blood_cells_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_echo_form-whole_blood').click(function() {
-  $('#whole_blood_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_echo_form-serum').click(function() {
-  $('#serum_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_echo_form-plasma').click(function() {
-  $('#plasma_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_echo_form-buffy_coat').click(function() {
-  $('#buffy_coat_number_of_tubes_div')[this.checked ? "show" : "hide"]();
-});
-$('#id_shipped_to_echo_form-red_blood_cells').click(function() {
-  $('#red_blood_cells_number_of_tubes_div')[this.checked ? "show" : "hide"]();
+document.getElementById('id_processed_form-processed_aliquoted_off_site').addEventListener('change', function () {
+    var style = this.value == 'R' || this.value=='T' ? 'block' : 'none';
+    document.getElementById('processed_aliquoted_date_time').style.display = style;
 });
 
-// Pop up modal if messages
-// const exampleModal = document.getElementById('modal_component_message')
-$(document).ready(function() {
-if ( $('#exampleModal').length ) { // if there is an DOM that has class has-error
-     $('#exampleModal').modal('show'); // Show Modal
-  }
+document.getElementById('id_processed_form-all_18_collected').addEventListener('change', function () {
+    var style = this.value == 'N'  ? 'block' : 'none';
+    document.getElementById('partial_aliquot_18ml_1').style.display = style;
+});
+
+$('#id_processed_form-refigerated_prior_to_processing').click(function() {
+  $('#refigerated_placed_date_time')[this.checked ? "show" : "hide"]();
+  $('#refigerated_removed_date_time')[this.checked ? "show" : "hide"]();
+});
+
+$('#id_processed_form-partial_aliquot_18ml_1').click(function() {
+  $('#partial_aliquot_18ml_1_amount')[this.checked ? "show" : "hide"]();
+});
+
+$('#id_processed_form-partial_aliquot_18ml_2').click(function() {
+  $('#partial_aliquot_18ml_2_amount')[this.checked ? "show" : "hide"]();
+});
+
+$('#id_processed_form-partial_aliquot_18ml_3').click(function() {
+  $('#partial_aliquot_18ml_3_amount')[this.checked ? "show" : "hide"]();
+});
+
+$('#id_processed_form-partial_aliquot_18ml_4').click(function() {
+  $('#partial_aliquot_18ml_4_amount')[this.checked ? "show" : "hide"]();
+});
+
+$('#id_processed_form-partial_aliquot_18ml_5').click(function() {
+  $('#partial_aliquot_18ml_5_amount')[this.checked ? "show" : "hide"]();
+});
+
+$('#id_processed_form-partial_aliquot_18ml_6').click(function() {
+  $('#partial_aliquot_18ml_6_amount')[this.checked ? "show" : "hide"]();
+});
+
+$('#id_processed_form-partial_aliquot_18ml_7').click(function() {
+  $('#partial_aliquot_18ml_7_amount')[this.checked ? "show" : "hide"]();
+});
+
+
+document.getElementById('id_processed_form-partial_aliquot_18ml_1_amount').addEventListener('change', function () {
+    var style = this.value != '' ? 'block' : 'none';
+    document.getElementById('partial_aliquot_18ml_2').style.display = style;
+});
+
+document.getElementById('id_processed_form-partial_aliquot_18ml_2_amount').addEventListener('change', function () {
+    var style = this.value != '' ? 'block' : 'none';
+    document.getElementById('partial_aliquot_18ml_3').style.display = style;
+});
+
+document.getElementById('id_processed_form-partial_aliquot_18ml_3_amount').addEventListener('change', function () {
+    var style = this.value != '' ? 'block' : 'none';
+    document.getElementById('partial_aliquot_18ml_4').style.display = style;
+});
+
+document.getElementById('id_processed_form-partial_aliquot_18ml_4_amount').addEventListener('change', function () {
+    var style = this.value != '' ? 'block' : 'none';
+    document.getElementById('partial_aliquot_18ml_5').style.display = style;
+});
+
+document.getElementById('id_processed_form-partial_aliquot_18ml_5_amount').addEventListener('change', function () {
+    var style = this.value != '' ? 'block' : 'none';
+    document.getElementById('partial_aliquot_18ml_6').style.display = style;
+});
+
+document.getElementById('id_processed_form-partial_aliquot_18ml_6_amount').addEventListener('change', function () {
+    var style = this.value != '' ? 'block' : 'none';
+    document.getElementById('partial_aliquot_18ml_7').style.display = style;
 });
 
 
