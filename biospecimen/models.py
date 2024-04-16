@@ -321,6 +321,36 @@ class ReceivedMSU(models.Model):
     def __str__(self):
         return f"received {self.received_date_time}"
 
+class Processed(models.Model):
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+
+    class ProcessedChoices(models.TextChoices):
+        REFIGERATED = 'R', _('Refigerated')
+        ROOM_TEMPERATURE = 'T', _('Room Temperature')
+        NOT_APPLICABLE = 'N', _('Not Applicable')
+
+    processed_aliquoted_off_site = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
+    processed_aliquoted_date_time = models.DateTimeField(null=True,blank=True)
+    total_volume_of_urine_in_collection_cup = models.IntegerField(null=True, blank=True)
+    precipate_bottom_of_container = models.BooleanField(null=True, blank=True)
+    refigerated_prior_to_processing = models.BooleanField(null=True,blank=True)
+    refigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
+    refigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
+    all_18_collected = models.BooleanField(null=True,blank=True)
+    all_7_collected = models.BooleanField(null=True,blank=True)
+
+
+class UrineAliquot(models.Model):
+    processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,blank=True,null=True)
+
+    class VialAmount(models.TextChoices):
+        EIGHTEEN_ML = 'E',_('Eighteen Ml')
+        SEVEN_ML = 'S',_('Seven Ml')
+
+    aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
+    aliquot_volume_collected = models.FloatField(null=True,blank=True)
+
+
 class Status(models.Model):
     #todo sublcass text choices for status
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
