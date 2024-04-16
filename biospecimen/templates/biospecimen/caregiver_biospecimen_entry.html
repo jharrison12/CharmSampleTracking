@@ -96,12 +96,12 @@
             </div>
         </div>
     {% endif %}
-    {% if collected_questions_form %}
+    {% if processed_form %}
         <div id="collected_questions_form" class="row border border-primary p-3 rounded">
-          <form method="POST" action={% url 'biospecimen:collected_questions_post' charm_project_identifier caregiver_bio_pk %}>
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_processed_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
-              <h2>Collected Questions Form</h2>
-            {{ collected_questions_form.as_p }}
+              <h2>Processed Form</h2>
+            {{ processed_form.as_p }}
           <input type="submit" value="Submit" />
           </form>
         </div>

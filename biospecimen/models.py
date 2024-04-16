@@ -355,6 +355,7 @@ class Status(models.Model):
     #todo sublcass text choices for status
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
     collected_fk = models.ForeignKey(Collected, on_delete=models.PROTECT, null=True, blank=True)
+    processed_fk = models.ForeignKey(Processed, on_delete=models.PROTECT, null=True, blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     received_wsu_fk = models.ForeignKey(ReceivedWSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_msu_fk = models.ForeignKey(ShippedMSU,on_delete=models.PROTECT,null=True,blank=True)

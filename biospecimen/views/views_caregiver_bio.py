@@ -9,7 +9,8 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Collected
     InitialBioFormPostNatal, KitSentForm, \
     ReceivedatWSUForm, InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm, ShippedtoWSUFormPlacenta, \
     ShippedtoMSUForm, ReceivedatMSUForm, ShippedtoWSUFormBlood, \
-    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoForm, DeclinedForm, NotCollectedForm
+    ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoForm, DeclinedForm, NotCollectedForm, \
+    ProcessedFormUrine
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -341,7 +342,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     incentive_item = Incentive.objects.filter(caregiverbiospecimen=caregiver_bio)
-    processed_item = Processed.objects.filter(caregiverbiospecimen=caregiver_bio)
+    processed_item = Processed.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -357,6 +358,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     shipped_to_msu_form = None
     received_msu_form = None
     not_collected_form = None
+    processed_form = None
     if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True):
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collection_type in HAIR_SALIVA:
@@ -388,12 +390,12 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             logging.debug(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     elif collection_type==URINE:
+        logging.critical(f'{ not processed_item}')
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
-
-
-        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not shipped_to_wsu_item:
-                # and caregiver_bio.incentive_fk.incentive_date and \
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
+            processed_form = ProcessedFormUrine(prefix='processed_form')
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and processed_item and not shipped_to_wsu_item:
             shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
         if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
             logging.debug(f"made it to received at wsu form")
@@ -415,8 +417,12 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'shipped_to_msu_form':shipped_to_msu_form,
                                                                                                   'received_msu_form':received_msu_form,
                                                                                                   'not_collected_form':not_collected_form,
-                                                                                                  'not_collected_item': not_collected_item
+                                                                                                  'not_collected_item': not_collected_item,
+                                                                                                  'processed_item':processed_item,
+                                                                                                  'processed_form':processed_form
                                                                                                   })
+
+
 
 @login_required
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
@@ -791,6 +797,11 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
                         caregiver_bio_pk=caregiver_bio_pk)
     return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
+
+
+@login_required
+def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
+    pass
 
 @login_required
 def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregiver_bio_pk):
