@@ -390,7 +390,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             logging.debug(f"in shipped to echo if statement")
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     elif collection_type==URINE:
-        logging.critical(f'{ not processed_item}')
+        logging.debug(f'{ not processed_item}')
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
@@ -521,7 +521,6 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             if form.is_valid():
                 logging.debug(f"Is form valie {form.is_valid()}")
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                logging.critical(f"form is {form}")
                 collected_urine.save_urine(form=form,request=request)
                 Incentive.objects.create().save_fk(caregiver_bio=caregiver_bio)
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
@@ -801,7 +800,15 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
 
 @login_required
 def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
-    pass
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    processed_item = Processed.objects.create()
+    logging.critical(f'in processed post for URINE')
+    if request.method == "POST":
+        form = ProcessedFormUrine(data=request.POST,prefix='processed_form')
+        if form.is_valid():
+            processed_item.save_processed(form=form,request=request,caregiver_bio=caregiver_bio)
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
 
 @login_required
 def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregiver_bio_pk):
@@ -813,7 +820,6 @@ def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregive
         form = NotCollectedForm(data=request.POST, prefix='not_collected_form')
         if form.is_valid():
             not_collected_item.save_not_collected(form=form, request=request)
-    logging.critical(f'made it here not collected saved')
     return redirect("biospecimen:caregiver_biospecimen_initial", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
 def error(request):

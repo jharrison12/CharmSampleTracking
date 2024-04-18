@@ -35,12 +35,12 @@ document.getElementById('id_processed_form-processed_aliquoted_off_site').addEve
 });
 
 document.getElementById('id_processed_form-all_18_collected').addEventListener('change', function () {
-    var style = this.value == 'N'  ? 'block' : 'none';
+    var style = this.value == "False"  ? 'block' : 'none';
     document.getElementById('partial_aliquot_18ml_1').style.display = style;
 });
 
 document.getElementById('id_processed_form-all_7_collected').addEventListener('change', function () {
-    var style = this.value == 'N'  ? 'block' : 'none';
+    var style = this.value == "False"  ? 'block' : 'none';
     document.getElementById('partial_aliquot_7ml_1').style.display = style;
 });
 

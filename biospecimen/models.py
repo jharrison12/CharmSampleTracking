@@ -339,6 +339,35 @@ class Processed(models.Model):
     all_18_collected = models.BooleanField(null=True,blank=True)
     all_7_collected = models.BooleanField(null=True,blank=True)
 
+    def save_processed(self,form,request,caregiver_bio):
+        logging.critical(f"In saved processed function")
+        caregiver_bio.status_fk.processed_fk= self
+        self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
+        self.processed_aliquoted_date_time = form.cleaned_data['processed_aliquoted_date_time']
+        self.total_volume_of_urine_in_collection_cup = form.cleaned_data['total_volume_of_urine_in_collection_cup']
+        self.precipate_bottom_of_container = form.cleaned_data['precipate_bottom_of_container']
+        self.refigerated_prior_to_processing = form.cleaned_data['refigerated_prior_to_processing']
+        self.refigerated_placed_date_time = form.cleaned_data['refigerated_placed_date_time']
+        self.refigerated_removed_date_time = form.cleaned_data['refigerated_removed_date_time']
+        self.all_18_collected = form.cleaned_data['all_18_collected']
+        self.all_7_collected = form.cleaned_data['all_7_collected']
+        self.save()
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
+        logging.critical(f"processed object has saved")
+        logging.critical(form.cleaned_data['all_18_collected'])
+        if (form.cleaned_data['all_18_collected'])=="False":
+            logging.critical('in aliquot save loop')
+            for i in range(1,8):
+                logging.critical(f"i is {i}")
+                logging.critical(form.cleaned_data[f'partial_aliquot_18ml_{i}'])
+                if form.cleaned_data[f'partial_aliquot_18ml_{i}'] is True:
+                    UrineAliquot.objects.create(processed_fk=self,aliquot_vial_size='E',aliquot_volume_collected=form.cleaned_data[f'partial_aliquot_18ml_{i}_amount'])
+                    logging.critical(f'Urine aliquot saved')
+
+
+
+
 
 class UrineAliquot(models.Model):
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,blank=True,null=True)
