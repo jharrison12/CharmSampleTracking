@@ -1,8 +1,10 @@
 import logging
 
-from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Collection, Collected, NotCollected, NoConsent, ShippedWSU, ShippedECHO, \
-    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU,ReceivedMSU,Project,Caregiver,PregnancyTrimester,Child,Component,URINE,BLOOD_DICT_FORM,BLOOD_DICT,ComponentError,\
-    Processed
+from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, Collection, Collected, NotCollected, \
+    NoConsent, ShippedWSU, ShippedECHO, \
+    KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU, ReceivedMSU, Project, Caregiver, PregnancyTrimester, Child, \
+    Component, URINE, BLOOD_DICT_FORM, BLOOD_DICT, ComponentError, \
+    Processed, UrineAliquot
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
     ShippedChoiceForm, ShippedtoWSUForm, \
     ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
@@ -349,6 +351,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     shipped_to_msu_item = ShippedMSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_msu_item = ReceivedMSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    urine_aliquot_18ml_items = UrineAliquot.objects.filter(processed_fk__status__caregiverbiospecimen=caregiver_bio,aliquot_vial_size=UrineAliquot.VialAmount.EIGHTEEN_ML)
+    urine_aliquot_7ml_items = UrineAliquot.objects.filter(processed_fk__status__caregiverbiospecimen=caregiver_bio,aliquot_vial_size=UrineAliquot.VialAmount.SEVEN_ML)
     collected_form = None
     shipped_choice = None
     shipped_wsu_form = None
@@ -419,7 +423,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'not_collected_form':not_collected_form,
                                                                                                   'not_collected_item': not_collected_item,
                                                                                                   'processed_item':processed_item,
-                                                                                                  'processed_form':processed_form
+                                                                                                  'processed_form':processed_form,
+                                                                                                  'urine_aliquot_18ml_items': urine_aliquot_18ml_items,
+                                                                                                  'urine_aliquot_7ml_items': urine_aliquot_7ml_items
                                                                                                   })
 
 

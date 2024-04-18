@@ -263,6 +263,36 @@
           <input type="submit" value="Submit" />
           </form>
         </div>
+    {% elif processed_item %}
+        <div id="processed_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Processed</button>
+            </div>
+            <div class="col-8">
+                <div>Processed Aliquoted Off Site:{{ caregiver_bio.status_fk.processed_fk.get_processed_aliquoted_off_site_display }}</div>
+                {% if caregiver_bio.status_fk.processed_fk.processed_aliquoted_off_site not in 'N' %}<div>Processed Aliquoted Date Time: {{ caregiver_bio.status_fk.processed_fk.processed_aliquoted_date_time }}</div>{% endif %}
+                <div>Total Volume Urine in Collection Cup: {{ caregiver_bio.status_fk.processed_fk.total_volume_of_urine_in_collection_cup }}</div>
+                <div>Precipate Bottom of Container: {{ caregiver_bio.status_fk.processed_fk.precipate_bottom_of_container }}</div>
+                <div>Refigerated Prior to Processing: {{ caregiver_bio.status_fk.processed_fk.refigerated_prior_to_processing }}</div>
+                {% if caregiver_bio.status_fk.processed_fk.refigerated_prior_to_processing not in 'False' %}Refigerated Placed Datetime: {{ caregiver_bio.status_fk.processed_fk.refigerated_placed_date_time }}{% endif %}
+                {% if caregiver_bio.status_fk.processed_fk.refigerated_prior_to_processing not in 'False' %}Refigerated Removed Datetime: {{ caregiver_bio.status_fk.processed_fk.refigerated_removed_date_time }}{% endif %}
+                <div>All 18ml Vials Collected?:{{ caregiver_bio.status_fk.processed_fk.all_18_collected }}</div>
+                <ul>
+                {% for item in urine_aliquot_18ml_items %}
+                    <li>Vial #{{ forloop.counter }}:{{ item.aliquot_volume_collected }}ml</li>
+                {% endfor %}
+                </ul>
+                <div>All 7ml Collected:{{ caregiver_bio.status_fk.processed_fk.all_7_collected }}</div>
+                <ul>
+                {% for item in urine_aliquot_7ml_items %}
+                    <li>Vial #{{ forloop.counter }}:{{ item.aliquot_volume_collected }}ml</li>
+                {% endfor %}
+                </ul>
+
+            </div>
+        </div>
     {% endif %}
     {% if shipped_wsu_form  %}
         <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
