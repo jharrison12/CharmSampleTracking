@@ -364,10 +364,10 @@ class Processed(models.Model):
                 if form.cleaned_data[f'partial_aliquot_18ml_{i}'] is True:
                     UrineAliquot.objects.create(processed_fk=self,aliquot_vial_size='E',aliquot_volume_collected=form.cleaned_data[f'partial_aliquot_18ml_{i}_amount'])
                     logging.critical(f'Urine aliquot saved')
-
-
-
-
+        if form.cleaned_data['all_7_collected']=="False":
+            for i in range(1,4):
+                if form.cleaned_data[f'partial_aliquot_7ml_{i}'] is True:
+                    UrineAliquot.objects.create(processed_fk=self,aliquot_vial_size='S',aliquot_volume_collected=form.cleaned_data[f'partial_aliquot_7ml_{i}_amount'])
 
 class UrineAliquot(models.Model):
     processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,blank=True,null=True)
