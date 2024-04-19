@@ -1,8 +1,8 @@
 //Hide component if not clicked
 //TODO FIX ALL OF THIS
 $('#processed_aliquoted_date_time').hide();
-$('#refigerated_placed_date_time').hide();
-$('#refigerated_removed_date_time').hide();
+$('#refrigerated_placed_date_time').hide();
+$('#refrigerated_removed_date_time').hide();
 $('#partial_aliquot_18ml_1').hide();
 $('#partial_aliquot_18ml_1_amount').hide();
 $('#partial_aliquot_18ml_2').hide();
@@ -44,9 +44,9 @@ document.getElementById('id_processed_form-all_7_collected').addEventListener('c
     document.getElementById('partial_aliquot_7ml_1').style.display = style;
 });
 
-$('#id_processed_form-refigerated_prior_to_processing').click(function() {
-  $('#refigerated_placed_date_time')[this.checked ? "show" : "hide"]();
-  $('#refigerated_removed_date_time')[this.checked ? "show" : "hide"]();
+$('#id_processed_form-refrigerated_prior_to_processing').click(function() {
+  $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
+  $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
 });
 
 $('#id_processed_form-partial_aliquot_18ml_1').click(function() {

@@ -21,7 +21,7 @@ KIT_SENT_NOT_COLLECTED = [('K','Kit Sent'),('N','Not Collected')]
 SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
-PROCESSED_ALIQUOTED_OFF_SITE = [('N','Not Applicable'),('R','Refigerated'),('T','Room Temperature')]
+PROCESSED_ALIQUOTED_OFF_SITE = [('N','Not Applicable'),('R','refrigerated'),('T','Room Temperature')]
 YES_NO=[(True,'Yes'),(False,'No')]
 
 
@@ -144,9 +144,9 @@ class ProcessedFormUrine(forms.Form):
     processed_aliquoted_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the specimen received at the processing site?',required=False)
     total_volume_of_urine_in_collection_cup = forms.IntegerField(label='What is the total volume of urine in the collection cup?',max_value=150,min_value=0)
     precipate_bottom_of_container = forms.BooleanField(label='Are there precipitate(s) at the bottom of the collection container?',required=False)
-    refigerated_prior_to_processing = forms.BooleanField(label='Was the collection cup placed at refrigerated temperature prior to processing?',required=False)
-    refigerated_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collected cup placed at refrigerated temperature?',required=False)
-    refigerated_removed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collection cup removed from refrigerated temperature for processing?',required=False)
+    refrigerated_prior_to_processing = forms.BooleanField(label='Was the collection cup placed at refrigerated temperature prior to processing?',required=False)
+    refrigerated_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collected cup placed at refrigerated temperature?',required=False)
+    refrigerated_removed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collection cup removed from refrigerated temperature for processing?',required=False)
     all_18_collected = forms.ChoiceField(label='Were all seven of the 1.8 mL urine aliquots collected? (orange cap)',choices=YES_NO)
     partial_aliquot_18ml_1 = forms.BooleanField(required=False,label='Partial Aliquot #1')
     partial_aliquot_18ml_1_amount = forms.FloatField(max_value=1.8,min_value=0,label='Partial Aliquot #1 Amount',required=False)

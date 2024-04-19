@@ -125,20 +125,20 @@
                   <label for="{{ processed_form.precipate_bottom_of_container.id_for_label }}" class="form-label"> {{ processed_form.precipate_bottom_of_container.label }}</label>
                   {{ processed_form.precipate_bottom_of_container }}
               </div>
-              <div class="form-group" id="refigerated_prior_to_processing">
-                  {{ processed_form.refigerated_prior_to_processing.errors }}
-                  <label for="{{ processed_form.refigerated_prior_to_processing.id_for_label }}" class="form-label"> {{ processed_form.refigerated_prior_to_processing.label }}</label>
-                  {{ processed_form.refigerated_prior_to_processing }}
+              <div class="form-group" id="refrigerated_prior_to_processing">
+                  {{ processed_form.refrigerated_prior_to_processing.errors }}
+                  <label for="{{ processed_form.refrigerated_prior_to_processing.id_for_label }}" class="form-label"> {{ processed_form.refrigerated_prior_to_processing.label }}</label>
+                  {{ processed_form.refrigerated_prior_to_processing }}
               </div>
-              <div class="form-group" id="refigerated_placed_date_time">
-                  {{ processed_form.refigerated_placed_date_time.errors }}
-                  <label for="{{ processed_form.refigerated_placed_date_time.id_for_label }}" class="form-label"> {{ processed_form.refigerated_placed_date_time.label }}</label>
-                  {{ processed_form.refigerated_placed_date_time }}
+              <div class="form-group" id="refrigerated_placed_date_time">
+                  {{ processed_form.refrigerated_placed_date_time.errors }}
+                  <label for="{{ processed_form.refrigerated_placed_date_time.id_for_label }}" class="form-label"> {{ processed_form.refrigerated_placed_date_time.label }}</label>
+                  {{ processed_form.refrigerated_placed_date_time }}
               </div>
-              <div class="form-group" id="refigerated_removed_date_time">
-                  {{ processed_form.refigerated_removed_date_time.errors }}
-                  <label for="{{ processed_form.refigerated_removed_date_time.id_for_label }}" class="form-label"> {{ processed_form.refigerated_removed_date_time.label }}</label>
-                  {{ processed_form.refigerated_removed_date_time }}
+              <div class="form-group" id="refrigerated_removed_date_time">
+                  {{ processed_form.refrigerated_removed_date_time.errors }}
+                  <label for="{{ processed_form.refrigerated_removed_date_time.id_for_label }}" class="form-label"> {{ processed_form.refrigerated_removed_date_time.label }}</label>
+                  {{ processed_form.refrigerated_removed_date_time }}
               </div>
               <div class="form-group" id="all_18_collected">
                   {{ processed_form.all_18_collected.errors }}
@@ -275,9 +275,9 @@
                 {% if caregiver_bio.status_fk.processed_fk.processed_aliquoted_off_site not in 'N' %}<div>Processed Aliquoted Date Time: {{ caregiver_bio.status_fk.processed_fk.processed_aliquoted_date_time }}</div>{% endif %}
                 <div>Total Volume Urine in Collection Cup: {{ caregiver_bio.status_fk.processed_fk.total_volume_of_urine_in_collection_cup }}</div>
                 <div>Precipate Bottom of Container: {{ caregiver_bio.status_fk.processed_fk.precipate_bottom_of_container }}</div>
-                <div>Refigerated Prior to Processing: {{ caregiver_bio.status_fk.processed_fk.refigerated_prior_to_processing }}</div>
-                {% if caregiver_bio.status_fk.processed_fk.refigerated_prior_to_processing not in 'False' %}Refigerated Placed Datetime: {{ caregiver_bio.status_fk.processed_fk.refigerated_placed_date_time }}{% endif %}
-                {% if caregiver_bio.status_fk.processed_fk.refigerated_prior_to_processing not in 'False' %}Refigerated Removed Datetime: {{ caregiver_bio.status_fk.processed_fk.refigerated_removed_date_time }}{% endif %}
+                <div>Refrigerated Prior to Processing: {{ caregiver_bio.status_fk.processed_fk.refrigerated_prior_to_processing }}</div>
+                {% if caregiver_bio.status_fk.processed_fk.refrigerated_prior_to_processing not in 'False' %}Refrigerated Placed Datetime: {{ caregiver_bio.status_fk.processed_fk.refrigerated_placed_date_time }}{% endif %}
+                {% if caregiver_bio.status_fk.processed_fk.refrigerated_prior_to_processing not in 'False' %}Refrigerated Removed Datetime: {{ caregiver_bio.status_fk.processed_fk.refrigerated_removed_date_time }}{% endif %}
                 <div>All 18ml Vials Collected?:{{ caregiver_bio.status_fk.processed_fk.all_18_collected }}</div>
                 <ul>
                 {% for item in urine_aliquot_18ml_items %}
