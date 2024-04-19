@@ -271,7 +271,6 @@ class Declined(models.Model):
 
 class ReceivedWSU(models.Model):
     received_date_time = models.DateTimeField(null=True,blank=True)
-    number_of_tubes = models.IntegerField(default=None, null=True, blank=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
 
     def save_received_wsu(self,caregiver_bio,request,form=None):
@@ -281,7 +280,6 @@ class ReceivedWSU(models.Model):
         else:
             self.received_date_time = form.cleaned_data['received_date_time']
             self.logged_by = request.user
-            self.number_of_tubes = form.cleaned_data['number_of_tubes']
         caregiver_bio.status_fk.received_wsu_fk = self
         caregiver_bio.status_fk.received_wsu_fk.save()
         caregiver_bio.status_fk.save()

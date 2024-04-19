@@ -328,7 +328,6 @@ class CollectedChildToothForm(forms.Form):
 class ReceivedatWSUForm(forms.Form):
     received_date_time = forms.DateTimeField(initial=timezone.now(),
                                              widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-    number_of_tubes = forms.IntegerField(required=False)
 
     def __str__(self):
         return f"{self.received_date_time}"
