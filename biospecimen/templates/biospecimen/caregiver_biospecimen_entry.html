@@ -98,7 +98,7 @@
         </div>
     {% endif %}
     {% if processed_form %}
-        <div id="collected_questions_form" class="row border border-primary p-3 rounded">
+        <div id="processed_questions_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_processed_post' charm_project_identifier caregiver_bio_pk %}>
           {% csrf_token %}
               <h2>Processed Form</h2>
@@ -293,6 +293,46 @@
 
             </div>
         </div>
+    {% endif %}
+    {% if frozen_form %}
+        <div id="frozen_questions_form" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_frozen_post' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Frozen Form</h2>
+              {{ frozen_form.non_field_errors }}
+              {{ frozen_form.has_error }}
+              {{ frozen_form.errors }}
+              <div class="form-group">
+                  {{ frozen_form.freezer_placed_date_time.errors }}
+                 <label for="{{ frozen_form.freezer_placed_date_time.id_for_label }}" class="form-label"> {{ frozen_form.freezer_placed_date_time.label }}</label>
+                  {{ frozen_form.freezer_placed_date_time }}
+              </div>
+              <div class="form-group">
+                  {{ frozen_form.number_of_tubes.errors }}
+                 <label for="{{ frozen_form.number_of_tubes.id_for_label }}" class="form-label"> {{ frozen_form.number_of_tubes.label }}</label>
+                  {{ frozen_form.number_of_tubes }}
+              </div>
+              <div class="form-group">
+                  {{ frozen_form.notes_and_deviations.errors }}
+                 <label for="{{ frozen_form.notes_and_deviations.id_for_label }}" class="form-label"> {{ frozen_form.notes_and_deviations.label }}</label>
+                  {{ frozen_form.notes_and_deviations }}
+              </div>
+              <input type="submit" value="Submit" />
+          </form>
+        </div>
+    {% elif frozen_item %}
+          <div id="frozen_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Frozen</button>
+            </div>
+            <div class="col-8">
+                <div>Freezer Placed Date Time:{{ caregiver_bio.status_fk.frozen_fk.freezer_placed_date_time }}</div>
+                <div>Number of Tubes:{{ caregiver_bio.status_fk.frozen_fk.number_of_tubes }}</div>
+                <div>Notes:{{ caregiver_bio.status_fk.frozen_fk.notes_and_deviations }}</div>
+            </div>
+          </div>
     {% endif %}
     {% if shipped_wsu_form  %}
         <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">

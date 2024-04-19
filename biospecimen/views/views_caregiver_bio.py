@@ -4,7 +4,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, C
     NoConsent, ShippedWSU, ShippedECHO, \
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU, ReceivedMSU, Project, Caregiver, PregnancyTrimester, Child, \
     Component, URINE, BLOOD_DICT_FORM, BLOOD_DICT, ComponentError, \
-    Processed, UrineAliquot
+    Processed, UrineAliquot, Frozen
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
     ShippedChoiceForm, ShippedtoWSUForm, \
     ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
@@ -12,7 +12,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Collected
     ReceivedatWSUForm, InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm, ShippedtoWSUFormPlacenta, \
     ShippedtoMSUForm, ReceivedatMSUForm, ShippedtoWSUFormBlood, \
     ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoForm, DeclinedForm, NotCollectedForm, \
-    ProcessedFormUrine
+    ProcessedFormUrine, FrozenFormUrine
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -345,6 +345,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     incentive_item = Incentive.objects.filter(caregiverbiospecimen=caregiver_bio)
     processed_item = Processed.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    frozen_item = Frozen.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -363,6 +364,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     received_msu_form = None
     not_collected_form = None
     processed_form = None
+    frozen_form = None
     if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True):
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collection_type in HAIR_SALIVA:
@@ -399,7 +401,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
             processed_form = ProcessedFormUrine(prefix='processed_form')
-        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and processed_item and not shipped_to_wsu_item:
+        if processed_item.exists() and not frozen_item:
+            frozen_form = FrozenFormUrine(prefix='frozen_form')
+        if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and frozen_item and not shipped_to_wsu_item:
             shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
         if shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not received_at_wsu_item:
             logging.debug(f"made it to received at wsu form")
@@ -425,7 +429,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'processed_item':processed_item,
                                                                                                   'processed_form':processed_form,
                                                                                                   'urine_aliquot_18ml_items': urine_aliquot_18ml_items,
-                                                                                                  'urine_aliquot_7ml_items': urine_aliquot_7ml_items
+                                                                                                  'urine_aliquot_7ml_items': urine_aliquot_7ml_items,
+                                                                                                  'frozen_item':frozen_item,
+                                                                                                  'frozen_form':frozen_form
                                                                                                   })
 
 
@@ -815,6 +821,19 @@ def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bi
             processed_item.save_processed(form=form,request=request,caregiver_bio=caregiver_bio)
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
+
+@login_required
+def caregiver_biospecimen_frozen_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    frozen_item = Frozen.objects.create()
+    logging.critical(f'in processed post for URINE')
+    if request.method == "POST":
+        form = FrozenFormUrine(data=request.POST,prefix='frozen_form')
+        if form.is_valid():
+            frozen_item.save_frozen(form=form,request=request,caregiver_bio=caregiver_bio)
+        return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
+
 
 @login_required
 def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregiver_bio_pk):

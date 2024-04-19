@@ -379,12 +379,26 @@ class UrineAliquot(models.Model):
     aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
     aliquot_volume_collected = models.FloatField(null=True,blank=True)
 
+class Frozen(models.Model):
+    freezer_placed_date_time = models.DateTimeField(null=True,blank=True)
+    number_of_tubes = models.IntegerField(null=True,blank=True,default=None)
+    notes_and_deviations = models.TextField()
+
+    def save_frozen(self,form,request,caregiver_bio):
+        caregiver_bio.status_fk.frozen_fk= self
+        self.freezer_placed_date_time = form.cleaned_data['freezer_placed_date_time']
+        self.number_of_tubes = form.cleaned_data['number_of_tubes']
+        self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
+        self.save()
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
 
 class Status(models.Model):
     #todo sublcass text choices for status
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
     collected_fk = models.ForeignKey(Collected, on_delete=models.PROTECT, null=True, blank=True)
     processed_fk = models.ForeignKey(Processed, on_delete=models.PROTECT, null=True, blank=True)
+    frozen_fk = models.ForeignKey(Frozen,on_delete=models.PROTECT,null=True,blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     received_wsu_fk = models.ForeignKey(ReceivedWSU,on_delete=models.PROTECT,null=True,blank=True)
     shipped_msu_fk = models.ForeignKey(ShippedMSU,on_delete=models.PROTECT,null=True,blank=True)

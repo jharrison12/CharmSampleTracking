@@ -173,6 +173,10 @@ class ProcessedFormUrine(forms.Form):
     partial_aliquot_7ml_4_amount = forms.FloatField(max_value=7.0,min_value=0,label='Partial Aliquot #4 Amount',required=False)
     notes_and_deviations = forms.CharField(max_length=255,required=False)
 
+class FrozenFormUrine(forms.Form):
+    freezer_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time cryovials were placed in the freezer:',required=False)
+    number_of_tubes =forms.IntegerField(label='Total number of tubes',max_value=11,min_value=0)
+    notes_and_deviations = forms.CharField(max_length=255, required=False)
 
 class InitialBioForm(forms.Form):
     collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED)
