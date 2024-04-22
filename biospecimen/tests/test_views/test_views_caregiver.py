@@ -80,7 +80,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
                                'processed_form-precipate_bottom_of_container': True,
                                'processed_form-refrigerated_prior_to_processing': False,
                                'processed_form-all_18_collected': False,
-                               'processed_form-partial_aliquot_18ml_1': False,
+                               'processed_form-partial_aliquot_18ml_1': True,
                                'processed_form-partial_aliquot_18ml_1_amount': 1.1,
                                'processed_form-all_7_collected':True
                                })
@@ -154,17 +154,25 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.initial_send_form(primary_key, 'C')
         response = self.collected_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        logging.critical(response.content)
+        logging.debug(response.content)
         self.assertContains(response,'Logged By: testuser')
+
+    def test_echo2_bio_entry_urine_shows_vial_numbers_if_processed_submitted(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key, 'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
+        logging.debug(response.content)
+        self.assertContains(response,'Vial #1:1.1ml')
 
     def test_echo2_bio_page_shows_shipped_to_wsu_data_if_complete(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key, 'C')
-        response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key, 'W')
+        self.initial_send_form(primary_key, 'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         response = self.shipped_to_wsu_send_form(primary_key)
-        response = self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertContains(response, 'Courier: FedEx')
 
@@ -172,8 +180,8 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key, 'C')
         response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key, 'W')
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         response = self.shipped_to_wsu_send_form(primary_key)
         response = self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
@@ -183,7 +191,8 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         response = self.shipped_to_wsu_send_form(primary_key)
         response = self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
@@ -196,13 +205,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4400/{primary_key}/entry/')
         self.assertRedirects(response,f'/biospecimen/error/')
 
-    def test_echo2_bio_entry_urine_collected_redirects_after_post(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key, 'C')
-        response = self.collected_send_form(primary_key)
-        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
-
-    def test_echo2_bio_urine_initial_posts_to_initial_post_view(self):
+    def test_echo2_bio_urine_initia_form_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'C')
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
@@ -218,44 +221,43 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.send_not_collected_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/initial/",status_code=302,target_status_code=302)
 
-    def test_echo2_urine_incentive_form_redirects_to_entry(self):
+    def test_echo2_bio_entry_urine_collected_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key,'C')
+        response = self.initial_send_form(primary_key, 'C')
         response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
-    def test_echo2_bio_entry_shipped_choice_redirects_after_post_wsu(self):
+    def test_echo2_urine_processed_form_redirects_to_entry(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'W')
+        response = self.processed_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
-    def test_echo2_bio_entry_urine_shipped_choice_redirects_after_post_echo(self):
+    def test_echo2_bio_entry_frozen_form_redircts_after_post_wsu(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'E')
+        response = self.processed_send_form(primary_key)
+        response = self.frozen_send_form()
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
-    def test_echo2_bio_urine_entry_shipped_echo_redirects_after_post(self):
+    def test_echo2_bio_urine_entry_shipped_wsu_urine_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'E')
-        response = self.shipped_to_echo_echo_send_form(primary_key)
+        response = self.processed_send_form(primary_key)
+        response = self.frozen_send_form()
+        response = self.shipped_to_wsu_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
+
 
     def test_echo2_bio_urine_entry_received_urine_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        response = self.shipped_choice_send_form(primary_key,'W')
+        response = self.processed_send_form(primary_key)
+        response = self.frozen_send_form()
         response = self.shipped_to_wsu_send_form(primary_key)
         response = self.received_at_wsu_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")

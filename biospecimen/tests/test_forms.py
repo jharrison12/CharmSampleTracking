@@ -4,7 +4,7 @@ import unittest
 # from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from biospecimen.forms import ValidationError
+from biospecimen.forms import ValidationError, ProcessedFormUrine
 from django.test import TestCase
 from django.utils import timezone
 
@@ -12,8 +12,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm,ProcessedB
 ShippedBiospecimenForm,CollectedBiospecimenForm, InitialBioForm,ShippedChoiceForm,ShippedtoWSUForm,\
     ShippedtoEchoForm,CollectedBloodForm,InitialBioFormPostNatal,KitSentForm,CollectedChildUrineStoolForm,CollectedBiospecimenHairSalivaForm,\
 ShippedChoiceEchoForm,CollectedChildBloodSpotForm,CollectedChildBloodSpotHairFormOneYear,ShippedtoWSUFormChild,DeclinedForm,ReceivedatWSUForm,\
-    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm,ShippedtoEchoBloodForm,\
-CollectedQuestionsFormUrine
+    InitialBioFormPeriNatal,ShippedtoWSUFormPlacenta,ShippedtoMSUForm,ReceivedatMSUForm,ShippedtoWSUFormBlood,ReceivedatWSUBloodForm,ShippedtoEchoBloodForm
 from biospecimen.models import Caregiver, CaregiverBiospecimen
 from biospecimen.tests.test_views.test_views_caregiver import CaregiverEcho2BiospecimenPageBlood as BL
 from biospecimen.tests.db_setup import DatabaseSetup
@@ -168,7 +167,7 @@ class CaregiverBioShippedChoiceForm(TestCase):
 class CaregiverCollectedQuestionsFormUrine(TestCase):
 
     def test_bio_collected_questions_form_has_shipped_to_wsu(self):
-        form = CollectedQuestionsFormUrine()
+        form = ProcessedFormUrine()
         self.assertIn('If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?',form.as_p())
 
 
@@ -209,10 +208,6 @@ class ReceivedatWSUFormTest(TestCase):
     def test_declined_form_has_declined_date(self):
         form = ReceivedatWSUForm()
         self.assertIn('Received date time', form.as_p())
-
-    def test_declined_form_has_declined_date(self):
-        form = ReceivedatWSUForm()
-        self.assertIn('Number of tubes', form.as_p())
 
 class ShippedtoMSUFormTest(TestCase):
 

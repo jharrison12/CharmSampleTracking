@@ -814,7 +814,7 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
 def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     processed_item = Processed.objects.create()
-    logging.critical(f'in processed post for URINE')
+    logging.debug(f'in processed post for URINE')
     if request.method == "POST":
         form = ProcessedFormUrine(data=request.POST,prefix='processed_form')
         if form.is_valid():
@@ -826,7 +826,7 @@ def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bi
 def caregiver_biospecimen_frozen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     frozen_item = Frozen.objects.create()
-    logging.critical(f'in processed post for URINE')
+    logging.debug(f'in processed post for URINE')
     if request.method == "POST":
         form = FrozenFormUrine(data=request.POST,prefix='frozen_form')
         if form.is_valid():

@@ -338,7 +338,7 @@ class Processed(models.Model):
     all_7_collected = models.BooleanField(null=True,blank=True)
 
     def save_processed(self,form,request,caregiver_bio):
-        logging.critical(f"In saved processed function")
+        logging.debug(f"In saved processed function")
         caregiver_bio.status_fk.processed_fk= self
         self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
         self.processed_aliquoted_date_time = form.cleaned_data['processed_aliquoted_date_time']
@@ -352,16 +352,16 @@ class Processed(models.Model):
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
-        logging.critical(f"processed object has saved")
-        logging.critical(form.cleaned_data['all_18_collected'])
+        logging.debug(f"processed object has saved")
+        logging.debug(form.cleaned_data['all_18_collected'])
         if (form.cleaned_data['all_18_collected'])=="False":
-            logging.critical('in aliquot save loop')
+            logging.debug('in aliquot save loop')
             for i in range(1,8):
-                logging.critical(f"i is {i}")
-                logging.critical(form.cleaned_data[f'partial_aliquot_18ml_{i}'])
+                logging.debug(f"i is {i}")
+                logging.debug(form.cleaned_data[f'partial_aliquot_18ml_{i}'])
                 if form.cleaned_data[f'partial_aliquot_18ml_{i}'] is True:
                     UrineAliquot.objects.create(processed_fk=self,aliquot_vial_size='E',aliquot_volume_collected=form.cleaned_data[f'partial_aliquot_18ml_{i}_amount'])
-                    logging.critical(f'Urine aliquot saved')
+                    logging.debug(f'Urine aliquot saved')
         if form.cleaned_data['all_7_collected']=="False":
             for i in range(1,4):
                 if form.cleaned_data[f'partial_aliquot_7ml_{i}'] is True:
