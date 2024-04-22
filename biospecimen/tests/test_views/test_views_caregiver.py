@@ -10,7 +10,8 @@ from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBio
     ShippedChoiceEchoForm, CollectedChildBloodSpotForm, CollectedChildBloodSpotHairFormOneYear, ShippedtoWSUFormChild, \
     InitialBioFormChildTooth, \
     CollectedChildToothForm, DeclinedForm, ReceivedatWSUForm, ShippedtoMSUForm, CollectedBiospecimenHairSalivaForm, \
-    ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoForm, NotCollectedForm
+    ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoForm, NotCollectedForm, ProcessedFormUrine, \
+    FrozenFormUrine
 from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -31,10 +32,9 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
     def collected_send_form(self, primary_key):
         response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/',
-                                    data={"urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
-                                          "urine_form-processed_date_time": timezone.datetime(2023, 5, 5, 5, 5,5),
-                                          "urine_form-stored_date_time": timezone.datetime(2023, 5, 5, 5, 5,5),
-                                          "urine_form-number_of_tubes": 5,
+                                    data={"urine_form-eat_drink_datetime": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                          "urine_form-eat_drink_text_field": 'bread',
+                                          "urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5,5),
                                           "urine_form-notes_and_deviations": 'what',
                                           })
         return response
@@ -72,6 +72,30 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
 
         return response
 
+    def processed_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/processed/post/',
+                         data={'processed_form-processed_aliquoted_off_site': 'R',
+                               'processed_form-processed_aliquoted_date_time': timezone.datetime(2023, 5, 5, 5, 5, 5),
+                               'processed_form-total_volume_of_urine_in_collection_cup': 120,
+                               'processed_form-precipate_bottom_of_container': True,
+                               'processed_form-refrigerated_prior_to_processing': False,
+                               'processed_form-all_18_collected': False,
+                               'processed_form-partial_aliquot_18ml_1': False,
+                               'processed_form-partial_aliquot_18ml_1_amount': 1.1,
+                               'processed_form-all_7_collected':True
+                               })
+
+        return response
+
+    def frozen_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/frozen/post/',
+                         data={
+                             'frozen_form-freezer_placed_date_time': timezone.datetime(2023, 5, 5, 5, 5, 5),
+                             'frozen_form-number_of_tubes':2,
+                             'frozen_form-notes_and_deviations':'great',
+                               })
+
+        return response
 
     def shipped_to_wsu_send_form(self,primary_key):
         response =  self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_wsu/post/',
@@ -130,6 +154,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.initial_send_form(primary_key, 'C')
         response = self.collected_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
+        logging.critical(response.content)
         self.assertContains(response,'Logged By: testuser')
 
     def test_echo2_bio_page_shows_shipped_to_wsu_data_if_complete(self):
@@ -248,27 +273,36 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertNotIsInstance(response.context['collected_form'], CollectedBiospecimenUrineForm)
 
-    def test_echo2_bio_entry_shows_incentive_form_if_collected_form_sent(self):
+    def test_echo2_bio_page_shows_processed_form_if_collected_submitted(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key,'C')
-        response = self.collected_send_form(primary_key)
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        self.assertIsInstance(response.context['incentive_form'], IncentiveForm)
+        self.assertIsInstance(response.context['processed_form'], ProcessedFormUrine)
+
+    def test_echo2_bio_page_shows_frozen_form_if_processed_submitted(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
+        self.assertIsInstance(response.context['frozen_form'], FrozenFormUrine)
 
     def test_echo2_bio_page_shows_wsu_shipped_form_if_incentive_submitted(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         self.initial_send_form(primary_key,'C')
         self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUForm)
 
     def test_echo2_bio_page_shows_wsu_received_form_if_shipped_to_wsu_form_sent(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        self.initial_send_form(primary_key, 'C')
+        self.initial_send_form(primary_key,'C')
         self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
-        # self.shipped_choice_send_form(primary_key, 'W')
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         self.shipped_to_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         logging.debug(f"{response.content.decode()}")
@@ -278,7 +312,8 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         self.initial_send_form(primary_key,'C')
         self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         self.shipped_to_wsu_send_form(primary_key)
         self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
@@ -306,13 +341,6 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.not_collected_fk.logged_by.username,'testuser')
 
-    def test_echo2_bio_urine_incentive_post_saved_logged_by(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        self.initial_send_form(primary_key,'C')
-        self.collected_send_form(primary_key)
-        response = self.incentive_send_form(primary_key)
-        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        self.assertEqual(caregiver_bio.incentive_fk.logged_by.username,'testuser')
 
     def test_echo2_bio_urine_shipped_wsu_post_saves_logged_by(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
