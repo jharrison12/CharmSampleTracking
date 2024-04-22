@@ -239,7 +239,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
         response = self.processed_send_form(primary_key)
-        response = self.frozen_send_form()
+        response = self.frozen_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
     def test_echo2_bio_urine_entry_shipped_wsu_urine_redirects_after_post(self):
@@ -247,19 +247,29 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
         response = self.processed_send_form(primary_key)
-        response = self.frozen_send_form()
+        response = self.frozen_send_form(primary_key)
         response = self.shipped_to_wsu_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
-
 
     def test_echo2_bio_urine_entry_received_urine_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'C')
         response = self.collected_send_form(primary_key)
         response = self.processed_send_form(primary_key)
-        response = self.frozen_send_form()
+        response = self.frozen_send_form(primary_key)
         response = self.shipped_to_wsu_send_form(primary_key)
         response = self.received_at_wsu_send_form(primary_key)
+        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
+
+    def test_echo2_bio_urine_entry_shipped_to_echo_urine_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.initial_send_form(primary_key,'C')
+        response = self.collected_send_form(primary_key)
+        response = self.processed_send_form(primary_key)
+        response = self.frozen_send_form(primary_key)
+        response = self.shipped_to_wsu_send_form(primary_key)
+        response = self.received_at_wsu_send_form(primary_key)
+        response = self.shipped_to_echo_echo_send_form(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
 
     #FORMS
@@ -343,12 +353,12 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.not_collected_fk.logged_by.username,'testuser')
 
-
     def test_echo2_bio_urine_shipped_wsu_post_saves_logged_by(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         self.initial_send_form(primary_key,'C')
         self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         self.shipped_to_wsu_send_form(primary_key)
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.shipped_wsu_fk.shipped_by.username,'testuser')
@@ -357,7 +367,8 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         self.initial_send_form(primary_key,'C')
         self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         self.shipped_to_wsu_send_form(primary_key)
         self.received_at_wsu_send_form(primary_key)
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
@@ -366,8 +377,10 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
     def test_echo2_bio_urine_shipped_echo_post_saves_logged_by(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         self.initial_send_form(primary_key,'C')
+        self.initial_send_form(primary_key, 'C')
         self.collected_send_form(primary_key)
-        self.incentive_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
         self.shipped_to_wsu_send_form(primary_key)
         self.received_at_wsu_send_form(primary_key)
         self.shipped_to_echo_echo_send_form(primary_key)

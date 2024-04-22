@@ -57,6 +57,11 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information_form"]/form/input[2]')
         submit.click()
 
+    def user_submits_urine_processed(self):
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('bread',body)
+
     def user_submits_urine_shipped_to_wsu(self):
 
         #user sees some of the information just entered
