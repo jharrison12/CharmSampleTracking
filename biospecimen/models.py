@@ -103,7 +103,7 @@ class Collected(models.Model):
     placed_in_formalin_date_time = models.DateTimeField(null=True,blank=True)
     received_date = models.DateField(null=True,blank=True)
     number_of_cards = models.IntegerField(null=True,blank=True)
-    notes_and_deviations = models.TextField()
+    notes_and_deviations = models.TextField(null=True,blank=True)
     eat_drink_text_field = models.TextField(null=True,blank=True)
 
     def create_collected_and_set_status_fk(self,caregiver_bio):
@@ -380,7 +380,7 @@ class UrineAliquot(models.Model):
 class Frozen(models.Model):
     freezer_placed_date_time = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True,default=None)
-    notes_and_deviations = models.TextField()
+    notes_and_deviations = models.TextField(null=True,blank=True)
 
     def save_frozen(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.frozen_fk= self
