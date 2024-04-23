@@ -108,9 +108,10 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         all_7_collected.select_by_visible_text('No')
 
         element = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_7ml_1')
-        self.browser.execute_script("arguments[0].scrollIntoView();", element)
-        #self.browser.execute_script("arguments[0].click();", element)
-        time.sleep(1)
+        # self.browser.execute_script("arguments[0].scrollIntoView();", element)
+        # #self.browser.execute_script("arguments[0].click();", element)
+        # time.sleep(1)
+        self.scroll_into_view(element)
 
         first_aliquot_7ml = self.browser.find_element(By.ID, "id_processed_form-partial_aliquot_7ml_1")
         first_aliquot_7ml.click()
@@ -176,8 +177,9 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         number_of_tubes.send_keys(5)
 
         logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
-        self.browser.execute_script("arguments[0].scrollIntoView();", logged_date_time)
-        time.sleep(1)
+        # self.browser.execute_script("arguments[0].scrollIntoView();", logged_date_time)
+        # time.sleep(1)
+        self.scroll_into_view(logged_date_time)
         logged_date_time.click()
         time.sleep(1)
         self.choose_flatpickr_day(new_num)
@@ -203,8 +205,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         # User sees received date time at
         # user submits shipped to WSu form
         received_date_time = self.browser.find_element(By.ID, "id_received_at_wsu_form-received_date_time")
-        self.browser.execute_script("arguments[0].scrollIntoView();", received_date_time)
-        time.sleep(1)
+        self.scroll_into_view(received_date_time)
         received_date_time.click()
         self.choose_flatpickr_day(0)
 
@@ -222,8 +223,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.assertIn('Shipped to ECHO Form',body)
 
         shipped_date_time = self.browser.find_element(By.ID, 'id_shipped_to_echo_form-shipped_date_and_time')
-        self.browser.execute_script("arguments[0].scrollIntoView();", shipped_date_time)
-        time.sleep(1)
+        self.scroll_into_view(shipped_date_time)
         shipped_date_time.click()
         self.choose_flatpickr_day(0)
 

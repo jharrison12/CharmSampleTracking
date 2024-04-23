@@ -61,6 +61,10 @@ class FunctionalTest(StaticLiveServerTestCase):
                 f"flat picker days {self.browser.find_elements(By.CSS_SELECTOR, 'span.flatpickr-day.today')}")
         return number_of_css_selector
 
+    def scroll_into_view(self, myelement):
+        self.browser.execute_script("arguments[0].scrollIntoView();", myelement)
+        time.sleep(1)
+
 
 def wait_for_element(browser,myelement):
     #logging.debug(browser,myelement)
@@ -72,5 +76,7 @@ def wait_for_element(browser,myelement):
         raise AssertionError
 
     return element
+
+
 
 TODAY = dt.datetime.now().strftime('%B %#d, %Y')
