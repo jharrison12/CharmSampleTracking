@@ -118,11 +118,19 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         first_aliquot_7ml_amount = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_7ml_1_amount')
         first_aliquot_7ml_amount.send_keys(1.1)
 
+        self.browser.find_element(By.TAG_NAME, 'body').click()
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="processed_questions_form"]/form/input[2]')
+        self.browser.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(1)
+
         submit = self.browser.find_element(By.XPATH,'//*[@id="processed_questions_form"]/form/input[2]')
         submit.click()
 
     def user_submits_urine_frozen(self):
-        pass
+        time.sleep(20)
+
 
     def user_submits_urine_shipped_to_wsu(self):
 
