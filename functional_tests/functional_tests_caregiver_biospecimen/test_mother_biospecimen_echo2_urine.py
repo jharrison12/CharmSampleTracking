@@ -60,7 +60,69 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
     def user_submits_urine_processed(self):
 
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('bread',body)
+        self.assertIn('Collection Location: Clinic',body)
+
+        aliquoted_off_site = self.browser.find_element(By.ID, "id_processed_form-processed_aliquoted_off_site")
+        aliquoted_off_site.send_keys('Refrigerated')
+
+        aliquoted_date_time = self.browser.find_element(By.ID, "id_processed_form-processed_aliquoted_date_time")
+        aliquoted_date_time.click()
+        self.choose_flatpickr_day(0)
+
+        #id_processed_form-total_volume_of_urine_in_collection_cup
+        total_volume_of_urine = self.browser.find_element(By.ID, "id_processed_form-total_volume_of_urine_in_collection_cup")
+        total_volume_of_urine.send_keys(100)
+        #processed_form-processed_aliquoted_off_site
+
+        precipate_at_bottom = self.browser.find_element(By.ID,'id_processed_form-precipate_bottom_of_container')
+        precipate_at_bottom.click()
+
+        placed_in_fridge = self.browser.find_element(By.ID,'id_processed_form-refrigerated_prior_to_processing')
+        placed_in_fridge.click()
+
+        refrigerated_date_time = self.browser.find_element(By.ID, "id_processed_form-refrigerated_placed_date_time")
+        refrigerated_date_time.click()
+        self.choose_flatpickr_day(1)
+
+        refrigerated_removed_date_time = self.browser.find_element(By.ID, "id_processed_form-refrigerated_removed_date_time")
+        refrigerated_removed_date_time.click()
+        self.choose_flatpickr_day(2)
+
+        all_18_collected = Select(
+            self.browser.find_element(By.ID, 'id_processed_form-all_18_collected'))
+        all_18_collected.select_by_visible_text('No')
+
+        first_aliquot_18ml = self.browser.find_element(By.ID, "id_processed_form-partial_aliquot_18ml_1")
+        first_aliquot_18ml.click()
+
+        #id_processed_form-partial_aliquot_18ml_1_amount
+        first_aliquot_18ml_amount = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_18ml_1_amount')
+        first_aliquot_18ml_amount.send_keys(1.1)
+
+        self.browser.find_element(By.TAG_NAME, 'body').click()
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Partial Aliquot #2',body)
+
+        all_7_collected = Select(
+            self.browser.find_element(By.ID, 'id_processed_form-all_7_collected'))
+        all_7_collected.select_by_visible_text('No')
+
+        element = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_7ml_1')
+        self.browser.execute_script("arguments[0].scrollIntoView();", element)
+        #self.browser.execute_script("arguments[0].click();", element)
+        time.sleep(1)
+
+        first_aliquot_7ml = self.browser.find_element(By.ID, "id_processed_form-partial_aliquot_7ml_1")
+        first_aliquot_7ml.click()
+
+        first_aliquot_7ml_amount = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_7ml_1_amount')
+        first_aliquot_7ml_amount.send_keys(1.1)
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="processed_questions_form"]/form/input[2]')
+        submit.click()
+
+    def user_submits_urine_frozen(self):
+        pass
 
     def user_submits_urine_shipped_to_wsu(self):
 
@@ -151,6 +213,8 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
     def test_user_can_choose_status_of_urine_information_chooses_collected_shipped_wsu(self):
         self.user_submits_urine_collected()
+        self.user_submits_urine_processed()
+        self.user_submits_urine_frozen()
         self.user_submits_urine_shipped_to_wsu()
         self.user_submits_urine_received_at_wsu()
         self.user_submits_urine_shipped_to_echo()
