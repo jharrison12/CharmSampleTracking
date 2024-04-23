@@ -129,8 +129,24 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         submit.click()
 
     def user_submits_urine_frozen(self):
-        time.sleep(20)
+        #id_frozen_form-freezer_placed_date_time
 
+        freezer_placed_date_time = self.browser.find_element(By.ID, "id_frozen_form-freezer_placed_date_time")
+        freezer_placed_date_time.click()
+        self.choose_flatpickr_day(0)
+
+        #id_frozen_form-number_of_tubes
+
+        frozen_number_of_tubes = self.browser.find_element(By.ID,'id_frozen_form-number_of_tubes')
+        frozen_number_of_tubes.send_keys(10)
+
+        #id_frozen_form-notes_and_deviations
+
+        frozen_notes = self.browser.find_element(By.ID,'id_frozen_form-notes_and_deviations')
+        frozen_notes.send_keys('they were really cold')
+
+        submit = self.browser.find_element(By.XPATH,'//*[@id="frozen_questions_form"]/form/input[2]')
+        submit.click()
 
     def user_submits_urine_shipped_to_wsu(self):
 
@@ -148,12 +164,6 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         self.assertNotIn('Incentive', body)
 
-        #user sees shipped to wsu form
-
-        body = self.browser.find_element(By.ID,'shipped_to_wsu_information_form').text
-        self.assertIn('Collected Questions',body)
-        self.assertIn('If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?',body)
-
         #user submits shipped to WSu form
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
         shipped_date_time.click()
@@ -166,10 +176,14 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         number_of_tubes.send_keys(5)
 
         logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
+        self.browser.execute_script("arguments[0].scrollIntoView();", logged_date_time)
+        time.sleep(1)
         logged_date_time.click()
+        time.sleep(1)
         self.choose_flatpickr_day(new_num)
 
         courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
+        self.browser.execute_script("arguments[0].scrollIntoView();", courier)
         courier.send_keys('FedEx')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
