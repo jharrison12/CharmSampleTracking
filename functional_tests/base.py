@@ -3,6 +3,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import datetime as dt
 from biospecimen.models import Collection,Status, CaregiverBiospecimen,ChildBiospecimen,Collected,PregnancyTrimester,ShippedWSU,ShippedECHO,KitSent,AgeCategory,\
     User,Caregiver,Incentive,Project,\
@@ -51,8 +52,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             WebDriverWait(self.browser,20).until(EC.presence_of_element_located((By.CSS_SELECTOR,'span.flatpickr-day.today')))
             flatpickr_class = self.browser.find_elements(By.CSS_SELECTOR,'span.flatpickr-day.today')[number_of_css_selector]
             flatpickr_class.click()
-            #find element body will click in the middle of the page and choose a different date lol
-            self.browser.find_element(By.TAG_NAME,'h1').click()
+            self.browser.execute_script("window.stop();")
             number_of_css_selector+=1
         except IndexError:
             logging.debug(

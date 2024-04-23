@@ -203,13 +203,11 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         # User sees received date time at
         # user submits shipped to WSu form
         received_date_time = self.browser.find_element(By.ID, "id_received_at_wsu_form-received_date_time")
+        self.browser.execute_script("arguments[0].scrollIntoView();", received_date_time)
+        time.sleep(1)
         received_date_time.click()
         self.choose_flatpickr_day(0)
 
-
-        number_of_tubes = self.browser.find_element(By.ID,'id_received_at_wsu_form-number_of_tubes')
-        number_of_tubes.send_keys(5)
-        time.sleep(1)
         submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
         submit.click()
 
@@ -224,6 +222,8 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.assertIn('Shipped to ECHO Form',body)
 
         shipped_date_time = self.browser.find_element(By.ID, 'id_shipped_to_echo_form-shipped_date_and_time')
+        self.browser.execute_script("arguments[0].scrollIntoView();", shipped_date_time)
+        time.sleep(1)
         shipped_date_time.click()
         self.choose_flatpickr_day(0)
 
