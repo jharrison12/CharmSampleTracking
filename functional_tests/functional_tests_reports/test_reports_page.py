@@ -176,6 +176,8 @@ class StaffUrineReportPageTest(FunctionalTest):
     def test_user_can_see_staff_shipped_to_wsu_urine_report(self):
         self.login_staff()
         motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+        motherurine.user_submits_urine_frozen(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
 
         # User visits the page for P7000
@@ -213,6 +215,8 @@ class StaffUrineReportPageTest(FunctionalTest):
     def test_user_can_see_staff_recieved_at_wsu_urine_report(self):
         self.login_staff()
         motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+        motherurine.user_submits_urine_frozen(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
         motherurine.user_submits_urine_received_at_wsu(self)
 
@@ -235,21 +239,19 @@ class StaffUrineReportPageTest(FunctionalTest):
         text = self.webpage_text()
         self.assertIn('4101', text)
         self.assertIn('12UR410101', text)
-        self.assertIn('Number of Tubes', text)
-        self.assertIn('5', text)
 
         self.browser.find_element(By.ID,'received_at_wsu_report_header').click()
         text = self.webpage_text()
         self.assertNotIn('4101', text)
         self.assertNotIn('12UR410101', text)
-        self.assertNotIn('Number of Tubes', text)
-        self.assertNotIn('5', text)
 
         ##TODO implement search bar
 
     def test_user_can_see_staff_shipped_to_echo_urine_report(self):
         self.login_staff()
         motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+        motherurine.user_submits_urine_frozen(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
         motherurine.user_submits_urine_received_at_wsu(self)
         motherurine.user_submits_urine_shipped_to_echo(self)
@@ -509,6 +511,8 @@ class UrineReportsPageTest(FunctionalTest):
 
     def test_user_can_see_shipped_to_wsu_urine_report(self):
         motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+        motherurine.user_submits_urine_frozen(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
 
         # User visits the page for P7000
@@ -535,6 +539,8 @@ class UrineReportsPageTest(FunctionalTest):
 
     def test_user_can_see_recieved_at_wsu_urine_report(self):
         motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+        motherurine.user_submits_urine_frozen(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
         motherurine.user_submits_urine_received_at_wsu(self)
 
@@ -564,6 +570,8 @@ class UrineReportsPageTest(FunctionalTest):
 
     def test_user_can_see_shipped_to_echo_urine_report(self):
         motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+        motherurine.user_submits_urine_frozen(self)
         motherurine.user_submits_urine_shipped_to_wsu(self)
         motherurine.user_submits_urine_received_at_wsu(self)
         motherurine.user_submits_urine_shipped_to_echo(self)

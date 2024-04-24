@@ -313,7 +313,7 @@ def caregiver_biospecimen_entry_hair_saliva(request, caregiver_charm_id, caregiv
                                                                                                   'declined_form':declined_form,
                                                                                                   'declined_item':declined_item
                                                                                                   })
-@login_required()
+@login_required
 def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
     try:
@@ -332,7 +332,6 @@ def caregiver_biospecimen_kit_sent_post(request,caregiver_charm_id,caregiver_bio
     else:
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
-
 
 @login_required
 def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
@@ -434,8 +433,6 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'frozen_form':frozen_form
                                                                                                   })
 
-
-
 @login_required
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -462,16 +459,18 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     received_at_wsu_item = ReceivedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    declined_item = Declined.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
     incentive_form = None
     received_wsu_form = None
-    declined_form= None
-    logging.debug(f"Caregiver bio is {caregiver_bio}")
-    if declined_item.exists() and declined_item.filter(declined_date__isnull=True):
-        declined_form = DeclinedForm(prefix='declined_form')
+    not_collected_form= None
+    logging.critical(f"Caregiver bio is {caregiver_bio}")
+    logging.critical(f"if value for not collected blood bio is {not_collected_item.exists()} {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
+    if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True).exists():
+        logging.critical(f"made it to not collected form")
+        not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
         logging.debug(f"Does collected_item exist? {collected_item.exists()}\n\n"
                          f"Is collected date time null {collected_item.filter(collected_date_time__isnull=True).exists()}\n")
@@ -513,8 +512,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'caregiver_bloods_shipped_wsu':caregiver_bloods_shipped_wsu,
                                                                                                         'caregiver_bloods_received_wsu':caregiver_bloods_received_wsu,
                                                                                                         'caregiver_bloods_shipped_echo':caregiver_bloods_shipped_echo,
-                                                                                                        'declined_form':declined_form,
-                                                                                                        'declined_item':declined_item
+                                                                                                        'not_collected_form':not_collected_form,
+                                                                                                        'not_collected_item':not_collected_item
                                                                                                         })
 
 @login_required
