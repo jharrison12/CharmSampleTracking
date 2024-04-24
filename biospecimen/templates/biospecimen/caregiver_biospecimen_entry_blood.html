@@ -24,7 +24,7 @@
                 <label for="{{ collected_form.tube_one.id_for_label }}" class="form-label">{{ collected_form.tube_one.label }}</label>
                 {{ collected_form.tube_one }}
               </div>
-              <div class="form-group">
+              <div class="form-group" id="tube_one_estimated_volume">
                 {{ collected_form.tube_one_estimated_volume.errors }}
                 <label for="{{ collected_form.tube_one_estimated_volume.id_for_label }}" class="form-label">{{ collected_form.tube_one_estimated_volume.label }}</label>
                 {{ collected_form.tube_one_estimated_volume }}
@@ -39,7 +39,7 @@
                 <label for="{{ collected_form.tube_two.id_for_label }}" class="form-label">{{ collected_form.tube_two.label }}</label>
                 {{ collected_form.tube_two }}
               </div>
-              <div class="form-group">
+              <div class="form-group" id="tube_two_estimated_volume">
                 {{ collected_form.tube_two_estimated_volume.errors }}
                 <label for="{{ collected_form.tube_two_estimated_volume.id_for_label }}" class="form-label">{{ collected_form.tube_two_estimated_volume.label }}</label>
                 {{ collected_form.tube_two_estimated_volume }}
@@ -54,7 +54,7 @@
                 <label for="{{ collected_form.tube_three.id_for_label }}" class="form-label">{{ collected_form.tube_three.label }}</label>
                 {{ collected_form.tube_three }}
               </div>
-              <div class="form-group">
+              <div class="form-group" id="tube_three_estimated_volume">
                 {{ collected_form.tube_three_estimated_volume.errors }}
                 <label for="{{ collected_form.tube_three_estimated_volume.id_for_label }}" class="form-label">{{ collected_form.tube_three_estimated_volume.label }}</label>
                 {{ collected_form.tube_three_estimated_volume }}
@@ -385,4 +385,5 @@
 {% block second_javascript %}
     <script type="text/javascript" src="/static/biospecimen/js/blood_component.js"></script>
     <script type="text/javascript" src="/static/biospecimen/js/not_collected.js"></script>
+    <script type="text/javascript" src="/static/biospecimen/js/blood_collected.js"></script>
 {% endblock %}
