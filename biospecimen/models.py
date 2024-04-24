@@ -96,7 +96,8 @@ class Collected(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,null=True,blank=True)
     collected_date_time = models.DateTimeField(null=True,blank=True)
-    eat_drink_datetime = models.DateTimeField(null=True,blank=True)
+    eat_drink_date_time = models.DateTimeField(null=True,blank=True)
+    other_water_date_time = models.DateTimeField(null=True,blank=True)
     processed_date_time = models.DateTimeField(null=True,blank=True)
     stored_date_time = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True)
@@ -170,6 +171,23 @@ class Collected(models.Model):
 
     def __str__(self):
         return f"collected {self.status_set}"
+
+
+class BloodTube(models.Model):
+    class CompletePartial(models.TextChoices):
+        COMPLETE = 'C', _('Complete')
+        PARTIAL = 'P', _('Partial')
+
+    class Hemolysis(models.TextChoices):
+        NONE = 'N', _('None')
+        MILD = 'M', _('Mild')
+        MODERATE = 'O', _('Moderate')
+        SEVERE = 'S', _('Severe')
+
+    complete_or_partial = models.CharField(max_length=1,choices=CompletePartial.choices,null=True,blank=True)
+    partial_estimated_volume = models.IntegerField(blank=True,null=True)
+    hemolysis = models.CharField(max_length=1,choices=Hemolysis.choices,null=True,blank=True)
+
 
 class NotCollected(models.Model):
     class RefusedOrOther(models.TextChoices):

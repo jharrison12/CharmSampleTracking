@@ -10,79 +10,59 @@
               <h2>Collected Form</h2>
             {{ collected_form.non_field_errors }}
               <div class="form-group">
+                {{ collected_form.other_water_date_time.errors }}
+                <label for="{{ collected_form.other_water_date_time.id_for_label }}" class="form-label">{{ collected_form.other_water_date_time.label }}</label>
+                {{ collected_form.other_water_date_time }}
+              </div>
+              <div class="form-group">
                 {{ collected_form.collected_date_time.errors }}
-                <label for="{{ collected_form.collected_date_time.id_for_label }}" class="form-label">Collected Date Time:</label>
+                <label for="{{ collected_form.collected_date_time.id_for_label }}" class="form-label">{{ collected_form.collected_date_time.label }}</label>
                 {{ collected_form.collected_date_time }}
               </div>
               <div class="form-group">
-                {{ collected_form.processed_date_time.errors }}
-                <label for="{{ collected_form.processed_date_time.id_for_label }}" class="form-label">Processed Date Time:</label>
-                {{ collected_form.processed_date_time }}
+                {{ collected_form.tube_one.errors }}
+                <label for="{{ collected_form.tube_one.id_for_label }}" class="form-label">{{ collected_form.tube_one.label }}</label>
+                {{ collected_form.tube_one }}
               </div>
               <div class="form-group">
-                {{ collected_form.stored_date_time.errors }}
-                <label for="{{ collected_form.stored_date_time.id_for_label }}" class="form-label">Stored Date Time:</label>
-                {{ collected_form.stored_date_time }}
+                {{ collected_form.tube_one_estimated_volume.errors }}
+                <label for="{{ collected_form.tube_one_estimated_volume.id_for_label }}" class="form-label">{{ collected_form.tube_one_estimated_volume.label }}</label>
+                {{ collected_form.tube_one_estimated_volume }}
               </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ collected_form.whole_blood.errors }}
-                    <label for="{{ collected_form.whole_blood.id_for_label }}" class="col-form-label">Whole Blood:</label>
-                    {{ collected_form.whole_blood }}
-                  </div>
-                  <div class="col-auto" id="whole_blood_number_of_tubes_div">
-                    {{ collected_form.whole_blood_number_of_tubes.errors }}
-                    <label for="{{ collected_form.whole_blood_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ collected_form.whole_blood_number_of_tubes }}
-                  </div>
+              <div class="form-group">
+                {{ collected_form.tube_one_hemolysis.errors }}
+                <label for="{{ collected_form.tube_one_hemolysis.id_for_label }}" class="form-label">{{ collected_form.tube_one_hemolysis.label }}</label>
+                {{ collected_form.tube_one_hemolysis }}
               </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ collected_form.plasma.errors }}
-                    <label for="{{ collected_form.plasma.id_for_label }}" class="col-form-label">Plasma:</label>
-                    {{ collected_form.plasma }}
-                  </div>
-                  <div class="col-auto" id="plasma_number_of_tubes_div">
-                    {{ collected_form.plasma_number_of_tubes.errors }}
-                    <label for="{{ collected_form.plasma_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ collected_form.plasma_number_of_tubes }}
-                  </div>
+              <div class="form-group">
+                {{ collected_form.tube_two.errors }}
+                <label for="{{ collected_form.tube_two.id_for_label }}" class="form-label">{{ collected_form.tube_two.label }}</label>
+                {{ collected_form.tube_two }}
               </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ collected_form.buffy_coat.errors }}
-                    <label for="{{ collected_form.buffy_coat.id_for_label }}" class="col-form-label">Buffy Coat:</label>
-                    {{ collected_form.buffy_coat }}
-                  </div>
-                  <div class="col-auto" id="buffy_coat_number_of_tubes_div">
-                    {{ collected_form.buffy_coat_number_of_tubes.errors }}
-                    <label for="{{ collected_form.buffy_coat_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ collected_form.buffy_coat_number_of_tubes }}
-                  </div>
+              <div class="form-group">
+                {{ collected_form.tube_two_estimated_volume.errors }}
+                <label for="{{ collected_form.tube_two_estimated_volume.id_for_label }}" class="form-label">{{ collected_form.tube_two_estimated_volume.label }}</label>
+                {{ collected_form.tube_two_estimated_volume }}
               </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ collected_form.red_blood_cells.errors }}
-                    <label for="{{ collected_form.red_blood_cells.id_for_label }}" class="col-form-label">Red Blood Cells:</label>
-                    {{ collected_form.red_blood_cells }}
-                  </div>
-                  <div class="col-auto" id="red_blood_cells_number_of_tubes_div">
-                    {{ collected_form.red_blood_cells_number_of_tubes.errors }}
-                    <label for="{{ collected_form.red_blood_cells_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ collected_form.red_blood_cells_number_of_tubes }}
-                  </div>
+              <div class="form-group">
+                {{ collected_form.tube_two_hemolysis.errors }}
+                <label for="{{ collected_form.tube_two_hemolysis.id_for_label }}" class="form-label">{{ collected_form.tube_two_hemolysis.label }}</label>
+                {{ collected_form.tube_two_hemolysis }}
               </div>
-              <div class="row g-3">
-                  <div class="col-auto">
-                    {{ collected_form.serum.errors }}
-                    <label for="{{ collected_form.serum.id_for_label }}" class="col-form-label">Serum:</label>
-                    {{ collected_form.serum }}
-                  </div>
-                  <div class="col-auto" id="serum_number_of_tubes_div">
-                    {{ collected_form.serum_number_of_tubes.errors }}
-                    <label for="{{ collected_form.serum_number_of_tubes.id_for_label }}" class="col-form-label">Number of Tubes:</label>
-                    {{ collected_form.serum_number_of_tubes }}
-                  </div>
+              <div class="form-group">
+                {{ collected_form.tube_three.errors }}
+                <label for="{{ collected_form.tube_three.id_for_label }}" class="form-label">{{ collected_form.tube_three.label }}</label>
+                {{ collected_form.tube_three }}
+              </div>
+              <div class="form-group">
+                {{ collected_form.tube_three_estimated_volume.errors }}
+                <label for="{{ collected_form.tube_three_estimated_volume.id_for_label }}" class="form-label">{{ collected_form.tube_three_estimated_volume.label }}</label>
+                {{ collected_form.tube_three_estimated_volume }}
+              </div>
+              <div class="form-group">
+                {{ collected_form.tube_three_hemolysis.errors }}
+                <label for="{{ collected_form.tube_three_hemolysis.id_for_label }}" class="form-label">{{ collected_form.tube_three_hemolysis.label }}</label>
+                {{ collected_form.tube_three_hemolysis }}
               </div>
           <input type="submit" value="Submit" />
           </form>

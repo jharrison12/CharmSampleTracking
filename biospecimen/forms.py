@@ -23,6 +23,8 @@ SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
 PROCESSED_ALIQUOTED_OFF_SITE = [('N','Not Applicable'),('R','refrigerated'),('T','Room Temperature')]
 YES_NO=[(True,'Yes'),(False,'No')]
+PARTIAL_COMPLETE = [('C','Complete'),('P','Partial')]
+HEMOLYSIS = [('N','None'),('M','Mild'),('O','Moderate'),('S','Severe')]
 
 
 def check_component_tubes(component_values, form_data,cleaned_data,chain_of_custody):
@@ -279,26 +281,17 @@ class ShippedtoEchoForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
 class CollectedBloodForm(forms.Form):
-    collected_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-    processed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-    stored_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-    whole_blood = forms.BooleanField(required=False)
-    whole_blood_number_of_tubes = forms.IntegerField(required=False)
-    plasma = forms.BooleanField(required=False)
-    plasma_number_of_tubes = forms.IntegerField(required=False)
-    buffy_coat = forms.BooleanField(required=False)
-    buffy_coat_number_of_tubes = forms.IntegerField(required=False)
-    red_blood_cells = forms.BooleanField(required=False)
-    red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
-    serum = forms.BooleanField(required=False)
-    serum_number_of_tubes = forms.IntegerField(required=False)
-
-    class Meta:
-        fields = ['collected_date_time','processed_date_time','stored_date_time','number_of_tubes']
-        widgets = {
-            "collected_date_time": forms.DateTimeInput,
-            "processed_date_time": forms.DateTimeInput
-        }
+    other_water_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the last time the participant ate or drank anything other than plain water?')
+    collected_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time Collected')
+    tube_one = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE)
+    tube_one_estimated_volume = forms.IntegerField()
+    tube_one_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
+    tube_two = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE)
+    tube_two_estimated_volume = forms.IntegerField()
+    tube_two_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
+    tube_three = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE)
+    tube_three_estimated_volume = forms.IntegerField()
+    tube_three_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
 
 class KitSentForm(forms.Form):
     kit_sent_date = forms.DateField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datepicker"}))
@@ -335,11 +328,6 @@ class ReceivedatWSUForm(forms.Form):
 
 class DeclinedForm(forms.Form):
     declined_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-
-    # def __init__(self, *args, **kwargs):
-    #     super(DeclinedForm, self).__init__(*args, **kwargs)
-    #     self.fields['declined_date'].widget = TextInput(attrs={
-    #         'class': 'datepicker'})
 
 class NotCollectedForm(forms.Form):
     CHOICES = [
