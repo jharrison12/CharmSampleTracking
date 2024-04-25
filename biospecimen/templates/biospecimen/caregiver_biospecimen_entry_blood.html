@@ -76,18 +76,23 @@
             </div>
             <div class="col-8">
                 <div>Collected Date Time:{{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
-                <div>Processed Date Time:{{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>
-                <div>Stored Date Time:{{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>
-                <div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>
+                <div>When was the last time the participant ate or drank anything other than plain water?:{{ caregiver_bio.status_fk.collected_fk.other_water_date_time }}</div>
                 <div>Logged By:{{ caregiver_bio.status_fk.collected_fk.logged_by }}</div>
+                <ul>
                 {% for blood in caregiver_bloods_collected %}
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-                      <label class="form-check-label" for="flexCheckCheckedDisabled">
-                        {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}
-                      </label>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm">
+                                 Tube #{{ blood.tube_number }}:
+                          {{ blood.get_complete_or_partial_display }}
+                          {{ blood.get_tube_type_display }}
+                          {{ blood.get_hemolysis_display }}
+                          {{ blood.partial_estimated_volume }}
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
+                </ul>
             </div>
         </div>
     {% else %}

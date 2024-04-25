@@ -4,7 +4,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, C
     NoConsent, ShippedWSU, ShippedECHO, \
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU, ReceivedMSU, Project, Caregiver, PregnancyTrimester, Child, \
     Component, URINE, BLOOD_DICT_FORM, BLOOD_DICT, ComponentError, \
-    Processed, UrineAliquot, Frozen
+    Processed, UrineAliquot, Frozen,BloodTube
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
     ShippedChoiceForm, ShippedtoWSUForm, \
     ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
@@ -49,6 +49,9 @@ def return_caregiver_bloods(caregiver_bio,collected_fk=None,shipped_wsu_fk=None,
     elif shipped_echo_fk:
         return Component.objects.filter(caregiver_biospecimen_fk=caregiver_bio, number_of_tubes__isnull=False,
                                         shipped_echo_fk=shipped_echo_fk)
+
+def return_blood_tubes(caregiver_bio):
+    return BloodTube.objects.filter(caregiver_biospecimen_fk=caregiver_bio)
 
 def create_or_update_component_values(caregiver_bio,logged_in_user,form_data,collected_fk=None,shipped_wsu_fk=None, received_wsu_fk=None,shipped_to_echo_fk=None,project='ECHO2'):
         logging.debug(f"What is caregiver_bio {caregiver_bio}\n")
@@ -447,8 +450,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     caregiver_bloods_received_wsu = None
     caregiver_bloods_shipped_echo = None
     if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk:
-        caregiver_bloods_collected = return_caregiver_bloods(caregiver_bio,collected_fk=caregiver_bio.status_fk.collected_fk)
-        logging.debug(f"caregiver bloods collected {caregiver_bloods_collected}")
+        caregiver_bloods_collected = return_blood_tubes(caregiver_bio=caregiver_bio)
+        logging.critical(f"caregiver blood tubes {caregiver_bloods_collected}")
     if caregiver_bio.status_fk and caregiver_bio.status_fk.shipped_wsu_fk:
         caregiver_bloods_shipped_wsu = return_caregiver_bloods(caregiver_bio,shipped_wsu_fk=caregiver_bio.status_fk.shipped_wsu_fk)
     if caregiver_bio.status_fk and caregiver_bio.status_fk.received_wsu_fk:
@@ -560,7 +563,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 #                                   logged_in_user=request.user,
                 #                                   form_data=form.cleaned_data,
                 #                                   collected_fk=blood_item,shipped_wsu_fk=None,received_wsu_fk=None)
-                blood_item.save_blood(form=form,request=request)
+                blood_item.save_blood(form=form,request=request,caregiver_bio=caregiver_bio)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError

@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -136,7 +137,7 @@ class Collected(models.Model):
         self.logged_by = request.user
         self.save()
 
-    def save_blood(self,form,request):
+    def save_blood(self,form,request,caregiver_bio):
         self.other_water_date_time = form.cleaned_data['other_water_date_time']
         self.collected_date_time = form.cleaned_data['collected_date_time']
         self.logged_by = request.user
@@ -145,11 +146,13 @@ class Collected(models.Model):
             if tube==1:
                 BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
                                      complete_or_partial=form.cleaned_data[f'tube_{tube}'],
-                                     tube_type='S',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'])
+                                     tube_type='S',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'],
+                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube)
             else:
                 BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
                                      complete_or_partial=form.cleaned_data[f'tube_{tube}'],
-                                     tube_type='E',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'])
+                                     tube_type='E',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'],
+                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube)
 
     def component_check(self,components,form):
         logging.debug(f"{form.cleaned_data}")
@@ -616,9 +619,10 @@ class BloodTube(models.Model):
         SEVERE = 'S', _('Severe')
 
     caregiver_biospecimen_fk = models.ForeignKey(CaregiverBiospecimen,on_delete=models.PROTECT,null=True,blank=True)
+    tube_number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(3)],null=True,blank=True)
     tube_type = models.CharField(max_length=1,choices=TubeType.choices,null=True,blank=True)
     complete_or_partial = models.CharField(max_length=1,choices=CompletePartial.choices,null=True,blank=True)
-    partial_estimated_volume = models.IntegerField(blank=True,null=True)
+    partial_estimated_volume = models.DecimalField(blank=True,null=True,decimal_places=1,max_digits=3)
     hemolysis = models.CharField(max_length=1,choices=Hemolysis.choices,null=True,blank=True)
 
 class ChildBiospecimen(models.Model):
