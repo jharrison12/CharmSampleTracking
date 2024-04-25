@@ -137,11 +137,19 @@ class Collected(models.Model):
         self.save()
 
     def save_blood(self,form,request):
+        self.other_water_date_time = form.cleaned_data['other_water_date_time']
         self.collected_date_time = form.cleaned_data['collected_date_time']
-        self.processed_date_time = form.cleaned_data['processed_date_time']
-        self.stored_date_time = form.cleaned_data['stored_date_time']
         self.logged_by = request.user
         self.save()
+        for tube in range(1,4):
+            if tube==1:
+                BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
+                                     complete_or_partial=form.cleaned_data[f'tube_{tube}'],
+                                     tube_type='S',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'])
+            else:
+                BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
+                                     complete_or_partial=form.cleaned_data[f'tube_{tube}'],
+                                     tube_type='E',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'])
 
     def component_check(self,components,form):
         logging.debug(f"{form.cleaned_data}")
@@ -171,22 +179,6 @@ class Collected(models.Model):
 
     def __str__(self):
         return f"collected {self.status_set}"
-
-
-class BloodTube(models.Model):
-    class CompletePartial(models.TextChoices):
-        COMPLETE = 'C', _('Complete')
-        PARTIAL = 'P', _('Partial')
-
-    class Hemolysis(models.TextChoices):
-        NONE = 'N', _('None')
-        MILD = 'M', _('Mild')
-        MODERATE = 'O', _('Moderate')
-        SEVERE = 'S', _('Severe')
-
-    complete_or_partial = models.CharField(max_length=1,choices=CompletePartial.choices,null=True,blank=True)
-    partial_estimated_volume = models.IntegerField(blank=True,null=True)
-    hemolysis = models.CharField(max_length=1,choices=Hemolysis.choices,null=True,blank=True)
 
 
 class NotCollected(models.Model):
@@ -606,6 +598,28 @@ class CaregiverBiospecimen(models.Model):
 
     def __str__(self):
         return f"{self.caregiver_fk.charm_project_identifier} {self.biospecimen_id}"
+
+class BloodTube(models.Model):
+    class TubeType(models.TextChoices):
+        EDTA = 'E', _('EDTA')
+        SERUM = 'S',_('Serum')
+
+    class CompletePartial(models.TextChoices):
+        COMPLETE = 'C', _('Complete')
+        PARTIAL = 'P', _('Partial')
+        NOT_COMPLETE = 'N', _('Not Complete')
+
+    class Hemolysis(models.TextChoices):
+        NONE = 'N', _('None')
+        MILD = 'M', _('Mild')
+        MODERATE = 'O', _('Moderate')
+        SEVERE = 'S', _('Severe')
+
+    caregiver_biospecimen_fk = models.ForeignKey(CaregiverBiospecimen,on_delete=models.PROTECT,null=True,blank=True)
+    tube_type = models.CharField(max_length=1,choices=TubeType.choices,null=True,blank=True)
+    complete_or_partial = models.CharField(max_length=1,choices=CompletePartial.choices,null=True,blank=True)
+    partial_estimated_volume = models.IntegerField(blank=True,null=True)
+    hemolysis = models.CharField(max_length=1,choices=Hemolysis.choices,null=True,blank=True)
 
 class ChildBiospecimen(models.Model):
     child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)

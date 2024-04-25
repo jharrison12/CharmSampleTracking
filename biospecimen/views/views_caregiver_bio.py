@@ -553,12 +553,13 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                         caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in BLOOD:
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
+            logging.critical(f'in collection type blood post page')
             if form.is_valid():
                 blood_item = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                create_or_update_component_values(caregiver_bio=caregiver_bio,
-                                                  logged_in_user=request.user,
-                                                  form_data=form.cleaned_data,
-                                                  collected_fk=blood_item,shipped_wsu_fk=None,received_wsu_fk=None)
+                # create_or_update_component_values(caregiver_bio=caregiver_bio,
+                #                                   logged_in_user=request.user,
+                #                                   form_data=form.cleaned_data,
+                #                                   collected_fk=blood_item,shipped_wsu_fk=None,received_wsu_fk=None)
                 blood_item.save_blood(form=form,request=request)
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:

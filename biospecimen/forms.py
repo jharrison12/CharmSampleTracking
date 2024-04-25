@@ -23,7 +23,7 @@ SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
 PROCESSED_ALIQUOTED_OFF_SITE = [('N','Not Applicable'),('R','refrigerated'),('T','Room Temperature')]
 YES_NO=[(True,'Yes'),(False,'No')]
-PARTIAL_COMPLETE = [('C','Complete'),('P','Partial')]
+PARTIAL_COMPLETE = [('C','Complete'),('P','Partial'),('N','Not Collected')]
 HEMOLYSIS = [('N','None'),('M','Mild'),('O','Moderate'),('S','Severe')]
 
 
@@ -283,15 +283,16 @@ class ShippedtoEchoForm(forms.Form):
 class CollectedBloodForm(forms.Form):
     other_water_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the last time the participant ate or drank anything other than plain water?')
     collected_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time Collected')
-    tube_one = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE)
-    tube_one_estimated_volume = forms.IntegerField()
-    tube_one_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
-    tube_two = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE)
-    tube_two_estimated_volume = forms.IntegerField()
-    tube_two_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
-    tube_three = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE)
-    tube_three_estimated_volume = forms.IntegerField()
-    tube_three_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
+    tube_1 = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE, label='Tube #1 - Serum')
+    tube_1_estimated_volume = forms.IntegerField(required=False)
+    tube_1_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
+    tube_2 = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE,label='Tube #2 - EDTA')
+    tube_2_estimated_volume = forms.IntegerField(required=False)
+    tube_2_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
+    tube_3 = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE,label='Tube #3 - EDTA')
+    tube_3_estimated_volume = forms.IntegerField(required=False)
+    tube_3_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
+    notes = forms.CharField(max_length=255,required=False)
 
 class KitSentForm(forms.Form):
     kit_sent_date = forms.DateField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datepicker"}))

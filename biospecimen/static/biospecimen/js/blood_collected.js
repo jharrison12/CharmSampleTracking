@@ -1,24 +1,24 @@
 //Hide component if not clicked
 //TODO FIX ALL OF THIS
-$('#tube_one_estimated_volume').hide();
-$('#tube_two_estimated_volume').hide();
-$('#tube_three_estimated_volume').hide();
+$('#tube_1_estimated_volume').hide();
+$('#tube_2_estimated_volume').hide();
+$('#tube_3_estimated_volume').hide();
 
 console.log('reached this')
 
-document.getElementById('id_blood_form-tube_one').addEventListener('change', function () {
+document.getElementById('id_blood_form-tube_1').addEventListener('change', function () {
     var style = this.value == 'P' ? 'block' : 'none';
-    document.getElementById('tube_one_estimated_volume').style.display = style;
+    document.getElementById('tube_1_estimated_volume').style.display = style;
 });
 
-document.getElementById('id_blood_form-tube_two').addEventListener('change', function () {
+document.getElementById('id_blood_form-tube_2').addEventListener('change', function () {
     var style = this.value == 'P' ? 'block' : 'none';
-    document.getElementById('tube_two_estimated_volume').style.display = style;
+    document.getElementById('tube_2_estimated_volume').style.display = style;
 });
 
-document.getElementById('id_blood_form-tube_three').addEventListener('change', function () {
+document.getElementById('id_blood_form-tube_3').addEventListener('change', function () {
     var style = this.value == 'P' ? 'block' : 'none';
-    document.getElementById('tube_three_estimated_volume').style.display = style;
+    document.getElementById('tube_3_estimated_volume').style.display = style;
 });
 
 
