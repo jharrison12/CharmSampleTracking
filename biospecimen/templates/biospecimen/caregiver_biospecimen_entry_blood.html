@@ -78,21 +78,20 @@
                 <div>Collected Date Time:{{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
                 <div>When was the last time the participant ate or drank anything other than plain water?:{{ caregiver_bio.status_fk.collected_fk.other_water_date_time }}</div>
                 <div>Logged By:{{ caregiver_bio.status_fk.collected_fk.logged_by }}</div>
-                <ul>
-                {% for blood in caregiver_bloods_collected %}
                     <div class="container">
                         <div class="row">
-                            <div class="col-sm">
-                                 Tube #{{ blood.tube_number }}:
-                          {{ blood.get_complete_or_partial_display }}
-                          {{ blood.get_tube_type_display }}
-                          {{ blood.get_hemolysis_display }}
-                          {{ blood.partial_estimated_volume }}
+                {% for blood in caregiver_bloods_collected %}
+                            <div class="col-sm border border-primary p-3 rounded">
+                                <div class="row"><p class="font-weight-bold">Tube #{{ blood.tube_number }}:</p></div>
+                                <div class="row">Complete or Partial: {{ blood.get_complete_or_partial_display }}</div>
+                                <div class="row"> Blood Type: {{ blood.get_tube_type_display }}</div>
+                                <div class="row">Hemolysis: {{ blood.get_hemolysis_display }}</div>
+                                <div class="row">Estimated Volume: {{ blood.partial_estimated_volume }}</div>
                             </div>
+                {% endfor %}
                         </div>
                     </div>
-                {% endfor %}
-                </ul>
+
             </div>
         </div>
     {% else %}
