@@ -22,6 +22,7 @@ SHIPPED_CHOICE = [('W','Shipped to WSU'),('E','Shipped to Echo')]
 SHIPPED_CHOICE_ECHO = [('E','Shipped to Echo')]
 COURIERS = [('F','FedEx'),('P','USPS'),('U','UPS'),('D','DHL')]
 PROCESSED_ALIQUOTED_OFF_SITE = [('N','Not Applicable'),('R','refrigerated'),('T','Room Temperature')]
+BLOOD_PROCESSED_ALIQUOTED = [('N','Not Applicable'),('R','refrigerated'),('T','Room Temperature'),('D','Dry Ice')]
 YES_NO=[(True,'Yes'),(False,'No')]
 PARTIAL_COMPLETE = [('C','Complete'),('P','Partial'),('N','Not Collected')]
 HEMOLYSIS = [('N','None'),('M','Mild'),('O','Moderate'),('S','Severe')]
@@ -292,6 +293,49 @@ class CollectedBloodForm(forms.Form):
     tube_3 = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE,label='Tube #3 - EDTA')
     tube_3_estimated_volume = forms.DecimalField(required=False)
     tube_3_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
+    notes = forms.CharField(max_length=255,required=False)
+
+class ProcessedBloodForm(forms.Form):
+    processed_aliquoted_off_site = forms.CharField(max_length=1,choices=BLOOD_PROCESSED_ALIQUOTED,null=True,blank=True)
+    specimen_received_date_time =forms.DateTimeField(null=True,blank=True)
+    purple_edta_tube_refrigerated_prior_to_centrifuge = forms.BooleanField(null=True,blank=True)
+    purple_edta_refrigerated_placed_date_time = forms.DateTimeField(null=True,blank=True)
+    purple_edta_refrigerated_removed_date_time =forms.DateTimeField(null=True,blank=True)
+    purple_edta_refrigerated_removed_date_time =forms.DateTimeField(null=True,blank=True)
+    whole_blood_blue_cap_collected = forms.BooleanField(null=True,blank=True)
+    blood_spot_card_completed = forms.BooleanField(null=True,blank=True)
+    vacutainer_centrifuge_start_time = forms.DateTimeField(null=True,blank=True)
+    vacutainer_centrifuge_end_time = forms.DateTimeField(null=True,blank=True)
+    plasma_purple_cap_200_ml_all_collected = forms.BooleanField(null=True,blank=True)
+    plasma_purple_cap_200_ml_number_collected = forms.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_all_collected = forms.BooleanField(null=True,blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_1_collected = forms.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_1_amount = forms.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_2_collected = forms.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_2_amount = forms.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_3_collected = forms.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_3_amount = forms.IntegerField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_all_collected = forms.BooleanField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected = forms.BooleanField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount = forms.IntegerField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected = forms.BooleanField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount = forms.IntegerField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_all_collected = forms.BooleanField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_collected = forms.BooleanField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_amount = forms.IntegerField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_2_collected = forms.BooleanField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_2_amount = forms.IntegerField(null=True, blank=True)
+    serum_red_cap_200_microl_all_collected = forms.BooleanField(null=True, blank=True)
+    serum_red_cap_200_microl_number_collected = forms.IntegerField(null=True, blank=True)
+    serum_red_cap_1_ml_all_collected = forms.BooleanField(null=True, blank=True)
+    serum_red_cap_1_ml_partial_aliquot_number_1_collected = forms.BooleanField(null=True, blank=True)
+    serum_red_cap_1_ml_partial_aliquot_number_1_amount = forms.IntegerField(null=True, blank=True)
+    serum_red_cap_1_ml_partial_aliquot_number_2_collected = forms.BooleanField(null=True, blank=True)
+    serum_red_cap_1_ml_partial_aliquot_number_2_amount = forms.IntegerField(null=True, blank=True)
+    serum_red_cap_1_mlpartial_aliquot_number_1_collected = forms.BooleanField(null=True, blank=True)
+    serum_red_cap_1_mlpartial_aliquot_number_1_amount = forms.IntegerField(null=True, blank=True)
+    serum_red_cap_1_mlpartial_aliquot_number_2_collected = forms.BooleanField(null=True, blank=True)
+    serum_red_cap_1_mlpartial_aliquot_number_2_amount = forms.IntegerField(null=True, blank=True)
     notes = forms.CharField(max_length=255,required=False)
 
 class KitSentForm(forms.Form):

@@ -4,7 +4,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, C
     NoConsent, ShippedWSU, ShippedECHO, \
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU, ReceivedMSU, Project, Caregiver, PregnancyTrimester, Child, \
     Component, URINE, BLOOD_DICT_FORM, BLOOD_DICT, ComponentError, \
-    Processed, UrineAliquot, Frozen,BloodTube
+    ProcessedUrine, UrineAliquot, Frozen,BloodTube
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
     ShippedChoiceForm, ShippedtoWSUForm, \
     ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
@@ -346,7 +346,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     collected_item = Collected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     incentive_item = Incentive.objects.filter(caregiverbiospecimen=caregiver_bio)
-    processed_item = Processed.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    processed_item = ProcessedUrine.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     frozen_item = Frozen.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_wsu_item = ShippedWSU.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
@@ -469,26 +469,14 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     incentive_form = None
     received_wsu_form = None
     not_collected_form= None
+    collected_form=None
     logging.critical(f"Caregiver bio is {caregiver_bio}")
     logging.critical(f"if value for not collected blood bio is {not_collected_item.exists()} {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
     if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True).exists():
         logging.critical(f"made it to not collected form")
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
-        logging.debug(f"Does collected_item exist? {collected_item.exists()}\n\n"
-                         f"Is collected date time null {collected_item.filter(collected_date_time__isnull=True).exists()}\n")
-        logging.debug(f"in Collected form if statement")
         collected_form = CollectedBloodForm(prefix='blood_form')
-        logging.debug(BLOOD_DICT.get(collection_type))
-        # disable whatever check box you used to pull the data
-        logging.debug(f"collection type {collection_type}")
-        if collection_type!=Collection.CollectionType.BLOOD:
-            collected_form.fields[str(BLOOD_DICT.get(collection_type))].initial = True
-            collected_form.fields[str(BLOOD_DICT.get(collection_type))].disabled = True
-        # collected_form.fields[str(blood_dict.get(collection_type))].widget.attrs['readonly'] = True
-    else:
-        logging.debug(f"Collected form is none")
-        collected_form = None
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not caregiver_bio.incentive_fk:
         logging.debug(f"in incentive form if block")
         incentive_form = IncentiveForm(prefix='incentive_form')
@@ -816,7 +804,7 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
 @login_required
 def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    processed_item = Processed.objects.create()
+    processed_item = ProcessedUrine.objects.create()
     logging.debug(f'in processed post for URINE')
     if request.method == "POST":
         form = ProcessedFormUrine(data=request.POST,prefix='processed_form')

@@ -332,7 +332,48 @@ class ReceivedMSU(models.Model):
     def __str__(self):
         return f"received {self.received_date_time}"
 
-class Processed(models.Model):
+class ProcessedBlood(models.Model):
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+
+    class ProcessedChoices(models.TextChoices):
+        DRY_ICE = 'D',_('Dry Ice')
+        REFRIGERATED = 'R', _('Refrigerated')
+        ROOM_TEMPERATURE = 'T', _('Room Temperature')
+        NOT_APPLICABLE = 'N', _('Not Applicable')
+
+    processed_aliquoted_off_site = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
+    specimen_received_date_time =models.DateTimeField(null=True,blank=True)
+    purple_edta_tube_refrigerated_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
+    purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
+    purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
+    purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
+    whole_blood_blue_cap_collected = models.BooleanField(null=True,blank=True)
+    blood_spot_card_completed = models.BooleanField(null=True,blank=True)
+    vacutainer_centrifuge_start_time = models.DateTimeField(null=True,blank=True)
+    vacutainer_centrifuge_end_time = models.DateTimeField(null=True,blank=True)
+    plasma_purple_cap_200_ml_all_collected = models.BooleanField(null=True,blank=True)
+    plasma_purple_cap_200_ml_number_collected = models.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_all_collected = models.BooleanField(null=True,blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_1_collected = models.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_1_amount = models.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_2_collected = models.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_2_amount = models.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_3_collected = models.IntegerField(null=True, blank=True)
+    plasma_purple_cap_1_ml_partial_aliquot_number_3_amount = models.IntegerField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_all_collected = models.BooleanField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected = models.BooleanField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount = models.IntegerField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected = models.BooleanField(null=True, blank=True)
+    buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount = models.IntegerField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_all_collected = models.BooleanField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_collected = models.BooleanField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_amount = models.IntegerField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_2_collected = models.BooleanField(null=True, blank=True)
+    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_2_amount = models.IntegerField(null=True, blank=True)
+    serum_red_cap_200_microl_all_collected = models.BooleanField(null=True, blank=True)
+    serum_red_cap_200_microl_number_collected = models.IntegerField(null=True, blank=True)
+
+class ProcessedUrine(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
     class ProcessedChoices(models.TextChoices):
@@ -381,7 +422,7 @@ class Processed(models.Model):
                     UrineAliquot.objects.create(processed_fk=self,aliquot_vial_size='S',aliquot_volume_collected=form.cleaned_data[f'partial_aliquot_7ml_{i}_amount'])
 
 class UrineAliquot(models.Model):
-    processed_fk = models.ForeignKey(Processed,on_delete=models.PROTECT,blank=True,null=True)
+    processed_fk = models.ForeignKey(ProcessedUrine, on_delete=models.PROTECT, blank=True, null=True)
 
     class VialAmount(models.TextChoices):
         EIGHTEEN_ML = 'E',_('Eighteen Ml')
@@ -408,7 +449,7 @@ class Status(models.Model):
     #todo sublcass text choices for status
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
     collected_fk = models.ForeignKey(Collected, on_delete=models.PROTECT, null=True, blank=True)
-    processed_fk = models.ForeignKey(Processed, on_delete=models.PROTECT, null=True, blank=True)
+    processed_fk = models.ForeignKey(ProcessedUrine, on_delete=models.PROTECT, null=True, blank=True)
     frozen_fk = models.ForeignKey(Frozen,on_delete=models.PROTECT,null=True,blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     received_wsu_fk = models.ForeignKey(ReceivedWSU,on_delete=models.PROTECT,null=True,blank=True)
@@ -427,7 +468,7 @@ class Status(models.Model):
         elif self.stored_fk and self.stored_fk.outcome_fk.get_outcome_display()=='C':
             return f"Stored: {self.shipped_fk.outcome_fk.get_outcome_display()}"
         elif self.processed_fk and self.processed_fk.outcome_fk.get_outcome_display()=='C':
-            return f"Processed: {self.shipped_fk.outcome_fk.get_outcome_display()}"
+            return f"ProcessedUrine: {self.shipped_fk.outcome_fk.get_outcome_display()}"
         else:
             return None
 
