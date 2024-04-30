@@ -342,36 +342,10 @@ class ProcessedBlood(models.Model):
         NOT_APPLICABLE = 'N', _('Not Applicable')
 
     processed_aliquoted_off_site = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
-    specimen_received_date_time =models.DateTimeField(null=True,blank=True)
+    specimen_received_date_time = models.DateTimeField(null=True,blank=True)
     purple_edta_tube_refrigerated_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
     purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
     purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
-    purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
-    whole_blood_blue_cap_collected = models.BooleanField(null=True,blank=True)
-    blood_spot_card_completed = models.BooleanField(null=True,blank=True)
-    vacutainer_centrifuge_start_time = models.DateTimeField(null=True,blank=True)
-    vacutainer_centrifuge_end_time = models.DateTimeField(null=True,blank=True)
-    plasma_purple_cap_200_ml_all_collected = models.BooleanField(null=True,blank=True)
-    plasma_purple_cap_200_ml_number_collected = models.IntegerField(null=True, blank=True)
-    plasma_purple_cap_1_ml_all_collected = models.BooleanField(null=True,blank=True)
-    plasma_purple_cap_1_ml_partial_aliquot_number_1_collected = models.IntegerField(null=True, blank=True)
-    plasma_purple_cap_1_ml_partial_aliquot_number_1_amount = models.IntegerField(null=True, blank=True)
-    plasma_purple_cap_1_ml_partial_aliquot_number_2_collected = models.IntegerField(null=True, blank=True)
-    plasma_purple_cap_1_ml_partial_aliquot_number_2_amount = models.IntegerField(null=True, blank=True)
-    plasma_purple_cap_1_ml_partial_aliquot_number_3_collected = models.IntegerField(null=True, blank=True)
-    plasma_purple_cap_1_ml_partial_aliquot_number_3_amount = models.IntegerField(null=True, blank=True)
-    buffy_coat_green_cap_1_ml_all_collected = models.BooleanField(null=True, blank=True)
-    buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected = models.BooleanField(null=True, blank=True)
-    buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount = models.IntegerField(null=True, blank=True)
-    buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected = models.BooleanField(null=True, blank=True)
-    buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount = models.IntegerField(null=True, blank=True)
-    red_blood_cells_yellow_cap_1_ml_all_collected = models.BooleanField(null=True, blank=True)
-    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_collected = models.BooleanField(null=True, blank=True)
-    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_amount = models.IntegerField(null=True, blank=True)
-    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_2_collected = models.BooleanField(null=True, blank=True)
-    red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_2_amount = models.IntegerField(null=True, blank=True)
-    serum_red_cap_200_microl_all_collected = models.BooleanField(null=True, blank=True)
-    serum_red_cap_200_microl_number_collected = models.IntegerField(null=True, blank=True)
 
 class ProcessedUrine(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
@@ -427,6 +401,32 @@ class UrineAliquot(models.Model):
     class VialAmount(models.TextChoices):
         EIGHTEEN_ML = 'E',_('Eighteen Ml')
         SEVEN_ML = 'S',_('Seven Ml')
+
+    aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
+    aliquot_volume_collected = models.FloatField(null=True,blank=True)
+
+class BloodAliquot(models.Model):
+    aliquot_number =models.IntegerField()
+    processed_fk = models.ForeignKey(ProcessedUrine, on_delete=models.PROTECT, blank=True, null=True)
+
+    class VialAmount(models.TextChoices):
+        EIGHTEEN_ML = 'E',_('Eighteen Ml')
+        SEVEN_ML = 'S',_('Seven Ml')
+
+    class CapColor(models.TextChoices):
+        PURPLE = 'P', _('Purple')
+        BLUE = 'B',_('Blue')
+        GREEN = 'G',_('Green')
+        YELLOW = 'Y',_('Yellow')
+        RED = 'R',_('Red')
+
+    class BloodType(models.TextChoices):
+        SERUM = 'S', _('Serum')
+        WHOLE_BLOOD = 'W', _('Whole blood')
+        BLOOD_SPOTS = 'B',_('Blood spots')
+        PLASMA = 'P',_('Plasma')
+        BUFFY_COAT = 'F',_('Buffy coat')
+        RED_BLOOD_CELLS = 'R',_('Red Blood Cells')
 
     aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
     aliquot_volume_collected = models.FloatField(null=True,blank=True)
