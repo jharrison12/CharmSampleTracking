@@ -96,35 +96,82 @@
         </div>
     {% else %}
     {% endif %}
-    {% if incentive_form and not caregiver_bio.incentive_fk.incentive_date%}
-        <div id="incentive_form" class="row border border-primary p-3 rounded">
-          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_incentive_post' charm_project_identifier caregiver_bio_pk %}>
-          {% csrf_token %}
-              <h2>Incentive Form</h2>
-            {{ incentive_form.as_p }}
-          <input type="submit" value="Submit" />
-          </form>
-        </div>
-    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.incentive_fk and caregiver_bio.incentive_fk.incentive_date %}
-        <div id="incentive_information" class="row border border-primary p-3 rounded">
-            <div class="col-4">
-                {# TODO ADD FILTER TAG  #}
-                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
-                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive Information</button>
-            </div>
-            <div class="col-8">
-                <div>Incentive Date: {{ caregiver_bio.incentive_fk.incentive_date }}</div>
-                {% for blood in caregiver_bloods_collected %}
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-                      <label class="form-check-label" for="flexCheckCheckedDisabled">
-                          {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}
-                      </label>
-                    </div>
-                {% endfor %}
-            </div>
+    {% if processed_form %}
+        <div id="processed_form" class="row border border-primary p-3 rounded">
+            <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_blood_processed_post' charm_project_identifier caregiver_bio_pk %}>
+            {% csrf_token %}
+            <h2>Processed Form</h2>
+             {{ processed_form.non_field_errors }}
+              {{ processed_form.has_error }}
+              {{ processed_form.errors }}
+                <div class="form-group">
+                {{ processed_form.processed_aliquoted_off_site.errors }}
+                <label for="{{ processed_form.processed_aliquoted_off_site.id_for_label }}" class="form-label">If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?</label>
+                {{ processed_form.processed_aliquoted_off_site }}
+                </div>
+                <div class="form-group">
+                {{ processed_form.specimen_received_date_time.errors }}
+                <label for="{{ processed_form.specimen_received_date_time.id_for_label }}" class="form-label">If anything other than Not Applicable: When was the specimen received at the processing site?</label>
+                {{ processed_form.specimen_received_date_time }}
+                </div>
+                <div class="form-group">
+                {{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.errors }}
+                <label for="{{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.id_for_label }}" class="form-label">Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?</label>
+                {{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge }}
+                </div>
+                <div class="form-group">
+                {{ processed_form.edta_purple_refrigerated_placed_date_time.errors }}
+                <label for="{{ processed_form.edta_purple_refrigerated_placed_date_time.id_for_label }}" class="form-label">If Yes, date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging</label>
+                {{ processed_form.edta_purple_refrigerated_placed_date_time }}
+                </div>
+                <div class="form-group">
+                {{ processed_form.edta_purple_refrigerated_removed_date_time.errors }}
+                <label for="{{ processed_form.edta_purple_refrigerated_removed_date_time.id_for_label }}" class="form-label">If Yes, date and time EDTA tubes were removed from refrigerated temperature for centrifuging</label>
+                {{ processed_form.edta_purple_refrigerated_removed_date_time }}
+                </div>
+                <div class="form-group">
+                {{ processed_form.whole_blood_blue_cap_collected.errors }}
+                <label for="{{ processed_form.whole_blood_blue_cap_collected.id_for_label }}" class="form-label">Were both Whole Blood aliquots collected? (blue cap)</label>
+                {{ processed_form.whole_blood_blue_cap_collected }}
+                </div>
+                <div class="form-group">
+                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected.errors }}
+                <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">Whole Blood aliquot #1 (blue cap) collected?</label>
+                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected }}
+                </div>
+             <input type="submit" value="Submit" />
+            </form>
         </div>
     {% endif %}
+{#    {% if incentive_form and not caregiver_bio.incentive_fk.incentive_date%}#}
+{#        <div id="incentive_form" class="row border border-primary p-3 rounded">#}
+{#          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_incentive_post' charm_project_identifier caregiver_bio_pk %}>#}
+{#          {% csrf_token %}#}
+{#              <h2>Incentive Form</h2>#}
+{#            {{ incentive_form.as_p }}#}
+{#          <input type="submit" value="Submit" />#}
+{#          </form>#}
+{#        </div>#}
+{#    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.incentive_fk and caregiver_bio.incentive_fk.incentive_date %}#}
+{#        <div id="incentive_information" class="row border border-primary p-3 rounded">#}
+{#            <div class="col-4">#}
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+{#                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive Information</button>#}
+{#            </div>#}
+{#            <div class="col-8">#}
+{#                <div>Incentive Date: {{ caregiver_bio.incentive_fk.incentive_date }}</div>#}
+{#                {% for blood in caregiver_bloods_collected %}#}
+{#                    <div class="form-check form-check-inline">#}
+{#                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>#}
+{#                      <label class="form-check-label" for="flexCheckCheckedDisabled">#}
+{#                          {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}#}
+{#                      </label>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#        </div>#}
+{#    {% endif %}#}
     {% if shipped_wsu_form  %}
         <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>

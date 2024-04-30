@@ -450,6 +450,7 @@ class Status(models.Model):
     kit_sent_fk = models.ForeignKey(KitSent,on_delete=models.PROTECT, blank=True,null=True)
     collected_fk = models.ForeignKey(Collected, on_delete=models.PROTECT, null=True, blank=True)
     processed_fk = models.ForeignKey(ProcessedUrine, on_delete=models.PROTECT, null=True, blank=True)
+    processed_blood_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, null=True, blank=True)
     frozen_fk = models.ForeignKey(Frozen,on_delete=models.PROTECT,null=True,blank=True)
     shipped_wsu_fk = models.ForeignKey(ShippedWSU,on_delete=models.PROTECT,null=True,blank=True)
     received_wsu_fk = models.ForeignKey(ReceivedWSU,on_delete=models.PROTECT,null=True,blank=True)
