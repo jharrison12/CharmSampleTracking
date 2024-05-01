@@ -328,7 +328,7 @@ class ProcessedBloodForm(forms.Form):
     buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount = forms.IntegerField(required=False)
     buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected = forms.BooleanField(required=False)
     buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount = forms.IntegerField(required=False)
-    red_blood_cells_yellow_cap_1_ml_all_collected = forms.ChoiceField(required=False,choices=YES_NO)
+    red_blood_cells_yellow_cap_1_ml_all_collected = forms.ChoiceField(required=False,choices=YES_NO,label='Were both Red Blood Cell aliquots collected? (yellow cap)')
     red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_collected = forms.BooleanField(required=False)
     red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_1_amount = forms.IntegerField(required=False)
     red_blood_cells_yellow_cap_1_ml_partial_aliquot_number_2_collected = forms.BooleanField(required=False)
