@@ -5,6 +5,9 @@ $('#edta_purple_refrigerated_placed_date_time').hide();
 $('#edta_purple_refrigerated_removed_date_time').hide();
 $('#whole_blood_aliquots_div').hide();
 $('#incomplete_blood_spot_card_div').hide();
+$('#plasma_purple_cap_200_microliter_number_collected').hide();
+$('#plasma_purple_cap_1_ml_partial_aliquots').hide();
+$('#buffy_coat_partial_aliquots').hide();
 
 
 console.log('reached this')
@@ -22,16 +25,27 @@ document.getElementById('id_processed_form-blood_spot_card_completed').addEventL
     document.getElementById('incomplete_blood_spot_card_div').style.display = style;
 });
 
+
+document.getElementById('id_processed_form-plasma_purple_cap_200_microliter_all_collected').addEventListener('change', function () {
+    var style = this.value == 'False' ? 'block' : 'none';
+    document.getElementById('plasma_purple_cap_200_microliter_number_collected').style.display = style;
+});
+
+document.getElementById('id_processed_form-plasma_purple_cap_1_ml_all_collected').addEventListener('change', function () {
+    var style = this.value == 'False' ? 'block' : 'none';
+    document.getElementById('plasma_purple_cap_1_ml_partial_aliquots').style.display = style;
+});
+
+document.getElementById('id_processed_form-buffy_coat_green_cap_1_ml_all_collected').addEventListener('change', function () {
+    var style = this.value == 'False' ? 'block' : 'none';
+    document.getElementById('buffy_coat_partial_aliquots').style.display = style;
+});
+
 //
 
 $('#id_processed_form-refrigerated_prior_to_processing').click(function() {
   $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
   $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
-});
-
-document.getElementById('id_processed_form-partial_aliquot_18ml_1_amount').addEventListener('change', function () {
-    var style = this.value != '' ? 'block' : 'none';
-    document.getElementById('partial_aliquot_18ml_2').style.display = style;
 });
 
 

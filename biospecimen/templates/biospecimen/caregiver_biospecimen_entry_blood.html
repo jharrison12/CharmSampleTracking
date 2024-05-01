@@ -189,74 +189,78 @@
                 {{ processed_form.vacutainer_centrifuge_end_time }}
                 </div>
                 <div class="form-group">
-                {{ processed_form.plasma_purple_cap_200_ml_all_collected.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_200_ml_all_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_200_ml_all_collected.label }}</label>
-                {{ processed_form.plasma_purple_cap_200_ml_all_collected }}
+                {{ processed_form.plasma_purple_cap_200_microliter_all_collected.errors }}
+                <label for="{{ processed_form.plasma_purple_cap_200_microliter_all_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_200_microliter_all_collected.label }}</label>
+                {{ processed_form.plasma_purple_cap_200_microliter_all_collected }}
                 </div>
-				<div class="form-group">
-                {{ processed_form.plasma_purple_cap_200_ml_number_collected.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_200_ml_number_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_200_ml_number_collected.label }}</label>
-                {{ processed_form.plasma_purple_cap_200_ml_number_collected }}
+				<div class="form-group" id="plasma_purple_cap_200_microliter_number_collected">
+                {{ processed_form.plasma_purple_cap_200_microliter_number_collected.errors }}
+                <label for="{{ processed_form.plasma_purple_cap_200_microliter_number_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_200_microliter_number_collected.label }}</label>
+                {{ processed_form.plasma_purple_cap_200_microliter_number_collected }}
                 </div>
 				<div class="form-group">
                 {{ processed_form.plasma_purple_cap_1_ml_all_collected.errors }}
                 <label for="{{ processed_form.plasma_purple_cap_1_ml_all_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_all_collected.label }}</label>
                 {{ processed_form.plasma_purple_cap_1_ml_all_collected }}
                 </div>
-				<div class="form-group">
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected.label }}</label>
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount.label }}</label>
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected.label }}</label>
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount.label }}</label>
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected.label }}</label>
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected }}
-                </div>
-                                <div class="form-group">
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount.errors }}
-                <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount.label }}</label>
-                {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount }}
+                <div id="plasma_purple_cap_1_ml_partial_aliquots">
+                    <div class="form-group">
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected.errors }}
+                    <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected.label }}</label>
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount.errors }}
+                    <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount.label }}</label>
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_1_amount }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected.errors }}
+                    <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected.label }}</label>
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount.errors }}
+                    <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount.label }}</label>
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_2_amount }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected.errors }}
+                    <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected.label }}</label>
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount.errors }}
+                    <label for="{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount.label }}</label>
+                    {{ processed_form.plasma_purple_cap_1_ml_partial_aliquot_number_3_amount }}
+                    </div>
                 </div>
 				<div class="form-group">
                 {{ processed_form.buffy_coat_green_cap_1_ml_all_collected.errors }}
                 <label for="{{ processed_form.buffy_coat_green_cap_1_ml_all_collected.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_all_collected.label }}</label>
                 {{ processed_form.buffy_coat_green_cap_1_ml_all_collected }}
                 </div>
-				<div class="form-group">
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected.errors }}
-                <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected.label }}</label>
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount.errors }}
-                <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount.label }}</label>
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected.errors }}
-                <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected.label }}</label>
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount.errors }}
-                <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount.label }}</label>
-                {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount }}
+                <div id="buffy_coat_partial_aliquots">
+                    <div class="form-group">
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected.errors }}
+                    <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected.label }}</label>
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount.errors }}
+                    <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount.label }}</label>
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_1_amount }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected.errors }}
+                    <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected.label }}</label>
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount.errors }}
+                    <label for="{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount.label }}</label>
+                    {{ processed_form.buffy_coat_green_cap_1_ml_partial_aliquot_number_2_amount }}
+                    </div>
                 </div>
 				<div class="form-group">
                 {{ processed_form.red_blood_cells_yellow_cap_1_ml_all_collected.errors }}
