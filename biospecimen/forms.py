@@ -298,15 +298,20 @@ class CollectedBloodForm(forms.Form):
 class ProcessedBloodForm(forms.Form):
     processed_aliquoted_off_site = forms.ChoiceField(widget=forms.Select,choices=BLOOD_PROCESSED_ALIQUOTED,label='If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?')
     specimen_received_date_time =forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='If anything other than Not Applicable: When was the specimen received at the processing site?')
-    edta_purple_tube_refrigerated_prior_to_centrifuge = forms.ChoiceField(required=False,choices=YES_NO,label='Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?')
+    edta_purple_tube_refrigerated_prior_to_centrifuge = forms.ChoiceField(required=False,choices=YES_NO,
+                                                                          label='Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?',
+                                                                          initial=False)
     edta_purple_refrigerated_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),required=False,label='If Yes, date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging')
     edta_purple_refrigerated_removed_date_time =forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),required=False,label='If Yes, date and time EDTA tubes were removed from refrigerated temperature for centrifuging')
     whole_blood_blue_cap_collected = forms.ChoiceField(required=False,choices=YES_NO,label='Were both Whole Blood aliquots collected? (blue cap)')
     whole_blood_blue_cap_partial_aliquot_number_1_collected = forms.BooleanField(required=False)
     whole_blood_blue_cap_partial_aliquot_number_1_amount = forms.IntegerField(required=False)
     whole_blood_blue_cap_partial_aliquot_number_2_collected = forms.BooleanField(required=False)
-    whole_blood_blue_cap_partial_aliquot_number_2_amount = forms.IntegerField(required=False)
+    whole_blood_blue_cap_partial_aliquot_number_2_amount = forms.IntegerField(required=False,label='Whole Blood aliquot #2 (blue cap) amount:')
     blood_spot_card_completed = forms.ChoiceField(required=False,choices=YES_NO,label='Was the blood spot card filled completely?')
+    blood_spot_card_number_of_complete_spots = forms.IntegerField(required=False,label='Number of complete blood spots')
+    blood_spot_card_number_of_dots_smaller_than_dotted_circle = forms.IntegerField(required=False,label='Number of blood spots smaller than dotted circle')
+    blood_spot_card_number_of_dotted_circle_missing_blood_spot = forms.IntegerField(required=False,label='Number of dotted circles missing a blood spot')
     vacutainer_centrifuge_start_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Vacutainer centrifuge start time:')
     vacutainer_centrifuge_end_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Vacutainer centrifuge end time:')
     plasma_purple_cap_200_ml_all_collected = forms.ChoiceField(required=False,choices=YES_NO)

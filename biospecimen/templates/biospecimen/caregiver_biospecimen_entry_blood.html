@@ -109,22 +109,22 @@
                 <label for="{{ processed_form.processed_aliquoted_off_site.id_for_label }}" class="form-label">If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?</label>
                 {{ processed_form.processed_aliquoted_off_site }}
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="specimen_received_at_processing_site">
                 {{ processed_form.specimen_received_date_time.errors }}
                 <label for="{{ processed_form.specimen_received_date_time.id_for_label }}" class="form-label">If anything other than Not Applicable: When was the specimen received at the processing site?</label>
                 {{ processed_form.specimen_received_date_time }}
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="edta_purple_tube_refrigerated_prior_to_centrifuge">
                 {{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.errors }}
                 <label for="{{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.id_for_label }}" class="form-label">Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?</label>
                 {{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge }}
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="edta_purple_refrigerated_placed_date_time">
                 {{ processed_form.edta_purple_refrigerated_placed_date_time.errors }}
                 <label for="{{ processed_form.edta_purple_refrigerated_placed_date_time.id_for_label }}" class="form-label">If Yes, date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging</label>
                 {{ processed_form.edta_purple_refrigerated_placed_date_time }}
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="edta_purple_refrigerated_removed_date_time">
                 {{ processed_form.edta_purple_refrigerated_removed_date_time.errors }}
                 <label for="{{ processed_form.edta_purple_refrigerated_removed_date_time.id_for_label }}" class="form-label">If Yes, date and time EDTA tubes were removed from refrigerated temperature for centrifuging</label>
                 {{ processed_form.edta_purple_refrigerated_removed_date_time }}
@@ -134,30 +134,49 @@
                 <label for="{{ processed_form.whole_blood_blue_cap_collected.id_for_label }}" class="form-label">Were both Whole Blood aliquots collected? (blue cap)</label>
                 {{ processed_form.whole_blood_blue_cap_collected }}
                 </div>
-                <div class="form-group">
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected.errors }}
-                <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">Whole Blood aliquot #1 (blue cap) collected?</label>
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected }}
-                </div>
-                <div class="form-group">
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_amount.errors }}
-                <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">Whole Blood aliquot #1 (blue cap) amount:</label>
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_amount }}
-                </div>
-                <div class="form-group">
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_collected.errors }}
-                <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">Whole Blood aliquot #2 (blue cap) collected?</label>
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_collected }}
-                </div>
-                <div class="form-group">
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_amount.errors }}
-                <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">Whole Blood aliquot #2 (blue cap) amount:</label>
-                {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_amount }}
+                <div id="whole_blood_aliquots_div">
+                    <div class="form-group">
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected.errors }}
+                    <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">Whole Blood aliquot #1 (blue cap) collected?</label>
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_amount.errors }}
+                    <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">Whole Blood aliquot #1 (blue cap) amount:</label>
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_1_amount }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_collected.errors }}
+                    <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">Whole Blood aliquot #2 (blue cap) collected?</label>
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_amount.errors }}
+                    <label for="{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_amount.label }}</label>
+                    {{ processed_form.whole_blood_blue_cap_partial_aliquot_number_2_amount }}
+                    </div>
                 </div>
                 <div class="form-group">
                 {{ processed_form.blood_spot_card_completed.errors }}
                 <label for="{{ processed_form.blood_spot_card_completed.id_for_label }}" class="form-label">{{ processed_form.blood_spot_card_completed.label}}</label>
                 {{ processed_form.blood_spot_card_completed }}
+                </div>
+                <div id="incomplete_blood_spot_card_div">
+                    <div class="form-group">
+                    {{ processed_form.blood_spot_card_number_of_complete_spots.errors }}
+                    <label for="{{ processed_form.blood_spot_card_number_of_complete_spots.id_for_label }}" class="form-label">{{ processed_form.blood_spot_card_number_of_complete_spots.label}}</label>
+                    {{ processed_form.blood_spot_card_number_of_complete_spots }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.blood_spot_card_number_of_dots_smaller_than_dotted_circle.errors }}
+                    <label for="{{ processed_form.blood_spot_card_number_of_dots_smaller_than_dotted_circle.id_for_label }}" class="form-label">{{ processed_form.blood_spot_card_number_of_dots_smaller_than_dotted_circle.label }}</label>
+                    {{ processed_form.blood_spot_card_number_of_dots_smaller_than_dotted_circle }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.blood_spot_card_number_of_dotted_circle_missing_blood_spot.errors }}
+                    <label for="{{ processed_form.blood_spot_card_number_of_dotted_circle_missing_blood_spot.id_for_label }}" class="form-label">{{ processed_form.blood_spot_card_number_of_dotted_circle_missing_blood_spot.label }}</label>
+                    {{ processed_form.blood_spot_card_number_of_dotted_circle_missing_blood_spot }}
+                    </div>
                 </div>
                 <div class="form-group">
                 {{ processed_form.vacutainer_centrifuge_start_time.errors }}
@@ -623,4 +642,5 @@
     <script type="text/javascript" src="/static/biospecimen/js/blood_component.js"></script>
     <script type="text/javascript" src="/static/biospecimen/js/not_collected.js"></script>
     <script type="text/javascript" src="/static/biospecimen/js/blood_collected.js"></script>
+    <script type="text/javascript" src="/static/biospecimen/js/blood_processed.js"></script>
 {% endblock %}
