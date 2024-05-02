@@ -347,6 +347,18 @@ class ProcessedBlood(models.Model):
     purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
     purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
 
+    def save_processed(self,form,request,caregiver_bio):
+        caregiver_bio.status_fk.processed_blood_fk = self
+        self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
+        self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
+        self.purple_edta_tube_refrigerated_prior_to_centrifuge = form.cleaned_data['purple_edta_tube_refrigerated_prior_to_centrifuge']
+        self.purple_edta_refrigerated_placed_date_time = form.cleaned_data['purple_edta_refrigerated_placed_date_time']
+        self.purple_edta_refrigerated_removed_date_time = form.cleaned_data['purple_edta_refrigerated_removed_date_time']
+        self.save()
+        caregiver_bio.status_fk.save()
+        caregiver_bio.save()
+
+
 class ProcessedUrine(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 

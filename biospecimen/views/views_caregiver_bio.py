@@ -846,7 +846,14 @@ def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregive
 
 @login_required
 def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
-    pass
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    processed_item = ProcessedBlood.objects.create()
+    if request.method == "POST":
+        form = ProcessedBloodForm(data=request.POST, prefix='processed_form')
+        if form.is_valid():
+            processed_item.save_not_processed(form=form, request=request)
+    return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+                    caregiver_bio_pk=caregiver_bio_pk)
 
 def error(request):
     return render(request=request,template_name='biospecimen/error.html')
