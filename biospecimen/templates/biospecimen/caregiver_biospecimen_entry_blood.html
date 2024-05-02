@@ -294,55 +294,39 @@
                 <label for="{{ processed_form.serum_red_cap_200_microl_all_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_200_microl_all_collected.label }}</label>
                 {{ processed_form.serum_red_cap_200_microl_all_collected }}
                 </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_200_microl_number_collected.errors }}
-                <label for="{{ processed_form.serum_red_cap_200_microl_number_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_200_microl_number_collected.label }}</label>
-                {{ processed_form.serum_red_cap_200_microl_number_collected }}
+                <div id="serum_red_cap_200_microl_number_aliquots_collected">
+                    <div class="form-group">
+                    {{ processed_form.serum_red_cap_200_microl_number_collected.errors }}
+                    <label for="{{ processed_form.serum_red_cap_200_microl_number_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_200_microl_number_collected.label }}</label>
+                    {{ processed_form.serum_red_cap_200_microl_number_collected }}
+                    </div>
                 </div>
 				<div class="form-group">
                 {{ processed_form.serum_red_cap_1_ml_all_collected.errors }}
                 <label for="{{ processed_form.serum_red_cap_1_ml_all_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_all_collected.label }}</label>
                 {{ processed_form.serum_red_cap_1_ml_all_collected }}
                 </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected.label }}</label>
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount.label }}</label>
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount }}
-                </div>
-                <div class="form-group">
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected.label }}</label>
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount.label }}</label>
-                {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_collected.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_collected.label }}</label>
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_amount.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_amount.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_amount.label }}</label>
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_1_amount }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_collected.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_collected.label }}</label>
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_collected }}
-                </div>
-				<div class="form-group">
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_amount.errors }}
-                <label for="{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_amount.label }}</label>
-                {{ processed_form.serum_red_cap_1_mlpartial_aliquot_number_2_amount }}
+                <div id="serum_red_cap_1_ml_partial_aliquots">
+                    <div class="form-group">
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected.errors }}
+                    <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected.label }}</label>
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount.errors }}
+                    <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount.label }}</label>
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_1_amount }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected.errors }}
+                    <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected.label }}</label>
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_collected }}
+                    </div>
+                    <div class="form-group">
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount.errors }}
+                    <label for="{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount.id_for_label }}" class="form-label">{{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount.label }}</label>
+                    {{ processed_form.serum_red_cap_1_ml_partial_aliquot_number_2_amount }}
+                    </div>
                 </div>
 				<div class="form-group">
                 {{ processed_form.notes.errors }}

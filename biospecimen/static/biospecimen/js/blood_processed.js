@@ -9,6 +9,8 @@ $('#plasma_purple_cap_200_microliter_number_collected').hide();
 $('#plasma_purple_cap_1_ml_partial_aliquots').hide();
 $('#buffy_coat_partial_aliquots').hide();
 $('#red_blood_cells_partial_aliquots').hide();
+$('#serum_red_cap_200_microl_number_aliquots_collected').hide();
+$('#serum_red_cap_1_ml_partial_aliquots').hide();
 
 
 console.log('reached this')
@@ -47,6 +49,17 @@ document.getElementById('id_processed_form-red_blood_cells_yellow_cap_1_ml_all_c
     document.getElementById('red_blood_cells_partial_aliquots').style.display = style;
 });
 
+
+document.getElementById('id_processed_form-serum_red_cap_200_microl_all_collected').addEventListener('change', function () {
+    var style = this.value == 'False' ? 'block' : 'none';
+    document.getElementById('serum_red_cap_200_microl_number_aliquots_collected').style.display = style;
+});
+
+
+document.getElementById('id_processed_form-serum_red_cap_1_ml_all_collected').addEventListener('change', function () {
+    var style = this.value == 'False' ? 'block' : 'none';
+    document.getElementById('serum_red_cap_1_ml_partial_aliquots').style.display = style;
+});
 
 //
 
