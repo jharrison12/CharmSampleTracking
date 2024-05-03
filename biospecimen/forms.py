@@ -261,7 +261,7 @@ class ReceivedatWSUFormChild(forms.Form):
     receive_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
 class ShippedtoEchoForm(forms.Form):
-    shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    shipped_date_and_time = forms.DateTimeField( widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
 class CollectedBloodForm(forms.Form):
     other_water_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the last time the participant ate or drank anything other than plain water?')
@@ -344,13 +344,13 @@ class CollectedBiospecimenHairSalivaForm(forms.Form):
 
 class CollectedChildBloodSpotHairFormOneYear(forms.Form):
     in_person_remote = forms.ChoiceField(widget=forms.Select,choices=IN_PERSON_REMOTE)
-    date_received =forms.DateField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datepicker"}))
+    date_received =forms.DateField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
 class CollectedChildToothForm(forms.Form):
-    date_collected =forms.DateField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datepicker"}))
+    date_collected =forms.DateField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
 class ReceivedatWSUForm(forms.Form):
-    received_date_time = forms.DateTimeField(initial=timezone.now(),
+    received_date_time = forms.DateTimeField(
                                              widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
     def __str__(self):
@@ -358,7 +358,7 @@ class ReceivedatWSUForm(forms.Form):
 
 
 class DeclinedForm(forms.Form):
-    declined_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    declined_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datepicker"}))
 
 class NotCollectedForm(forms.Form):
     CHOICES = [
