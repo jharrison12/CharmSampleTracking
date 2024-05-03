@@ -189,18 +189,15 @@
                 {% if caregiver_bio.status_fk.processed_fk.refrigerated_prior_to_processing not in 'False' %}Refrigerated Placed Datetime: {{ caregiver_bio.status_fk.processed_fk.refrigerated_placed_date_time }}{% endif %}
                 {% if caregiver_bio.status_fk.processed_fk.refrigerated_prior_to_processing not in 'False' %}Refrigerated Removed Datetime: {{ caregiver_bio.status_fk.processed_fk.refrigerated_removed_date_time }}{% endif %}
                 <div>All 18ml Vials Collected?:{{ caregiver_bio.status_fk.processed_fk.all_18_collected }}</div>
-                <ul>
-                {% for item in urine_aliquot_18ml_items %}
-                    <li>Vial #{{ forloop.counter }}:{{ item.aliquot_volume_collected }}ml</li>
-                {% endfor %}
-                </ul>
-                <div>All 7ml Collected:{{ caregiver_bio.status_fk.processed_fk.all_7_collected }}</div>
-                <ul>
-                {% for item in urine_aliquot_7ml_items %}
-                    <li>Vial #{{ forloop.counter }}:{{ item.aliquot_volume_collected }}ml</li>
-                {% endfor %}
-                </ul>
-
+                {% if caregiver_bio.status_fk.processed_fk.all_18_collected == False %}
+                    <div>If any aliquots were partial, what is the estimated volume of the partial aliquot?:{{ caregiver_bio.status_fk.processed_fk.partial_aliquot_18ml_volume }}</div>
+                    <div>If any aliquots were missing, how many were collected?:{{ caregiver_bio.status_fk.processed_fk.number_of_tubes_collected_18_ml_if_some_missing }}</div>
+                {% endif %}
+                <div>All 7ml Collected?:{{ caregiver_bio.status_fk.processed_fk.all_7_collected }}</div>
+                {% if caregiver_bio.status_fk.processed_fk.all_7_collected == False %}
+                    <div>If any aliquots were partial, what is the estimated volume of the partial aliquot?:{{ caregiver_bio.status_fk.processed_fk.partial_aliquot_7ml_volume }}</div>
+                    <div>If any aliquots were missing, how many were collected?:{{ caregiver_bio.status_fk.processed_fk.number_of_tubes_collected_7_ml_if_some_missing }}</div>
+                {% endif %}
             </div>
         </div>
     {% endif %}

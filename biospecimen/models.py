@@ -379,7 +379,12 @@ class ProcessedUrine(models.Model):
     refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
     refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
     all_18_collected = models.BooleanField(null=True,blank=True)
+    partial_aliquot_18ml_volume = models.FloatField(null=True,blank=True)
+    number_of_tubes_collected_18_ml_if_some_missing = models.IntegerField(null=True,blank=True)
     all_7_collected = models.BooleanField(null=True,blank=True)
+    partial_aliquot_7ml_volume = models.FloatField(null=True,blank=True)
+    number_of_tubes_collected_7_ml_if_some_missing = models.IntegerField(null=True,blank=True)
+    notes_and_deviations = models.TextField(max_length=255,null=True,blank=True)
 
 
     def save_processed(self,form,request,caregiver_bio):
@@ -393,24 +398,17 @@ class ProcessedUrine(models.Model):
         self.refrigerated_placed_date_time = form.cleaned_data['refrigerated_placed_date_time']
         self.refrigerated_removed_date_time = form.cleaned_data['refrigerated_removed_date_time']
         self.all_18_collected = form.cleaned_data['all_18_collected']
+        self.partial_aliquot_18ml_volume = form.cleaned_data['partial_aliquot_18ml_volume']
+        self.number_of_tubes_collected_18_ml_if_some_missing = form.cleaned_data['number_of_tubes_collected_18_ml_if_some_missing']
         self.all_7_collected = form.cleaned_data['all_7_collected']
+        self.partial_aliquot_7ml_volume = form.cleaned_data['partial_aliquot_7ml_volume']
+        self.number_of_tubes_collected_7_ml_if_some_missing = form.cleaned_data['number_of_tubes_collected_7_ml_if_some_missing']
+        self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
         logging.debug(f"processed object has saved")
         logging.debug(form.cleaned_data['all_18_collected'])
-        if (form.cleaned_data['all_18_collected'])=="False":
-            logging.debug('in aliquot save loop')
-            for i in range(1,8):
-                logging.debug(f"i is {i}")
-                logging.debug(form.cleaned_data[f'partial_aliquot_18ml_{i}'])
-                if form.cleaned_data[f'partial_aliquot_18ml_{i}'] is True:
-                    UrineAliquot.objects.create(processed_fk=self,aliquot_vial_size='E',aliquot_volume_collected=form.cleaned_data[f'partial_aliquot_18ml_{i}_amount'])
-                    logging.debug(f'Urine aliquot saved')
-        if form.cleaned_data['all_7_collected']=="False":
-            for i in range(1,4):
-                if form.cleaned_data[f'partial_aliquot_7ml_{i}'] is True:
-                    UrineAliquot.objects.create(processed_fk=self,aliquot_vial_size='S',aliquot_volume_collected=form.cleaned_data[f'partial_aliquot_7ml_{i}_amount'])
 
 class UrineAliquot(models.Model):
     processed_fk = models.ForeignKey(ProcessedUrine, on_delete=models.PROTECT, blank=True, null=True)
