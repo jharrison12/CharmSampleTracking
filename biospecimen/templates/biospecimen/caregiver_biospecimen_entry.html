@@ -19,7 +19,7 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Kit Sent:</button>
             </div>
             <div class="col-8">
-                <div>Kit Sent Date Time: {{ caregiver_bio.status_fk.kit_sent_fk.kit_sent_date }}</div>
+                <div>Kit Sent Date Time: {{ caregiver_bio.status_fk.kit_sent_fk.kit_sent_date|date:'Y-m-d H:i' }}</div>
             </div>
         </div>
     {% endif %}
@@ -40,7 +40,7 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Collected</button>
             </div>
             <div class="col-8">
-                <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
+                <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time|date:'m/d/Y H:i' }}</div>
                 {% if collection_type not in 'H,L,U' %}<div>Processed Date Time: {{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>{% endif %}
                 {% if collection_type not in  'H,L,U' %}<div>Stored Date Time: {{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C,U' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>{% endif %}
@@ -182,7 +182,7 @@
             </div>
             <div class="col-8">
                 <div>Processed Aliquoted Off Site:{{ caregiver_bio.status_fk.processed_fk.get_processed_aliquoted_off_site_display }}</div>
-                {% if caregiver_bio.status_fk.processed_fk.processed_aliquoted_off_site not in 'N' %}<div>Processed Aliquoted Date Time: {{ caregiver_bio.status_fk.processed_fk.processed_aliquoted_date_time }}</div>{% endif %}
+                {% if caregiver_bio.status_fk.processed_fk.processed_aliquoted_off_site not in 'N' %}<div>Processed Aliquoted Date Time: {{ caregiver_bio.status_fk.processed_fk.processed_aliquoted_date_time|date:'Y-m-d H:i' }}</div>{% endif %}
                 <div>Total Volume Urine in Collection Cup: {{ caregiver_bio.status_fk.processed_fk.total_volume_of_urine_in_collection_cup }}</div>
                 <div>Precipate Bottom of Container: {{ caregiver_bio.status_fk.processed_fk.precipate_bottom_of_container }}</div>
                 <div>Refrigerated Prior to Processing: {{ caregiver_bio.status_fk.processed_fk.refrigerated_prior_to_processing }}</div>

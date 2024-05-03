@@ -178,3 +178,5 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'msuechonotifications@gmail.com'
 EMAIL_HOST_PASSWORD = parameters.EMAIL_PASSWORD
+
+DATETIME_FORMAT = "%m/%d/%Y %H:%M:%S"
