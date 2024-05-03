@@ -357,6 +357,10 @@ class ProcessedBlood(models.Model):
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
+        if (form.cleaned_data['whole_blood_blue_cap_collected'])=="False":
+            for i in range(1,3):
+                if(form.cleaned_data[f'whole_blood_blue_cap_partial_aliquot_number_{i}_collected']) is True:
+                    pass
 
 
 class ProcessedUrine(models.Model):
@@ -376,6 +380,7 @@ class ProcessedUrine(models.Model):
     refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
     all_18_collected = models.BooleanField(null=True,blank=True)
     all_7_collected = models.BooleanField(null=True,blank=True)
+
 
     def save_processed(self,form,request,caregiver_bio):
         logging.debug(f"In saved processed function")
