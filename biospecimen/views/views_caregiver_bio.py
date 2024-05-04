@@ -851,7 +851,7 @@ def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregi
     if request.method == "POST":
         form = ProcessedBloodForm(data=request.POST, prefix='processed_form')
         if form.is_valid():
-            processed_item.save_not_processed(form=form, request=request)
+            processed_item.save_processed(form=form, request=request,caregiver_bio=caregiver_bio)
     return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
 

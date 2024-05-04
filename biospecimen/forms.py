@@ -298,9 +298,9 @@ class ProcessedBloodForm(forms.Form):
     edta_purple_refrigerated_removed_date_time =forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),required=False,
                                                                     label='If Yes, date and time EDTA tubes were removed from refrigerated temperature for centrifuging')
 
-    whole_blood_blue_cap_collected = forms.ChoiceField(required=False,choices=YES_NO,label=f'Were both {whole_blood_blue_cap_text} collected? (blue cap)')
+    whole_blood_blue_cap_all_collected = forms.ChoiceField(required=False,choices=YES_NO,label=f'Were both {whole_blood_blue_cap_text} collected? (blue cap)')
     whole_blood_blue_cap_partial_aliquot_volume = forms.FloatField(required=False,label=f'If any {whole_blood_blue_cap_text} were partial, what is the estimated volume of the partial aliquot?:')
-    whole_blood_blue_cap_aliquots_collected = forms.IntegerField(required=False,label=f'If any {whole_blood_blue_cap_text} were missing, how many were collected?')
+    whole_blood_blue_cap_number_collected = forms.IntegerField(required=False, label=f'If any {whole_blood_blue_cap_text} were missing, how many were collected?')
 
     blood_spot_card_completed = forms.ChoiceField(required=False,choices=YES_NO,label='Was the blood spot card filled completely?')
     blood_spot_card_number_of_complete_spots = forms.IntegerField(required=False,label='Number of complete blood spots')

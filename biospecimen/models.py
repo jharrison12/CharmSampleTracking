@@ -28,6 +28,15 @@ BLOOD_DICT_DISPLAY = {'whole_blood':'Whole Blood',
               'red_blood_cells':'Red Blood Cells',
               'buffy_coat':'Buffy Coat'}
 
+BLOOD_ITEM_DICT = {'whole_blood_blue_cap':{'vial_amount':'O','blood_type':'W','cap_color':"B"},
+                   'plasma_purple_cap_200_microliter':{'vial_amount':'T','blood_type':'P','cap_color':"P"},
+                   'plasma_purple_cap_1_ml':{'vial_amount':'O','blood_type':'P','cap_color':"P"},
+                   'buffy_coat_green_cap_1_ml':{'vial_amount':'O','blood_type':'F','cap_color':"G"},
+                   'red_blood_cells_yellow_cap_1_ml':{'vial_amount':'O','blood_type':'R','cap_color':"Y"},
+                   'serum_red_cap_200_microl':{'vial_amount':'T','blood_type':'S','cap_color':"R"},
+                   'serum_red_cap_1_ml':{'vial_amount':'O','blood_type':'S','cap_color':"R"}
+                   }
+
 class ComponentError(Exception):
     pass
 
@@ -357,11 +366,11 @@ class ProcessedBlood(models.Model):
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
-        if (form.cleaned_data['whole_blood_blue_cap_collected'])=="False":
-            for i in range(1,3):
-                if(form.cleaned_data[f'whole_blood_blue_cap_partial_aliquot_number_{i}_collected']) is True:
-                    pass
-
+        blood_spot_card = BloodSpotCard.objects.create()
+        blood_spot_card.save_card(form,request,caregiver_bio)
+        for blood_item in list(BLOOD_ITEM_DICT.keys()):
+            blood_aliquot = BloodAliquot.objects.create()
+            blood_aliquot.save(form=form,request=request,caregiver_bio=caregiver_bio,blood_type_text=blood_item)
 
 class ProcessedUrine(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
@@ -421,20 +430,34 @@ class UrineAliquot(models.Model):
     aliquot_volume_collected = models.FloatField(null=True,blank=True)
 
 class BloodSpotCard(models.Model):
-    caregiver_fk = models.ForeignKey("Caregiver",on_delete=models.PROTECT)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    caregiver_fk = models.ForeignKey("CaregiverBiospecimen",on_delete=models.PROTECT)
     processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
     blood_spot_card_completed = models.BooleanField(null=True, blank=True)
     blood_spot_card_number_of_complete_spots = models.IntegerField(null=True,blank=True)
     blood_spot_card_number_of_dots_smaller_than_dotted_circle = models.IntegerField(null=True,blank=True)
     blood_spot_card_number_of_dotted_circle_missing_blood_spot  = models.IntegerField(null=True,blank=True)
 
+    def save_card(self,form,request,caregiver_bio):
+        self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
+        self.caregiver_fk = caregiver_bio
+        self.logged_by = request.user
+        self.blood_spot_card_completed = form.cleaned_data["blood_spot_card_completed"]
+        self.blood_spot_card_number_of_complete_spots = form.cleaned_data["blood_spot_card_number_of_complete_spots"]
+        self.blood_spot_card_number_of_dots_smaller_than_dotted_circle = form.cleaned_data["blood_spot_card_number_of_dots_smaller_than_dotted_circle"]
+        self.blood_spot_card_number_of_dotted_circle_missing_blood_spot = form.cleaned_data["blood_spot_card_number_of_dotted_circle_missing_blood_spot"]
+        self.save()
+
 class BloodAliquot(models.Model):
-    caregiver_fk = models.ForeignKey("Caregiver", on_delete=models.PROTECT,blank=True,null=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    caregiver_bio_fk = models.ForeignKey("CaregiverBiospecimen", on_delete=models.PROTECT,blank=True,null=True)
     processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
 
     class VialAmount(models.TextChoices):
-        EIGHTEEN_ML = 'E',_('Eighteen Ml')
-        SEVEN_ML = 'S',_('Seven Ml')
+        TWO_HUNDRED_MICRO = 'T',_('Two Hundred Microliters')
+        ONE_ML = 'O', _('One Milliliter')
+        EIGHTEEN_ML = 'E',_('Eighteen Milliliter')
+        SEVEN_ML = 'S',_('Seven Milliliter')
 
     class CapColor(models.TextChoices):
         PURPLE = 'P', _('Purple')
@@ -456,6 +479,17 @@ class BloodAliquot(models.Model):
     aliquot_blood_type = models.CharField(max_length=1,choices=BloodType.choices,null=True,blank=True)
     aliquot_estimated_volume_of_partial = models.FloatField(null=True,blank=True)
     aliquot_number_of_tubes_collected = models.IntegerField(null=True,blank=True)
+
+    def save(self,form,request,caregiver_bio,blood_type_text):
+        self.logged_by = request.user
+        self.caregiver_bio_fk = caregiver_bio
+        self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
+        logging.critical(BLOOD_ITEM_DICT[blood_type_text['blood_type']])
+        self.aliquot_blood_type = BLOOD_ITEM_DICT[blood_type_text['blood_type']]
+        self.aliquot_cap_color = BLOOD_ITEM_DICT[blood_type_text['cap_color']]
+        self.aliquot_vial_size = BLOOD_ITEM_DICT[blood_type_text['vial_amount']]
+        self.aliquot_estimated_volume_of_partial = form.cleaned_data[f'{blood_type_text}_partial_aliquot_volume']
+        self.aliquot_number_of_tubes_collected = form.cleaned_data[f'{blood_type_text}_number_collected']
 
 class Frozen(models.Model):
     freezer_placed_date_time = models.DateTimeField(null=True,blank=True)
