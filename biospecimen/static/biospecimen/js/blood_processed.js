@@ -28,6 +28,10 @@ document.getElementById('id_processed_form-blood_spot_card_completed').addEventL
     document.getElementById('incomplete_blood_spot_card_div').style.display = style;
 });
 
+document.getElementById('id_processed_form-whole_blood_blue_cap_collected').addEventListener('change', function () {
+    var style = this.value == 'False' ? 'block' : 'none';
+    document.getElementById('whole_blood_aliquots_div').style.display = style;
+});
 
 document.getElementById('id_processed_form-plasma_purple_cap_200_microliter_all_collected').addEventListener('change', function () {
     var style = this.value == 'False' ? 'block' : 'none';

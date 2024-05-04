@@ -420,9 +420,17 @@ class UrineAliquot(models.Model):
     aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
     aliquot_volume_collected = models.FloatField(null=True,blank=True)
 
+class BloodSpotCard(models.Model):
+    caregiver_fk = models.ForeignKey("Caregiver",on_delete=models.PROTECT)
+    processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
+    blood_spot_card_completed = models.BooleanField(null=True, blank=True)
+    blood_spot_card_number_of_complete_spots = models.IntegerField(null=True,blank=True)
+    blood_spot_card_number_of_dots_smaller_than_dotted_circle = models.IntegerField(null=True,blank=True)
+    blood_spot_card_number_of_dotted_circle_missing_blood_spot  = models.IntegerField(null=True,blank=True)
+
 class BloodAliquot(models.Model):
-    aliquot_number =models.IntegerField()
-    processed_fk = models.ForeignKey(ProcessedUrine, on_delete=models.PROTECT, blank=True, null=True)
+    caregiver_fk = models.ForeignKey("Caregiver", on_delete=models.PROTECT,blank=True,null=True)
+    processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
 
     class VialAmount(models.TextChoices):
         EIGHTEEN_ML = 'E',_('Eighteen Ml')
@@ -444,7 +452,10 @@ class BloodAliquot(models.Model):
         RED_BLOOD_CELLS = 'R',_('Red Blood Cells')
 
     aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
-    aliquot_volume_collected = models.FloatField(null=True,blank=True)
+    aliquot_cap_color = models.CharField(max_length=1,choices=CapColor.choices,null=True,blank=True)
+    aliquot_blood_type = models.CharField(max_length=1,choices=BloodType.choices,null=True,blank=True)
+    aliquot_estimated_volume_of_partial = models.FloatField(null=True,blank=True)
+    aliquot_number_of_tubes_collected = models.IntegerField(null=True,blank=True)
 
 class Frozen(models.Model):
     freezer_placed_date_time = models.DateTimeField(null=True,blank=True)
