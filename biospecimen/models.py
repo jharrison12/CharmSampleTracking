@@ -372,9 +372,9 @@ class ProcessedBlood(models.Model):
         blood_spot_card = BloodSpotCard.objects.create()
         blood_spot_card.save_card(form,request,caregiver_bio)
         for blood_item in list(BLOOD_ITEM_DICT.keys()):
-            logging(f'blood item is {blood_item}')
+            logging.critical(f'blood item is {blood_item}')
             blood_aliquot = BloodAliquot.objects.create()
-            blood_aliquot.save(form=form,request=request,caregiver_bio=caregiver_bio,blood_type_text=blood_item)
+            blood_aliquot.save_aliquot(form=form,request=request,caregiver_bio=caregiver_bio,blood_type_text=blood_item)
 
 class ProcessedUrine(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
@@ -435,7 +435,7 @@ class UrineAliquot(models.Model):
 
 class BloodSpotCard(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
-    caregiver_fk = models.ForeignKey("CaregiverBiospecimen",on_delete=models.PROTECT)
+    caregiver_fk = models.ForeignKey("CaregiverBiospecimen",on_delete=models.PROTECT,blank=True, null=True)
     processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
     blood_spot_card_completed = models.BooleanField(null=True, blank=True)
     blood_spot_card_number_of_complete_spots = models.IntegerField(null=True,blank=True)
@@ -484,16 +484,18 @@ class BloodAliquot(models.Model):
     aliquot_estimated_volume_of_partial = models.FloatField(null=True,blank=True)
     aliquot_number_of_tubes_collected = models.IntegerField(null=True,blank=True)
 
-    def save(self,form,request,caregiver_bio,blood_type_text):
+    def save_aliquot(self,form,request,caregiver_bio,blood_type_text):
         self.logged_by = request.user
         self.caregiver_bio_fk = caregiver_bio
         self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
-        logging.critical(BLOOD_ITEM_DICT[blood_type_text['blood_type']])
-        self.aliquot_blood_type = BLOOD_ITEM_DICT[blood_type_text['blood_type']]
-        self.aliquot_cap_color = BLOOD_ITEM_DICT[blood_type_text['cap_color']]
-        self.aliquot_vial_size = BLOOD_ITEM_DICT[blood_type_text['vial_amount']]
+        logging.critical(f"blood type text is {blood_type_text}")
+        logging.critical(BLOOD_ITEM_DICT[blood_type_text]['blood_type'])
+        self.aliquot_blood_type = BLOOD_ITEM_DICT[blood_type_text]['blood_type']
+        self.aliquot_cap_color = BLOOD_ITEM_DICT[blood_type_text]['cap_color']
+        self.aliquot_vial_size = BLOOD_ITEM_DICT[blood_type_text]['vial_amount']
         self.aliquot_estimated_volume_of_partial = form.cleaned_data[f'{blood_type_text}_partial_aliquot_volume']
         self.aliquot_number_of_tubes_collected = form.cleaned_data[f'{blood_type_text}_number_collected']
+        self.save()
 
 class Frozen(models.Model):
     freezer_placed_date_time = models.DateTimeField(null=True,blank=True)
