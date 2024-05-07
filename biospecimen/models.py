@@ -28,13 +28,13 @@ BLOOD_DICT_DISPLAY = {'whole_blood':'Whole Blood',
               'red_blood_cells':'Red Blood Cells',
               'buffy_coat':'Buffy Coat'}
 
-BLOOD_ITEM_DICT = {'whole_blood_blue_cap':{'vial_amount':'O','blood_type':'W','cap_color':"B"},
-                   'plasma_purple_cap_200_microliter':{'vial_amount':'T','blood_type':'P','cap_color':"P"},
-                   'plasma_purple_cap_1_ml':{'vial_amount':'O','blood_type':'P','cap_color':"P"},
-                   'buffy_coat_green_cap_1_ml':{'vial_amount':'O','blood_type':'F','cap_color':"G"},
-                   'red_blood_cells_yellow_cap_1_ml':{'vial_amount':'O','blood_type':'R','cap_color':"Y"},
-                   'serum_red_cap_200_microl':{'vial_amount':'T','blood_type':'S','cap_color':"R"},
-                   'serum_red_cap_1_ml':{'vial_amount':'O','blood_type':'S','cap_color':"R"}
+BLOOD_ITEM_DICT = {'whole_blood_blue_cap':{'vial_amount':'O','blood_type':'W','cap_color':"B",'number_of_tubes':2},
+                   'plasma_purple_cap_200_microliter':{'vial_amount':'T','blood_type':'P','cap_color':"P",'number_of_tubes':7},
+                   'plasma_purple_cap_1_ml':{'vial_amount':'O','blood_type':'P','cap_color':"P",'number_of_tubes':3},
+                   'buffy_coat_green_cap_1_ml':{'vial_amount':'O','blood_type':'F','cap_color':"G",'number_of_tubes':2},
+                   'red_blood_cells_yellow_cap_1_ml':{'vial_amount':'O','blood_type':'R','cap_color':"Y",'number_of_tubes':2},
+                   'serum_red_cap_200_microl':{'vial_amount':'T','blood_type':'S','cap_color':"R",'number_of_tubes':3},
+                   'serum_red_cap_1_ml':{'vial_amount':'O','blood_type':'S','cap_color':"R",'number_of_tubes':2}
                    }
 
 class ComponentError(Exception):
@@ -493,8 +493,11 @@ class BloodAliquot(models.Model):
         self.aliquot_blood_type = BLOOD_ITEM_DICT[blood_type_text]['blood_type']
         self.aliquot_cap_color = BLOOD_ITEM_DICT[blood_type_text]['cap_color']
         self.aliquot_vial_size = BLOOD_ITEM_DICT[blood_type_text]['vial_amount']
-        self.aliquot_estimated_volume_of_partial = form.cleaned_data[f'{blood_type_text}_partial_aliquot_volume']
-        self.aliquot_number_of_tubes_collected = form.cleaned_data[f'{blood_type_text}_number_collected']
+        if form.cleaned_data[f'{blood_type_text}_all_collected'] != "True":
+            self.aliquot_estimated_volume_of_partial = form.cleaned_data[f'{blood_type_text}_partial_aliquot_volume']
+            self.aliquot_number_of_tubes_collected = form.cleaned_data[f'{blood_type_text}_number_collected']
+        else:
+            self.aliquot_number_of_tubes_collected = BLOOD_ITEM_DICT[blood_type_text]['number_of_tubes']
         self.save()
 
 class Frozen(models.Model):
