@@ -289,7 +289,7 @@ class ProcessedBloodForm(forms.Form):
     processed_aliquoted_off_site = forms.ChoiceField(widget=forms.Select,choices=BLOOD_PROCESSED_ALIQUOTED,
                                                      label='If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?')
     specimen_received_date_time =forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),
-                                                     label='If anything other than Not Applicable: When was the specimen received at the processing site?')
+                                                     label='If anything other than Not Applicable: When was the specimen received at the processing site?',required=False)
     edta_purple_tube_refrigerated_prior_to_centrifuge = forms.ChoiceField(required=False,choices=YES_NO,
                                                                           label='Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?',
                                                                           initial=False)

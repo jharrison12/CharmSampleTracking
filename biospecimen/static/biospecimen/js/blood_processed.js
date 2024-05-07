@@ -23,6 +23,11 @@ document.getElementById('id_processed_form-edta_purple_tube_refrigerated_prior_t
 
 // id_processed_form-blood_spot_card_completed
 
+document.getElementById('id_processed_form-processed_aliquoted_off_site').addEventListener('change', function () {
+    var style = this.value != 'N' ? 'block' : 'none';
+    document.getElementById('specimen_received_at_processing_site').style.display = style;
+});
+
 document.getElementById('id_processed_form-blood_spot_card_completed').addEventListener('change', function () {
     var style = this.value == 'False' ? 'block' : 'none';
     document.getElementById('incomplete_blood_spot_card_div').style.display = style;

@@ -479,10 +479,10 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
         collected_form = CollectedBloodForm(prefix='blood_form')
-    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False):
+    if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
             logging.critical(f"in processed form if block")
             processed_form = ProcessedBloodForm(prefix='processed_form')
-    elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.incentive_fk.incentive_date \
+    elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.status_fk.processed_blood_fk \
             and not (caregiver_bio.status_fk.shipped_wsu_fk):
         shipped_wsu_form = ShippedtoWSUFormBlood(prefix="shipped_to_wsu_form",caregiver_bio=caregiver_bio)
     elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not (caregiver_bio.status_fk.received_wsu_fk):
@@ -804,7 +804,6 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
     return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
 
-
 @login_required
 def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -829,7 +828,6 @@ def caregiver_biospecimen_frozen_post(request,caregiver_charm_id,caregiver_bio_p
         return redirect("biospecimen:caregiver_biospecimen_entry", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
 
-
 @login_required
 def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -848,8 +846,10 @@ def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregive
 def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     processed_item = ProcessedBlood.objects.create()
+    logging.critical(f'in caregiver blood post')
     if request.method == "POST":
         form = ProcessedBloodForm(data=request.POST, prefix='processed_form')
+        logging.critical(f"is form valid {form.is_valid()} {form.errors}")
         if form.is_valid():
             processed_item.save_processed(form=form, request=request,caregiver_bio=caregiver_bio)
     return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,

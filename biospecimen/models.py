@@ -359,16 +359,20 @@ class ProcessedBlood(models.Model):
     def save_processed(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.processed_blood_fk = self
         self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
-        self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
-        self.purple_edta_tube_refrigerated_prior_to_centrifuge = form.cleaned_data['purple_edta_tube_refrigerated_prior_to_centrifuge']
-        self.purple_edta_refrigerated_placed_date_time = form.cleaned_data['purple_edta_refrigerated_placed_date_time']
-        self.purple_edta_refrigerated_removed_date_time = form.cleaned_data['purple_edta_refrigerated_removed_date_time']
+        if self.processed_aliquoted_off_site != 'N':
+            self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
+        self.purple_edta_tube_refrigerated_prior_to_centrifuge = form.cleaned_data['edta_purple_tube_refrigerated_prior_to_centrifuge']
+        if self.purple_edta_tube_refrigerated_prior_to_centrifuge == "True":
+            self.purple_edta_refrigerated_placed_date_time = form.cleaned_data['edta_purple_refrigerated_placed_date_time']
+            self.purple_edta_refrigerated_removed_date_time = form.cleaned_data['edta_purple_refrigerated_removed_date_time']
         self.save()
+        logging.critical(f"made it past initial save processed")
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
         blood_spot_card = BloodSpotCard.objects.create()
         blood_spot_card.save_card(form,request,caregiver_bio)
         for blood_item in list(BLOOD_ITEM_DICT.keys()):
+            logging(f'blood item is {blood_item}')
             blood_aliquot = BloodAliquot.objects.create()
             blood_aliquot.save(form=form,request=request,caregiver_bio=caregiver_bio,blood_type_text=blood_item)
 
