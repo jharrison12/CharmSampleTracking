@@ -556,11 +556,13 @@ class Status(models.Model):
                 new_collected = Collected.objects.create()
                 self.collected_fk = new_collected
                 new_collected.save()
+                model_type = 'C'
             elif form.cleaned_data['collected_not_collected'] == 'N':
                 new_not_collected = NotCollected.objects.create()
                 new_not_collected.logged_by = request.user
                 self.not_collected_fk = new_not_collected
                 new_not_collected.save()
+                model_type = 'N'
         elif request.POST.__contains__('initial_form-collected_not_collected_kit_sent'):
             if form.cleaned_data['collected_not_collected_kit_sent'] == 'K':
                 new_kit_sent = KitSent.objects.create()
@@ -570,6 +572,7 @@ class Status(models.Model):
                 new_not_collected.logged_by = request.user
                 self.not_collected_fk = new_not_collected
                 new_not_collected.save()
+                model_type = 'N'
             elif form.cleaned_data['collected_not_collected_kit_sent'] == 'X':
                 new_declined = Declined.objects.create()
                 self.declined_fk = new_declined
@@ -585,9 +588,11 @@ class Status(models.Model):
                 new_not_collected.logged_by = request.user
                 self.not_collected_fk = new_not_collected
                 new_not_collected.save()
+                model_type = 'N'
         else:
             raise KeyError
         self.save_status(caregiver_bio=caregiver_bio)
+        return model_type
 
     def __str__(self):
         return f"Status {self.pk}"

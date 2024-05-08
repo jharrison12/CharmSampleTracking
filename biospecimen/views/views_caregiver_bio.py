@@ -108,21 +108,6 @@ def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in,request)
         if bound_form.is_valid():
             received_at_wsu.save_received_wsu(caregiver_bio=caregiver_bio,request=request,form=bound_form)
 
-
-# def create_or_update_incentive(caregiver_bio_pk, bound_form):
-#     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-#     try:
-#         incentive_item = Incentive.objects.get(caregiverbiospecimen=caregiver_bio)
-#     except Incentive.DoesNotExist:
-#         incentive_item = Incentive()
-#         caregiver_bio.incentive_fk = incentive_item
-#     logging.debug(f"{incentive_item}")
-#     logging.debug(f"{bound_form.cleaned_data}")
-#     incentive_item.incentive_date = bound_form.cleaned_data['incentive_date']
-#     incentive_item.save()
-#     caregiver_bio.save()
-
-
 def compare_form_component(component_values,form):
     for component in component_values:
         logging.debug(
@@ -235,6 +220,8 @@ def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'collection_type': collection_type
                                                                                                     })
 
+
+
 @login_required
 def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.filter(pk=caregiver_bio_pk).first()
@@ -247,8 +234,14 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         form = InitialBioForm(data=request.POST, prefix='initial_form')
         if form.is_valid():
             new_status = Status.objects.create()
-            new_status.save_initial_form(form=form,caregiver_bio=caregiver_bio,request=request)
-            if collection_type in BLOOD:
+            initial_status = new_status.save_initial_form(form=form,caregiver_bio=caregiver_bio,request=request)
+            logging.critical(f"initial status is {initial_status}")
+            logging.critical(f" is instance {isinstance(initial_status,NotCollected)}")
+            if initial_status=='N':
+                logging.critical(f"Found not collected")
+                return redirect("biospecimen:caregiver_biospecimen_not_collected", caregiver_charm_id=caregiver_charm_id,
+                                caregiver_bio_pk=caregiver_bio_pk)
+            elif collection_type in BLOOD:
                 return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
             else:
@@ -367,8 +360,6 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     not_collected_form = None
     processed_form = None
     frozen_form = None
-    if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True):
-        not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collection_type in HAIR_SALIVA:
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenHairSalivaForm(prefix='hair_saliva_form')
@@ -848,8 +839,25 @@ def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregive
         form = NotCollectedForm(data=request.POST, prefix='not_collected_form')
         if form.is_valid():
             not_collected_item.save_not_collected(form=form, request=request)
-    return redirect("biospecimen:caregiver_biospecimen_initial", caregiver_charm_id=caregiver_charm_id,
+    return redirect("biospecimen:caregiver_biospecimen_not_collected", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
+
+@login_required
+def caregiver_biospecimen_not_collected(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    logging.critical(f"does not collected item exist {not_collected_item.exists()}")
+    logging.critical(f"refused or other is null {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
+    not_collected_form = None
+    if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True).exists():
+        not_collected_form = NotCollectedForm(prefix='not_collected_form')
+    return render(request, template_name='biospecimen/caregiver_biospecimen_entry_base.html',
+                  context={'caregiver_bio':caregiver_bio,
+                            'charm_project_identifier':caregiver_charm_id,
+                            'caregiver_bio_pk':caregiver_bio_pk,
+                           'not_collected_form':not_collected_form,
+                           'not_collected_item':not_collected_item,
+                           })
 
 @login_required
 def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
