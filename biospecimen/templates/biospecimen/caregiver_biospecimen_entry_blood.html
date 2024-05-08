@@ -289,6 +289,32 @@
              <input type="submit" value="Submit" />
             </form>
         </div>
+    {% elif processed_item %}
+        <div id="processed_blood_information" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                {# TODO ADD FILTER TAG  #}
+                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Processed Blood</button>
+            </div>
+            <div class="col-8">
+                <div>Aliquoted off site: {{ caregiver_bio.status_fk.processed_blood_fk.get_processed_aliquoted_off_site_display }}</div>
+                    {% if caregiver_bio.status_fk.processed_blood_fk.processed_aliquoted_off_site != 'N' %}
+                    <div>Specimen Received Date Time: {{ caregiver_bio.status_fk.processed_blood_fk.specimen_received_date_time }}</div>
+                    {% endif %}
+                <div>Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_tube_refrigerated_prior_to_centrifuge }}</div>
+                    {% if caregiver_bio.status_fk.processed_blood_fk.purple_edta_tube_refrigerated_prior_to_centrifuge == True %}
+                        <div>Date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_refrigerated_placed_date_time }}</div>
+                        <div>Date and time EDTA tubes were removed from refrigerated temperature prior to centrifuging: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_refrigerated_removed_date_time }}</div>
+                    {% endif %}
+                {% for aliquot in blood_aliquots %}
+                    <h3>{{ aliquot.get_aliquot_blood_type_display }} {{ aliquot.get_aliquot_vial_size_display }}  {{ aliquot.get_aliquot_cap_color_display }}</h3>
+                        <ul>
+                            <li>Number of aliquots collected: {{ aliquot.aliquot_number_of_tubes_collected }}</li>
+                            <li>If partial what amount: {{ aliquot.aliquot_estimated_volume_of_partial }}</li>
+                        </ul>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
 {#    {% if incentive_form and not caregiver_bio.incentive_fk.incentive_date%}#}
 {#        <div id="incentive_form" class="row border border-primary p-3 rounded">#}

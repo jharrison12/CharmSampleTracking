@@ -472,10 +472,10 @@ class BloodAliquot(models.Model):
 
     class BloodType(models.TextChoices):
         SERUM = 'S', _('Serum')
-        WHOLE_BLOOD = 'W', _('Whole blood')
-        BLOOD_SPOTS = 'B',_('Blood spots')
+        WHOLE_BLOOD = 'W', _('Whole Blood')
+        BLOOD_SPOTS = 'B',_('Blood Spots')
         PLASMA = 'P',_('Plasma')
-        BUFFY_COAT = 'F',_('Buffy coat')
+        BUFFY_COAT = 'F',_('Buffy Coat')
         RED_BLOOD_CELLS = 'R',_('Red Blood Cells')
 
     aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
@@ -483,6 +483,7 @@ class BloodAliquot(models.Model):
     aliquot_blood_type = models.CharField(max_length=1,choices=BloodType.choices,null=True,blank=True)
     aliquot_estimated_volume_of_partial = models.FloatField(null=True,blank=True)
     aliquot_number_of_tubes_collected = models.IntegerField(null=True,blank=True)
+    aliquot_max_number_of_tubes_collected = models.IntegerField(null=True,blank=True)
 
     def save_aliquot(self,form,request,caregiver_bio,blood_type_text):
         self.logged_by = request.user
@@ -493,6 +494,7 @@ class BloodAliquot(models.Model):
         self.aliquot_blood_type = BLOOD_ITEM_DICT[blood_type_text]['blood_type']
         self.aliquot_cap_color = BLOOD_ITEM_DICT[blood_type_text]['cap_color']
         self.aliquot_vial_size = BLOOD_ITEM_DICT[blood_type_text]['vial_amount']
+        self.aliquot_max_number_of_tubes_collected = BLOOD_ITEM_DICT[blood_type_text]['number_of_tubes']
         if form.cleaned_data[f'{blood_type_text}_all_collected'] != "True":
             self.aliquot_estimated_volume_of_partial = form.cleaned_data[f'{blood_type_text}_partial_aliquot_volume']
             self.aliquot_number_of_tubes_collected = form.cleaned_data[f'{blood_type_text}_number_collected']

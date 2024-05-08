@@ -4,7 +4,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, C
     NoConsent, ShippedWSU, ShippedECHO, \
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU, ReceivedMSU, Project, Caregiver, PregnancyTrimester, Child, \
     Component, URINE, BLOOD_DICT_FORM, BLOOD_DICT, ComponentError, \
-    ProcessedUrine, UrineAliquot, Frozen,BloodTube,ProcessedBlood
+    ProcessedUrine, UrineAliquot, Frozen, BloodTube, ProcessedBlood, BloodAliquot
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
     ShippedChoiceForm, ShippedtoWSUForm, \
     ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
@@ -439,6 +439,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
 @login_required
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    logging.critical(f'caregiver bio is {caregiver_bio} pk {caregiver_bio.pk}')
     try:
         caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
@@ -464,6 +465,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     processed_item = ProcessedBlood.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    blood_aliquots = BloodAliquot.objects.filter(caregiver_bio_fk=caregiver_bio)
+    logging.critical(f'blood aliquots are {blood_aliquots}')
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
@@ -508,7 +511,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'not_collected_form':not_collected_form,
                                                                                                         'not_collected_item':not_collected_item,
                                                                                                         'processed_form':processed_form,
-                                                                                                        'processed_item':processed_item
+                                                                                                        'processed_item':processed_item,
+                                                                                                        'blood_aliquots':blood_aliquots
                                                                                                         })
 
 @login_required
