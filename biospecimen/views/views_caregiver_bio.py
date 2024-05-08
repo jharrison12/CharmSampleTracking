@@ -539,6 +539,8 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                 collected_urine = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 collected_urine.save_urine(form=form,request=request)
                 Incentive.objects.create().save_fk(caregiver_bio=caregiver_bio)
+            else:
+                messages.info(request, f"{form.non_field_errors()}")
             return redirect("biospecimen:caregiver_biospecimen_entry",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in HAIR_SALIVA:
             form = CollectedBiospecimenHairSalivaForm(data=request.POST, prefix='hair_saliva_form')
@@ -561,11 +563,9 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
             logging.critical(f'in collection type blood post page')
             if form.is_valid():
                 blood_item = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                # create_or_update_component_values(caregiver_bio=caregiver_bio,
-                #                                   logged_in_user=request.user,
-                #                                   form_data=form.cleaned_data,
-                #                                   collected_fk=blood_item,shipped_wsu_fk=None,received_wsu_fk=None)
                 blood_item.save_blood(form=form,request=request,caregiver_bio=caregiver_bio)
+            else:
+                messages.info(request, f"{form.errors}")
             return redirect("biospecimen:caregiver_biospecimen_entry_blood",caregiver_charm_id=caregiver_charm_id,caregiver_bio_pk=caregiver_bio_pk)
         else:
             raise AssertionError
@@ -851,7 +851,6 @@ def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregive
     return redirect("biospecimen:caregiver_biospecimen_initial", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
 
-
 @login_required
 def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
@@ -862,6 +861,8 @@ def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregi
         logging.critical(f"is form valid {form.is_valid()} {form.errors}")
         if form.is_valid():
             processed_item.save_processed(form=form, request=request,caregiver_bio=caregiver_bio)
+        else:
+            messages.info(request, f"{form.errors}")
     return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                     caregiver_bio_pk=caregiver_bio_pk)
 
