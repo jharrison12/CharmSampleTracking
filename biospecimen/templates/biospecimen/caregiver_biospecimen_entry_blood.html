@@ -1,4 +1,7 @@
 {% extends "biospecimen/base.html" %}
+{% block javascript_block %}
+    <script type="text/javascript" src="/static/biospecimen/js/datetime_test.js" async></script>
+{% endblock %}
 {% block header %}Charm ID: {{ charm_project_identifier }}{% endblock %}
 {% block section %}
     <div class="row" id="biospecimen_information">
@@ -8,9 +11,6 @@
     {% if caregiver_bio.trimester_fk %}<div class="col-sm">Trimester: {{ caregiver_bio.trimester_fk.get_trimester_display }}</div>{% endif %}
         <hr/>
     </div>
-{% endblock %}
-{% block javascript_block %}
-    <script type="text/javascript" src="/static/biospecimen/js/datetime_test.js" async></script>
 {% endblock %}
 {% block bio_logic %}
     {% if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk and not caregiver_bio.status_fk.collected_fk.collected_date_time %}

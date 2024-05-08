@@ -1,7 +1,17 @@
-{% extends "biospecimen/caregiver_biospecimen_entry_base.html" %}
+{% extends "biospecimen/base.html" %}
 {% block javascript_block %}
     <script type="text/javascript" src="/static/biospecimen/js/datetime_test.js" async></script>
     <script type="text/javascript" src="/static/biospecimen/js/urine_processed.js" async></script>
+{% endblock %}
+{% block header %}Charm ID: {{ charm_project_identifier }}{% endblock %}
+{% block section %}
+    <div class="row" id="biospecimen_information">
+    <div class="col-sm">ID: {{ caregiver_bio.biospecimen_id }}</div>
+    <div class="col-sm">Type: {{ caregiver_bio.collection_fk.get_collection_type_display }}</div>
+    {#  Not sure what the below object was in the SRO version of this device    #}
+    {% if caregiver_bio.trimester_fk %}<div class="col-sm">Trimester: {{ caregiver_bio.trimester_fk.get_trimester_display }}</div>{% endif %}
+        <hr/>
+    </div>
 {% endblock %}
 {% block bio_logic %}
     {% if caregiver_bio.status_fk and caregiver_bio.status_fk.kit_sent_fk and not caregiver_bio.status_fk.kit_sent_fk.kit_sent_date %}

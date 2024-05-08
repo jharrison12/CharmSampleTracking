@@ -833,7 +833,6 @@ def caregiver_biospecimen_frozen_post(request,caregiver_charm_id,caregiver_bio_p
 def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
     not_collected_item = NotCollected.objects.get(status__caregiverbiospecimen=caregiver_bio)
-    collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     logging.debug(f'{not_collected_item}')
     if request.method == "POST":
         form = NotCollectedForm(data=request.POST, prefix='not_collected_form')
