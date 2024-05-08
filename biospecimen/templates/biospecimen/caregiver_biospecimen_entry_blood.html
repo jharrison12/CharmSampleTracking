@@ -347,35 +347,6 @@
             </div>
         </div>
     {% endif %}
-{#    {% if incentive_form and not caregiver_bio.incentive_fk.incentive_date%}#}
-{#        <div id="incentive_form" class="row border border-primary p-3 rounded">#}
-{#          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_incentive_post' charm_project_identifier caregiver_bio_pk %}>#}
-{#          {% csrf_token %}#}
-{#              <h2>Incentive Form</h2>#}
-{#            {{ incentive_form.as_p }}#}
-{#          <input type="submit" value="Submit" />#}
-{#          </form>#}
-{#        </div>#}
-{#    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.incentive_fk and caregiver_bio.incentive_fk.incentive_date %}#}
-{#        <div id="incentive_information" class="row border border-primary p-3 rounded">#}
-{#            <div class="col-4">#}
-                {# TODO ADD FILTER TAG  #}
-                {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
-{#                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Incentive Information</button>#}
-{#            </div>#}
-{#            <div class="col-8">#}
-{#                <div>Incentive Date: {{ caregiver_bio.incentive_fk.incentive_date }}</div>#}
-{#                {% for blood in caregiver_bloods_collected %}#}
-{#                    <div class="form-check form-check-inline">#}
-{#                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>#}
-{#                      <label class="form-check-label" for="flexCheckCheckedDisabled">#}
-{#                          {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}#}
-{#                      </label>#}
-{#                    </div>#}
-{#                {% endfor %}#}
-{#            </div>#}
-{#        </div>#}
-{#    {% endif %}#}
     {% if shipped_wsu_form  %}
         <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>
