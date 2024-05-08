@@ -4,7 +4,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, C
     NoConsent, ShippedWSU, ShippedECHO, \
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU, ReceivedMSU, Project, Caregiver, PregnancyTrimester, Child, \
     Component, URINE, BLOOD_DICT_FORM, BLOOD_DICT, ComponentError, \
-    ProcessedUrine, UrineAliquot, Frozen, BloodTube, ProcessedBlood, BloodAliquot
+    ProcessedUrine, UrineAliquot, Frozen, BloodTube, ProcessedBlood, BloodAliquot, BloodSpotCard
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
     ShippedChoiceForm, ShippedtoWSUForm, \
     ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
@@ -466,6 +466,11 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     processed_item = ProcessedBlood.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     blood_aliquots = BloodAliquot.objects.filter(caregiver_bio_fk=caregiver_bio)
+    try:
+        blood_spot_card = BloodSpotCard.objects.get(caregiver_bio_fk=caregiver_bio)
+    except BloodSpotCard.DoesNotExist:
+        logging.critical(f"Blood spots card not found")
+        blood_spot_card = None
     logging.critical(f'blood aliquots are {blood_aliquots}')
     shipped_choice = None
     shipped_wsu_form = None
@@ -512,7 +517,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'not_collected_item':not_collected_item,
                                                                                                         'processed_form':processed_form,
                                                                                                         'processed_item':processed_item,
-                                                                                                        'blood_aliquots':blood_aliquots
+                                                                                                        'blood_aliquots':blood_aliquots,
+                                                                                                        'blood_spot_card':blood_spot_card
                                                                                                         })
 
 @login_required

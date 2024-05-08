@@ -435,7 +435,7 @@ class UrineAliquot(models.Model):
 
 class BloodSpotCard(models.Model):
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
-    caregiver_fk = models.ForeignKey("CaregiverBiospecimen",on_delete=models.PROTECT,blank=True, null=True)
+    caregiver_bio_fk = models.ForeignKey("CaregiverBiospecimen",on_delete=models.PROTECT,blank=True, null=True)
     processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
     blood_spot_card_completed = models.BooleanField(null=True, blank=True)
     blood_spot_card_number_of_complete_spots = models.IntegerField(null=True,blank=True)
@@ -444,7 +444,7 @@ class BloodSpotCard(models.Model):
 
     def save_card(self,form,request,caregiver_bio):
         self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
-        self.caregiver_fk = caregiver_bio
+        self.caregiver_bio_fk = caregiver_bio
         self.logged_by = request.user
         self.blood_spot_card_completed = form.cleaned_data["blood_spot_card_completed"]
         self.blood_spot_card_number_of_complete_spots = form.cleaned_data["blood_spot_card_number_of_complete_spots"]
