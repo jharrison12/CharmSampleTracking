@@ -389,27 +389,18 @@
           <input type="submit" value="Submit" />
           </form>
         </div>
-    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.shipped_wsu_fk and caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time %}
-        <div id="shipped_to_wsu_information" class="row border border-primary p-3 rounded">
+    {% elif caregiver_bio.status_fk.collected_fk.collected_date_time and caregiver_bio.status_fk.frozen_fk %}
+        <div id="frozen_information" class="row border border-primary p-3 rounded">
             <div class="col-4">
                 {# TODO ADD FILTER TAG  #}
                 {#       https://stackoverflow.com/questions/6571649/model-name-of-objects-in-django-templates         #}
-                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped WSU</button>
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Frozen</button>
             </div>
             <div class="col-8">
-                <div>Shipped Date Time:{{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_time }}</div>
-                <div>Courier: {{ caregiver_bio.status_fk.shipped_wsu_fk.get_courier_display }}</div>
-                <div>Tracking Number:{{ caregiver_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
-                <div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
-                <div>Shipped By: {{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_by }}</div>
-                {% for blood in caregiver_bloods_shipped_wsu %}
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-                      <label class="form-check-label" for="flexCheckCheckedDisabled">
-                          {{ blood.get_component_type_display }} Number of Tubes: {{ blood.number_of_tubes }}
-                      </label>
-                    </div>
-                {% endfor %}
+                <div>Date/time cryovials were placed in the freezer: {{ caregiver_bio.status_fk.frozen_fk.freezer_placed_date_time }}</div>
+                <div>Total number of tubes (not including bloodspot card): {{ caregiver_bio.status_fk.frozen_fk.number_of_tubes }}</div>
+                <div>Date/time bloodspot card was placed in the freezer:: {{ caregiver_bio.status_fk.frozen_fk.blood_spot_card_placed_in_freezer }}</div>
+                <div>Notes: {{ caregiver_bio.status_fk.frozen_fk.notes_and_deviations }}</div>
             </div>
         </div>
     {% endif %}
