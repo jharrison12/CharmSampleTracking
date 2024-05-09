@@ -163,6 +163,12 @@ class FrozenFormUrine(forms.Form):
     number_of_tubes =forms.IntegerField(label='Total number of tubes',max_value=11,min_value=0)
     notes_and_deviations = forms.CharField(max_length=255, required=False)
 
+class FrozenFormBlood(forms.Form):
+    freezer_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time cryovials were placed in the freezer:',required=False)
+    number_of_tubes =forms.IntegerField(label='Total number of tubes (not including bloodspot card)',max_value=21,min_value=0)
+    blood_spot_card_placed_in_freezer = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time bloodspot card was placed in the freezer:',required=False)
+    notes_and_deviations = forms.CharField(max_length=255, required=False)
+
 class InitialBioForm(forms.Form):
     collected_not_collected = forms.ChoiceField(widget=forms.Select, choices=COLLECTED_NOT_COLLECTED)
 

@@ -504,6 +504,7 @@ class BloodAliquot(models.Model):
 
 class Frozen(models.Model):
     freezer_placed_date_time = models.DateTimeField(null=True,blank=True)
+    blood_spot_card_placed_in_freezer = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True,default=None)
     notes_and_deviations = models.TextField(null=True,blank=True)
 
@@ -512,6 +513,8 @@ class Frozen(models.Model):
         self.freezer_placed_date_time = form.cleaned_data['freezer_placed_date_time']
         self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
+        if caregiver_bio.collection_fk.collection_type=='B':
+            self.blood_spot_card_placed_in_freezer = form.cleaned_data['blood_spot_card_placed_in_freezer']
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()

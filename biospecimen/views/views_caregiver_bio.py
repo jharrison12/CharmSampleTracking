@@ -12,7 +12,7 @@ from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, Collected
     ReceivedatWSUForm, InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm, ShippedtoWSUFormPlacenta, \
     ShippedtoMSUForm, ReceivedatMSUForm, ShippedtoWSUFormBlood, \
     ReceivedatWSUBloodForm, ShippedtoEchoBloodForm, ShippedtoEchoForm, DeclinedForm, NotCollectedForm, \
-    ProcessedFormUrine, FrozenFormUrine,ProcessedBloodForm
+    ProcessedFormUrine, FrozenFormUrine, ProcessedBloodForm, FrozenFormBlood
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -471,6 +471,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     not_collected_form= None
     collected_form=None
     processed_form = None
+    frozen_form = None
     logging.critical(f"Caregiver bio is {caregiver_bio}")
     logging.critical(f"if value for not collected blood bio is {not_collected_item.exists()} {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
     if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True).exists():
@@ -481,9 +482,9 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
             logging.critical(f"in processed form if block")
             processed_form = ProcessedBloodForm(prefix='processed_form')
-    elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and caregiver_bio.status_fk.processed_blood_fk \
-            and not (caregiver_bio.status_fk.shipped_wsu_fk):
-        shipped_wsu_form = ShippedtoWSUFormBlood(prefix="shipped_to_wsu_form",caregiver_bio=caregiver_bio)
+    elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and processed_item \
+            and not (caregiver_bio.status_fk.frozen_fk):
+        frozen_form = FrozenFormBlood(prefix="frozen_form")
     elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not (caregiver_bio.status_fk.received_wsu_fk):
         received_wsu_form = ReceivedatWSUBloodForm(prefix="received_at_wsu_form",caregiver_bio=caregiver_bio)
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
@@ -509,7 +510,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'processed_form':processed_form,
                                                                                                         'processed_item':processed_item,
                                                                                                         'blood_aliquots':blood_aliquots,
-                                                                                                        'blood_spot_card':blood_spot_card
+                                                                                                        'blood_spot_card':blood_spot_card,
+                                                                                                        'frozen_form':frozen_form
                                                                                                         })
 
 @login_required
@@ -792,6 +794,10 @@ def caregiver_biospecimen_shipped_echo_post(request,caregiver_charm_id,caregiver
 @login_required
 def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     declined_item = Declined.objects.get(status__caregiverbiospecimen=caregiver_bio)
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     logging.debug(f'{declined_item}')
@@ -808,6 +814,10 @@ def caregiver_biospecimen_declined_post(request, caregiver_charm_id,caregiver_bi
 @login_required
 def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     processed_item = ProcessedUrine.objects.create()
     logging.debug(f'in processed post for URINE')
     if request.method == "POST":
@@ -820,6 +830,10 @@ def caregiver_biospecimen_processed_post(request,caregiver_charm_id,caregiver_bi
 @login_required
 def caregiver_biospecimen_frozen_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     frozen_item = Frozen.objects.create()
     logging.debug(f'in processed post for URINE')
     if request.method == "POST":
@@ -830,8 +844,28 @@ def caregiver_biospecimen_frozen_post(request,caregiver_charm_id,caregiver_bio_p
                         caregiver_bio_pk=caregiver_bio_pk)
 
 @login_required
+def caregiver_biospecimen_frozen_blood_post(request,caregiver_charm_id,caregiver_bio_pk):
+    caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
+    frozen_item = Frozen.objects.create()
+    logging.debug(f'in processed post for URINE')
+    if request.method == "POST":
+        form = FrozenFormBlood(data=request.POST,prefix='frozen_form')
+        if form.is_valid():
+            frozen_item.save_frozen(form=form,request=request,caregiver_bio=caregiver_bio)
+        return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
+                        caregiver_bio_pk=caregiver_bio_pk)
+
+@login_required
 def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     not_collected_item = NotCollected.objects.get(status__caregiverbiospecimen=caregiver_bio)
     logging.debug(f'{not_collected_item}')
     if request.method == "POST":
@@ -844,6 +878,10 @@ def caregiver_biospecimen_not_collected_post(request,caregiver_charm_id,caregive
 @login_required
 def caregiver_biospecimen_not_collected(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     logging.critical(f"does not collected item exist {not_collected_item.exists()}")
     logging.critical(f"refused or other is null {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
@@ -861,6 +899,10 @@ def caregiver_biospecimen_not_collected(request,caregiver_charm_id,caregiver_bio
 @login_required
 def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    try:
+        caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
+    except PermissionError:
+        return redirect('biospecimen:error_page')
     processed_item = ProcessedBlood.objects.create()
     logging.critical(f'in caregiver blood post')
     if request.method == "POST":
