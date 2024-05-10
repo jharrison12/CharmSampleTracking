@@ -484,7 +484,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
             and not (caregiver_bio.status_fk.frozen_fk):
         frozen_form = FrozenFormBlood(prefix="frozen_form")
     elif collected_item.exists() and frozen_item.exists() and frozen_item.filter(freezer_placed_date_time__isnull=False) and not caregiver_bio.status_fk.shipped_wsu_fk:
-        shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
+        shipped_wsu_form = ShippedtoWSUFormBlood(prefix="shipped_to_wsu_form")
     elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not (caregiver_bio.status_fk.received_wsu_fk):
         received_wsu_form = ReceivedatWSUBloodForm(prefix="received_at_wsu_form",caregiver_bio=caregiver_bio)
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
