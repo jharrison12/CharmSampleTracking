@@ -456,6 +456,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     shipped_to_echo_item = ShippedECHO.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     processed_item = ProcessedBlood.objects.filter(status__caregiverbiospecimen=caregiver_bio)
+    frozen_item = Frozen.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     blood_aliquots = BloodAliquot.objects.filter(caregiver_bio_fk=caregiver_bio)
     try:
         blood_spot_card = BloodSpotCard.objects.get(caregiver_bio_fk=caregiver_bio)
@@ -485,6 +486,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and processed_item \
             and not (caregiver_bio.status_fk.frozen_fk):
         frozen_form = FrozenFormBlood(prefix="frozen_form")
+    elif collected_item.exists() and frozen_item.exists() and frozen_item.filter(freezer_placed_date_time__isnull=False) and not caregiver_bio.status_fk.shipped_wsu_fk:
+        shipped_wsu_form = ShippedtoWSUForm(prefix="shipped_to_wsu_form")
     elif shipped_to_wsu_item.exists() and shipped_to_wsu_item.filter(shipped_date_time__isnull=False) and not (caregiver_bio.status_fk.received_wsu_fk):
         received_wsu_form = ReceivedatWSUBloodForm(prefix="received_at_wsu_form",caregiver_bio=caregiver_bio)
     elif received_at_wsu_item.exists() and received_at_wsu_item.filter(received_date_time__isnull=False)\
@@ -511,7 +514,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'processed_item':processed_item,
                                                                                                         'blood_aliquots':blood_aliquots,
                                                                                                         'blood_spot_card':blood_spot_card,
-                                                                                                        'frozen_form':frozen_form
+                                                                                                        'frozen_form':frozen_form,
+                                                                                                        'shipped_to_wsu_item':shipped_to_wsu_item
                                                                                                         })
 
 @login_required
@@ -647,14 +651,14 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
     collection_type = Collection.objects.get(caregiverbiospecimen=caregiver_bio).collection_type
     if request.method == "POST":
         if collection_type in BLOOD:
-            form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form',caregiver_bio=caregiver_bio)
+            form = ShippedtoWSUFormBlood(data=request.POST, prefix='shipped_to_wsu_form')
             logging.debug(f"IN views shipped wsu post")
             if form.is_valid():
                 logging.debug(f"Shipped to wsu form valid")
                 update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,request=request,collection_type=collection_type)
                 shipped_wsu_item = ShippedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
-                                                  collected_fk=None,shipped_wsu_fk=shipped_wsu_item)
+                # create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
+                #                                   collected_fk=None,shipped_wsu_fk=shipped_wsu_item)
             else:
                 logging.debug(f"form errors? {form.errors}")
                 messages.info(request, f"{form.non_field_errors()}")

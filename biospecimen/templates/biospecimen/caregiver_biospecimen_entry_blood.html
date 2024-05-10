@@ -404,6 +404,40 @@
             </div>
         </div>
     {% endif %}
+    {% if shipped_wsu_form %}
+        <div id="shipped_to_wsu_information_form" class="row border border-primary p-3 rounded">
+          <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_shipped_wsu_post' charm_project_identifier caregiver_bio_pk %}>
+          {% csrf_token %}
+              <h2>Shipped to WSU Form</h2>
+              {{ shipped_wsu_form.non_field_errors }}
+              {{ shipped_wsu_form.has_error }}
+              {{ shipped_wsu_form.errors }}
+              <div class="form-group">
+                {{ shipped_wsu_form.shipped_date_and_time.errors }}
+                <label for="{{ shipped_wsu_form.shipped_date_and_time.id_for_label }}" class="form-label">{{shipped_wsu_form.shipped_date_and_time.label }}</label>
+                {{ shipped_wsu_form.shipped_date_and_time }}
+              </div>
+              <div class="form-group">
+                {{ shipped_wsu_form.number_of_tubes.errors }}
+                <label for="{{ shipped_wsu_form.number_of_tubes.id_for_label }}" class="form-label">{{shipped_wsu_form.number_of_tubes.label }}</label>
+                {{ shipped_wsu_form.number_of_tubes }}
+              </div>
+              <div class="form-group">
+                {{ shipped_wsu_form.courier.errors }}
+                <label for="{{ shipped_wsu_form.courier.id_for_label }}" class="form-label">{{shipped_wsu_form.courier.label }}</label>
+                {{ shipped_wsu_form.courier }}
+              </div>
+              <div class="form-group">
+                {{ shipped_wsu_form.tracking_number.errors }}
+                <label for="{{ shipped_wsu_form.tracking_number.id_for_label }}" class="form-label">{{shipped_wsu_form.tracking_number.label }}</label>
+                {{ shipped_wsu_form.tracking_number }}
+              </div>
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
+    {% elif shipped_to_wsu_item %}
+        ADD SHIPPED TO WSU INFORMATION
+    {% endif %}
     {% if received_wsu_form and not caregiver_bio.status_fk.received_wsu_fk.received_date_time %}
         <div id="received_at_wsu_information_form" class="row border border-primary p-3 rounded">
           <form method="POST" action={% url 'biospecimen:caregiver_biospecimen_received_wsu_post' charm_project_identifier caregiver_bio_pk %}>

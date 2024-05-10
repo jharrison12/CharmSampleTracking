@@ -195,32 +195,33 @@ class ShippedtoWSUForm(forms.Form):
     courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
 
 class ShippedtoWSUFormBlood(forms.Form):
-    shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-    tracking_number = forms.CharField()
-    logged_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
-    courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
-    whole_blood = forms.BooleanField(required=False)
-    whole_blood_number_of_tubes = forms.IntegerField(required=False)
-    plasma = forms.BooleanField(required=False)
-    plasma_number_of_tubes = forms.IntegerField(required=False)
-    buffy_coat = forms.BooleanField(required=False)
-    buffy_coat_number_of_tubes = forms.IntegerField(required=False)
-    red_blood_cells = forms.BooleanField(required=False)
-    red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
-    serum = forms.BooleanField(required=False)
-    serum_number_of_tubes = forms.IntegerField(required=False)
-
-    # https://stackoverflow.com/questions/24251141/pass-data-to-django-forms-field-clean-method
-    def __init__(self, *args,**kwargs):
-        self.caregiver_bio = kwargs.pop('caregiver_bio')
-        super(ShippedtoWSUFormBlood,self).__init__(*args,**kwargs)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
-        logging.debug(f"component values{component_values}")
-        test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
-        check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data,chain_of_custody='collected')
+    shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time shipped')
+    number_of_tubes = forms.IntegerField(required=False,label='Number of tubes')
+    courier = forms.ChoiceField(widget=forms.Select, choices=COURIERS,label='Courier')
+    tracking_number = forms.CharField(label='Tracking number')
+    #
+    # whole_blood = forms.BooleanField(required=False)
+    # whole_blood_number_of_tubes = forms.IntegerField(required=False)
+    # plasma = forms.BooleanField(required=False)
+    # plasma_number_of_tubes = forms.IntegerField(required=False)
+    # buffy_coat = forms.BooleanField(required=False)
+    # buffy_coat_number_of_tubes = forms.IntegerField(required=False)
+    # red_blood_cells = forms.BooleanField(required=False)
+    # red_blood_cells_number_of_tubes = forms.IntegerField(required=False)
+    # serum = forms.BooleanField(required=False)
+    # serum_number_of_tubes = forms.IntegerField(required=False)
+    #
+    # # https://stackoverflow.com/questions/24251141/pass-data-to-django-forms-field-clean-method
+    # def __init__(self, *args,**kwargs):
+    #     self.caregiver_bio = kwargs.pop('caregiver_bio')
+    #     super(ShippedtoWSUFormBlood,self).__init__(*args,**kwargs)
+    #
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     component_values = Component.objects.filter(caregiver_biospecimen_fk=self.caregiver_bio)
+    #     logging.debug(f"component values{component_values}")
+    #     test_data = {k: cleaned_data[k] for k in BLOOD_DICT.values()}
+    #     check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data,chain_of_custody='collected')
 
 class ReceivedatWSUBloodForm(forms.Form):
     received_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
