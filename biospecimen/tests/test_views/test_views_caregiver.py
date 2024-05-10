@@ -11,7 +11,7 @@ from biospecimen.forms import IncentiveForm, ProcessedBiospecimenForm, StoredBio
     InitialBioFormChildTooth, \
     CollectedChildToothForm, DeclinedForm, ReceivedatWSUForm, ShippedtoMSUForm, CollectedBiospecimenHairSalivaForm, \
     ShippedtoWSUFormBlood, ReceivedatWSUBloodForm, ShippedtoEchoForm, NotCollectedForm, ProcessedFormUrine, \
-    FrozenFormUrine, ProcessedBloodForm, FrozenFormBlood
+    FrozenFormUrine, ProcessedBloodForm, FrozenFormBlood, ShippedtoEchoBloodForm
 from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
@@ -825,21 +825,17 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry_blood.html')
-    #move
-
 
     def test_echo2_bio_page_shows_trimester_if_blood(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         self.assertContains(response, 'Trimester: Second')
 
-
     def test_echo2_bio_entry_blood_shows_updated_values_if_posted(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.content.decode())
         self.assertContains(response,'When was the last time the participant ate or drank anything other than plain water?:May 5, 2023, 5:05 a.m.')
         self.assertContains(response,'Complete or Partial: Complete')
 
@@ -958,17 +954,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
 
     # Redirection tests
 
-    def test_echo2_bio_blood_form_redirects_after_post(self):
-        #not sure what this is testing
-        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
-        response = self.blood_initial_send_form(primary_key, 'C')
-        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/',
-                                    data={"id_blood_form-serum": True,
-                                          })
-
-        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
-
-
     def test_echo2_bio_blood_initial_form_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         response = self.blood_initial_send_form(primary_key,'C')
@@ -1020,6 +1005,17 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.blood_received_at_wsu(primary_key)
         self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
 
+    def test_echo2_bio_blood_shipped_to_echo_form_redirects_after_post(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        self.blood_frozen_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key)
+        self.blood_received_at_wsu(primary_key)
+        response = self.shipped_to_echo_send_form(primary_key)
+        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/blood/")
+
     def test_echo2_initial_page_redirect_if_there_is_collected_fk(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.blood_initial_send_form(primary_key, 'C')
@@ -1034,7 +1030,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/initial/')
-        logging.debug(response.context)
         self.assertIsInstance(response.context['initial_bio_form'], InitialBioForm)
 
     def test_echo_2_bio_entry_whole_blood_shows_processed_form_after_collected(self):
@@ -1043,7 +1038,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.content.decode())
         self.assertIsInstance(response.context['processed_form'], ProcessedBloodForm)
 
     def test_echo_2_bio_entry_whole_blood_shows_frozen_form_after_processed(self):
@@ -1053,7 +1047,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_collected_form_send(primary_key)
         self.blood_processed_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.content.decode())
         self.assertIsInstance(response.context['frozen_form'], FrozenFormBlood)
 
     def test_echo2_bio_page_shows_wsu_shipped_form_if_collected_not_null_and_shipped_wsu_not_null(self):
@@ -1064,7 +1057,6 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_processed_form_send(primary_key)
         self.blood_frozen_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.context)
         self.assertIsInstance(response.context['shipped_wsu_form'], ShippedtoWSUFormBlood)
 
     def test_echo2_bio_page_shows_received_at_wsu_form_if_shipped_at_wsu_not_null(self):
@@ -1078,6 +1070,19 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
         logging.debug(response.context)
         self.assertIsInstance(response.context['received_wsu_form'], ReceivedatWSUBloodForm)
+
+    def test_echo2_bio_page_shows_shipped_to_echo_form_if_received_at_wsu_form_sent(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.blood_initial_send_form(primary_key, 'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        self.blood_frozen_form_send(primary_key)
+        self.blood_shipped_to_wsu(primary_key)
+        self.blood_received_at_wsu(primary_key)
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
+        logging.critical(response.context)
+        self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoBloodForm)
 
     #View updates data tests
     @unittest.skip
@@ -1144,6 +1149,23 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_collected_form_send(primary_key)
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.collected_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_blood_processed_form_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.processed_blood_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_blood_frozen_form_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        self.blood_frozen_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.frozen_fk.logged_by.username,'testuser')
 
     @unittest.skip
     def test_echo2_bio_blood_incentive_form_saved_logged_by(self):

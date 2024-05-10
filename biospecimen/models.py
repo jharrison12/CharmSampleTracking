@@ -359,6 +359,7 @@ class ProcessedBlood(models.Model):
     def save_processed(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.processed_blood_fk = self
         self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
+        self.logged_by = request.user
         if self.processed_aliquoted_off_site != 'N':
             self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
         self.purple_edta_tube_refrigerated_prior_to_centrifuge = form.cleaned_data['edta_purple_tube_refrigerated_prior_to_centrifuge']
@@ -366,7 +367,6 @@ class ProcessedBlood(models.Model):
             self.purple_edta_refrigerated_placed_date_time = form.cleaned_data['edta_purple_refrigerated_placed_date_time']
             self.purple_edta_refrigerated_removed_date_time = form.cleaned_data['edta_purple_refrigerated_removed_date_time']
         self.save()
-        logging.critical(f"made it past initial save processed")
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
         blood_spot_card = BloodSpotCard.objects.create()
@@ -507,9 +507,11 @@ class Frozen(models.Model):
     blood_spot_card_placed_in_freezer = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True,default=None)
     notes_and_deviations = models.TextField(null=True,blank=True)
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
 
     def save_frozen(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.frozen_fk= self
+        self.logged_by = request.user
         self.freezer_placed_date_time = form.cleaned_data['freezer_placed_date_time']
         self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
