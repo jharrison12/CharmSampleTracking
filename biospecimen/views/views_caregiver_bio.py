@@ -88,11 +88,8 @@ def update_shipped_wsu(caregiver_bio_pk,bound_form,request,collection_type=None)
     except ShippedWSU.DoesNotExist:
         logging.debug(f"Shipped to wsu not found")
         shipped_to_wsu = ShippedWSU.objects.create()
-        # status_bio.shipped_wsu_fk = shipped_to_wsu
         logging.debug(f"shipped to wsu created status_bio: {status_bio} shipped to wsu {shipped_to_wsu}")
     shipped_to_wsu.save_shipped_wsu(form=bound_form,request=request,caregiver_bio=caregiver_bio,collection_type=collection_type)
-    # received_object = ReceivedWSU.objects.create()
-    # received_object.save_received_wsu(caregiver_bio=caregiver_bio)
     logging.debug(f"shipped to wsu function complete {shipped_to_wsu} status: {status_bio}\n")
 
 def update_received_wsu(caregiver_bio_pk,data,bound_form,user_logged_in,request):
@@ -656,9 +653,6 @@ def caregiver_biospecimen_shipped_wsu_post(request,caregiver_charm_id,caregiver_
             if form.is_valid():
                 logging.debug(f"Shipped to wsu form valid")
                 update_shipped_wsu(caregiver_bio_pk=caregiver_bio.pk,bound_form=form,request=request,collection_type=collection_type)
-                shipped_wsu_item = ShippedWSU.objects.get(status__caregiverbiospecimen=caregiver_bio)
-                # create_or_update_component_values(caregiver_bio=caregiver_bio,logged_in_user=request.user,form_data=form.cleaned_data,
-                #                                   collected_fk=None,shipped_wsu_fk=shipped_wsu_item)
             else:
                 logging.debug(f"form errors? {form.errors}")
                 messages.info(request, f"{form.non_field_errors()}")
