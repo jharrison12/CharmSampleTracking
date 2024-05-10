@@ -436,7 +436,17 @@
           </form>
         </div>
     {% elif shipped_to_wsu_item %}
-        ADD SHIPPED TO WSU INFORMATION
+        <div id="received_at_wsuinformation" class="row border border-primary p-3 rounded">
+            <div class="col-4">
+                <button type="button" class="btn btn-primary" disabled aria-disabled="true">Shipped to WSU</button>
+            </div>
+            <div class="col-8">
+                <div>Shipped Date Time: {{ caregiver_bio.status_fk.shipped_wsu_fk.shipped_date_and_time }}</div>
+                <div>Number of Tubes: {{ caregiver_bio.status_fk.shipped_wsu_fk.number_of_tubes }}</div>
+                <div>Courier: {{ caregiver_bio.status_fk.shipped_wsu_fk.courier }}</div>
+                <div>Tracking Number: {{ caregiver_bio.status_fk.shipped_wsu_fk.tracking_number }}</div>
+            </div>
+        </div>
     {% endif %}
     {% if received_wsu_form and not caregiver_bio.status_fk.received_wsu_fk.received_date_time %}
         <div id="received_at_wsu_information_form" class="row border border-primary p-3 rounded">
