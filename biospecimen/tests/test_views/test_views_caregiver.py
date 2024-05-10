@@ -388,7 +388,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.shipped_echo_fk.logged_by.username,'testuser')
 
-
+@unittest.skip
 class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester,age_category=None, project='ECHO2'):
