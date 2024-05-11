@@ -403,6 +403,7 @@ class ProcessedUrine(models.Model):
     def save_processed(self,form,request,caregiver_bio):
         logging.debug(f"In saved processed function")
         caregiver_bio.status_fk.processed_fk= self
+        self.logged_by = request.user
         self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
         self.processed_aliquoted_date_time = form.cleaned_data['processed_aliquoted_date_time']
         self.total_volume_of_urine_in_collection_cup = form.cleaned_data['total_volume_of_urine_in_collection_cup']

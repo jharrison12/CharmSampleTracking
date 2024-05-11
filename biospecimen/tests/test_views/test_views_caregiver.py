@@ -80,8 +80,8 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
                                'processed_form-precipate_bottom_of_container': True,
                                'processed_form-refrigerated_prior_to_processing': False,
                                'processed_form-all_18_collected': False,
-                               'processed_form-partial_aliquot_18ml_1': True,
-                               'processed_form-partial_aliquot_18ml_1_amount': 1.1,
+                               'processed_form-partial_aliquot_18ml_volume': 1.1,
+                               'processed_form-number_of_tubes_collected_18_ml_if_some_missing': 1,
                                'processed_form-all_7_collected':True
                                })
 
@@ -133,6 +133,12 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry.html')
 
+    def test_echo2_bio_page_not_collected_returns_correct_template(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        response = self.initial_send_form(primary_key,'N')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/not_collected/')
+        self.assertTemplateUsed(response, 'biospecimen/caregiver_biospecimen_entry_base.html')
+
     def test_echo2_bio_page_shows_caregiver_id(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
@@ -164,8 +170,8 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.collected_send_form(primary_key)
         self.processed_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        logging.debug(response.content)
-        self.assertContains(response,'Vial #1:1.1ml')
+        logging.critical(response.content)
+        self.assertContains(response,'If any aliquots were partial, what is the estimated volume of the partial aliquot?:1.1')
 
     def test_echo2_bio_page_shows_shipped_to_wsu_data_if_complete(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
@@ -173,29 +179,29 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.collected_send_form(primary_key)
         self.processed_send_form(primary_key)
         self.frozen_send_form(primary_key)
-        response = self.shipped_to_wsu_send_form(primary_key)
+        self.shipped_to_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertContains(response, 'Courier: FedEx')
 
     def test_echo2_bio_page_shows_shipped_by_user(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key, 'C')
-        response = self.collected_send_form(primary_key)
+        self.initial_send_form(primary_key, 'C')
+        self.collected_send_form(primary_key)
         self.processed_send_form(primary_key)
         self.frozen_send_form(primary_key)
-        response = self.shipped_to_wsu_send_form(primary_key)
-        response = self.received_at_wsu_send_form(primary_key)
+        self.shipped_to_wsu_send_form(primary_key)
+        self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertContains(response, 'Shipped By: testuser')
 
     def test_echo2_bio_page_shows_shipped_to_echo_data_if_complete(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        response = self.initial_send_form(primary_key,'C')
-        response = self.collected_send_form(primary_key)
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
         self.processed_send_form(primary_key)
         self.frozen_send_form(primary_key)
-        response = self.shipped_to_wsu_send_form(primary_key)
-        response = self.received_at_wsu_send_form(primary_key)
+        self.shipped_to_wsu_send_form(primary_key)
+        self.received_at_wsu_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
         self.assertContains(response, 'Shipped Date Time:')
 
@@ -214,13 +220,13 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
     def test_echo2_bio_urine_initial_posts_to_initial_post_view_not_collected(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'N')
-        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/entry/")
+        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/not_collected/")
 
     def test_echo2_bio_urine_test_that_not_collected_form_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         response = self.initial_send_form(primary_key,'N')
         response = self.send_not_collected_form(primary_key)
-        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/initial/",status_code=302,target_status_code=302)
+        self.assertRedirects(response, f"/biospecimen/caregiver/4100/{primary_key}/not_collected/")
 
     def test_echo2_bio_entry_urine_collected_redirects_after_post(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
@@ -335,7 +341,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
     def test_echo2_bio_page_shows_not_collected_form_if_user_chooses_not_collected(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
         self.initial_send_form(primary_key,'N')
-        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
+        response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/not_collected/')
         self.assertIsInstance(response.context['not_collected_form'], NotCollectedForm)
 
     #Logged_By
@@ -348,11 +354,22 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.collected_fk.logged_by.username,'testuser')
 
-    def test_echo2_bio_urine_not_collected_post_saved_logged_by(self):
+    def test_echo2_bio_urine_processed_form_saved_logged_by(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
-        self.initial_send_form(primary_key,'N')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
-        self.assertEqual(caregiver_bio.status_fk.not_collected_fk.logged_by.username,'testuser')
+        self.assertEqual(caregiver_bio.status_fk.processed_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_urine_frozen_form_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        self.frozen_send_form(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.frozen_fk.logged_by.username,'testuser')
 
     def test_echo2_bio_urine_shipped_wsu_post_saves_logged_by(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
@@ -387,6 +404,12 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.shipped_to_echo_echo_send_form(primary_key)
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual(caregiver_bio.status_fk.shipped_echo_fk.logged_by.username,'testuser')
+
+    def test_echo2_bio_urine_not_collected_post_saved_logged_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'N')
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual(caregiver_bio.status_fk.not_collected_fk.logged_by.username,'testuser')
 
 @unittest.skip
 class CaregiverEcho2BiospecimenPageHairSaliva(DatabaseSetup):
