@@ -151,10 +151,10 @@ class ProcessedFormUrine(forms.Form):
     refrigerated_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collected cup placed at refrigerated temperature?',required=False)
     refrigerated_removed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collection cup removed from refrigerated temperature for processing?',required=False)
     all_18_collected = forms.ChoiceField(label='Were all seven of the 1.8 mL urine aliquots collected? (orange cap)',choices=YES_NO)
-    partial_aliquot_18ml_volume = forms.FloatField(required=False,label='If any aliquots were partial, what is the estimated volume of the partial aliquot?')
+    partial_aliquot_18ml_volume = forms.FloatField(required=False,label='If any aliquots were partial, what is the estimated volume of the partial aliquot?',max_value=1.8,min_value=0)
     number_of_tubes_collected_18_ml_if_some_missing = forms.IntegerField(max_value=7,min_value=1,label='If any aliquots were missing, how many were collected?',required=False)
     all_7_collected = forms.ChoiceField(label='Were all four of the 7 mL urine aliquots collected? (orange cap)', choices=YES_NO)
-    partial_aliquot_7ml_volume = forms.FloatField(required=False,label='If any aliquots were partial, what is the estimated volume of the partial aliquot?')
+    partial_aliquot_7ml_volume = forms.FloatField(required=False,label='If any aliquots were partial, what is the estimated volume of the partial aliquot?',max_value=7,min_value=0)
     number_of_tubes_collected_7_ml_if_some_missing = forms.IntegerField(max_value=4,min_value=1,label='If any aliquots were missing, how many were collected?',required=False)
     notes_and_deviations = forms.CharField(max_length=255,required=False)
 
@@ -191,7 +191,6 @@ class ShippedtoWSUForm(forms.Form):
     shipped_date_and_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     tracking_number = forms.CharField()
     number_of_tubes = forms.IntegerField()
-    logged_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
 
 class ShippedtoWSUFormBlood(forms.Form):
