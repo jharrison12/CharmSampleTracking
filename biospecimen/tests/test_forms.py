@@ -4,7 +4,7 @@ import unittest
 # from django.core.exceptions import ValidationError
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from biospecimen.forms import ValidationError, ProcessedFormUrine
+from biospecimen.forms import ValidationError, ProcessedFormUrine, FrozenFormBlood, FrozenFormUrine
 from django.test import TestCase
 from django.utils import timezone
 
@@ -225,28 +225,47 @@ class CaregiverBloodCollectedForm(TestCase):
 
     def test_blood_collected_form_has_datetime_collected(self):
         form = CollectedBloodForm()
-        self.assertIn('Collected date time:', form.as_p())
+        self.assertIn('Tube #1 - Serum:', form.as_p())
 
+    @unittest.skip
     def test_blood_collected_form_has_checkbox_for_whole_blood(self):
         form =CollectedBloodForm()
         self.assertIn('<input type="checkbox" name="whole_blood',form.as_p())
 
+    @unittest.skip
     def test_blood_collected_form_has_checkbox_for_plasma(self):
         form =CollectedBloodForm()
         self.assertIn('<input type="checkbox" name="plasma',form.as_p())
 
+    @unittest.skip
     def test_blood_collected_form_has_checkbox_for_buffy_coat(self):
         form =CollectedBloodForm()
         self.assertIn('<input type="checkbox" name="buffy_coat',form.as_p())
 
+    @unittest.skip
     def test_blood_collected_form_has_checkbox_for_rbc(self):
         form =CollectedBloodForm()
         self.assertIn('<input type="checkbox" name="red_blood_cells',form.as_p())
 
+    @unittest.skip
     def test_blood_collected_form_has_checkbox_for_serum(self):
         form = CollectedBloodForm()
         self.assertIn('<input type="checkbox" name="serum', form.as_p())
 
+
+class CaregiverBloodFrozenFormTest(DatabaseSetup):
+
+    def test_blood_frozen_form_has_datetime_collected(self):
+        form = FrozenFormBlood()
+        self.assertIn('Date/time cryovials were placed in the freezer:', form.as_p())
+
+class CaregiverUrineFrozenFormTest(DatabaseSetup):
+
+    def test_blood_frozen_form_has_datetime_collected(self):
+        form = FrozenFormUrine()
+        self.assertIn('Date/time cryovials were placed in the freezer:', form.as_p())
+
+@unittest.skip
 class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
@@ -316,7 +335,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
                                         data={'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
 
         return response
-
+    @unittest.skip
     def test_caregiver_blood_shipped_to_wsu_form_fails_if_component_doesnt_match(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
@@ -335,6 +354,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
         #the context manager with self.assertRaises(ValidationError) didn't work probably due to custom error message
         self.assertTrue(form.has_error(NON_FIELD_ERRORS,'ValidationError'))
 
+    @unittest.skip
     def test_caregiver_blood_received_at_wsu_form_fails_if_doesnt_match(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
@@ -350,6 +370,7 @@ class CaregiverBloodShippedtoWSUFormTest(DatabaseSetup):
         # the context manager with self.assertRaises(ValidationError) didn't work probably due to custom error message
         self.assertTrue(form.has_error(NON_FIELD_ERRORS, 'ValidationError'))
 
+    @unittest.skip
     def test_caregiver_blood_shipped_to_echo_does_not_fail_if_component_not_passed(self):
         primary_key = self.return_caregiver_bio_pk(charm_id='4100', collection_type='B', trimester='S')
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)

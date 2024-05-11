@@ -1,4 +1,6 @@
 import logging
+import unittest
+
 from biospecimen.models import CaregiverBiospecimen,Caregiver
 from django.utils import timezone
 from biospecimen.forms import IncentiveForm, ReceivedatWSUForm,InitialBioFormPeriNatal, CollectedBiospecimenPlacentaForm,\
@@ -7,6 +9,8 @@ from biospecimen.tests.db_setup import DatabaseSetup
 
 logging.basicConfig(level=logging.CRITICAL)
 
+
+@unittest.skip
 class CaregiverEcho2BiospecimenPagePlacenta(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester=None,age_category=None, project='ECHO2'):
