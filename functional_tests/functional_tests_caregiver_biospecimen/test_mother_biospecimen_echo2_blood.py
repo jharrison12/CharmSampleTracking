@@ -276,9 +276,47 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
         self.user_inputs_shipped_echo_blood_page()
 
-    def test_user_can_choose_status_of_blood_information_chooses_not_collected(self):
+    def test_user_can_choose_status_of_blood_information_chooses_not_collected_other(self):
         # User visits the caregiver biospecimen page and sees blood
         primary_key = self.return_caregiver_bio_pk('4100', 'B', trimester='S')
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
+
+        # user sees initial form and submits collected
+        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Initial Form', body_text)
+
+        collected_not_collected = Select(self.browser.find_element(By.ID, 'id_initial_form-collected_not_collected'))
+        collected_not_collected.select_by_visible_text('Not Collected')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        # user sees declined form on next page
+        time.sleep(2)
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Not Collected Form', body_text)
+
+        # user chooses refused
+
+        other_radio = self.browser.find_element(By.ID, 'id_not_collected_form-refused_or_other_1')
+        other_radio.click()
+        other_specify = self.browser.find_element(By.ID,'other_specify_input')
+        other_specify.send_keys('too busy')
+
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="not_collected_form"]/form/input[2]')
+        submit.click()
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+
+        self.assertIn(f'Refused or other: Other', body_text)
+        self.assertIn(f'Other Reason: too busy', body_text)
+        self.assertIn('Logged By: testuser', body_text)
+
+    def test_user_can_choose_status_of_blood_information_chooses_not_collected_refused(self):
+        # User visits the caregiver biospecimen page and sees blood
+        primary_key = self.return_caregiver_bio_pk('4100', 'B',trimester='S')
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
 
@@ -293,43 +331,19 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
         submit.click()
 
-        #user sees collected form on next page
-
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertNotIn('<form>', body_text)
-        self.assertIn('Not Collected', body_text)
-
-    def test_user_can_choose_status_of_blood_information_chooses_declined(self):
-        # User visits the caregiver biospecimen page and sees blood
-        primary_key = self.return_caregiver_bio_pk('4100', 'B',trimester='S')
-        self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
-
-        #user sees initial form and submits collected
-        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
-        body_text = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Initial Form',body_text)
-
-        collected_not_collected = Select(self.browser.find_element(By.ID,'id_initial_form-collected_not_collected'))
-        collected_not_collected.select_by_visible_text('Declined')
-        submit = self.browser.find_element(By.XPATH,'//*[@id="collected_information"]/form/input[2]')
-        submit.click()
-
         # user sees declined form on next page
-
+        time.sleep(2)
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Declined Form', body_text)
+        self.assertIn('Not Collected Form', body_text)
 
-        declined_date_time = self.browser.find_element(By.ID, 'id_declined_form-declined_date_time')
+        #user chooses refused
 
-        declined_date_time.click()
-        self.choose_flatpickr_day(0)
-        time.sleep(5)
-        submit = self.browser.find_element(By.XPATH, '//*[@id="declined_form"]/form/input[2]')
+        refused_radio = self.browser.find_element(By.ID, 'id_not_collected_form-refused_or_other_0')
+        refused_radio.click()
+        submit = self.browser.find_element(By.XPATH, '//*[@id="not_collected_form"]/form/input[2]')
         submit.click()
         body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn(f'Declined Date Time: {TODAY}', body_text)
+        self.assertIn(f'Refused or other: Refused', body_text)
         self.assertIn('Logged By: testuser', body_text)
 
     def test_user_can_submited_blood_collected_information_and_then_leaves_and_returns_and_incentive_form_is_there(self):
