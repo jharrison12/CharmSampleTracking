@@ -164,9 +164,9 @@ class FrozenFormUrine(forms.Form):
     notes_and_deviations = forms.CharField(max_length=255, required=False)
 
 class FrozenFormBlood(forms.Form):
-    freezer_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time cryovials were placed in the freezer:',required=False)
-    number_of_tubes =forms.IntegerField(label='Total number of tubes (not including bloodspot card)',max_value=21,min_value=0)
-    blood_spot_card_placed_in_freezer = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time bloodspot card was placed in the freezer:',required=False)
+    freezer_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time cryovials were placed in the freezer:',required=True)
+    number_of_tubes =forms.IntegerField(label='Total number of tubes (not including bloodspot card)',max_value=21,min_value=0,required=True)
+    blood_spot_card_placed_in_freezer = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time bloodspot card was placed in the freezer:',required=True)
     notes_and_deviations = forms.CharField(max_length=255, required=False)
 
 class InitialBioForm(forms.Form):
@@ -295,7 +295,7 @@ class ProcessedBloodForm(forms.Form):
     processed_aliquoted_off_site = forms.ChoiceField(widget=forms.Select,choices=BLOOD_PROCESSED_ALIQUOTED,
                                                      label='If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?')
     specimen_received_date_time =forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),
-                                                     label='If anything other than Not Applicable: When was the specimen received at the processing site?',required=False)
+                                                     label='When was the specimen received at the processing site?',required=False)
     edta_purple_tube_refrigerated_prior_to_centrifuge = forms.ChoiceField(required=False,choices=YES_NO,
                                                                           label='Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?',
                                                                           initial=False)

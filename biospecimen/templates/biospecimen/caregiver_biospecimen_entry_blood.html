@@ -138,32 +138,32 @@
                 {% endif %}
                 <div class="form-group">
                 {{ processed_form.processed_aliquoted_off_site.errors }}
-                <label for="{{ processed_form.processed_aliquoted_off_site.id_for_label }}" class="form-label">If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?</label>
+                <label for="{{ processed_form.processed_aliquoted_off_site.id_for_label }}" class="form-label">{{ processed_form.processed_aliquoted_off_site.label }}</label>
                 {{ processed_form.processed_aliquoted_off_site }}
                 </div>
                 <div class="form-group" id="specimen_received_at_processing_site">
                 {{ processed_form.specimen_received_date_time.errors }}
-                <label for="{{ processed_form.specimen_received_date_time.id_for_label }}" class="form-label">If anything other than Not Applicable: When was the specimen received at the processing site?</label>
+                <label for="{{ processed_form.specimen_received_date_time.id_for_label }}" class="form-label">{{ processed_form.specimen_received_date_time.label }}</label>
                 {{ processed_form.specimen_received_date_time }}
                 </div>
                 <div class="form-group" id="edta_purple_tube_refrigerated_prior_to_centrifuge">
                 {{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.errors }}
-                <label for="{{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.id_for_label }}" class="form-label">Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?</label>
+                <label for="{{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.id_for_label }}" class="form-label">{{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge.label }}</label>
                 {{ processed_form.edta_purple_tube_refrigerated_prior_to_centrifuge }}
                 </div>
                 <div class="form-group" id="edta_purple_refrigerated_placed_date_time">
                 {{ processed_form.edta_purple_refrigerated_placed_date_time.errors }}
-                <label for="{{ processed_form.edta_purple_refrigerated_placed_date_time.id_for_label }}" class="form-label">If Yes, date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging</label>
+                <label for="{{ processed_form.edta_purple_refrigerated_placed_date_time.id_for_label }}" class="form-label">{{ processed_form.edta_purple_refrigerated_placed_date_time.label }}</label>
                 {{ processed_form.edta_purple_refrigerated_placed_date_time }}
                 </div>
                 <div class="form-group" id="edta_purple_refrigerated_removed_date_time">
                 {{ processed_form.edta_purple_refrigerated_removed_date_time.errors }}
-                <label for="{{ processed_form.edta_purple_refrigerated_removed_date_time.id_for_label }}" class="form-label">If Yes, date and time EDTA tubes were removed from refrigerated temperature for centrifuging</label>
+                <label for="{{ processed_form.edta_purple_refrigerated_removed_date_time.id_for_label }}" class="form-label">{{ processed_form.edta_purple_refrigerated_removed_date_time.label }}</label>
                 {{ processed_form.edta_purple_refrigerated_removed_date_time }}
                 </div>
                 <div class="form-group">
                 {{ processed_form.whole_blood_blue_cap_all_collected.errors }}
-                <label for="{{ processed_form.whole_blood_blue_cap_all_collected.id_for_label }}" class="form-label">Were both Whole Blood aliquots collected? (blue cap)</label>
+                <label for="{{ processed_form.whole_blood_blue_cap_all_collected.id_for_label }}" class="form-label">{{ processed_form.whole_blood_blue_cap_all_collected.label }}</label>
                 {{ processed_form.whole_blood_blue_cap_all_collected }}
                 </div>
                 <div id="whole_blood_aliquots_div">
