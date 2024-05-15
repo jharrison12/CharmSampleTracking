@@ -317,9 +317,7 @@ class ProcessedBloodForm(forms.Form):
     vacutainer_centrifuge_start_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Vacutainer centrifuge start time:')
     vacutainer_centrifuge_end_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Vacutainer centrifuge end time:')
 
-    plasma_purple_cap_200_microliter_all_collected = forms.ChoiceField(required=False, choices=YES_NO, label=f'Were all seven 200 {plasma_purple_cap_200_microliter_text} collected?')
-    plasma_purple_cap_200_microliter_partial_aliquot_volume = forms.FloatField(required=False,max_value=199,min_value=0,
-                                                                               label=f'If any {plasma_purple_cap_200_microliter_text} were partial, what is the estimated volume of the partial aliquot?:')
+    plasma_purple_cap_200_microliter_all_collected = forms.ChoiceField(required=False, choices=YES_NO, label=f'Were all seven {plasma_purple_cap_200_microliter_text} collected?')
     plasma_purple_cap_200_microliter_number_collected = forms.IntegerField(required=False,max_value=6,min_value=0,
                                                                            label=f'If any {plasma_purple_cap_200_microliter_text} were missing, how many plasma 200 micro liter aliquots (purple cap) were collected?')
 

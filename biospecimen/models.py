@@ -498,7 +498,10 @@ class BloodAliquot(models.Model):
         self.aliquot_vial_size = BLOOD_ITEM_DICT[blood_type_text]['vial_amount']
         self.aliquot_max_number_of_tubes_collected = BLOOD_ITEM_DICT[blood_type_text]['number_of_tubes']
         if form.cleaned_data[f'{blood_type_text}_all_collected'] != "True":
-            self.aliquot_estimated_volume_of_partial = form.cleaned_data[f'{blood_type_text}_partial_aliquot_volume']
+            try:
+                self.aliquot_estimated_volume_of_partial = form.cleaned_data[f'{blood_type_text}_partial_aliquot_volume']
+            except KeyError:
+                self.aliquot_estimated_volume_of_partial = None
             self.aliquot_number_of_tubes_collected = form.cleaned_data[f'{blood_type_text}_number_collected']
         else:
             self.aliquot_number_of_tubes_collected = BLOOD_ITEM_DICT[blood_type_text]['number_of_tubes']

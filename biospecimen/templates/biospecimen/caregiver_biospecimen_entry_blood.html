@@ -217,11 +217,6 @@
                 </div>
                 <div id="plasma_purple_cap_200_microliter_number_collected">
                     <div class="form-group">
-                    {{ processed_form.plasma_purple_cap_200_microliter_partial_aliquot_volume.errors }}
-                    <label for="{{ processed_form.plasma_purple_cap_200_microliter_partial_aliquot_volume.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_200_microliter_partial_aliquot_volume.label }}</label>
-                    {{ processed_form.plasma_purple_cap_200_microliter_partial_aliquot_volume }}
-                    </div>
-                    <div class="form-group">
                     {{ processed_form.plasma_purple_cap_200_microliter_number_collected.errors }}
                     <label for="{{ processed_form.plasma_purple_cap_200_microliter_number_collected.id_for_label }}" class="form-label">{{ processed_form.plasma_purple_cap_200_microliter_number_collected.label }}</label>
                     {{ processed_form.plasma_purple_cap_200_microliter_number_collected }}
@@ -355,8 +350,10 @@
                                 <li>All collected? Yes</li>
                             {% else %}
                                 <li>All collected? No</li>
-                            <li>Number of aliquots collected: {{ aliquot.aliquot_number_of_tubes_collected }}</li>
-                            <li>If partial what amount: {{ aliquot.aliquot_estimated_volume_of_partial }}</li>
+                                <li>Number of aliquots collected: {{ aliquot.aliquot_number_of_tubes_collected }}</li>
+                                {% if aliquot.aliquot_estimated_volume_of_partial != None %}
+                                    <li>If partial what amount: {{ aliquot.aliquot_estimated_volume_of_partial }}</li>
+                                {% endif %}
                             {% endif %}
                         </ul>
                 {% endfor %}
