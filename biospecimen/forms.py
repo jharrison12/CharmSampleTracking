@@ -194,7 +194,7 @@ class ShippedtoWSUForm(forms.Form):
     courier = forms.ChoiceField(widget=forms.Select,choices=COURIERS)
 
 class ShippedtoWSUFormBlood(forms.Form):
-    shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time shipped')
+    shipped_date_and_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='Date/time shipped')
     number_of_tubes = forms.IntegerField(required=False,label='Number of tubes')
     courier = forms.ChoiceField(widget=forms.Select, choices=COURIERS,label='Courier')
     tracking_number = forms.CharField(label='Tracking number')
@@ -223,7 +223,7 @@ class ShippedtoWSUFormBlood(forms.Form):
     #     check_component_tubes(component_values=component_values,form_data=test_data,cleaned_data=cleaned_data,chain_of_custody='collected')
 
 class ReceivedatWSUBloodForm(forms.Form):
-    received_date_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    received_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     whole_blood = forms.BooleanField(required=False)
     whole_blood_number_of_tubes = forms.IntegerField(required=False)
     plasma = forms.BooleanField(required=False)
@@ -248,7 +248,7 @@ class ReceivedatWSUBloodForm(forms.Form):
 
 
 class ShippedtoEchoBloodForm(forms.Form):
-    shipped_date_and_time = forms.DateTimeField(initial=timezone.now(),widget=forms.TextInput(attrs={'class': "datetimepicker"}))
+    shipped_date_and_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}))
 
     def __init__(self, *args,**kwargs):
         self.caregiver_bio = kwargs.pop('caregiver_bio')

@@ -693,9 +693,9 @@ def caregiver_biospecimen_received_wsu_post(request,caregiver_charm_id,caregiver
             form = ReceivedatWSUBloodForm(data=request.POST, prefix='received_at_wsu_form',caregiver_bio=caregiver_bio)
             if form.is_valid():
                 update_received_wsu(caregiver_bio_pk=caregiver_bio.pk, data=request.POST,request=request, user_logged_in=request.user,bound_form=form)
-                create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
-                                                  form_data=form.cleaned_data,
-                                                  collected_fk=None, shipped_wsu_fk=None, received_wsu_fk=caregiver_bio.status_fk.received_wsu_fk)
+                # create_or_update_component_values(caregiver_bio=caregiver_bio, logged_in_user=request.user,
+                #                                   form_data=form.cleaned_data,
+                #                                   collected_fk=None, shipped_wsu_fk=None, received_wsu_fk=caregiver_bio.status_fk.received_wsu_fk)
             else:
                 logging.debug(f"form errors? {form.errors}")
                 messages.info(request, f"{form.non_field_errors()}")
@@ -854,6 +854,8 @@ def caregiver_biospecimen_frozen_blood_post(request,caregiver_charm_id,caregiver
         form = FrozenFormBlood(data=request.POST,prefix='frozen_form')
         if form.is_valid():
             frozen_item.save_frozen(form=form,request=request,caregiver_bio=caregiver_bio)
+        else:
+            messages.info(request, f"{form.errors}")
         return redirect("biospecimen:caregiver_biospecimen_entry_blood", caregiver_charm_id=caregiver_charm_id,
                         caregiver_bio_pk=caregiver_bio_pk)
 
