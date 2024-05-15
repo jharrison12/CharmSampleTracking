@@ -340,8 +340,7 @@ class ProcessedBloodForm(forms.Form):
                                                                            label=f'If any {red_blood_cells_yellow_cap_text} were missing, how many {red_blood_cells_yellow_cap_text} were collected?')
 
     serum_red_cap_200_microl_all_collected = forms.ChoiceField(required=False,choices=YES_NO,label=f'Were all three {serum_red_cap_200_micro_text} aliquots collected?')
-    serum_red_cap_200_microl_partial_aliquot_volume = forms.FloatField(required=False,max_value=199,min_value=0,
-                                                                              label=f'If any {serum_red_cap_200_micro_text} were partial, what is the estimated volume of the partial aliquot?:')
+
     serum_red_cap_200_microl_number_collected = forms.IntegerField(required=False,max_value=3,min_value=0,
                                                                           label=f'If any {serum_red_cap_200_micro_text} were missing, how many {serum_red_cap_200_micro_text} were collected?')
 
