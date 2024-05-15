@@ -149,6 +149,7 @@ class Collected(models.Model):
     def save_blood(self,form,request,caregiver_bio):
         self.other_water_date_time = form.cleaned_data['other_water_date_time']
         self.collected_date_time = form.cleaned_data['collected_date_time']
+        self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
         self.logged_by = request.user
         self.save()
         for tube in range(1,4):

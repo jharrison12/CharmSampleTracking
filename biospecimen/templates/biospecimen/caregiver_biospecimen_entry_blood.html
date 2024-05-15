@@ -83,6 +83,11 @@
                 <label for="{{ collected_form.tube_3_hemolysis.id_for_label }}" class="form-label">{{ collected_form.tube_3_hemolysis.label }}</label>
                 {{ collected_form.tube_3_hemolysis }}
               </div>
+              <div class="form-group">
+                {{ collected_form.notes_and_deviations.errors }}
+                <label for="{{ collected_form.notes_and_deviations.id_for_label }}" class="form-label">{{ collected_form.notes_and_deviations.label }}</label>
+                {{ collected_form.notes_and_deviations }}
+              </div>
           <input type="submit" value="Submit" />
           </form>
         </div>
@@ -94,9 +99,10 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Collected</button>
             </div>
             <div class="col-8">
-                <div>Collected Date Time:{{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
-                <div>When was the last time the participant ate or drank anything other than plain water?:{{ caregiver_bio.status_fk.collected_fk.other_water_date_time }}</div>
-                <div>Logged By:{{ caregiver_bio.status_fk.collected_fk.logged_by }}</div>
+                <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time }}</div>
+                <div>When was the last time the participant ate or drank anything other than plain water?: {{ caregiver_bio.status_fk.collected_fk.other_water_date_time }}</div>
+                <div>Logged By: {{ caregiver_bio.status_fk.collected_fk.logged_by }}</div>
+                <div>Notes and Deviations: {{ caregiver_bio.status_fk.collected_fk.notes_and_deviations }}</div>
                     <div class="container">
                         <div class="row">
                 {% for blood in caregiver_bloods_collected %}

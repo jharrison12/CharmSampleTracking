@@ -281,7 +281,7 @@ class CollectedBloodForm(forms.Form):
     tube_3 = forms.ChoiceField(widget=forms.Select,choices=PARTIAL_COMPLETE,label='Tube #3 - EDTA')
     tube_3_estimated_volume = forms.DecimalField(required=False)
     tube_3_hemolysis = forms.ChoiceField(widget=forms.Select,choices=HEMOLYSIS)
-    notes = forms.CharField(max_length=255,required=False)
+    notes_and_deviations = forms.CharField(max_length=255,required=False)
 
 class ProcessedBloodForm(forms.Form):
     plasma_purple_cap_200_microliter_text = 'plasma 200 micro liter aliquots (purple cap)'
