@@ -330,8 +330,6 @@ class ProcessedBloodForm(forms.Form):
 
     buffy_coat_green_cap_1_ml_all_collected = forms.ChoiceField(required=False,choices=YES_NO,
                                                                 label=f'Were both {buffy_coat_green_cap_text} aliquots collected? (green cap)?')
-    buffy_coat_green_cap_1_ml_partial_aliquot_volume = forms.FloatField(required=False,max_value=0.99,min_value=0,
-                                                                               label=f'If any {buffy_coat_green_cap_text} were partial, what is the estimated volume of the partial aliquot?:')
     buffy_coat_green_cap_1_ml_number_collected = forms.IntegerField(required=False,max_value=2,min_value=0,
                                                                            label=f'If any {buffy_coat_green_cap_text} were missing, how many {buffy_coat_green_cap_text} were collected?')
 
