@@ -103,6 +103,21 @@ class Incentive(models.Model):
 
 
 class Collected(models.Model):
+
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C',_('Clinic')
+
+    class KitDistribution(models.TextChoices):
+        NOT_APPLICABLE = 'N',_('Not Applicable')
+
+    class InpersonRemoteChoices(models.TextChoices):
+        IN_PERSON = 'I', _('In Person')
+        REMOTE = 'R', _('Remote')
+
+    class MethodOfCollection(models.TextChoices):
+        URINE_CUP = 'U', _('Urine cup')
+
+    method_of_collection = models.CharField(max_length=1,choices=MethodOfCollection.choices,null=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT,null=True,blank=True)
     incentive_fk = models.ForeignKey(Incentive, on_delete=models.PROTECT,null=True,blank=True)
     collected_date_time = models.DateTimeField(null=True,blank=True)
@@ -116,11 +131,10 @@ class Collected(models.Model):
     number_of_cards = models.IntegerField(null=True,blank=True)
     notes_and_deviations = models.TextField(null=True,blank=True)
     eat_drink_text_field = models.TextField(null=True,blank=True)
-
-    class CollectionLocation(models.TextChoices):
-        CLINIC = 'C',_('Clinic')
-
+    kit_stock_number = models.TextField(null=True,blank=True)
+    kit_distribution = models.CharField(null=True,blank=True,choices=KitDistribution.choices)
     collection_location = models.CharField(null=True,blank=True,choices=CollectionLocation.choices)
+    in_person_remote = models.CharField(max_length=1, choices=InpersonRemoteChoices.choices)
 
     def create_collected_and_set_status_fk(self,caregiver_bio):
         caregiver_bio.status_fk.collected_fk = self
@@ -170,31 +184,6 @@ class Collected(models.Model):
                                      tube_type='E',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'],
                                          caregiver_biospecimen_fk=caregiver_bio,tube_number=tube,collected_by='C')
 
-    def component_check(self,components,form):
-        logging.debug(f"{form.cleaned_data}")
-
-    class InpersonRemoteChoices(models.TextChoices):
-        IN_PERSON = 'I', _('In Person')
-        REMOTE = 'R', _('Remote')
-
-    in_person_remote = models.CharField(max_length=1, choices=InpersonRemoteChoices.choices)
-
-    class KitDistributionChoices(models.TextChoices):
-        NOT_APPLICABLE = 'N', _('Not Applicable')
-
-    kit_distribution = models.CharField(max_length=1, choices=KitDistributionChoices.choices,null=True)
-
-    ##todo check for formaline datetime if placenta
-
-    class MethodOfCollection(models.TextChoices):
-        URINE_CUP = 'U', _('Urine cup')
-
-    method_of_collection = models.CharField(max_length=1,choices=MethodOfCollection.choices,null=True)
-
-    class CollectionLocation(models.TextChoices):
-        CLINIC = 'C', _('Clinic')
-
-    collection_location = models.CharField(max_length=1,choices=CollectionLocation.choices,null=True)
 
     def __str__(self):
         return f"collected {self.status_set}"
@@ -397,13 +386,15 @@ class ProcessedBlood(models.Model):
             blood_aliquot.save_aliquot(form=form,request=request,caregiver_bio=caregiver_bio,blood_type_text=blood_item)
 
 class ProcessedUrine(models.Model):
-    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
-
     class ProcessedChoices(models.TextChoices):
-        refrigerated = 'R', _('refrigerated')
+        REFRIGERATED = 'R', _('Refrigerated')
         ROOM_TEMPERATURE = 'T', _('Room Temperature')
         NOT_APPLICABLE = 'N', _('Not Applicable')
 
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C',_('Clinic')
+
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
     processed_aliquoted_off_site = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
     processed_aliquoted_date_time = models.DateTimeField(null=True,blank=True)
     total_volume_of_urine_in_collection_cup = models.IntegerField(null=True, blank=True)
@@ -418,7 +409,10 @@ class ProcessedUrine(models.Model):
     partial_aliquot_7ml_volume = models.FloatField(null=True,blank=True)
     number_of_tubes_collected_7_ml_if_some_missing = models.IntegerField(null=True,blank=True)
     notes_and_deviations = models.TextField(max_length=255,null=True,blank=True)
-
+    received_by = models.TextField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
+    processed_by = models.TextField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
+    diaper_collection = models.TextField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
+    specific_gravity = models.TextField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
 
     def save_processed(self,form,request,caregiver_bio):
         logging.debug(f"In saved processed function")
@@ -438,6 +432,10 @@ class ProcessedUrine(models.Model):
         self.partial_aliquot_7ml_volume = form.cleaned_data['partial_aliquot_7ml_volume']
         self.number_of_tubes_collected_7_ml_if_some_missing = form.cleaned_data['number_of_tubes_collected_7_ml_if_some_missing']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
+        self.processed_by = self.CollectionLocation.CLINIC
+        self.received_by = self.CollectionLocation.CLINIC
+        self.diaper_collection = self.ProcessedChoices.NOT_APPLICABLE
+        self.specific_gravity = self.ProcessedChoices.NOT_APPLICABLE
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
