@@ -132,8 +132,8 @@ class Collected(models.Model):
     notes_and_deviations = models.TextField(null=True,blank=True)
     eat_drink_text_field = models.TextField(null=True,blank=True)
     kit_stock_number = models.TextField(null=True,blank=True)
-    kit_distribution = models.CharField(null=True,blank=True,choices=KitDistribution.choices)
-    collection_location = models.CharField(null=True,blank=True,choices=CollectionLocation.choices)
+    kit_distribution = models.CharField(max_length=1,null=True,blank=True,choices=KitDistribution.choices)
+    collection_location = models.CharField(max_length=1,null=True,blank=True,choices=CollectionLocation.choices)
     in_person_remote = models.CharField(max_length=1, choices=InpersonRemoteChoices.choices)
 
     def create_collected_and_set_status_fk(self,caregiver_bio):
@@ -478,10 +478,6 @@ class BloodSpotCard(models.Model):
         self.save()
 
 class BloodAliquot(models.Model):
-    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
-    caregiver_bio_fk = models.ForeignKey("CaregiverBiospecimen", on_delete=models.PROTECT,blank=True,null=True)
-    processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
-
     class VialAmount(models.TextChoices):
         TWO_HUNDRED_MICRO = 'T',_('Two Hundred Microliters')
         ONE_ML = 'O', _('One Milliliter')
@@ -506,6 +502,9 @@ class BloodAliquot(models.Model):
     class CollectionLocation(models.TextChoices):
         CLINIC = 'C',_('Clinic')
 
+    logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    caregiver_bio_fk = models.ForeignKey("CaregiverBiospecimen", on_delete=models.PROTECT,blank=True,null=True)
+    processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
     aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
     aliquot_cap_color = models.CharField(max_length=1,choices=CapColor.choices,null=True,blank=True)
     aliquot_blood_type = models.CharField(max_length=1,choices=BloodType.choices,null=True,blank=True)
