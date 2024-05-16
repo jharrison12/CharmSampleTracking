@@ -369,6 +369,7 @@ class ProcessedBlood(models.Model):
     red_serum_temperature_transported_for_processing =models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
     received_by =models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
     red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
+    centrifuged_in_refrigerated_centrifuge = models.BooleanField(null=True,blank=True)
 
     def save_processed(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.processed_blood_fk = self
@@ -377,6 +378,7 @@ class ProcessedBlood(models.Model):
         self.red_serum_temperature_transported_for_processing = 'T'
         self.received_by = 'C'
         self.red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = True
+        self.centrifuged_in_refrigerated_centrifuge = False
         self.logged_by = request.user
         if self.processed_aliquoted_off_site != 'N':
             self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
@@ -453,6 +455,9 @@ class UrineAliquot(models.Model):
     aliquot_volume_collected = models.FloatField(null=True,blank=True)
 
 class BloodSpotCard(models.Model):
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C',_('Clinic')
+
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
     caregiver_bio_fk = models.ForeignKey("CaregiverBiospecimen",on_delete=models.PROTECT,blank=True, null=True)
     processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
@@ -460,11 +465,13 @@ class BloodSpotCard(models.Model):
     blood_spot_card_number_of_complete_spots = models.IntegerField(null=True,blank=True)
     blood_spot_card_number_of_dots_smaller_than_dotted_circle = models.IntegerField(null=True,blank=True)
     blood_spot_card_number_of_dotted_circle_missing_blood_spot  = models.IntegerField(null=True,blank=True)
+    processed_by  = models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
 
     def save_card(self,form,request,caregiver_bio):
         self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
         self.caregiver_bio_fk = caregiver_bio
         self.logged_by = request.user
+        self.processed_by = self.CollectionLocation.CLINIC
         self.blood_spot_card_completed = form.cleaned_data["blood_spot_card_completed"]
         self.blood_spot_card_number_of_complete_spots = form.cleaned_data["blood_spot_card_number_of_complete_spots"]
         self.blood_spot_card_number_of_dots_smaller_than_dotted_circle = form.cleaned_data["blood_spot_card_number_of_dots_smaller_than_dotted_circle"]
