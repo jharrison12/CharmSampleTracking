@@ -117,6 +117,11 @@ class Collected(models.Model):
     notes_and_deviations = models.TextField(null=True,blank=True)
     eat_drink_text_field = models.TextField(null=True,blank=True)
 
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C',_('Clinic')
+
+    collection_location = models.CharField(null=True,blank=True,choices=CollectionLocation.choices)
+
     def create_collected_and_set_status_fk(self,caregiver_bio):
         caregiver_bio.status_fk.collected_fk = self
         caregiver_bio.status_fk.save()
@@ -150,6 +155,7 @@ class Collected(models.Model):
         self.other_water_date_time = form.cleaned_data['other_water_date_time']
         self.collected_date_time = form.cleaned_data['collected_date_time']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
+        self.collection_location = 'C'
         self.logged_by = request.user
         self.save()
         for tube in range(1,4):
@@ -157,12 +163,12 @@ class Collected(models.Model):
                 BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
                                      complete_or_partial=form.cleaned_data[f'tube_{tube}'],
                                      tube_type='S',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'],
-                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube)
+                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube,collected_by='C')
             else:
                 BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
                                      complete_or_partial=form.cleaned_data[f'tube_{tube}'],
                                      tube_type='E',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'],
-                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube)
+                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube,collected_by='C')
 
     def component_check(self,components,form):
         logging.debug(f"{form.cleaned_data}")
@@ -351,15 +357,26 @@ class ProcessedBlood(models.Model):
         ROOM_TEMPERATURE = 'T', _('Room Temperature')
         NOT_APPLICABLE = 'N', _('Not Applicable')
 
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C',_('Clinic')
+
     processed_aliquoted_off_site = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
     specimen_received_date_time = models.DateTimeField(null=True,blank=True)
     purple_edta_tube_refrigerated_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
     purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
     purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
+    purple_edta_temperature_transported_for_processing = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
+    red_serum_temperature_transported_for_processing =models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
+    received_by =models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
+    red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
 
     def save_processed(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.processed_blood_fk = self
         self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
+        self.purple_edta_temperature_transported_for_processing = 'T'
+        self.red_serum_temperature_transported_for_processing = 'T'
+        self.received_by = 'C'
+        self.red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = True
         self.logged_by = request.user
         if self.processed_aliquoted_off_site != 'N':
             self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
@@ -480,16 +497,21 @@ class BloodAliquot(models.Model):
         BUFFY_COAT = 'F',_('Buffy Coat')
         RED_BLOOD_CELLS = 'R',_('Red Blood Cells')
 
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C',_('Clinic')
+
     aliquot_vial_size = models.CharField(max_length=1,choices=VialAmount.choices,null=True,blank=True)
     aliquot_cap_color = models.CharField(max_length=1,choices=CapColor.choices,null=True,blank=True)
     aliquot_blood_type = models.CharField(max_length=1,choices=BloodType.choices,null=True,blank=True)
     aliquot_estimated_volume_of_partial = models.FloatField(null=True,blank=True)
     aliquot_number_of_tubes_collected = models.IntegerField(null=True,blank=True)
     aliquot_max_number_of_tubes_collected = models.IntegerField(null=True,blank=True)
+    processed_by = models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
 
     def save_aliquot(self,form,request,caregiver_bio,blood_type_text):
         self.logged_by = request.user
         self.caregiver_bio_fk = caregiver_bio
+        self.processed_by =  self.CollectionLocation.CLINIC
         self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
         logging.critical(f"blood type text is {blood_type_text}")
         logging.critical(BLOOD_ITEM_DICT[blood_type_text]['blood_type'])
@@ -746,12 +768,16 @@ class BloodTube(models.Model):
         MODERATE = 'O', _('Moderate')
         SEVERE = 'S', _('Severe')
 
+    class CollectionLocation(models.TextChoices):
+        CLINIC = 'C',_('Clinic')
+
     caregiver_biospecimen_fk = models.ForeignKey(CaregiverBiospecimen,on_delete=models.PROTECT,null=True,blank=True)
     tube_number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(3)],null=True,blank=True)
     tube_type = models.CharField(max_length=1,choices=TubeType.choices,null=True,blank=True)
     complete_or_partial = models.CharField(max_length=1,choices=CompletePartial.choices,null=True,blank=True)
     partial_estimated_volume = models.DecimalField(blank=True,null=True,decimal_places=1,max_digits=3)
     hemolysis = models.CharField(max_length=1,choices=Hemolysis.choices,null=True,blank=True)
+    collected_by = models.CharField(max_length=1, choices=CollectionLocation.choices,null=True,blank=True)
 
 class ChildBiospecimen(models.Model):
     child_fk = models.ForeignKey(Child, on_delete=models.PROTECT)
