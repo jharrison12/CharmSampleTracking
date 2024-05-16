@@ -323,7 +323,7 @@
                         <div>Date and time EDTA tubes were removed from refrigerated temperature prior to centrifuging: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_refrigerated_removed_date_time }}</div>
                     {% endif %}
                 <h3>Blood Spot Card</h3>
-                {% if blood_spot_card.blood_spot_card_completed == "True" %}
+                {% if blood_spot_card.blood_spot_card_completed == True %}
                     Blood spot card completed? {{ blood_spot_card.blood_spot_card_completed }}
                 {% else %}
                     <ul>
@@ -399,7 +399,7 @@
             <div class="col-8">
                 <div>Date/time cryovials were placed in the freezer: {{ caregiver_bio.status_fk.frozen_fk.freezer_placed_date_time }}</div>
                 <div>Total number of tubes (not including bloodspot card): {{ caregiver_bio.status_fk.frozen_fk.number_of_tubes }}</div>
-                <div>Date/time bloodspot card was placed in the freezer:: {{ caregiver_bio.status_fk.frozen_fk.blood_spot_card_placed_in_freezer }}</div>
+                <div>Date/time bloodspot card was placed in the freezer:: {{ blood_spot_card.blood_spot_card_placed_in_freezer }}</div>
                 <div>Notes: {{ caregiver_bio.status_fk.frozen_fk.notes_and_deviations }}</div>
             </div>
         </div>

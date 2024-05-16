@@ -466,6 +466,7 @@ class BloodSpotCard(models.Model):
     blood_spot_card_number_of_dots_smaller_than_dotted_circle = models.IntegerField(null=True,blank=True)
     blood_spot_card_number_of_dotted_circle_missing_blood_spot  = models.IntegerField(null=True,blank=True)
     processed_by  = models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
+    blood_spot_card_placed_in_freezer = models.DateTimeField(null=True,blank=True)
 
     def save_card(self,form,request,caregiver_bio):
         self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
@@ -538,7 +539,6 @@ class BloodAliquot(models.Model):
 
 class Frozen(models.Model):
     freezer_placed_date_time = models.DateTimeField(null=True,blank=True)
-    blood_spot_card_placed_in_freezer = models.DateTimeField(null=True,blank=True)
     number_of_tubes = models.IntegerField(null=True,blank=True,default=None)
     notes_and_deviations = models.TextField(null=True,blank=True)
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
@@ -550,7 +550,9 @@ class Frozen(models.Model):
         self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
         if caregiver_bio.collection_fk.collection_type=='B':
-            self.blood_spot_card_placed_in_freezer = form.cleaned_data['blood_spot_card_placed_in_freezer']
+            bloodspot_card = BloodSpotCard.objects.get(caregiver_bio_fk=caregiver_bio)
+            bloodspot_card.blood_spot_card_placed_in_freezer = form.cleaned_data['blood_spot_card_placed_in_freezer']
+            bloodspot_card.save()
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
