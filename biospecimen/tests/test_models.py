@@ -164,7 +164,6 @@ class ReceivedWSUModelTest(DatabaseSetup):
 
 class ComponentBioModelTest(DatabaseSetup):
 
-
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
         mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
         caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
@@ -235,3 +234,100 @@ class ComponentBioModelTest(DatabaseSetup):
         logging.debug(component_test)
         logging.debug(Status.objects.get(caregiverbiospecimen=caregiver_bio))
         self.assertEqual(component_test.collected_fk, caregiver_bio.status_fk.collected_fk)
+
+class CustomModelSaveFunctionsTest(DatabaseSetup):
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, age_category=None, project='ECHO2'):
+        logging.debug(
+            f"chrarm_id {charm_id} collection_type {collection_type} trimester {trimester} age_category {age_category} project {project}")
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester,
+                                                        project_fk__project_name=project,
+                                                        age_category_fk__age_category=age_category)
+
+        return caregiverbio.pk
+
+    def initial_send_form(self, primary_key,c_n_or_x):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/initial/post/',
+                                    data={"initial_form-collected_not_collected": c_n_or_x,
+                                          })
+        return response
+
+    def collected_send_form(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/',
+                                    data={"urine_form-eat_drink_datetime": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                          "urine_form-eat_drink_text_field": 'bread',
+                                          "urine_form-collected_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                          "urine_form-notes_and_deviations": 'what',
+                                          })
+        return response
+
+    def processed_send_form(self,primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/processed/post/',
+                         data={'processed_form-processed_aliquoted_off_site': 'R',
+                               'processed_form-processed_aliquoted_date_time': timezone.datetime(2023, 5, 5, 5, 5, 5),
+                               'processed_form-total_volume_of_urine_in_collection_cup': 120,
+                               'processed_form-precipate_bottom_of_container': True,
+                               'processed_form-refrigerated_prior_to_processing': False,
+                               'processed_form-all_18_collected': False,
+                               'processed_form-partial_aliquot_18ml_volume': 1.1,
+                               'processed_form-number_of_tubes_collected_18_ml_if_some_missing': 1,
+                               'processed_form-all_7_collected':True
+                               })
+
+        return response
+
+    def test_sending_collected_urine_form_saves_kit_distribution(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('N',caregiver_bio_to_test.status_fk.collected_fk.kit_distribution)
+
+    def test_sending_collected_urine_form_saves_collection_location(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('C',caregiver_bio_to_test.status_fk.collected_fk.collection_location)
+
+    def test_sending_collected_urine_form_saves_method_of_collection(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('U',caregiver_bio_to_test.status_fk.collected_fk.method_of_collection)
+
+    def test_sending_processed_urine_form_saves_received_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('C',caregiver_bio_to_test.status_fk.processed_fk.received_by)
+
+    def test_sending_processed_urine_form_saves_processed_by(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('C',caregiver_bio_to_test.status_fk.processed_fk.processed_by)
+
+    def test_sending_processed_urine_form_saves_diaper_collection(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('N',caregiver_bio_to_test.status_fk.processed_fk.diaper_collection)
+
+    def test_sending_processed_urine_form_saves_specific_gravity(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', 'S')
+        self.initial_send_form(primary_key,'C')
+        self.collected_send_form(primary_key)
+        self.processed_send_form(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('N',caregiver_bio_to_test.status_fk.processed_fk.specific_gravity)

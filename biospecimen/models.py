@@ -146,9 +146,9 @@ class Collected(models.Model):
         self.eat_drink_text_field = form.cleaned_data['eat_drink_text_field']
         self.collected_date_time = form.cleaned_data['collected_date_time']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
-        self.collection_location = 'C'
-        self.kit_distribution = 'N'
-        self.method_of_collection = 'U'
+        self.collection_location = self.CollectionLocation.CLINIC
+        self.kit_distribution = self.KitDistribution.NOT_APPLICABLE
+        self.method_of_collection = self.MethodOfCollection.URINE_CUP
         self.logged_by = request.user
         self.save()
 
