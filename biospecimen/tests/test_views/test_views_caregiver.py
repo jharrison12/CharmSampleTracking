@@ -859,7 +859,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_initial_send_form(primary_key, 'C')
         self.blood_collected_form_send(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        self.assertContains(response,'When was the last time the participant ate or drank anything other than plain water?:May 5, 2023, 5:05 a.m.')
+        self.assertContains(response,'When was the last time the participant ate or drank anything other than plain water?: May 5, 2023, 5:05 a.m.')
         self.assertContains(response,'Complete or Partial: Complete')
 
     @unittest.skip
