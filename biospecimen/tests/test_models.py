@@ -235,7 +235,7 @@ class ComponentBioModelTest(DatabaseSetup):
         logging.debug(Status.objects.get(caregiverbiospecimen=caregiver_bio))
         self.assertEqual(component_test.collected_fk, caregiver_bio.status_fk.collected_fk)
 
-class CustomModelSaveFunctionsTest(DatabaseSetup):
+class CustomUrineModelSaveFunctionsTest(DatabaseSetup):
 
     def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, age_category=None, project='ECHO2'):
         logging.debug(
@@ -331,3 +331,121 @@ class CustomModelSaveFunctionsTest(DatabaseSetup):
         self.processed_send_form(primary_key)
         caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
         self.assertEqual('N',caregiver_bio_to_test.status_fk.processed_fk.specific_gravity)
+
+class CustomBlooodModelSaveFunctionsTest(DatabaseSetup):
+
+    def return_caregiver_bio_pk(self, charm_id, collection_type, trimester, project='ECHO2'):
+        mother_one = Caregiver.objects.get(charm_project_identifier=charm_id)
+        caregiverbio = CaregiverBiospecimen.objects.get(caregiver_fk=mother_one,
+                                                        collection_fk__collection_type=collection_type,
+                                                        trimester_fk__trimester=trimester,
+                                                        project_fk__project_name=project)
+        return caregiverbio.pk
+
+    def blood_collected_form_send(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/post/', data={
+            'blood_form-other_water_date_time': timezone.datetime(
+                2023, 5, 5, 5, 5, 5),
+            'blood_form-collected_date_time': timezone.datetime(
+                2023, 5, 5, 5, 5, 5),
+            'blood_form-tube_1': 'C',
+            'blood_form-tube_1_hemolysis': 'N',
+            'blood_form-tube_2': 'C',
+            'blood_form-tube_2_hemolysis': 'N',
+            'blood_form-tube_3': 'C',
+            'blood_form-tube_3_hemolysis': 'N',
+        })
+        return response
+
+    def blood_processed_form_send(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/processed_blood/post/',
+                                    data={'processed_form-processed_aliquoted_off_site': 'R',
+                                          'processed_form-specimen_received_date_time': timezone.datetime(2023, 5, 5, 5,
+                                                                                                          5, 5),
+                                          'processed_form-edta_purple_tube_refrigerated_prior_to_centrifuge': True,
+                                          'processed_form-edta_purple_refrigerated_placed_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'processed_form-edta_purple_refrigerated_removed_date_time': timezone.datetime(
+                                              2023, 5, 5, 5, 5, 5),
+                                          'processed_form-whole_blood_blue_cap_all_collected': False,
+                                          'processed_form-whole_blood_blue_cap_partial_aliquot_volume': 1.0,
+                                          'processed_form-whole_blood_blue_cap_number_collected': 1,
+                                          'processed_form-blood_spot_card_completed': False,
+                                          'processed_form-blood_spot_card_number_of_complete_spots': 1,
+                                          'processed_form-blood_spot_card_number_of_dots_smaller_than_dotted_circle': 1,
+                                          'processed_form-blood_spot_card_number_of_dotted_circle_missing_blood_spot': 1,
+                                          'processed_form-vacutainer_centrifuge_start_time': timezone.datetime(2023, 5,
+                                                                                                               5, 5, 5,
+                                                                                                               5),
+                                          'processed_form-vacutainer_centrifuge_end_time': timezone.datetime(2023, 5, 5,
+                                                                                                             5, 5, 5),
+                                          'processed_form-plasma_purple_cap_200_microliter_all_collected': False,
+                                          'processed_form-plasma_purple_cap_200_microliter_partial_aliquot_volume': 0.8,
+                                          'processed_form-plasma_purple_cap_200_microliter_number_collected': 1,
+                                          'processed_form-plasma_purple_cap_1_ml_all_collected': False,
+                                          'processed_form-plasma_purple_cap_1_ml_partial_aliquot_volume': 0.7,
+                                          'processed_form-plasma_purple_cap_1_ml_number_collected': 1,
+                                          'processed_form-buffy_coat_green_cap_1_ml_all_collected': False,
+                                          'processed_form-buffy_coat_green_cap_1_ml_partial_aliquot_volume': 0.8,
+                                          'processed_form-buffy_coat_green_cap_1_ml_number_collected': 1,
+                                          'processed_form-red_blood_cells_yellow_cap_1_ml_all_collected': False,
+                                          'processed_form-red_blood_cells_yellow_cap_1_ml_partial_aliquot_volume': 0.8,
+                                          'processed_form-red_blood_cells_yellow_cap_1_ml_number_collected': 1,
+                                          'processed_form-serum_red_cap_200_microl_all_collected': False,
+                                          'processed_form-serum_red_cap_200_microl_partial_aliquot_volume': 0.6,
+                                          'processed_form-serum_red_cap_200_microl_number_collected': 1,
+                                          'processed_form-serum_red_cap_1_ml_all_collected': False,
+                                          'processed_form-serum_red_cap_1_ml_partial_aliquot_volume': 0.7,
+                                          'processed_form-serum_red_cap_1_ml_number_collected': 2,
+                                          'processed_form-notes': 'a lot to enter',
+                                          })
+
+        return response
+
+    def blood_frozen_form_send(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/frozen_blood/post/',
+                                    data={
+                                        "frozen_form-freezer_placed_date_time": timezone.datetime(2023, 5, 5, 5, 5, 5),
+                                        "frozen_form-number_of_tubes": 1,
+                                        "frozen_form-blood_spot_card_placed_in_freezer": timezone.datetime(2023, 5, 5,
+                                                                                                           5, 5, 5),
+                                        "frozen_form-notes_and_deviations": 'Yes'
+                                        }
+                                    )
+        return response
+
+    def blood_initial_send_form(self, primary_key, c_n_or_x):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/initial/post/',
+                                    data={"initial_form-collected_not_collected": c_n_or_x,
+                                          })
+        return response
+
+    def blood_shipped_to_wsu(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_wsu/post/',
+                                    data={'shipped_to_wsu_form-shipped_date_and_time': timezone.datetime(2023, 12, 5, 5,
+                                                                                                         5, 5),
+                                          'shipped_to_wsu_form-tracking_number': 555,
+                                          f'shipped_to_wsu_form-number_of_tubes': 3,
+                                          'shipped_to_wsu_form-courier': 'F'})
+
+        return response
+
+    def blood_received_at_wsu(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/received_wsu/post/',
+                                    data={
+                                        'received_at_wsu_form-received_date_time': timezone.datetime(2023, 12, 5, 5, 5,
+                                                                                                     5)})
+
+        return response
+
+    def shipped_to_echo_send_form(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/shipped_echo/post/',
+                                    data={'shipped_to_echo_form-shipped_date_and_time': timezone.datetime(2023, 5, 5, 5,
+                                                                                                          5, 5)})
+
+        return response
+
+    def send_declined_form(self, primary_key):
+        response = self.client.post(f'/biospecimen/caregiver/4100/{primary_key}/declined/post/',
+                                    data={'declined_form-declined_date_time': timezone.datetime(2023, 12, 5, 5, 5, 5)})
+        return response
