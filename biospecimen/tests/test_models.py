@@ -482,6 +482,23 @@ class CustomBlooodModelSaveFunctionsTest(DatabaseSetup):
         edta_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S',tube_number=1)
         self.assertEqual('R',edta_tube.temperature_transported_for_processing)
 
+
+    def test_that_blood_processed_saves_received_location(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('C',caregiver_bio_to_test.status_fk.processed_blood_fk.received_by)
+
+    def test_that_blood_processed_saves_processed_location(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio_to_test = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('C',caregiver_bio_to_test.status_fk.processed_blood_fk.processed_by)
+
     def test_that_edta_blood_tube_2_saves_date_time_refrigerated(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.blood_initial_send_form(primary_key,'C')
@@ -526,3 +543,11 @@ class CustomBlooodModelSaveFunctionsTest(DatabaseSetup):
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         serum_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S',tube_number=1)
         self.assertEqual('Y',serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge)
+
+    def test_that_blood_tubes_centri_fuged_in_refrigerated_centriguge(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        self.assertEqual('N',caregiver_bio.status_fk.processed_blood_fk.centrifuged_in_refrigerated_centrifuge)

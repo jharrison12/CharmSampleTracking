@@ -357,19 +357,16 @@ class ProcessedBlood(models.Model):
 
     processed_aliquoted_off_site = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
     specimen_received_date_time = models.DateTimeField(null=True,blank=True)
-    # purple_edta_tube_refrigerated_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
-    # purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
-    # purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
     received_by =models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
-    # red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
-    centrifuged_in_refrigerated_centrifuge = models.BooleanField(null=True,blank=True)
+    processed_by =models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
+    centrifuged_in_refrigerated_centrifuge = models.CharField(max_length=1,choices=YesOrNo.choices,null=True,blank=True)
 
     def save_processed(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.processed_blood_fk = self
         self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
         self.received_by = 'C'
-        self.red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = True
-        self.centrifuged_in_refrigerated_centrifuge = False
+        self.processed_by = 'C'
+        self.centrifuged_in_refrigerated_centrifuge = 'N'
         self.logged_by = request.user
         if self.processed_aliquoted_off_site != 'N':
             self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
