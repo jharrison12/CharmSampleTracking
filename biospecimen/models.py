@@ -177,12 +177,12 @@ class Collected(models.Model):
                 BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
                                      complete_or_partial=form.cleaned_data[f'tube_{tube}'],
                                      tube_type='S',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'],
-                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube,collected_by='C')
+                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube,collected_by='C',temperature_transported_for_processing='R')
             else:
                 BloodTube.objects.create(partial_estimated_volume=form.cleaned_data[f'tube_{tube}_estimated_volume'],
                                      complete_or_partial=form.cleaned_data[f'tube_{tube}'],
                                      tube_type='E',hemolysis=form.cleaned_data[f'tube_{tube}_hemolysis'],
-                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube,collected_by='C')
+                                         caregiver_biospecimen_fk=caregiver_bio,tube_number=tube,collected_by='C',temperature_transported_for_processing='R')
 
 
     def __str__(self):
@@ -354,8 +354,6 @@ class ProcessedBlood(models.Model):
     purple_edta_tube_refrigerated_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
     purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
     purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
-    purple_edta_temperature_transported_for_processing = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
-    red_serum_temperature_transported_for_processing =models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
     received_by =models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
     red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
     centrifuged_in_refrigerated_centrifuge = models.BooleanField(null=True,blank=True)
@@ -363,8 +361,6 @@ class ProcessedBlood(models.Model):
     def save_processed(self,form,request,caregiver_bio):
         caregiver_bio.status_fk.processed_blood_fk = self
         self.processed_aliquoted_off_site = form.cleaned_data['processed_aliquoted_off_site']
-        self.purple_edta_temperature_transported_for_processing = 'T'
-        self.red_serum_temperature_transported_for_processing = 'T'
         self.received_by = 'C'
         self.red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = True
         self.centrifuged_in_refrigerated_centrifuge = False
@@ -777,12 +773,19 @@ class BloodTube(models.Model):
     class CollectionLocation(models.TextChoices):
         CLINIC = 'C',_('Clinic')
 
+    class TemperatrueChoices(models.TextChoices):
+        DRY_ICE = 'D',_('Dry Ice')
+        REFRIGERATED = 'R', _('Refrigerated')
+        ROOM_TEMPERATURE = 'T', _('Room Temperature')
+        NOT_APPLICABLE = 'N', _('Not Applicable')
+
     caregiver_biospecimen_fk = models.ForeignKey(CaregiverBiospecimen,on_delete=models.PROTECT,null=True,blank=True)
     tube_number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(3)],null=True,blank=True)
     tube_type = models.CharField(max_length=1,choices=TubeType.choices,null=True,blank=True)
     complete_or_partial = models.CharField(max_length=1,choices=CompletePartial.choices,null=True,blank=True)
     partial_estimated_volume = models.DecimalField(blank=True,null=True,decimal_places=1,max_digits=3)
     hemolysis = models.CharField(max_length=1,choices=Hemolysis.choices,null=True,blank=True)
+    temperature_transported_for_processing = models.CharField(max_length=1,choices=TemperatrueChoices.choices,null=True,blank=True)
     collected_by = models.CharField(max_length=1, choices=CollectionLocation.choices,null=True,blank=True)
 
 class ChildBiospecimen(models.Model):
