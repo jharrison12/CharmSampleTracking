@@ -466,7 +466,6 @@ class CustomBlooodModelSaveFunctionsTest(DatabaseSetup):
         edta_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='E',tube_number=2)
         self.assertEqual('R',edta_tube.temperature_transported_for_processing)
 
-
     def test_that_edta_blood_tube_3_saves_transported_temp(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
         self.blood_initial_send_form(primary_key,'C')
@@ -482,3 +481,48 @@ class CustomBlooodModelSaveFunctionsTest(DatabaseSetup):
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         edta_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S',tube_number=1)
         self.assertEqual('R',edta_tube.temperature_transported_for_processing)
+
+    def test_that_edta_blood_tube_2_saves_date_time_refrigerated(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        edta_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='E',tube_number=2)
+        self.assertEqual(datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc),edta_tube.refrigerated_placed_date_time)
+
+    def test_that_edta_blood_tube_3_saves_date_time_refrigerated(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        edta_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='E',tube_number=3)
+        self.assertEqual(datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc),edta_tube.refrigerated_placed_date_time)
+
+    def test_that_edta_blood_tube_2_saves_date_time_remove_refrigerated(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        edta_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='E',tube_number=2)
+        self.assertEqual(datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc),edta_tube.refrigerated_removed_date_time)
+
+    def test_that_edta_blood_tube_3_saves_date_time_remove_refrigerated(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        edta_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='E',tube_number=3)
+        self.assertEqual(datetime.datetime(2023, 5, 5, 9, 5, 5, tzinfo=datetime.timezone.utc),edta_tube.refrigerated_removed_date_time)
+
+    def test_that_serum_blood_tube_1_saves_held_at_room_temp_prior_to_centrifuge(self):
+        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
+        self.blood_initial_send_form(primary_key,'C')
+        self.blood_collected_form_send(primary_key)
+        self.blood_processed_form_send(primary_key)
+        caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
+        serum_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S',tube_number=1)
+        self.assertEqual('Y',serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge)

@@ -37,6 +37,12 @@ BLOOD_ITEM_DICT = {'whole_blood_blue_cap':{'vial_amount':'O','blood_type':'W','c
                    'serum_red_cap_1_ml':{'vial_amount':'O','blood_type':'S','cap_color':"R",'number_of_tubes':2}
                    }
 
+
+class YesOrNo(models.TextChoices):
+    YES = 'Y', _('Yes')
+    NO = 'N', _('No')
+
+
 class ComponentError(Exception):
     pass
 
@@ -351,11 +357,11 @@ class ProcessedBlood(models.Model):
 
     processed_aliquoted_off_site = models.CharField(max_length=1,choices=ProcessedChoices.choices,null=True,blank=True)
     specimen_received_date_time = models.DateTimeField(null=True,blank=True)
-    purple_edta_tube_refrigerated_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
-    purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
-    purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
+    # purple_edta_tube_refrigerated_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
+    # purple_edta_refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
+    # purple_edta_refrigerated_removed_date_time =models.DateTimeField(null=True,blank=True)
     received_by =models.CharField(max_length=1,choices=CollectionLocation.choices,null=True,blank=True)
-    red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
+    # red_serum_held_at_room_temperature_30_to_60_prior_to_centrifuge = models.BooleanField(null=True,blank=True)
     centrifuged_in_refrigerated_centrifuge = models.BooleanField(null=True,blank=True)
 
     def save_processed(self,form,request,caregiver_bio):
@@ -367,10 +373,16 @@ class ProcessedBlood(models.Model):
         self.logged_by = request.user
         if self.processed_aliquoted_off_site != 'N':
             self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
-        self.purple_edta_tube_refrigerated_prior_to_centrifuge = form.cleaned_data['edta_purple_tube_refrigerated_prior_to_centrifuge']
-        if self.purple_edta_tube_refrigerated_prior_to_centrifuge == "True":
-            self.purple_edta_refrigerated_placed_date_time = form.cleaned_data['edta_purple_refrigerated_placed_date_time']
-            self.purple_edta_refrigerated_removed_date_time = form.cleaned_data['edta_purple_refrigerated_removed_date_time']
+        edta_tubes = BloodTube.objects.filter(caregiver_biospecimen_fk=caregiver_bio,tube_type='E')
+        serum_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S')
+        serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge = 'Y'
+        serum_tube.save()
+        for tube in edta_tubes:
+            tube.refrigerated_prior_to_centrifuge = form.cleaned_data['edta_purple_tube_refrigerated_prior_to_centrifuge']
+            if tube.refrigerated_prior_to_centrifuge == "True":
+                tube.refrigerated_placed_date_time = form.cleaned_data['edta_purple_refrigerated_placed_date_time']
+                tube.refrigerated_removed_date_time = form.cleaned_data['edta_purple_refrigerated_removed_date_time']
+            tube.save()
         self.save()
         caregiver_bio.status_fk.save()
         caregiver_bio.save()
@@ -634,7 +646,6 @@ class Status(models.Model):
     class Meta:
         verbose_name_plural = "status"
 
-
 class Collection(models.Model):
     #todo subclass text choices
     class CollectionType(models.TextChoices):
@@ -654,7 +665,6 @@ class Collection(models.Model):
 
     def __str__(self):
         return f"{self.collection_type}"
-
 
 class Caregiver(models.Model):
     charm_project_identifier = models.CharField(default='', max_length=6,unique=True)
@@ -786,6 +796,10 @@ class BloodTube(models.Model):
     partial_estimated_volume = models.DecimalField(blank=True,null=True,decimal_places=1,max_digits=3)
     hemolysis = models.CharField(max_length=1,choices=Hemolysis.choices,null=True,blank=True)
     temperature_transported_for_processing = models.CharField(max_length=1,choices=TemperatrueChoices.choices,null=True,blank=True)
+    refrigerated_prior_to_centrifuge = models.BooleanField(null=True, blank=True)
+    refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
+    refrigerated_removed_date_time = models.DateTimeField(null=True, blank=True)
+    held_at_room_temperature_30_to_60_prior_to_centrifuge = models.CharField(max_length=1,null=True,blank=True,choices=YesOrNo.choices)
     collected_by = models.CharField(max_length=1, choices=CollectionLocation.choices,null=True,blank=True)
 
 class ChildBiospecimen(models.Model):
