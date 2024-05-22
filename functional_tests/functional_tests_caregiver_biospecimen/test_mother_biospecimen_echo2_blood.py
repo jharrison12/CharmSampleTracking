@@ -269,8 +269,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.scroll_into_view(submit)
         submit.click()
 
-        time.sleep(30)
-
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_processed_shipped_to_wsu_received_wsu_shipped_echo(self):
         self.user_input_collected_blood()
@@ -356,4 +354,13 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Logged By: testuser', body_text)
 
     def test_user_can_submited_blood_collected_information_and_then_leaves_and_returns_and_processed_form_is_there(self):
-        self.fail()
+        self.user_input_collected_blood()
+
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/')
+        time.sleep(1)
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/2/entry/blood/')
+
+        body = self.browser.find_element(By.TAG_NAME,'body').text
+        self.assertIn('If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?',body)
