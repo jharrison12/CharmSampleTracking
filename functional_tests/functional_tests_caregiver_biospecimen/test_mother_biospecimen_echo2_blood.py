@@ -26,6 +26,9 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
                                                         project_fk__project_name=project)
         return caregiverbio.pk
 
+    def click_outside_of_element(self,html_id):
+        self.browser.find_element(By.ID,html_id).click()
+
     def user_input_collected_blood(self):
         # User visits the caregiver biospecimen page and sees blood
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
@@ -96,37 +99,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn('Complete or Partial: Partial',collected_blood_information)
         self.assertIn('Estimated Volume: 1.0',collected_blood_information)
 
-        time.sleep(50)
-
-
-        # processed = self.browser.find_element(By.ID, "id_blood_form-processed_date_time")
-        # processed.click()
-        # number_of_elements = self.choose_flatpickr_day(number_of_elements)
-        #
-        # stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
-        # stored.click()
-        # number_of_elements = self.choose_flatpickr_day(number_of_elements)
-
-        # user sees a ton of checkboxes for all the bloods possible
-        # user does not see whole blood number of tubes until whole blood is checked
-
-        # body = self.browser.find_element(By.TAG_NAME, 'body').text
-        #
-        # self.assertNotIn('Number of Tubes:', body)
-        # self.assertIn('Plasma', body)
-        # self.assertIn('Whole Blood', body)
-        # self.assertIn('Serum', body)
-        # self.assertIn('Red Blood Cells', body)
-        # self.assertIn('Buffy Coat', body)
-        #
-        # whole_blood_checkbox = self.browser.find_element(By.ID, "id_blood_form-whole_blood")
-        # whole_blood_checkbox.click()
-        #
-        # whole_blood_tubes = self.browser.find_element(By.ID, "id_blood_form-whole_blood_number_of_tubes")
-        # whole_blood_tubes.send_keys(3)
-        #
-        # submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information_form"]/form/input[2]')
-        # submit.click()
 
     def user_inputs_processed_blood_information(self):
         body = self.browser.find_element(By.TAG_NAME, 'body').text
@@ -134,7 +106,131 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
     #     id_processed_form-processed_aliquoted_off_site
 
         processed_aliquoted_off_site = Select(self.browser.find_element(By.ID, 'id_processed_form-processed_aliquoted_off_site'))
-        processed_aliquoted_off_site.select_by_visible_text('Refigerated')
+        processed_aliquoted_off_site.select_by_visible_text('Refrigerated')
+
+        processed_received_date_time = self.browser.find_element(By.ID, "id_processed_form-specimen_received_date_time")
+        processed_received_date_time.click()
+        number_of_elements = self.choose_flatpickr_day(0)
+
+        refrigerated_prior_to_centrifuge = Select(self.browser.find_element(By.ID, 'id_processed_form-edta_purple_tube_refrigerated_prior_to_centrifuge'))
+        refrigerated_prior_to_centrifuge.select_by_visible_text('Yes')
+
+        edta_purple_refrigerated_placed_date_time = self.browser.find_element(By.ID, "id_processed_form-edta_purple_refrigerated_placed_date_time")
+        edta_purple_refrigerated_placed_date_time.click()
+        number_of_elements = self.choose_flatpickr_day(number_of_elements)
+
+        edta_purple_refrigerated_removed_date_time = self.browser.find_element(By.ID, "id_processed_form-edta_purple_refrigerated_removed_date_time")
+        self.scroll_into_view(edta_purple_refrigerated_removed_date_time)
+        edta_purple_refrigerated_removed_date_time.click()
+        number_of_elements = self.choose_flatpickr_day(number_of_elements)
+
+        #id_processed_form-whole_blood_blue_cap_all_collected
+        whole_blood_blue_cap_all_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-whole_blood_blue_cap_all_collected'))
+        whole_blood_blue_cap_all_collected.select_by_visible_text('No')
+
+        whole_blood_blue_cap_partial_aliquot_volume = self.browser.find_element(By.ID, "id_processed_form-whole_blood_blue_cap_partial_aliquot_volume")
+        whole_blood_blue_cap_partial_aliquot_volume.send_keys(1.0)
+
+        whole_blood_blue_cap_number_collected = self.browser.find_element(By.ID, "id_processed_form-whole_blood_blue_cap_number_collected")
+        whole_blood_blue_cap_number_collected.send_keys(1)
+
+        blood_spot_card_completed = Select(self.browser.find_element(By.ID, 'id_processed_form-blood_spot_card_completed'))
+        blood_spot_card_completed.select_by_visible_text('No')
+
+        blood_spot_card_number_of_dots_smaller_than_dotted_circle = self.browser.find_element(By.ID, "id_processed_form-blood_spot_card_number_of_dots_smaller_than_dotted_circle")
+        blood_spot_card_number_of_dots_smaller_than_dotted_circle.send_keys(2)
+
+        blood_spot_card_number_of_complete_spots = self.browser.find_element(By.ID,"id_processed_form-blood_spot_card_number_of_complete_spots")
+        blood_spot_card_number_of_complete_spots.send_keys(2)
+
+        blood_spot_card_number_of_dotted_circle_missing_blood_spot = self.browser.find_element(By.ID,"id_processed_form-blood_spot_card_number_of_dotted_circle_missing_blood_spot")
+        blood_spot_card_number_of_dotted_circle_missing_blood_spot.send_keys(2)
+
+        vacutainer_centrifuge_start_time = self.browser.find_element(By.ID, "id_processed_form-vacutainer_centrifuge_start_time")
+        self.scroll_into_view(vacutainer_centrifuge_start_time)
+        vacutainer_centrifuge_start_time.click()
+        number_of_elements = self.choose_flatpickr_day(number_of_elements)
+        self.click_outside_of_element("id_processed_form-blood_spot_card_number_of_dotted_circle_missing_blood_spot")
+
+        vacutainer_centrifuge_end_time = self.browser.find_element(By.ID, "id_processed_form-vacutainer_centrifuge_end_time")
+        self.scroll_into_view(vacutainer_centrifuge_end_time)
+        vacutainer_centrifuge_end_time.click()
+        number_of_elements = self.choose_flatpickr_day(number_of_elements)
+
+        plasma_purple_cap_200_microliter_all_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-plasma_purple_cap_200_microliter_all_collected'))
+        plasma_purple_cap_200_microliter_all_collected.select_by_visible_text('No')
+
+        plasma_purple_cap_200_microliter_number_collected = self.browser.find_element(By.ID,"id_processed_form-plasma_purple_cap_200_microliter_number_collected")
+        plasma_purple_cap_200_microliter_number_collected.send_keys(2)
+
+        plasma_purple_cap_1_ml_all_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-plasma_purple_cap_1_ml_all_collected'))
+        plasma_purple_cap_1_ml_all_collected.select_by_visible_text('No')
+
+        plasma_purple_cap_1_ml_partial_aliquot_volume = self.browser.find_element(By.ID,"id_processed_form-plasma_purple_cap_1_ml_partial_aliquot_volume")
+        plasma_purple_cap_1_ml_partial_aliquot_volume.send_keys(0.98)
+
+        plasma_purple_cap_1_ml_number_collected = self.browser.find_element(By.ID,"id_processed_form-plasma_purple_cap_1_ml_number_collected")
+        plasma_purple_cap_1_ml_number_collected.send_keys(2)
+
+        buffy_coat_green_cap_1_ml_all_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-buffy_coat_green_cap_1_ml_all_collected'))
+        buffy_coat_green_cap_1_ml_all_collected.select_by_visible_text('No')
+
+        buffy_coat_green_cap_1_ml_number_collected = self.browser.find_element(By.ID,"id_processed_form-buffy_coat_green_cap_1_ml_number_collected")
+        buffy_coat_green_cap_1_ml_number_collected.send_keys(2)
+
+        red_blood_cells_yellow_cap_1_ml_all_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-red_blood_cells_yellow_cap_1_ml_all_collected'))
+        red_blood_cells_yellow_cap_1_ml_all_collected.select_by_visible_text('No')
+
+        red_blood_cells_yellow_cap_1_ml_partial_aliquot_volume = self.browser.find_element(By.ID,"id_processed_form-red_blood_cells_yellow_cap_1_ml_partial_aliquot_volume")
+        red_blood_cells_yellow_cap_1_ml_partial_aliquot_volume.send_keys(1.3)
+
+        red_blood_cells_yellow_cap_1_ml_number_collected = self.browser.find_element(By.ID,"id_processed_form-red_blood_cells_yellow_cap_1_ml_number_collected")
+        red_blood_cells_yellow_cap_1_ml_number_collected.send_keys(2)
+
+        serum_red_cap_200_microl_all_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-serum_red_cap_200_microl_all_collected'))
+        serum_red_cap_200_microl_all_collected.select_by_visible_text('No')
+
+        serum_red_cap_200_microl_number_collected = self.browser.find_element(By.ID,"id_processed_form-serum_red_cap_200_microl_number_collected")
+        serum_red_cap_200_microl_number_collected.send_keys(2)
+
+        serum_red_cap_1_ml_all_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-serum_red_cap_1_ml_all_collected'))
+        serum_red_cap_1_ml_all_collected.select_by_visible_text('No')
+
+        serum_red_cap_1_ml_partial_aliquot_volume = self.browser.find_element(By.ID,"id_processed_form-serum_red_cap_1_ml_partial_aliquot_volume")
+        serum_red_cap_1_ml_partial_aliquot_volume.send_keys(0.9)
+
+        serum_red_cap_1_ml_number_collected = self.browser.find_element(By.ID,"id_processed_form-serum_red_cap_1_ml_number_collected")
+        serum_red_cap_1_ml_number_collected.send_keys(2)
+
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="processed_form"]/form/input[2]')
+        self.scroll_into_view(submit)
+        submit.click()
+
+
+    def user_inputs_frozen_information(self):
+        freezer_placed_date_time = self.browser.find_element(By.ID, "id_frozen_form-freezer_placed_date_time")
+        self.scroll_into_view(freezer_placed_date_time)
+        freezer_placed_date_time.click()
+        number_of_elements = self.choose_flatpickr_day(0)
+
+        number_of_tubes = self.browser.find_element(By.ID,"id_frozen_form-number_of_tubes")
+        number_of_tubes.send_keys(2)
+
+        blood_spot_card_placed_in_freezer = self.browser.find_element(By.ID, "id_frozen_form-blood_spot_card_placed_in_freezer")
+        self.scroll_into_view(blood_spot_card_placed_in_freezer)
+        blood_spot_card_placed_in_freezer.click()
+        number_of_elements = self.choose_flatpickr_day(number_of_elements)
+
+        notes_and_deviations = self.browser.find_element(By.ID,"id_frozen_form-notes_and_deviations")
+        notes_and_deviations.send_keys("great")
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
+        self.scroll_into_view(submit)
+        submit.click()
+
+        time.sleep(50)
+
 
     def user_inputs_shipped_to_wsu_blood(self):
         body = self.browser.find_element(By.TAG_NAME, 'body').text
@@ -252,23 +348,9 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
     def user_inputs_first_portion_of_blood_page(self):
         self.user_input_collected_blood()
         body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn('Whole Blood Number of Tubes: 3', body)
-        self.assertNotIn('Plasma Number of Tubes', body)
 
+        time.sleep(20)
         #user sees incentive form
-
-        form = self.browser.find_element(By.ID,"incentive_form").text
-        self.assertIn('Incentive Form',form)
-
-        incentive_date = self.browser.find_element(By.ID,'id_incentive_form-incentive_date')
-        incentive_date.click()
-        self.choose_flatpickr_day(0)
-
-        submit = self.browser.find_element(By.XPATH,'//*[@id="incentive_form"]/form/input[2]')
-        submit.click()
-
-        body = self.browser.find_element(By.TAG_NAME,'body').text
-        self.assertIn(f"Incentive Date: {TODAY}", body)
 
         #user submits shipped to WSu form
 
@@ -301,9 +383,11 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
 
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_processed_shipped_to_wsu_received_wsu_shipped_echo(self):
-        self.user_inputs_first_portion_of_blood_page()
+        self.user_input_collected_blood()
 
         self.user_inputs_processed_blood_information()
+
+        self.user_inputs_frozen_information()
 
         self.user_inputs_received_at_wsu_blood()
 
@@ -379,201 +463,5 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.assertIn(f'Refused or other: Refused', body_text)
         self.assertIn('Logged By: testuser', body_text)
 
-    def test_user_can_submited_blood_collected_information_and_then_leaves_and_returns_and_incentive_form_is_there(self):
-        primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')
-        self.browser.get(self.live_server_url)
-        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
-
-        # user sees initial form and submits collected
-        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
-        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
-        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
-
-        self.assertIn('Initial Form', body_text)
-
-        collected_not_collected = Select(self.browser.find_element(By.ID, 'id_initial_form-collected_not_collected'))
-        collected_not_collected.select_by_visible_text('Collected')
-        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
-        submit.click()
-
-        # user sees collected form on next page
-
-        form = self.browser.find_element(By.ID, 'collected_information_form').text
-        self.assertIn('Collected Form', form)
-
-        # user submits form and sees data
-        collected = self.browser.find_element(By.ID, "id_blood_form-collected_date_time")
-        collected.click()
-        time.sleep(2)
-        new_selector  = self.choose_flatpickr_day(number_of_css_selector=0)
-
-        processed = self.browser.find_element(By.ID, "id_blood_form-processed_date_time")
-        processed.click()
-        new_selector=self.choose_flatpickr_day(number_of_css_selector=new_selector)
-
-        stored = self.browser.find_element(By.ID, "id_blood_form-stored_date_time")
-        stored.click()
-        self.choose_flatpickr_day(number_of_css_selector=new_selector)
-
-        # user sees a ton of checkboxes for all the bloods possible
-        # user does not see whole blood number of tubes until whole blood is checked
-
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-
-        self.assertNotIn('Number of Tubes:', body)
-        self.assertIn('Plasma', body)
-        self.assertIn('Whole Blood', body)
-        self.assertIn('Serum', body)
-        self.assertIn('Red Blood Cells', body)
-        self.assertIn('Buffy Coat', body)
-
-        whole_blood_checkbox = self.browser.find_element(By.ID, "id_blood_form-whole_blood")
-        whole_blood_checkbox.click()
-
-        whole_blood_tubes = self.browser.find_element(By.ID, "id_blood_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(3)
-
-        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information_form"]/form/input[2]')
-        submit.click()
-
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Whole Blood Number of Tubes: 3', body)
-        self.assertNotIn('Plasma Number of Tubes', body)
-
-        # user sees incentive form
-        self.browser.implicitly_wait(2)
-        form = self.browser.find_element(By.ID, 'incentive_form').text
-        self.assertIn('Incentive Form', form)
-        time.sleep(2)
-
-        incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
-
-        self.browser.get(f'{self.live_server_url}/biospecimen/')
-
-        time.sleep(2)
-        self.browser.get(f'{self.live_server_url}/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        time.sleep(2)
-        # is incentive form still there?
-
-        form = self.browser.find_element(By.ID, 'incentive_form').text
-        self.assertIn('Incentive Form', form)
-
-        incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
-        incentive_date.click()
-        self.choose_flatpickr_day(0)
-
-    #
-    # def test_user_submits_incorrect_number_of_tubes_and_error_is_thrown(self):
-    #     self.user_inputs_first_portion_of_blood_page()
-    #     whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
-    #     whole_blood_tubes.send_keys(4)
-    #
-    #     #check that modal text isn't in body
-    #     body_text = self.browser.find_element(By.TAG_NAME,'body').text
-    #     self.assertNotIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood collected tubes: 3',
-    #                   body_text)
-    #
-    #     submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
-    #     submit.click()
-    #     WebDriverWait(self.browser,5).until(EC.visibility_of_element_located((By.ID
-    #                                                                               ,'exampleModal')))
-    #     modal_text = self.browser.find_element(By.ID,'exampleModal').text
-    #
-    #     self.assertIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood collected tubes: 3',modal_text)
-    #
-    #     #user clicks cancel
-    #     time.sleep(2)
-    #     self.browser.find_element(By.ID,'modal_cancel_button').click()
-    #
-    #     #user resubmits shipped to WSu form
-    #
-    #     shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
-    #     shipped_date_time.click()
-    #     number_of_elements = self.choose_flatpickr_day(0)
-    #
-    #     shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
-    #     shipped_date_time.send_keys('777777')
-    #
-    #     logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
-    #     logged_date_time.click()
-    #     self.choose_flatpickr_day(number_of_elements)
-    #
-    #     courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
-    #     courier.send_keys('FedEx')
-    #
-    #     #User sees a bunch of check boxes without number of tubes
-    #     shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
-    #
-    #     self.assertNotIn('Number of Tubes:', shipped_div)
-    #     self.assertIn('Plasma', shipped_div)
-    #     self.assertIn('Whole Blood', shipped_div)
-    #     self.assertIn('Serum', shipped_div)
-    #     self.assertIn('Red Blood Cells', shipped_div)
-    #     self.assertIn('Buffy Coat', shipped_div)
-    #
-    #     whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood")
-    #     whole_blood_checkbox.click()
-    #
-    #     whole_blood_tubes = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-whole_blood_number_of_tubes")
-    #     whole_blood_tubes.send_keys(3)
-    #
-    #     submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
-    #     submit.click()
-    #
-    #     #user submits wrong number to received at WSU form and sees modal
-    #
-    #     whole_blood_checkbox = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood")
-    #     whole_blood_checkbox.click()
-    #
-    #     whole_blood_tubes = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood_number_of_tubes")
-    #     whole_blood_tubes.send_keys(4)
-    #
-    #     #check that modal text isn't in body
-    #     body_text = self.browser.find_element(By.TAG_NAME,'body').text
-    #     self.assertNotIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood shipped to wsu tubes: 3',
-    #                   body_text)
-    #
-    #     submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
-    #     self.browser.execute_script("arguments[0].scrollIntoView();",submit)
-    #     self.browser.execute_script("arguments[0].click();",submit)
-    #
-    #     WebDriverWait(self.browser,5).until(EC.visibility_of_element_located((By.ID
-    #                                                                               ,'exampleModal')))
-    #     modal_text = self.browser.find_element(By.ID,'exampleModal').text
-    #
-    #     self.assertIn('Whole Blood number of tubes entered 4 does not match number of Whole Blood shipped to wsu tubes: 3',
-    #                   modal_text)
-    #
-    #     # user clicks cancel renters correct number
-    #     time.sleep(2)
-    #     self.browser.find_element(By.ID, 'modal_cancel_button').click()
-    #
-    #     whole_blood_checkbox = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood")
-    #     whole_blood_checkbox.click()
-    #
-    #     whole_blood_tubes = self.browser.find_element(By.ID,"id_received_at_wsu_form-whole_blood_number_of_tubes")
-    #     whole_blood_tubes.send_keys(3)
-    #
-    #     submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
-    #     self.browser.execute_script("arguments[0].scrollIntoView();",submit)
-    #     self.browser.execute_script("arguments[0].click();",submit)
-    #
-    #     body = self.browser.find_element(By.TAG_NAME,'Body')
-    #
-    #     #User sees shipped to Echo form
-    #     #check that modal isnt in body
-    #     body_text = self.browser.find_element(By.TAG_NAME,'body').text
-    #     self.assertNotIn(
-    #         'Whole Blood number of tubes entered 4 does not match number of Whole Blood received at wsu tubes: 3',
-    #         body_text)
-    #
-    #     shipped_echo_date_time = self.browser.find_element(By.ID,'id_shipped_to_echo_form-shipped_date_and_time')
-    #     shipped_echo_date_time.click()
-    #     self.choose_flatpickr_day(0)
-    #
-    #     submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
-    #     self.browser.execute_script("arguments[0].scrollIntoView();", submit)
-    #     self.browser.execute_script("arguments[0].click();", submit)
-    #
-    #     body = self.browser.find_element(By.TAG_NAME,'body').text
-    #     self.assertIn(f'Shipped Date Time: {TODAY}',body)
+    def test_user_can_submited_blood_collected_information_and_then_leaves_and_returns_and_processed_form_is_there(self):
+        self.fail()
