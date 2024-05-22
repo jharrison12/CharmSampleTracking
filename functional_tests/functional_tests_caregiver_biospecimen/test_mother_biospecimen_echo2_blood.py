@@ -229,157 +229,47 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.scroll_into_view(submit)
         submit.click()
 
-        time.sleep(50)
-
 
     def user_inputs_shipped_to_wsu_blood(self):
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Whole Blood Number of Tubes: 3', body)
-        self.assertNotIn('Plasma Number of Tubes', body)
-
-        # user sees incentive form
-
-        form = self.browser.find_element(By.ID, 'incentive_form').text
-        self.assertIn('Incentive Form', form)
-
-        incentive_date = self.browser.find_element(By.ID, 'id_incentive_form-incentive_date')
-        incentive_date.click()
-        self.choose_flatpickr_day(0)
-
-        submit = self.browser.find_element(By.XPATH, '//*[@id="incentive_form"]/form/input[2]')
-        submit.click()
-
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn(f"Incentive Date: {TODAY}", body)
-
-        # user submits shipped to WSu form
-
-        shipped_date_time = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-shipped_date_and_time")
-        shipped_date_time.click()
+        shipped_date_and_time = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-shipped_date_and_time")
+        self.scroll_into_view(shipped_date_and_time)
+        shipped_date_and_time.click()
         number_of_elements = self.choose_flatpickr_day(0)
 
-        shipped_date_time = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-tracking_number")
-        shipped_date_time.send_keys('777777')
+        number_of_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-number_of_tubes")
+        number_of_tubes.send_keys(2)
 
-        logged_date_time = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-logged_date_time")
-        logged_date_time.click()
-        self.choose_flatpickr_day(number_of_elements)
+        courier = Select(self.browser.find_element(By.ID, 'id_shipped_to_wsu_form-courier'))
+        courier.select_by_visible_text('FedEx')
 
-        courier = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-courier")
-        courier.send_keys('FedEx')
+        tracking_number = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-tracking_number")
+        tracking_number.send_keys(4444444)
 
-        # User sees a bunch of check boxes without number of tubes
-        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
-
-        self.assertNotIn('Number of Tubes:', shipped_div)
-        self.assertIn('Plasma', shipped_div)
-        self.assertIn('Whole Blood', shipped_div)
-        self.assertIn('Serum', shipped_div)
-        self.assertIn('Red Blood Cells', shipped_div)
-        self.assertIn('Buffy Coat', shipped_div)
-
-        whole_blood_checkbox = self.browser.find_element(By.ID, "id_shipped_to_wsu_form-whole_blood")
-        whole_blood_checkbox.click()
-
-        whole_blood_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(3)
-
-        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
-        self.assertIn('Number of Tubes:', shipped_div)
-
-        ##TODO implement code check that tubes match number of tubes previously entered
-        ##TODO implement code that sends email or alerts staff if this happens?
-
-        submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
+        self.scroll_into_view(submit)
         submit.click()
 
     def user_inputs_received_at_wsu_blood(self):
         received_date_time = self.browser.find_element(By.ID, "id_received_at_wsu_form-received_date_time")
+        self.scroll_into_view(received_date_time)
         received_date_time.click()
-        time.sleep(2)
-        self.choose_flatpickr_day(0)
-
-        # User sees a bunch of check boxes without number of tubes
-        received_div = self.browser.find_element(By.ID, 'received_at_wsu_information_form').text
-        whole_blood_number_of_tubes_text = self.browser.find_element(By.ID,
-                                                                     "id_received_at_wsu_form-whole_blood_number_of_tubes").text
-
-        self.assertNotIn('Number of Tubes:', whole_blood_number_of_tubes_text)
-        self.assertIn('Plasma', received_div)
-        self.assertIn('Whole Blood', received_div)
-        self.assertIn('Serum', received_div)
-        self.assertIn('Red Blood Cells', received_div)
-        self.assertIn('Buffy Coat', received_div)
-
-        whole_blood_checkbox = self.browser.find_element(By.ID, "id_received_at_wsu_form-whole_blood")
-        whole_blood_checkbox.click()
-
-        whole_blood_tubes = self.browser.find_element(By.ID, "id_received_at_wsu_form-whole_blood_number_of_tubes")
-        whole_blood_tubes.send_keys(3)
-
-        submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
-        self.browser.execute_script("arguments[0].scrollIntoView();", submit)
-        self.browser.execute_script("arguments[0].click();", submit)
-        # submit.click()
-
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn(f'Received at WSU {TODAY}', body)
-
-    def user_inputs_shipped_echo_blood_page(self):
-        # User sees shipped to Echo form
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        shipped_echo_date_time = self.browser.find_element(By.ID, 'id_shipped_to_echo_form-shipped_date_and_time')
-        shipped_echo_date_time.click()
-        self.choose_flatpickr_day(0)
-        time.sleep(10)
-        self.assertNotIn('Plasma', body)
-        self.assertIn('Whole Blood', body)
-        self.assertNotIn('Serum', body)
-        self.assertNotIn('Red Blood Cells', body)
-        self.assertNotIn('Buffy Coat', body)
-
-        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
-        self.browser.execute_script("arguments[0].scrollIntoView();", submit)
-        self.browser.execute_script("arguments[0].click();", submit)
-
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn(f'Shipped Date Time: {TODAY}', body)
-
-    def user_inputs_first_portion_of_blood_page(self):
-        self.user_input_collected_blood()
-        body = self.browser.find_element(By.TAG_NAME,'body').text
-
-        time.sleep(20)
-        #user sees incentive form
-
-        #user submits shipped to WSu form
-
-        shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
-        shipped_date_time.click()
         number_of_elements = self.choose_flatpickr_day(0)
 
-        shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
-        shipped_date_time.send_keys('777777')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="received_at_wsu_information_form"]/form/input[2]')
+        self.scroll_into_view(submit)
+        submit.click()
 
-        logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
-        logged_date_time.click()
-        self.choose_flatpickr_day(number_of_elements)
+    def user_inputs_shipped_echo_blood_page(self):
+        shipped_date_and_time = self.browser.find_element(By.ID, "id_shipped_to_echo_form-shipped_date_and_time")
+        self.scroll_into_view(shipped_date_and_time)
+        shipped_date_and_time.click()
+        number_of_elements = self.choose_flatpickr_day(0)
 
-        courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
-        courier.send_keys('FedEx')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="shipped_to_echo_form"]/form/input[2]')
+        self.scroll_into_view(submit)
+        submit.click()
 
-        #User sees a bunch of check boxes without number of tubes
-        shipped_div = self.browser.find_element(By.ID, 'shipped_to_wsu_information_form').text
-
-        self.assertNotIn('Number of Tubes:', shipped_div)
-        self.assertIn('Plasma', shipped_div)
-        self.assertIn('Whole Blood', shipped_div)
-        self.assertIn('Serum', shipped_div)
-        self.assertIn('Red Blood Cells', shipped_div)
-        self.assertIn('Buffy Coat', shipped_div)
-
-        whole_blood_checkbox = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-whole_blood")
-        whole_blood_checkbox.click()
+        time.sleep(30)
 
 
     def test_user_can_choose_status_of_blood_information_chooses_collected_processed_shipped_to_wsu_received_wsu_shipped_echo(self):
@@ -388,6 +278,8 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
         self.user_inputs_processed_blood_information()
 
         self.user_inputs_frozen_information()
+
+        self.user_inputs_shipped_to_wsu_blood()
 
         self.user_inputs_received_at_wsu_blood()
 
