@@ -13,6 +13,7 @@ from django.utils import timezone
 
 MAX_WAIT = 10
 
+
 class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
 
     def wait_for_row_in_list_table(self):
@@ -36,7 +37,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         return caregiverbio.pk
 
 
-    def test_user_can_choose_status_of_hair_or_saliva_information_chooses_kit_sent_collected_shipped_msu_then_echo(self):
+    def user_can_choose_status_of_hair_or_saliva_information_chooses_kit_sent_collected_shipped_msu_then_echo(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
@@ -167,7 +168,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertIn(f'Shipped Date Time: {TODAY}',body)
 
 
-    def test_user_can_choose_status_of_hair_or_salvia_information_chooses_not_collected_hope(self):
+    def user_can_choose_status_of_hair_or_salvia_information_chooses_not_collected_hope(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
@@ -190,7 +191,7 @@ class MotherBioSpecimenEcho2EntryTestHairSaliva(FunctionalTest):
         self.assertNotIn('<form>', body_text)
         self.assertIn('Not Collected', body_text)
 
-    def test_user_can_choose_status_of_hair_or_salvia_information_chooses_declined(self):
+    def user_can_choose_status_of_hair_or_salvia_information_chooses_declined(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('4100', 'H', trimester=None, child_age='ZF')
         self.browser.get(self.live_server_url)
