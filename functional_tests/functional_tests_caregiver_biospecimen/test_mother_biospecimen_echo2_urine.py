@@ -217,7 +217,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.user_submits_urine_received_at_wsu()
         self.user_submits_urine_shipped_to_echo()
 
-    def test_user_can_choose_status_of_urine_information_chooses_not_collected(self):
+    def test_user_can_choose_status_of_urine_information_chooses_not_collected_refused(self):
         # User visits the caregiver biospecimen page and sees urine
         primary_key = self.return_caregiver_bio_pk('4101', 'U', 'S')
         self.browser.get(self.live_server_url)
@@ -242,4 +242,67 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         self.assertIn('Not Collected', body_text)
         self.assertIn('Refused', body_text)
         self.assertIn('Other', body_text)
-        ##todo update ft to pass
+
+        refused_radio = self.browser.find_element(By.ID, 'id_not_collected_form-refused_or_other_0')
+        refused_radio.click()
+        submit = self.browser.find_element(By.XPATH, '//*[@id="not_collected_form"]/form/input[2]')
+        submit.click()
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn(f'Refused or other: Refused', body_text)
+        self.assertIn('Logged By: testuser', body_text)
+
+
+    def test_user_can_choose_status_of_urine_information_chooses_not_collected_other(self):
+        # User visits the caregiver biospecimen page and sees urine
+        primary_key = self.return_caregiver_bio_pk('4100', 'U', trimester='S')
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4100/{primary_key}/initial/')
+
+        # user sees initial form and submits collected
+        header_text = self.browser.find_elements(By.TAG_NAME, 'h1')
+        self.assertIn('Charm ID: 4100', [item.text for item in header_text])
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Initial Form', body_text)
+
+        collected_not_collected = Select(self.browser.find_element(By.ID, 'id_initial_form-collected_not_collected'))
+        collected_not_collected.select_by_visible_text('Not Collected')
+        submit = self.browser.find_element(By.XPATH, '//*[@id="collected_information"]/form/input[2]')
+        submit.click()
+
+        # user sees declined form on next page
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Not Collected Form', body_text)
+
+        # user chooses refused
+        other_radio = self.browser.find_element(By.ID, 'id_not_collected_form-refused_or_other_1')
+        other_radio.click()
+        other_specify = self.browser.find_element(By.ID,'other_specify_input')
+        other_specify.send_keys('too busy')
+
+        submit = self.browser.find_element(By.XPATH, '//*[@id="not_collected_form"]/form/input[2]')
+        submit.click()
+        body_text = self.browser.find_element(By.TAG_NAME, 'body').text
+
+        self.assertIn(f'Refused or other: Other', body_text)
+        self.assertIn(f'Other Reason: too busy', body_text)
+        self.assertIn('Logged By: testuser', body_text)
+
+    def test_user_can_submited_urine_collected_information_and_then_leaves_and_returns_and_processed_form_is_there(
+            self):
+        self.user_submits_urine_collected()
+        primary_key = self.return_caregiver_bio_pk('4101', 'U', trimester='S')
+
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/')
+        time.sleep(1)
+        self.browser.get(self.live_server_url)
+
+        self.browser.get(f'{self.browser.current_url}biospecimen/caregiver/4101/{primary_key}/entry/')
+
+        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        self.assertIn(
+            'If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?',
+            body)
+        self.assertIn(
+            'What is the total volume of urine in the collection cup?',
+            body)
