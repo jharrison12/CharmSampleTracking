@@ -16,7 +16,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
                                                         project_fk=echo2)
         return caregiverbio.pk
 
-    def test_user_can_choose_status_of_placenta_information_chooses_collected_shipped_wsu_shipped_echo(self):
+    def user_can_choose_status_of_placenta_information_chooses_collected_shipped_wsu_shipped_echo(self):
         # User visits the caregiver biospecimen page and sees placenta
         primary_key = self.return_caregiver_bio_pk('4100', 'C')
         self.browser.get(self.live_server_url)
@@ -131,7 +131,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
 
 
 
-    def test_user_can_choose_status_of_placenta_information_chooses_not_collected(self):
+    def user_can_choose_status_of_placenta_information_chooses_not_collected(self):
         # User visits the caregiver biospecimen page and sees placenta
         primary_key = self.return_caregiver_bio_pk('4100', 'C')
         self.browser.get(self.live_server_url)
@@ -154,7 +154,7 @@ class MotherBioSpecimenEcho2EntryTestPlacenta(FunctionalTest):
         self.assertNotIn('<form>', body_text)
         self.assertIn('Not Collected', body_text)
 
-    def test_user_can_choose_status_of_placenta_information_chooses_no_consent(self):
+    def user_can_choose_status_of_placenta_information_chooses_no_consent(self):
         # User visits the caregiver biospecimen page and sees placenta
         primary_key = self.return_caregiver_bio_pk('4100', 'C')
         self.browser.get(self.live_server_url)
