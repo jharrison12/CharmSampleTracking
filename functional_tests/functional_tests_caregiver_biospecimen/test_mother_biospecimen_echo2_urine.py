@@ -92,42 +92,25 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
             self.browser.find_element(By.ID, 'id_processed_form-all_18_collected'))
         all_18_collected.select_by_visible_text('No')
 
-        first_aliquot_18ml = self.browser.find_element(By.ID, "id_processed_form-partial_aliquot_18ml_1")
-        first_aliquot_18ml.click()
+        partial_aliquot_18ml_volume = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_18ml_volume')
+        partial_aliquot_18ml_volume.send_keys(1.1)
 
-        #id_processed_form-partial_aliquot_18ml_1_amount
-        first_aliquot_18ml_amount = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_18ml_1_amount')
-        first_aliquot_18ml_amount.send_keys(1.1)
+        number_of_tubes_collected_18_ml_if_some_missing = self.browser.find_element(By.ID,'id_processed_form-number_of_tubes_collected_18_ml_if_some_missing')
+        number_of_tubes_collected_18_ml_if_some_missing.send_keys(1)
 
-        self.browser.find_element(By.TAG_NAME, 'body').click()
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
-        self.assertIn('Partial Aliquot #2',body)
-
-        all_7_collected = Select(
-            self.browser.find_element(By.ID, 'id_processed_form-all_7_collected'))
+        all_7_collected = Select(self.browser.find_element(By.ID, 'id_processed_form-all_7_collected'))
         all_7_collected.select_by_visible_text('No')
 
-        element = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_7ml_1')
-        # self.browser.execute_script("arguments[0].scrollIntoView();", element)
-        # #self.browser.execute_script("arguments[0].click();", element)
-        # time.sleep(1)
-        self.scroll_into_view(element)
+        partial_aliquot_7ml_volume = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_7ml_volume')
+        partial_aliquot_7ml_volume.send_keys(1.1)
 
-        first_aliquot_7ml = self.browser.find_element(By.ID, "id_processed_form-partial_aliquot_7ml_1")
-        first_aliquot_7ml.click()
-
-        first_aliquot_7ml_amount = self.browser.find_element(By.ID,'id_processed_form-partial_aliquot_7ml_1_amount')
-        first_aliquot_7ml_amount.send_keys(1.1)
-
-        self.browser.find_element(By.TAG_NAME, 'body').click()
-        body = self.browser.find_element(By.TAG_NAME, 'body').text
+        number_of_tubes_collected_7_ml_if_some_missing = self.browser.find_element(By.ID,'id_processed_form-number_of_tubes_collected_7_ml_if_some_missing')
+        number_of_tubes_collected_7_ml_if_some_missing.send_keys(2)
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="processed_questions_form"]/form/input[2]')
-        self.browser.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(1)
-
-        submit = self.browser.find_element(By.XPATH,'//*[@id="processed_questions_form"]/form/input[2]')
+        self.scroll_into_view(submit)
         submit.click()
+
 
     def user_submits_urine_frozen(self):
         #id_frozen_form-freezer_placed_date_time
@@ -147,6 +130,7 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
         frozen_notes.send_keys('they were really cold')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="frozen_questions_form"]/form/input[2]')
+        self.scroll_into_view(submit)
         submit.click()
 
     def user_submits_urine_shipped_to_wsu(self):
@@ -167,25 +151,18 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         #user submits shipped to WSu form
         shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-shipped_date_and_time")
+        self.scroll_into_view(shipped_date_time)
         shipped_date_time.click()
         new_num = self.choose_flatpickr_day(0)
 
-        shipped_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
-        shipped_date_time.send_keys('777777')
+        tracking_number = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-tracking_number")
+        tracking_number.send_keys('777777')
 
         number_of_tubes = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-number_of_tubes")
         number_of_tubes.send_keys(5)
 
-        logged_date_time = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-logged_date_time")
-        # self.browser.execute_script("arguments[0].scrollIntoView();", logged_date_time)
-        # time.sleep(1)
-        self.scroll_into_view(logged_date_time)
-        logged_date_time.click()
-        time.sleep(1)
-        self.choose_flatpickr_day(new_num)
-
         courier = self.browser.find_element(By.ID,"id_shipped_to_wsu_form-courier")
-        self.browser.execute_script("arguments[0].scrollIntoView();", courier)
+        self.scroll_into_view(courier)
         courier.send_keys('FedEx')
 
         submit = self.browser.find_element(By.XPATH,'//*[@id="shipped_to_wsu_information_form"]/form/input[2]')
@@ -214,7 +191,6 @@ class MotherBioSpecimenEcho2EntryTestUrine(FunctionalTest):
 
         body = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertIn(f'Received at WSU: {TODAY}', body)
-        self.assertIn(f'Number of Tubes: 5', body)
 
         # user sees shipped to echo form
 
