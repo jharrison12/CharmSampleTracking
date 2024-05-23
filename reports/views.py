@@ -117,6 +117,24 @@ def collected_report_blood(request):
     return render(request=request,template_name='reports/collected_report_blood.html',context={'collected_blood':collected_blood})
 
 @login_required
+def processed_report_blood(request):
+    if request.user.is_staff:
+        processed_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=True).filter(collection_fk__collection_type='B')
+    else:
+        processed_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=True)\
+            .filter(collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
+    return render(request=request,template_name='reports/processed_report_blood.html',context={'processed_blood':processed_blood})
+
+@login_required
+def frozen_report_blood(request):
+    if request.user.is_staff:
+        frozen_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+    else:
+        frozen_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True)\
+            .filter(collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
+    return render(request=request,template_name='reports/frozen_report_blood.html',context={'frozen_blood':frozen_blood})
+
+@login_required
 def shipped_to_wsu_report_blood(request):
     if request.user.is_staff:
         shipped_to_wsu_biospecimen_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')

@@ -1,0 +1,34 @@
+{% extends "biospecimen/base.html" %}
+{% block header %}Processed Report{% endblock %}
+{% block section %}
+
+        <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Charm ID</th>
+              <th scope="col">Biospecimen ID</th>
+              <th scope="col" class="d-print-none">Trimester</th>
+              <th scope="col">Aliquoted Off Site</th>
+              <th scope="col">Received Date</th>
+              <th scope="col">EDTA Tube Refrigerated Prior to Centrifuge</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for biospecimen in processed_blood %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                  <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                  <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  <td>{{ biospecimen.status_fk.processed_blood_fk.get_processed_aliquoted_off_site_display }}</td>
+                  <td>{{ biospecimen.status_fk.processed_blood_fk.specimen_received_date_time }}</td>
+                  <td>{{ biospecimen.status_fk.processed_blood_fk. }}</td>
+              </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+    </div>
+{% endblock %}
