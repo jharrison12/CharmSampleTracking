@@ -26,9 +26,6 @@ class MotherBioSpecimenEcho2EntryTestBlood(FunctionalTest):
                                                         project_fk__project_name=project)
         return caregiverbio.pk
 
-    def click_outside_of_element(self,html_id):
-        self.browser.find_element(By.ID,html_id).click()
-
     def user_input_collected_blood(self):
         # User visits the caregiver biospecimen page and sees blood
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')

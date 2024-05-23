@@ -66,6 +66,9 @@ class FunctionalTest(StaticLiveServerTestCase):
         time.sleep(1)
 
 
+    def click_outside_of_element(self,html_id):
+        self.browser.find_element(By.ID,html_id).click()
+
 def wait_for_element(browser,myelement):
     #logging.debug(browser,myelement)
     try:

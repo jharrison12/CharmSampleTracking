@@ -627,7 +627,7 @@ class BloodReportsPageTest(FunctionalTest):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
 
-        # User visits the page for P7000
+        # User visits the page for 4100
         ## Is there a better way of navigating using selenium?
         self.browser.get(self.live_server_url)
         self.browser.get(f'{self.browser.current_url}reports/')
@@ -650,11 +650,55 @@ class BloodReportsPageTest(FunctionalTest):
         self.assertIn('4100',text)
         self.assertIn('12BL410001',text)
         self.assertIn('3',text)
-        
+
+    def test_user_can_see_processed_blood_report(self):
+        self.login_staff()
+        motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+
+        #User visits the page for 4100
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports', text)
+        self.browser.find_element(By.LINK_TEXT, 'Processed Report Blood').click()
+
+        text = self.webpage_text()
+        self.assertIn('Processed Report',text)
+
+        text = self.webpage_text()
+        self.assertIn('4100',text)
+        self.assertIn('12BL410001',text)
+        self.assertIn('3',text)
+
+    def test_user_can_see_frozen_blood_report(self):
+        self.login_staff()
+        motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+        motherblood.user_inputs_frozen_information(self)
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports', text)
+        self.browser.find_element(By.LINK_TEXT, 'Frozen Report Blood').click()
+
+        text = self.webpage_text()
+        self.assertIn('Frozen Report', text)
+
+        text = self.webpage_text()
+        self.assertIn('4100', text)
+        self.assertIn('12BL410001', text)
+        self.assertIn('3', text)
+
 
     def test_user_can_see_shipped_to_wsu_blood_report(self):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+        motherblood.user_inputs_frozen_information()
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         # User visits the page for P7000
         ## Is there a better way of navigating using selenium?
@@ -684,6 +728,8 @@ class BloodReportsPageTest(FunctionalTest):
     def test_user_can_see_received_at_wsu_blood_report(self):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+        motherblood.user_inputs_frozen_information(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)
         # User visits the page for P7000
@@ -714,6 +760,8 @@ class BloodReportsPageTest(FunctionalTest):
     def test_user_can_see_shipped_to_echo_blood_report(self):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+        motherblood.user_inputs_frozen_information(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)
         motherblood.user_inputs_shipped_echo_blood_page(self)
