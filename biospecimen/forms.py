@@ -304,7 +304,7 @@ class ProcessedBloodForm(forms.Form):
     edta_purple_refrigerated_removed_date_time =forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),required=False,
                                                                     label='If Yes, date and time EDTA tubes were removed from refrigerated temperature for centrifuging')
 
-    whole_blood_blue_cap_all_collected = forms.ChoiceField(required=False,choices=YES_NO,label=f'Were both {whole_blood_blue_cap_text} collected? (blue cap)')
+    whole_blood_blue_cap_all_collected = forms.ChoiceField(required=False,choices=YES_NO,label=f'Were both {whole_blood_blue_cap_text} collected?')
     whole_blood_blue_cap_partial_aliquot_volume = forms.FloatField(required=False,max_value=1.99, min_value=0,
                                                                    label=f'If any {whole_blood_blue_cap_text} were partial, what is the estimated volume of the partial aliquot?:')
     whole_blood_blue_cap_number_collected = forms.IntegerField(required=False, label=f'If any {whole_blood_blue_cap_text} were missing, how many were collected?',max_value=1,min_value=0)
@@ -329,11 +329,11 @@ class ProcessedBloodForm(forms.Form):
                                                                            label=f'If any {plasma_purle_cap_1_milliliter_text} were missing, how many {plasma_purle_cap_1_milliliter_text} were collected?')
 
     buffy_coat_green_cap_1_ml_all_collected = forms.ChoiceField(required=False,choices=YES_NO,
-                                                                label=f'Were both {buffy_coat_green_cap_text} aliquots collected? (green cap)?')
+                                                                label=f'Were both {buffy_coat_green_cap_text} aliquots collected?')
     buffy_coat_green_cap_1_ml_number_collected = forms.IntegerField(required=False,max_value=2,min_value=0,
                                                                            label=f'If any {buffy_coat_green_cap_text} were missing, how many {buffy_coat_green_cap_text} were collected?')
 
-    red_blood_cells_yellow_cap_1_ml_all_collected = forms.ChoiceField(required=False,choices=YES_NO,label=f'Were both {red_blood_cells_yellow_cap_text} aliquots collected? (yellow cap)')
+    red_blood_cells_yellow_cap_1_ml_all_collected = forms.ChoiceField(required=False,choices=YES_NO,label=f'Were both {red_blood_cells_yellow_cap_text} aliquots collected?')
     red_blood_cells_yellow_cap_1_ml_partial_aliquot_volume = forms.FloatField(required=False,max_value=1.79,min_value=0,
                                                                                label=f'If any {red_blood_cells_yellow_cap_text} were partial, what is the estimated volume of the partial aliquot?:')
     red_blood_cells_yellow_cap_1_ml_number_collected = forms.IntegerField(required=False,max_value=2,min_value=0,
