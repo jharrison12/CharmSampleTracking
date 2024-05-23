@@ -843,3 +843,36 @@ class Component(models.Model):
 
     def __str__(self):
         return f"{self.get_component_type_display()}"
+
+
+class Kit(models.Model):
+    caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT,null=True)
+    kit_number = models.TextField(max_length=4,null=True)
+    kit_stock_number = models.TextField(null=True)
+    visit = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f"{self.kit_number}"
+
+class KitTubeInformation(models.Model):
+
+    class TubeType(models.TextChoices):
+        RED_VAC = 'R', _('Red Vac')
+        PURPLE_VAC = 'U', _('Purple Vac')
+        BLOODSPOT =  'B', _('Bloodspot')
+        WHOLE_BLOOD = 'W',_('Whole Blood')
+        PLASMA = 'P', _('Plasma')
+        BUFFY_COAT = 'C', _('Buffy Coat')
+        RED_BLOOD_CELLS = 'L', _('Red Blood Cells')
+        SERUM = 'S',_('Serum')
+        CUP = 'T',_('Cup')
+        ONE_NINE = 'N',_('1.9')
+        SEVEN_SIX = 'X',_('7.6')
+
+    class Biospecimen(models.TextChoices):
+        BLOOD = 'B',_('Blood')
+        URINE = 'U',_('Urine')
+
+    kit_fk = models.ForeignKey(Kit,on_delete=models.PROTECT)
+    tube_type = models.CharField(max_length=1,choices=TubeType.choices,null=True)
+    specimen_id = models.CharField(max_length=10)
