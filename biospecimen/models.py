@@ -846,15 +846,26 @@ class Component(models.Model):
 
 
 class Kit(models.Model):
+    class Location(models.TextChoices):
+        DETROIT = 'D',_('Detroit')
+        MUNSON = 'M',_('Munson')
+        FLINT = 'F',_('Flint')
+
+    class Biospecimen(models.TextChoices):
+        BLOOD = 'B',_('Blood')
+        URINE = 'U',_('Urine')
+
     caregiver_fk = models.ForeignKey(Caregiver, on_delete=models.PROTECT,null=True)
     kit_number = models.TextField(max_length=4,null=True)
     kit_stock_number = models.TextField(null=True)
     visit = models.IntegerField(null=True)
+    location = models.CharField(max_length=1,choices=Location.choices,null=True)
+    biospecimen_type = models.CharField(max_length=1, choices=Biospecimen.choices,null=True)
 
     def __str__(self):
         return f"{self.kit_number}"
 
-class KitTubeInformation(models.Model):
+class KitTube(models.Model):
 
     class TubeType(models.TextChoices):
         RED_VAC = 'R', _('Red Vac')
@@ -869,10 +880,7 @@ class KitTubeInformation(models.Model):
         ONE_NINE = 'N',_('1.9')
         SEVEN_SIX = 'X',_('7.6')
 
-    class Biospecimen(models.TextChoices):
-        BLOOD = 'B',_('Blood')
-        URINE = 'U',_('Urine')
-
     kit_fk = models.ForeignKey(Kit,on_delete=models.PROTECT)
     tube_type = models.CharField(max_length=1,choices=TubeType.choices,null=True)
     specimen_id = models.CharField(max_length=10)
+
