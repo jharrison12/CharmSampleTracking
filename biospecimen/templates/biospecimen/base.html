@@ -37,8 +37,10 @@
 </div>
 <body>
     <div class="container">
-        <h1>{% block header %}{% endblock %}</h1>
-        {% block biobutton %}{% endblock %}
+        <div class="d-flex">
+            <h1 class="p-2">{% block header %}{% endblock %}</h1>
+            {% block biobutton %}{% endblock %}
+        </div>
         {% block section %}{% endblock %}
         {% block bio_logic %}{% endblock %}
     </div>
