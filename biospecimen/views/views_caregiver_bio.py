@@ -4,7 +4,7 @@ from biospecimen.models import CaregiverBiospecimen, ChildBiospecimen, Status, C
     NoConsent, ShippedWSU, ShippedECHO, \
     KitSent, Incentive, Declined, ReceivedWSU, ShippedMSU, ReceivedMSU, Project, Caregiver, PregnancyTrimester, Child, \
     Component, URINE, BLOOD_DICT_FORM, BLOOD_DICT, ComponentError, \
-    ProcessedUrine, UrineAliquot, Frozen, BloodTube, ProcessedBlood, BloodAliquot, BloodSpotCard
+    ProcessedUrine, UrineAliquot, Frozen, BloodTube, ProcessedBlood, BloodAliquot, BloodSpotCard,Kit,KitTube
 from biospecimen.forms import CaregiverBiospecimenForm, IncentiveForm, CollectedBiospecimenUrineForm, InitialBioForm, \
     ShippedChoiceForm, ShippedtoWSUForm, \
     ShippedtoEchoForm, CollectedBloodForm, CollectedBiospecimenHairSalivaForm, ShippedChoiceEchoForm, \
@@ -387,6 +387,10 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
             shipped_echo_form = ShippedtoEchoForm(prefix="shipped_to_echo_form")
     elif collection_type==URINE:
         logging.debug(f'{ not processed_item}')
+        caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+        logging.critical(f"caregiver is {caregiver}")
+        tube_ids = KitTube.objects.filter(kit_fk__biospecimen_type='U',kit_fk__caregiver_fk=caregiver)
+        logging.critical(f"{tube_ids}")
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
@@ -421,7 +425,8 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
                                                                                                   'urine_aliquot_18ml_items': urine_aliquot_18ml_items,
                                                                                                   'urine_aliquot_7ml_items': urine_aliquot_7ml_items,
                                                                                                   'frozen_item':frozen_item,
-                                                                                                  'frozen_form':frozen_form
+                                                                                                  'frozen_form':frozen_form,
+                                                                                                  'tube_ids':tube_ids
                                                                                                   })
 
 @login_required

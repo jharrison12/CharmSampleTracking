@@ -2,8 +2,10 @@
 {% block javascript_block %}
     <script type="text/javascript" src="/static/biospecimen/js/flatpickr_config.js" async></script>
     <script type="text/javascript" src="/static/biospecimen/js/urine_processed.js" async></script>
+    <script type="text/javascript" src="/static/biospecimen/js/modal_urine_tubes.js" async></script>
 {% endblock %}
-{% block header %}Charm ID: {{ charm_project_identifier }}{% endblock %}
+{% block header %}Charm ID: {{ charm_project_identifier }}
+    <button type="button" data-bs-toggle="modal" data-bs-target="#urine_tubes_modal"  class="btn btn-primary" id="barcode_button">Barcodes</button>{% endblock %}
 {% block section %}
     <div class="row" id="biospecimen_information">
     <div class="col-sm">ID: {{ caregiver_bio.biospecimen_id }}</div>
@@ -318,4 +320,43 @@
             </div>
         </div>
     {% endif %}
+    <!-- Modal -->
+{#     <div class="modal fade" id="urine_tubes_modal" role="dialog">#}
+{#        <div class="modal-dialog modal-lg">#}
+{#          <div class="modal-content">#}
+{#            <div class="modal-header">#}
+{#              <button type="button" class="close" data-dismiss="modal">&times;</button>#}
+{#              <h4 class="modal-title">Modal Header</h4>#}
+{#            </div>#}
+{#            <div class="modal-body">#}
+{#              <p>This is a large modal.</p>#}
+{#            </div>#}
+{#            <div class="modal-footer">#}
+{#              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
+{#            </div>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+    <div class="modal fade" id="urine_tubes_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Tube ID Numbers</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for tube in tube_ids %}
+                {{ tube }}
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+              <a type="button" id='modal-link' class="btn btn-secondary btn-lg">Confirm</a>
+              <button type="button" class="btn btn-primary btn-lg" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {#  Below is needed to reload javascript when user hits back button (which I imagine will happen)  #}
+    {#  https://stackoverflow.com/questions/9046184/reload-the-site-when-reached-via-browsers-back-button  #}
+    <input type="hidden" id="refresh" value="no">
 {% endblock %}
