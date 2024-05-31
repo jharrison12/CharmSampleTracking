@@ -477,6 +477,10 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     frozen_form = None
     logging.critical(f"Caregiver bio is {caregiver_bio}")
     logging.critical(f"if value for not collected blood bio is {not_collected_item.exists()} {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
+    caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    logging.critical(f"caregiver is {caregiver}")
+    tube_ids = KitTube.objects.filter(kit_fk__biospecimen_type='B', kit_fk__caregiver_fk=caregiver)
+    logging.critical(f"{tube_ids}")
     if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True).exists():
         logging.critical(f"made it to not collected form")
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
@@ -517,7 +521,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'blood_aliquots':blood_aliquots,
                                                                                                         'blood_spot_card':blood_spot_card,
                                                                                                         'frozen_form':frozen_form,
-                                                                                                        'shipped_to_wsu_item':shipped_to_wsu_item
+                                                                                                        'shipped_to_wsu_item':shipped_to_wsu_item,
+                                                                                                        'tube_ids':tube_ids
                                                                                                         })
 
 @login_required
