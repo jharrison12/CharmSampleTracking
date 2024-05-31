@@ -3,7 +3,9 @@
     <script type="text/javascript" src="/static/biospecimen/js/flatpickr_config.js" async></script>
 {% endblock %}
 {% block header %}Charm ID: {{ charm_project_identifier }}
-    <button type="button" data-bs-toggle="modal" data-bs-target="#blood_tubes_modal"  class="btn btn-primary" id="barcode_button">Barcodes</button>
+{% endblock %}
+{% block biobutton %}
+        <button type="button" data-bs-toggle="modal" data-bs-target="#blood_tubes_modal"  class="btn btn-primary" id="barcode_button">Barcodes</button>
 {% endblock %}
 {% block section %}
     <div class="row" id="biospecimen_information">
