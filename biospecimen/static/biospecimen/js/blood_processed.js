@@ -29,7 +29,6 @@ window.addEventListener("DOMContentLoaded", (event) => {
     }
     ;
 
-// id_processed_form-blood_spot_card_completed
 
     const processed_aliquoted_off_site = document.getElementById('id_processed_form-processed_aliquoted_off_site')
     if (processed_aliquoted_off_site) {
@@ -79,11 +78,6 @@ window.addEventListener("DOMContentLoaded", (event) => {
         })
     };
 
-    // document.getElementById('id_processed_form-buffy_coat_green_cap_1_ml_all_collected').addEventListener('change', function () {
-    //     var style = this.value == 'False' ? 'block' : 'none';
-    //     document.getElementById('buffy_coat_partial_aliquots').style.display = style;
-    // });
-
     const red_blood_cells_yellow_cap_1_ml_all_collected = document.getElementById('id_processed_form-red_blood_cells_yellow_cap_1_ml_all_collected')
     if (red_blood_cells_yellow_cap_1_ml_all_collected){
             red_blood_cells_yellow_cap_1_ml_all_collected.addEventListener('change', function () {
@@ -102,7 +96,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
     const serum_red_cap_1_ml_all_collected = document.getElementById('id_processed_form-serum_red_cap_1_ml_all_collected')
     if (serum_red_cap_1_ml_all_collected){
-        document.getElementById('id_processed_form-serum_red_cap_1_ml_all_collected').addEventListener('change', function () {
+        serum_red_cap_1_ml_all_collected.addEventListener('change', function () {
         var style = this.value == 'False' ? 'block' : 'none';
         document.getElementById('serum_red_cap_1_ml_partial_aliquots').style.display = style;
         })
@@ -152,10 +146,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     }
 ;
 
-    // $('#id_processed_form-refrigerated_prior_to_processing').click(function() {
-    //   $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
-    //   $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
-    // });
+
 });
 
 // Reload javascript if user hits back button.
