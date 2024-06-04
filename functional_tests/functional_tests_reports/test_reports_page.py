@@ -1,3 +1,4 @@
+import datetime
 import logging
 import time
 import unittest
@@ -682,13 +683,21 @@ class BloodReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
 
+        #User visits the page for 4100
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
         self.assertIn('Reports', text)
         self.browser.find_element(By.LINK_TEXT, 'Frozen Report Blood').click()
+
+        time.sleep(5)
 
         text = self.webpage_text()
         self.assertIn('Frozen Report', text)
 
         text = self.webpage_text()
+        self.assertIn(datetime.datetime.today().strftime('%Y-%m-%d'), text)
         self.assertIn('4100', text)
         self.assertIn('12BL410001', text)
         self.assertIn('3', text)
