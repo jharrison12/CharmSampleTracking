@@ -170,7 +170,7 @@ class CaregiverEcho2BiospecimenPageUrine(DatabaseSetup):
         self.collected_send_form(primary_key)
         self.processed_send_form(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/')
-        logging.critical(response.content)
+        logging.debug(response.content)
         self.assertContains(response,'If any aliquots were partial, what is the estimated volume of the partial aliquot?:1.1')
 
     def test_echo2_bio_page_shows_shipped_to_wsu_data_if_complete(self):
@@ -1104,7 +1104,7 @@ class CaregiverEcho2BiospecimenPageBlood(DatabaseSetup):
         self.blood_shipped_to_wsu(primary_key)
         self.blood_received_at_wsu(primary_key)
         response = self.client.get(f'/biospecimen/caregiver/4100/{primary_key}/entry/blood/')
-        logging.critical(response.context)
+        logging.debug(response.context)
         self.assertIsInstance(response.context['shipped_echo_form'], ShippedtoEchoBloodForm)
 
     #View updates data tests

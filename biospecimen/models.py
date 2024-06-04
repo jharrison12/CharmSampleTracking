@@ -386,7 +386,7 @@ class ProcessedBlood(models.Model):
         blood_spot_card = BloodSpotCard.objects.create()
         blood_spot_card.save_card(form,request,caregiver_bio)
         for blood_item in list(BLOOD_ITEM_DICT.keys()):
-            logging.critical(f'blood item is {blood_item}')
+            logging.debug(f'blood item is {blood_item}')
             blood_aliquot = BloodAliquot.objects.create()
             blood_aliquot.save_aliquot(form=form,request=request,caregiver_bio=caregiver_bio,blood_type_text=blood_item)
 
@@ -523,8 +523,8 @@ class BloodAliquot(models.Model):
         self.caregiver_bio_fk = caregiver_bio
         self.processed_by =  self.CollectionLocation.CLINIC
         self.processed_fk = caregiver_bio.status_fk.processed_blood_fk
-        logging.critical(f"blood type text is {blood_type_text}")
-        logging.critical(BLOOD_ITEM_DICT[blood_type_text]['blood_type'])
+        logging.debug(f"blood type text is {blood_type_text}")
+        logging.debug(BLOOD_ITEM_DICT[blood_type_text]['blood_type'])
         self.aliquot_blood_type = BLOOD_ITEM_DICT[blood_type_text]['blood_type']
         self.aliquot_cap_color = BLOOD_ITEM_DICT[blood_type_text]['cap_color']
         self.aliquot_vial_size = BLOOD_ITEM_DICT[blood_type_text]['vial_amount']

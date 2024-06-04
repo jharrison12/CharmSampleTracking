@@ -232,10 +232,10 @@ def caregiver_biospecimen_initial_post(request,caregiver_charm_id,caregiver_bio_
         if form.is_valid():
             new_status = Status.objects.create()
             initial_status = new_status.save_initial_form(form=form,caregiver_bio=caregiver_bio,request=request)
-            logging.critical(f"initial status is {initial_status}")
-            logging.critical(f" is instance {isinstance(initial_status,NotCollected)}")
+            logging.debug(f"initial status is {initial_status}")
+            logging.debug(f" is instance {isinstance(initial_status,NotCollected)}")
             if initial_status=='N':
-                logging.critical(f"Found not collected")
+                logging.debug(f"Found not collected")
                 return redirect("biospecimen:caregiver_biospecimen_not_collected", caregiver_charm_id=caregiver_charm_id,
                                 caregiver_bio_pk=caregiver_bio_pk)
             elif collection_type in BLOOD:
@@ -388,9 +388,9 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
     elif collection_type==URINE:
         logging.debug(f'{ not processed_item}')
         caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-        logging.critical(f"caregiver is {caregiver}")
+        logging.debug(f"caregiver is {caregiver}")
         tube_ids = KitTube.objects.filter(kit_fk__biospecimen_type='U',kit_fk__caregiver_fk=caregiver)
-        logging.critical(f"{tube_ids}")
+        logging.debug(f"{tube_ids}")
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True):
             collected_form = CollectedBiospecimenUrineForm(prefix='urine_form')
         if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
@@ -432,7 +432,7 @@ def caregiver_biospecimen_entry(request,caregiver_charm_id,caregiver_bio_pk):
 @login_required
 def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
-    logging.critical(f'caregiver bio is {caregiver_bio} pk {caregiver_bio.pk}')
+    logging.debug(f'caregiver bio is {caregiver_bio} pk {caregiver_bio.pk}')
     try:
         caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:
@@ -445,7 +445,7 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     caregiver_bloods_shipped_echo = None
     if caregiver_bio.status_fk and caregiver_bio.status_fk.collected_fk:
         caregiver_bloods_collected = return_blood_tubes(caregiver_bio=caregiver_bio)
-        logging.critical(f"caregiver blood tubes {caregiver_bloods_collected}")
+        logging.debug(f"caregiver blood tubes {caregiver_bloods_collected}")
     if caregiver_bio.status_fk and caregiver_bio.status_fk.shipped_wsu_fk:
         caregiver_bloods_shipped_wsu = return_caregiver_bloods(caregiver_bio,shipped_wsu_fk=caregiver_bio.status_fk.shipped_wsu_fk)
     if caregiver_bio.status_fk and caregiver_bio.status_fk.received_wsu_fk:
@@ -463,9 +463,9 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     try:
         blood_spot_card = BloodSpotCard.objects.get(caregiver_bio_fk=caregiver_bio)
     except BloodSpotCard.DoesNotExist:
-        logging.critical(f"Blood spots card not found")
+        logging.debug(f"Blood spots card not found")
         blood_spot_card = None
-    logging.critical(f'blood aliquots are {blood_aliquots}')
+    logging.debug(f'blood aliquots are {blood_aliquots}')
     shipped_choice = None
     shipped_wsu_form = None
     shipped_echo_form = None
@@ -475,19 +475,19 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     collected_form=None
     processed_form = None
     frozen_form = None
-    logging.critical(f"Caregiver bio is {caregiver_bio}")
-    logging.critical(f"if value for not collected blood bio is {not_collected_item.exists()} {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
+    logging.debug(f"Caregiver bio is {caregiver_bio}")
+    logging.debug(f"if value for not collected blood bio is {not_collected_item.exists()} {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
-    logging.critical(f"caregiver is {caregiver}")
+    logging.debug(f"caregiver is {caregiver}")
     tube_ids = KitTube.objects.filter(kit_fk__biospecimen_type='B', kit_fk__caregiver_fk=caregiver)
-    logging.critical(f"{tube_ids}")
+    logging.debug(f"{tube_ids}")
     if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True).exists():
-        logging.critical(f"made it to not collected form")
+        logging.debug(f"made it to not collected form")
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=True).exists():
         collected_form = CollectedBloodForm(prefix='blood_form')
     if collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and not processed_item:
-            logging.critical(f"in processed form if block")
+            logging.debug(f"in processed form if block")
             processed_form = ProcessedBloodForm(prefix='processed_form')
     elif collected_item.exists() and collected_item.filter(collected_date_time__isnull=False) and processed_item \
             and not (caregiver_bio.status_fk.frozen_fk):
@@ -564,7 +564,7 @@ def caregiver_biospecimen_post(request,caregiver_charm_id,caregiver_bio_pk):
                         caregiver_bio_pk=caregiver_bio_pk)
         elif collection_type in BLOOD:
             form = CollectedBloodForm(data=request.POST,prefix='blood_form')
-            logging.critical(f'in collection type blood post page')
+            logging.debug(f'in collection type blood post page')
             if form.is_valid():
                 blood_item = Collected.objects.get(status__caregiverbiospecimen=caregiver_bio)
                 blood_item.save_blood(form=form,request=request,caregiver_bio=caregiver_bio)
@@ -893,8 +893,8 @@ def caregiver_biospecimen_not_collected(request,caregiver_charm_id,caregiver_bio
     except PermissionError:
         return redirect('biospecimen:error_page')
     not_collected_item = NotCollected.objects.filter(status__caregiverbiospecimen=caregiver_bio)
-    logging.critical(f"does not collected item exist {not_collected_item.exists()}")
-    logging.critical(f"refused or other is null {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
+    logging.debug(f"does not collected item exist {not_collected_item.exists()}")
+    logging.debug(f"refused or other is null {not_collected_item.filter(refused_or_other__isnull=True).exists()}")
     not_collected_form = None
     if not_collected_item.exists() and not_collected_item.filter(refused_or_other__isnull=True).exists():
         not_collected_form = NotCollectedForm(prefix='not_collected_form')
@@ -914,10 +914,10 @@ def caregiver_biospecimen_blood_processed_post(request,caregiver_charm_id,caregi
     except PermissionError:
         return redirect('biospecimen:error_page')
     processed_item = ProcessedBlood.objects.create()
-    logging.critical(f'in caregiver blood post')
+    logging.debug(f'in caregiver blood post')
     if request.method == "POST":
         form = ProcessedBloodForm(data=request.POST, prefix='processed_form')
-        logging.critical(f"is form valid {form.is_valid()} {form.errors}")
+        logging.debug(f"is form valid {form.is_valid()} {form.errors}")
         if form.is_valid():
             processed_item.save_processed(form=form, request=request,caregiver_bio=caregiver_bio)
         else:
