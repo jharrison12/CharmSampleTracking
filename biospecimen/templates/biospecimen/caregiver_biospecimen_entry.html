@@ -331,6 +331,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+              {% if not tube_ids %}
+                        Currently no tube IDs for this study participant.
+              {% else %}
               <table class="table">
                   <thead>
                     <tr>
@@ -339,14 +342,17 @@
                     </tr>
                   </thead>
                     <tbody>
-                    {% for tube in tube_ids %}
-                        <tr>
-                            <td>{{ tube.specimen_id }}</td>
-                            <td>{{ tube.get_tube_type_display }}</td>
-                        </tr>
-                    {% endfor %}
+
+                        {% for tube in tube_ids %}
+                            <tr>
+                                <td>{{ tube.specimen_id }}</td>
+                                <td>{{ tube.get_tube_type_display }}</td>
+                            </tr>
+                        {% endfor %}
+
                       </tbody>
               </table>
+             {% endif %}
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-primary btn-lg" data-bs-dismiss="modal">Close</button>
