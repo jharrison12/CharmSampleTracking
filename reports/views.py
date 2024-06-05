@@ -1,7 +1,7 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404,redirect
-from biospecimen.models import CaregiverBiospecimen,Caregiver,Component
+from biospecimen.models import CaregiverBiospecimen,Caregiver,Component,BloodSpotCard
 from django.db.models import Prefetch
 import io
 from django.http import FileResponse
@@ -129,6 +129,7 @@ def processed_report_blood(request):
 def frozen_report_blood(request):
     if request.user.is_staff:
         frozen_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
+        # blood_card_frozen = BloodSpotCard.objects.get(caregiver_bio_fk=)
     else:
         frozen_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True)\
             .filter(collection_fk__collection_type='B').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)

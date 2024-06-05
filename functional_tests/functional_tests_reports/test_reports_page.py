@@ -695,7 +695,7 @@ class BloodReportsPageTest(FunctionalTest):
 
         text = self.webpage_text()
         self.assertIn('Frozen Report', text)
-
+        time.sleep(5)
         text = self.webpage_text()
         self.assertIn(datetime.datetime.today().strftime('%Y-%m-%d'), text)
         self.assertIn('4100', text)

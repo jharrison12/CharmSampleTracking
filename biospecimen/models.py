@@ -462,7 +462,7 @@ class BloodSpotCard(models.Model):
         CLINIC = 'C',_('Clinic')
 
     logged_by = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
-    caregiver_bio_fk = models.ForeignKey("CaregiverBiospecimen",on_delete=models.PROTECT,blank=True, null=True)
+    caregiver_bio_fk = models.OneToOneField("CaregiverBiospecimen",on_delete=models.PROTECT,blank=True, null=True)
     processed_fk = models.ForeignKey(ProcessedBlood, on_delete=models.PROTECT, blank=True, null=True)
     blood_spot_card_completed = models.BooleanField(null=True, blank=True)
     blood_spot_card_number_of_complete_spots = models.IntegerField(null=True,blank=True)

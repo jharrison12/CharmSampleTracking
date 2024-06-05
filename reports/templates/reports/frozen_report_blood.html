@@ -25,7 +25,7 @@
                   <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                   <td>{{ biospecimen.status_fk.frozen_fk.freezer_placed_date_time }}</td>
                   <td>{{ biospecimen.status_fk.frozen_fk.number_of_tubes }}</td>
-                  <td>{{ biospecimen }}</td>
+                  <td>{{ biospecimen.bloodspotcard.blood_spot_card_placed_in_freezer }}</td>
                   <td>{{ biospecimen.status_fk.frozen_fk.notes_and_deviations }}</td>
               </tr>
           {% endfor %}
