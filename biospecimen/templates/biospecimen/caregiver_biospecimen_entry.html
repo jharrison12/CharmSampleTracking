@@ -54,16 +54,13 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Collected</button>
             </div>
             <div class="col-8">
+                {% if collection_type in 'U' %}<div>Last time participant ate or drank: {{ caregiver_bio.status_fk.collected_fk.eat_drink_date_time}}</div>{% endif %}
+                {% if collection_type in 'U' %}<div>Everything that was consumed the last time the participant ate or drank anything: {{ caregiver_bio.status_fk.collected_fk.eat_drink_text_field}}</div>{% endif %}
                 <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time|date:'m/d/Y H:i' }}</div>
-                {% if collection_type not in 'H,L,U' %}<div>Processed Date Time: {{ caregiver_bio.status_fk.collected_fk.processed_date_time}}</div>{% endif %}
-                {% if collection_type not in  'H,L,U' %}<div>Stored Date Time: {{ caregiver_bio.status_fk.collected_fk.stored_date_time  }}</div>{% endif %}
-                {% if collection_type not in  'H,L,C,U' %}<div>Number of Tubes: {{ caregiver_bio.status_fk.collected_fk.number_of_tubes }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C' %}<div>Kit Distribution: {{ caregiver_bio.status_fk.collected_fk.get_kit_distribution_display }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C' %}<div>Method of Collection: {{ caregiver_bio.status_fk.collected_fk.get_method_of_collection_display }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C' %}<div>Collection Location: {{ caregiver_bio.status_fk.collected_fk.get_collection_location_display }}</div>{% endif %}
                 {% if collection_type not in  'H,L,C' %}<div>Notes and Deviations: {{ caregiver_bio.status_fk.collected_fk.notes_and_deviations }}</div>{% endif %}
-                {% if collection_type in 'H,L,C' %}<div>In Person/Remote: {{ caregiver_bio.status_fk.collected_fk.get_in_person_remote_display }}</div>{% endif %}
-                {% if collection_type in 'C' %}<div>Placed in Formalin: {{ caregiver_bio.status_fk.collected_fk.placed_in_formalin_date_time }}</div>{% endif %}
                 <div>Logged By: {{ caregiver_bio.status_fk.collected_fk.logged_by.username }}</div>
             </div>
         </div>

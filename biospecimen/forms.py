@@ -131,7 +131,7 @@ class CollectedBiospecimenPlacentaForm(forms.Form):
 
 class CollectedBiospecimenUrineForm(forms.Form):
     eat_drink_datetime = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the last time the participant ate or drank anything other than plain water?')
-    eat_drink_text_field = forms.CharField(max_length=255, required=False,label='List everything that was consumed the last time the particpiant ate or drank anything:')
+    eat_drink_text_field = forms.CharField(max_length=255, required=False,label='List everything that was consumed the last time the participant ate or drank anything:')
     collected_date_time = forms.DateTimeField( widget=forms.TextInput(attrs={'class': "datetimepicker"}))
     notes_and_deviations = forms.CharField(max_length=255,required=False)
 

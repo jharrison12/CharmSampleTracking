@@ -363,6 +363,8 @@ class StaffBloodReportPageTest(FunctionalTest):
     def test_user_can_see_shipped_to_wsu_blood_staff_report(self):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+        motherblood.user_inputs_frozen_information(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
 
         self.browser.get(self.live_server_url)
@@ -399,6 +401,8 @@ class StaffBloodReportPageTest(FunctionalTest):
     def test_user_can_see_received_at_wsu_blood_staff_report(self):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+        motherblood.user_inputs_frozen_information(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)
 
@@ -436,6 +440,8 @@ class StaffBloodReportPageTest(FunctionalTest):
     def test_user_can_see_shipped_to_echo_blood_staff_report(self):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+        motherblood.user_inputs_frozen_information(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         motherblood.user_inputs_received_at_wsu_blood(self)
         motherblood.user_inputs_shipped_echo_blood_page(self)
@@ -705,7 +711,7 @@ class BloodReportsPageTest(FunctionalTest):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
         motherblood.user_inputs_processed_blood_information(self)
-        motherblood.user_inputs_frozen_information()
+        motherblood.user_inputs_frozen_information(self)
         motherblood.user_inputs_shipped_to_wsu_blood(self)
         # User visits the page for P7000
         ## Is there a better way of navigating using selenium?
@@ -721,7 +727,7 @@ class BloodReportsPageTest(FunctionalTest):
 
         self.assertIn('4100', text)
 
-        # user sees a urine that is collected
+        # user sees a blood that is collected
 
         self.assertIn('12BL410001', text)
 

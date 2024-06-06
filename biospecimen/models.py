@@ -148,7 +148,7 @@ class Collected(models.Model):
         caregiver_bio.save()
 
     def save_urine(self,form,request):
-        self.eat_drink_datetime = form.cleaned_data['eat_drink_datetime']
+        self.eat_drink_date_time = form.cleaned_data['eat_drink_datetime']
         self.eat_drink_text_field = form.cleaned_data['eat_drink_text_field']
         self.collected_date_time = form.cleaned_data['collected_date_time']
         self.notes_and_deviations = form.cleaned_data['notes_and_deviations']
