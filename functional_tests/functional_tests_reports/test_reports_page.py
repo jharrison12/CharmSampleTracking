@@ -691,13 +691,11 @@ class BloodReportsPageTest(FunctionalTest):
         self.assertIn('Reports', text)
         self.browser.find_element(By.LINK_TEXT, 'Frozen Report Blood').click()
 
-        time.sleep(5)
-
         text = self.webpage_text()
         self.assertIn('Frozen Report', text)
-        time.sleep(5)
+
         text = self.webpage_text()
-        self.assertIn(datetime.datetime.today().strftime('%Y-%m-%d'), text)
+        self.assertIn(datetime.datetime.today().strftime('%B %#d, %Y'), text)
         self.assertIn('4100', text)
         self.assertIn('12BL410001', text)
         self.assertIn('3', text)
