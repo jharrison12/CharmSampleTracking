@@ -187,9 +187,12 @@ class StaffUrineReportPageTest(FunctionalTest):
 
         self.assertIn('Reports',text)
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
-
+        time.sleep(10)
         text = self.webpage_text()
         self.assertIn('Processed Report',text)
+        #4101 Should not be seen because it is hidden by javascript
+        self.assertNotIn('4101',text)
+        self.assertNotIn('12UR410101',text)
 
 
     def test_user_can_see_staff_shipped_to_wsu_urine_report(self):

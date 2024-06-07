@@ -1,4 +1,5 @@
 $('#collected_urine_report').hide();
+$('#processed_urine_report').hide();
 $('#shipped_to_wsu_urine_report').hide();
 $('#received_at_wsu_urine_report').hide();
 $('#shipped_to_echo_urine_report').hide();
@@ -16,6 +17,16 @@ $(document).ready(
         }
 }));
 
+$(document).ready(
+    document.querySelector('#processed_report_header').addEventListener('click', function(){
+        console.log("IS THIS WORKING")
+        if ($('#processed_urine_report').is(":hidden")){
+              $('#processed_urine_report').show();
+            }
+        else {
+           return $('#processed_urine_report').hide();
+        }
+}));
 
 $(document).ready(
     document.querySelector('#shipped_to_wsu_report_header').addEventListener('click', function(){
