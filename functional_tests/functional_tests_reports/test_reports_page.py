@@ -233,13 +233,12 @@ class StaffUrineReportPageTest(FunctionalTest):
         #user clicks on report header
         self.browser.find_element(By.ID,'frozen_report_header').click()
         text = self.webpage_text()
-        time.sleep(10)
+
         self.assertIn('Freezer Placed Date',text)
         self.assertIn('Number of Tubes',text)
         self.assertIn('Notes',text)
         self.assertIn('2',text)
         self.assertIn('they were really cold',text)
-
 
 
     def test_user_can_see_staff_shipped_to_wsu_urine_report(self):
@@ -279,7 +278,6 @@ class StaffUrineReportPageTest(FunctionalTest):
         self.assertNotIn('Number of Tubes', text)
         self.assertNotIn('5', text)
 
-    ##TODO implement search bar
 
     def test_user_can_see_staff_recieved_at_wsu_urine_report(self):
         self.login_staff()
@@ -416,15 +414,32 @@ class StaffBloodReportPageTest(FunctionalTest):
         self.browser.find_element(By.ID,'collected_report_header').click()
         text = self.webpage_text()
         self.assertIn('4100',text)
-        self.assertIn('12BL410001',text)
-        self.assertIn('3',text)
+        self.assertIn('Collected Date',text)
+        self.assertIn('Eat/Drink Date',text)
+        self.assertIn('Tube #1 Partial/Complete',text)
+        self.assertIn('Tube #1 Blood Type',text)
+        self.assertIn('Tube #1 Hemolysis',text)
+        self.assertIn('Tube #1 Estimated Volume',text)
+        self.assertIn('Tube #2 Partial/Complete',text)
+        self.assertIn('Tube #2 Blood Type',text)
+        self.assertIn('Tube #2 Hemolysis',text)
+        self.assertIn('Tube #2 Estimated Volume',text)
+        self.assertIn('Tube #3 Partial/Complete',text)
+        self.assertIn('Tube #3 Blood Type',text)
+        self.assertIn('Tube #3 Hemolysis',text)
+        self.assertIn('Tube #3 Estimated Volume',text)
+        self.assertIn('Partial',text)
+        self.assertIn('Mild',text)
+        self.assertIn('EDTA',text)
+        self.assertIn('Serum',text)
+
 
         #User clicks on header to hide report
         self.browser.find_element(By.ID,'collected_report_header').click()
         text = self.webpage_text()
         self.assertNotIn('4100',text)
         self.assertNotIn('12BL410001',text)
-        self.assertIn('3',text)
+        self.assertNotIn('Hemolysis',text)
 
         ##TODO implement search bar
 

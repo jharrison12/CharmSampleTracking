@@ -53,10 +53,8 @@ def biospecimen_report_urine(request):
 @login_required
 @staff_member_required
 def biospecimen_report_blood(request):
-    collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,
-                                                                status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
-    collected_blood.prefetch_related('status_fk__collected_fk__component_set').all().order_by(
-        'component__component_type')
+    collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__collected_fk__collected_date_time__isnull=False, status_fk__frozen_fk__isnull=True).filter(collection_fk__collection_type='B')
+    collected_blood.prefetch_related('bloodtube_set').all()
     shipped_to_wsu_biospecimen_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
     shipped_to_wsu_biospecimen_blood.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
         'component__component_type')

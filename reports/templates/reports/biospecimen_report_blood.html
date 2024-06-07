@@ -12,11 +12,19 @@
                   <th scope="col">Biospecimen ID</th>
                   <th scope="col" class="d-print-none">Trimester</th>
                   <th scope="col">Collected Date</th>
-                    {% for biospecimen in collected_blood %}
-                        {% for component in biospecimen.component_set.all %}
-                            <th scope="col">{{ component }} Number of Tubes:</th>
-                        {% endfor %}
-                    {% endfor %}
+                  <th scope="col">Eat/Drink Date</th>
+                  <th scope="col">Tube #1 Partial/Complete</th>
+                  <th scope="col">Tube #1 Blood Type</th>
+                  <th scope="col">Tube #1 Hemolysis</th>
+                  <th scope="col">Tube #1 Estimated Volume</th>
+                  <th scope="col">Tube #2 Partial/Complete</th>
+                  <th scope="col">Tube #2 Blood Type</th>
+                  <th scope="col">Tube #2 Hemolysis</th>
+                  <th scope="col">Tube #2 Estimated Volume</th>
+                  <th scope="col">Tube #3 Partial/Complete</th>
+                  <th scope="col">Tube #3 Blood Type</th>
+                  <th scope="col">Tube #3 Hemolysis</th>
+                  <th scope="col">Tube #3 Estimated Volume</th>
                 </tr>
               </thead>
               <tbody>
@@ -27,11 +35,14 @@
                       <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                       <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                       <td>{{ biospecimen.status_fk.collected_fk.collected_date_time }}</td>
-
-                  {% for component in biospecimen.component_set.all %}
-                      <td>{{ component.number_of_tubes }}</td>
-                     {% endfor %}
-                      </tr>
+                      <td>{{ biospecimen.status_fk.collected_fk.eat_drink_date_time }}</td>
+                      {% for tube in biospecimen.bloodtube_set.all %}
+                        <td>{{ tube.get_complete_or_partial_display }}</td>
+                        <td>{{ tube.get_tube_type_display }}</td>
+                        <td>{{ tube.get_hemolysis_display }}</td>
+                        <td>{{ tube.partial_estimated_volume }}</td>
+                      {% endfor %}
+                  </tr>
               {% endfor %}
 
               </tbody>
