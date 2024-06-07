@@ -1,5 +1,6 @@
 $('#collected_urine_report').hide();
 $('#processed_urine_report').hide();
+$('#frozen_urine_report').hide();
 $('#shipped_to_wsu_urine_report').hide();
 $('#received_at_wsu_urine_report').hide();
 $('#shipped_to_echo_urine_report').hide();
@@ -25,6 +26,17 @@ $(document).ready(
             }
         else {
            return $('#processed_urine_report').hide();
+        }
+}));
+
+$(document).ready(
+    document.querySelector('#frozen_report_header').addEventListener('click', function(){
+        console.log("IS THIS WORKING")
+        if ($('#frozen_urine_report').is(":hidden")){
+              $('#frozen_urine_report').show();
+            }
+        else {
+           return $('#frozen_urine_report').hide();
         }
 }));
 

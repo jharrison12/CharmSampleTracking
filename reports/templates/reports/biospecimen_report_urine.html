@@ -44,16 +44,62 @@
                       <th scope="col">Charm ID</th>
                       <th scope="col">Biospecimen ID</th>
                       <th scope="col" class="d-print-none">Trimester</th>
+                      <th scope="col">Processed Date</th>
+                      <th scope="col">All 18ml Vials Collected?</th>
+                      <th scope="col">18ml Estimated Volume</th>
+                      <th scope="col">18ml Aliquots Collected</th>
+                      <th scope="col">All 7ml Collected?</th>
+                      <th scope="col">7ml Estimated Volume</th>
+                      <th scope="col">7ml Aliquots Collected</th>
+                      <th scope="col">Notes and Deviations</th>
                     </tr>
                   </thead>
                   <tbody>
-                  {% for biospecimen in shipped_to_wsu_urine %}
+                  {% for biospecimen in processed_urine %}
                       <tr class="d-print-table-row">
                         <th scope="row">{{ forloop.counter }}</th>
                           <td class="d-print-table-cell"><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
                           <td class="d-print-table-cell"><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
                           <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
-
+                          <td>{{ biospecimen.status_fk.processed_fk.processed_aliquoted_date_time }}</td>
+                          <td>{{ biospecimen.status_fk.processed_fk.all_18_collected }}</td>
+                          <td>{{ biospecimen.status_fk.processed_fk.partial_aliquot_18ml_volume }}</td>
+                          <td>{{ biospecimen.status_fk.processed_fk.number_of_tubes_collected_18_ml_if_some_missing }}</td>
+                          <td>{{ biospecimen.status_fk.processed_fk.all_7_collected }}</td>
+                          <td>{{ biospecimen.status_fk.processed_fk.partial_aliquot_7ml_volume }}</td>
+                          <td>{{ biospecimen.status_fk.processed_fk.number_of_tubes_collected_7_ml_if_some_missing }}</td>
+                          <td>{{ biospecimen.status_fk.processed_fk.notes_and_deviations }}</td>
+                      </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+    </div>
+        <div class="row border border-2 border-primary p-3 rounded mb-2" id="frozen_urine_report_container">
+        <h1 id="frozen_report_header">Frozen Report</h1>
+            <div class="table-responsive d-print-table" id="frozen_urine_report">
+                <table class="table table-hover d-print-table">
+                  <thead>
+                    <tr class=d-print-table-row">
+                      <th scope="col">#</th>
+                      <th scope="col">Charm ID</th>
+                      <th scope="col">Biospecimen ID</th>
+                      <th scope="col" class="d-print-none">Trimester</th>
+                      <th scope="col">Freezer Placed Date</th>
+                      <th scope="col">Number of Tubes</th>
+                      <th scope="col">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for biospecimen in frozen_urine %}
+                      <tr class="d-print-table-row">
+                        <th scope="row">{{ forloop.counter }}</th>
+                          <td class="d-print-table-cell"><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                          <td class="d-print-table-cell"><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                          <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                          <td>{{ biospecimen.status_fk.frozen_fk.freezer_placed_date_time }}</td>
+                          <td>{{ biospecimen.status_fk.frozen_fk.number_of_tubes }}</td>
+                          <td>{{ biospecimen.status_fk.frozen_fk.notes_and_deviations }}</td>
                       </tr>
                   {% endfor %}
                   </tbody>

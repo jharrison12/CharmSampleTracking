@@ -187,12 +187,59 @@ class StaffUrineReportPageTest(FunctionalTest):
 
         self.assertIn('Reports',text)
         self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
-        time.sleep(10)
+
         text = self.webpage_text()
         self.assertIn('Processed Report',text)
         #4101 Should not be seen because it is hidden by javascript
         self.assertNotIn('4101',text)
         self.assertNotIn('12UR410101',text)
+
+        #user clicks on report header
+        self.browser.find_element(By.ID,'processed_report_header').click()
+        text = self.webpage_text()
+        self.assertIn('Processed Date',text)
+        self.assertIn('All 18ml Vials Collected?',text)
+        self.assertIn('18ml Estimated Volume',text)
+        self.assertIn('18ml Aliquots Collected',text)
+        self.assertIn('All 7ml Collected?',text)
+        self.assertIn('7ml Estimated Volume',text)
+        self.assertIn('7ml Aliquots Collected',text)
+        self.assertIn('Notes and Deviations',text)
+        self.assertIn('1.1',text)
+        self.assertIn('2',text)
+
+    def test_user_can_see_staff_frozen_report(self):
+        self.login_staff()
+        motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+        motherurine.user_submits_urine_frozen(self)
+
+        #User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports',text)
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
+
+        text = self.webpage_text()
+        self.assertIn('Frozen Report',text)
+
+        #4101 Should not be seen because it is hidden by javascript
+        self.assertNotIn('4101',text)
+        self.assertNotIn('12UR410101',text)
+        #user clicks on report header
+        self.browser.find_element(By.ID,'frozen_report_header').click()
+        text = self.webpage_text()
+        time.sleep(10)
+        self.assertIn('Freezer Placed Date',text)
+        self.assertIn('Number of Tubes',text)
+        self.assertIn('Notes',text)
+        self.assertIn('2',text)
+        self.assertIn('they were really cold',text)
+
 
 
     def test_user_can_see_staff_shipped_to_wsu_urine_report(self):

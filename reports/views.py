@@ -37,13 +37,18 @@ def no_specimen_report(request):
 @staff_member_required
 def biospecimen_report_urine(request):
     collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__collected_fk__collected_date_time__isnull=False,status_fk__processed_fk__isnull=True).filter(collection_fk__collection_type='U')
+    processed_urine = CaregiverBiospecimen.objects.filter(status_fk__processed_fk__isnull=False,status_fk__processed_fk__processed_aliquoted_date_time__isnull=False).filter(collection_fk__collection_type='U')
+    frozen_urine = CaregiverBiospecimen.objects.filter(status_fk__frozen_fk__isnull=False,status_fk__frozen_fk__freezer_placed_date_time__isnull=False).filter(collection_fk__collection_type='U')
     shipped_to_wsu_urine = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
     received_at_wsu_urine = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='U')
     shipped_to_echo_urine = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='U')
     return render(request=request,template_name='reports/biospecimen_report_urine.html',context={'collected_urine':collected_urine,
+                                                                                               'processed_urine':processed_urine,
+                                                                                               'frozen_urine':frozen_urine,
                                                                                                'shipped_to_wsu_urine':shipped_to_wsu_urine,
                                                                                                'received_at_wsu_urine':received_at_wsu_urine,
-                                                                                               'shipped_to_echo_urine':shipped_to_echo_urine})
+                                                                                               'shipped_to_echo_urine':shipped_to_echo_urine
+                                                                                                 })
 
 @login_required
 @staff_member_required
