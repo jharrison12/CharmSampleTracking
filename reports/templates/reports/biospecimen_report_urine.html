@@ -10,11 +10,11 @@
                   <th scope="col">#</th>
                   <th scope="col">Charm ID</th>
                   <th scope="col">Biospecimen ID</th>
-                  <th scope="col" class="d-print-none">Trimester</th>
                   <th scope="col">Collected Date</th>
-                  <th scope="col" class="d-print-none">Processed Date</th>
-                  <th scope="col" class="d-print-none">Stored Date</th>
-                  <th scope="col">Number of Tubes</th>
+{#                <th scope="col" class="d-print-none">Processed Date</th> KEEP so you can remember d-print-none#}
+                  <th scope="col" class="d-print-none">Eat Drink Date</th>
+                  <th scope="col">Eat Drink Notes</th>
+                  <th scope="col">Notes and Deviations</th>
                 </tr>
               </thead>
               <tbody>
@@ -23,11 +23,10 @@
                     <th scope="row">{{ forloop.counter }}</th>
                       <td class="d-print-table-cell"><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
                       <td class="d-print-table-cell"><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
-                      <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
                       <td>{{ biospecimen.status_fk.collected_fk.collected_date_time }}</td>
-                      <td class="d-print-none">{{ biospecimen.status_fk.collected_fk.processed_date_time }}</td>
-                      <td class="d-print-none">{{ biospecimen.status_fk.collected_fk.stored_date_time }}</td>
-                      <td>{{ biospecimen.status_fk.collected_fk.number_of_tubes }}</td>
+                      <td class="d-print-none">{{ biospecimen.status_fk.collected_fk.eat_drink_date_time }}</td>
+                      <td class="d-print-none">{{ biospecimen.status_fk.collected_fk.eat_drink_text_field }}</td>
+                      <td>{{ biospecimen.status_fk.collected_fk.notes_and_deviations }}</td>
                   </tr>
               {% endfor %}
 

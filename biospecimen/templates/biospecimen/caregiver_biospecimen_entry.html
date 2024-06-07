@@ -54,7 +54,7 @@
                 <button type="button" class="btn btn-primary" disabled aria-disabled="true">Collected</button>
             </div>
             <div class="col-8">
-                {% if collection_type in 'U' %}<div>Last time participant ate or drank: {{ caregiver_bio.status_fk.collected_fk.eat_drink_date_time}}</div>{% endif %}
+                {% if collection_type in 'U' %}<div>Last time participant ate or drank: {{ caregiver_bio.status_fk.collected_fk.eat_drink_date_time }}</div>{% endif %}
                 {% if collection_type in 'U' %}<div>Everything that was consumed the last time the participant ate or drank anything: {{ caregiver_bio.status_fk.collected_fk.eat_drink_text_field}}</div>{% endif %}
                 <div>Collected Date Time: {{ caregiver_bio.status_fk.collected_fk.collected_date_time|date:'m/d/Y H:i' }}</div>
                 {% if collection_type not in  'H,L,C' %}<div>Kit Distribution: {{ caregiver_bio.status_fk.collected_fk.get_kit_distribution_display }}</div>{% endif %}

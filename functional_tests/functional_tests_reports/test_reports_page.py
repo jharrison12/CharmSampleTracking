@@ -160,10 +160,10 @@ class StaffUrineReportPageTest(FunctionalTest):
         #User clicks on the header and it shows report
         self.browser.find_element(By.ID,'collected_report_header').click()
         text = self.webpage_text()
-        self.assertIn('4101',text)
-        self.assertIn('12UR410101',text)
-        self.assertIn('Number of Tubes',text)
-        self.assertIn('5',text)
+        self.assertIn('Collected Date',text)
+        self.assertIn('Eat Drink Date',text)
+        self.assertIn('Eat Drink Notes',text)
+        self.assertIn('Notes and Deviations',text)
 
         #User clicks on header to hide report
         self.browser.find_element(By.ID,'collected_report_header').click()
@@ -172,6 +172,24 @@ class StaffUrineReportPageTest(FunctionalTest):
         self.assertNotIn('12UR410101',text)
 
         ##TODO implement search bar
+
+    def test_user_can_see_staff_processed_report(self):
+        self.login_staff()
+        motherurine.user_submits_urine_collected(self)
+        motherurine.user_submits_urine_processed(self)
+
+        #User visits the page for P7000
+        ## Is there a better way of navigating using selenium?
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+
+        self.assertIn('Reports',text)
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Urine').click()
+
+        text = self.webpage_text()
+        self.assertIn('Processed Report',text)
 
 
     def test_user_can_see_staff_shipped_to_wsu_urine_report(self):
