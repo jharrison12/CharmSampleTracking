@@ -49,6 +49,30 @@
             </table>
         </div>
     </div>
+    <div class="row border border-2 border-primary p-3 rounded mb-2" id="processed_blood_report_container">
+        <h1 id="processed_report_header">Processed Report</h1>
+            <div class="table-responsive d-print-table" id="processed_blood_report">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Charm ID</th>
+                      <th scope="col">Biospecimen ID</th>
+                      <th scope="col" class="d-print-none">Trimester</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for biospecimen in processed_biospecimen_blood %}
+                      <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                          <td><a href={% url "biospecimen:list_of_bio_ids" biospecimen.caregiver_fk.charm_project_identifier %}>{{ biospecimen.caregiver_fk.charm_project_identifier }}</a></td>
+                          <td><a href={% url "biospecimen:caregiver_biospecimen_initial" biospecimen.caregiver_fk.charm_project_identifier biospecimen.pk %}>{{ biospecimen.biospecimen_id }}</a></td>
+                          <td class="d-print-none">{{ biospecimen.trimester_fk.get_trimester_display }}</td>
+                  {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+    </div>
 
     <div class="row border border-2 border-primary p-3 rounded mb-2" id="shipped_to_wsu_blood_report_container">
         <h1 id="shipped_to_wsu_report_header">Shipped to WSU Report</h1>

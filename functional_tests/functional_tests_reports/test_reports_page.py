@@ -443,6 +443,44 @@ class StaffBloodReportPageTest(FunctionalTest):
 
         ##TODO implement search bar
 
+
+    def test_user_can_see_processed_blood_report(self):
+        self.login_staff()
+        motherblood.user_input_collected_blood(self)
+        motherblood.user_inputs_processed_blood_information(self)
+
+        self.browser.get(self.live_server_url)
+        self.browser.get(f'{self.browser.current_url}reports/')
+
+        text = self.webpage_text()
+        self.assertIn('Reports',text)
+
+        self.browser.find_element(By.LINK_TEXT, 'Biospecimen Report Blood').click()
+        time.sleep(10)
+        text = self.webpage_text()
+        self.assertIn('Processed Report',text)
+
+        #4101 Should not be seen because it is hidden by javascript
+        self.assertNotIn('4100',text)
+        self.assertNotIn('12BL410001',text)
+
+        #User clicks on the header and it shows report
+        self.browser.find_element(By.ID,'processed_report_header').click()
+        text = self.webpage_text()
+        self.assertIn('4100',text)
+        self.assertIn('Process Date',text)
+        self.assertIn('Eat/Drink Date',text)
+
+
+        #User clicks on header to hide report
+        self.browser.find_element(By.ID,'collected_report_header').click()
+        text = self.webpage_text()
+        self.assertNotIn('4100',text)
+        self.assertNotIn('12BL410001',text)
+        self.assertNotIn('Hemolysis',text)
+
+        ##TODO implement search bar
+
     def test_user_can_see_shipped_to_wsu_blood_staff_report(self):
         self.login_staff()
         motherblood.user_input_collected_blood(self)
