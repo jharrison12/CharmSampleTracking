@@ -239,8 +239,7 @@ class ShippedWSU(models.Model):
         self.tracking_number = form.cleaned_data['tracking_number']
         self.courier = form.cleaned_data['courier']
         self.shipped_by = request.user
-        if collection_type==URINE:
-            self.number_of_tubes = form.cleaned_data['number_of_tubes']
+        self.number_of_tubes = form.cleaned_data['number_of_tubes']
         self.save()
         caregiver_bio.status_fk.shipped_wsu_fk = self
         caregiver_bio.status_fk.shipped_wsu_fk.save()
