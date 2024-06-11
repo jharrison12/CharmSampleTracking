@@ -25,6 +25,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
             var style = this.value == 'True' ? 'block' : 'none';
             document.getElementById('edta_purple_refrigerated_placed_date_time').style.display = style;
             document.getElementById('edta_purple_refrigerated_removed_date_time').style.display = style;
+            $('#id_processed_form-edta_purple_refrigerated_placed_date_time').val('');
+            $('#id_processed_form-edta_purple_refrigerated_removed_date_time').val('');
+            // document.getElementById('edta_purple_refrigerated_removed_date_time').textContent='';
         })
     }
     ;
@@ -35,6 +38,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
         processed_aliquoted_off_site.addEventListener('change', function () {
             var style = this.value != 'N' ? 'block' : 'none';
             document.getElementById('specimen_received_at_processing_site').style.display = style;
+
         })
     };
 
@@ -43,6 +47,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
         blood_spot_card_completed.addEventListener('change', function () {
             var style = this.value == 'False' ? 'block' : 'none';
             document.getElementById('incomplete_blood_spot_card_div').style.display = style;
+            $('#id_processed_form-blood_spot_card_number_of_complete_spots').val('');
+            $('#id_processed_form-blood_spot_card_number_of_dots_smaller_than_dotted_circle').val('');
+            $('#id_processed_form-blood_spot_card_number_of_dotted_circle_missing_blood_spot').val('');
+
         })
     };
 
@@ -51,6 +59,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
         whole_blood_blue_cap_all_collected.addEventListener('change', function () {
         var style = this.value == 'False' ? 'block' : 'none';
         document.getElementById('whole_blood_aliquots_div').style.display = style;
+        $('#id_processed_form-whole_blood_blue_cap_partial_aliquot_volume').val('');
+        $('#id_processed_form-whole_blood_blue_cap_number_collected').val('');
         })
     };
 
@@ -116,6 +126,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
             tube_1.addEventListener('change', function () {
             var style = this.value == 'P' ? 'block' : 'none';
             document.getElementById('tube_1_estimated_volume').style.display = style;
+            $('#id_blood_form-tube_1_estimated_volume').val('');
         })
     };
 
@@ -125,6 +136,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
             tube_2.addEventListener('change', function () {
             var style = this.value == 'P' ? 'block' : 'none';
             document.getElementById('tube_2_estimated_volume').style.display = style;
+            $('#id_blood_form-tube_2_estimated_volume').val('');
         })
     };
 
@@ -133,6 +145,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
             tube_3.addEventListener('change', function () {
             var style = this.value == 'P' ? 'block' : 'none';
             document.getElementById('tube_3_estimated_volume').style.display = style;
+            $('#id_blood_form-tube_3_estimated_volume').val('');
         })
     }
 ;
