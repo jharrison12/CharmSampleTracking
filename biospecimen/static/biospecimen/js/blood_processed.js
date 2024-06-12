@@ -69,6 +69,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
         plasma_purple_cap_200_microliter_all_collected.addEventListener('change', function () {
         var style = this.value == 'False' ? 'block' : 'none';
         document.getElementById('plasma_purple_cap_200_microliter_number_collected').style.display = style;
+        $('#id_processed_form-plasma_purple_cap_200_microliter_number_collected').val('');
         })
     };
 
@@ -77,6 +78,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
         plasma_purple_cap_1_ml_all_collected.addEventListener('change', function () {
         var style = this.value == 'False' ? 'block' : 'none';
         document.getElementById('plasma_purple_cap_1_ml_partial_aliquots').style.display = style;
+        $('#id_processed_form-plasma_purple_cap_1_ml_partial_aliquot_volume').val('');
+        $('#id_processed_form-plasma_purple_cap_1_ml_number_collected').val('');
         })
     };
 
@@ -85,6 +88,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
             buffy_coat_green_cap_1_ml_all_collected.addEventListener('change', function () {
             var style = this.value == 'False' ? 'block' : 'none';
             document.getElementById('buffy_coat_partial_aliquots').style.display = style;
+            $('#id_processed_form-buffy_coat_green_cap_1_ml_number_collected').val('');
         })
     };
 
@@ -93,6 +97,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
             red_blood_cells_yellow_cap_1_ml_all_collected.addEventListener('change', function () {
             var style = this.value == 'False' ? 'block' : 'none';
             document.getElementById('red_blood_cells_partial_aliquots').style.display = style;
+            $('#id_processed_form-red_blood_cells_yellow_cap_1_ml_partial_aliquot_volume').val('');
+            $('#id_processed_form-red_blood_cells_yellow_cap_1_ml_number_collected').val('');
         })
     };
 
@@ -101,6 +107,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
             serum_red_cap_200_microl_all_collected.addEventListener('change', function () {
             var style = this.value == 'False' ? 'block' : 'none';
             document.getElementById('serum_red_cap_200_microl_number_aliquots_collected').style.display = style;
+            $('#id_processed_form-serum_red_cap_200_microl_number_collected').val('');
         })
     };
 
@@ -109,6 +116,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
         serum_red_cap_1_ml_all_collected.addEventListener('change', function () {
         var style = this.value == 'False' ? 'block' : 'none';
         document.getElementById('serum_red_cap_1_ml_partial_aliquots').style.display = style;
+        $('#id_processed_form-serum_red_cap_1_ml_partial_aliquot_volume').val('');
+        $('#id_processed_form-serum_red_cap_1_ml_number_collected').val('');
         })
     };
 
