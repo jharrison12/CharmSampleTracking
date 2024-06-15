@@ -15,11 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include,path
+from django.urls import include, path, re_path
 from biospecimen import urls as biospecimen_urls
 from biospecimen import views as biospecimen_views
 from lists import urls as lists_urls
 from reports import urls as reports_urls
+from django.views.static import serve
+from django.conf import settings
 
 
 # app_name='main'
@@ -29,6 +31,7 @@ urlpatterns = [
     path('reports/', include(reports_urls)),
     path('lists/', include(lists_urls)),
     path('admin/', admin.site.urls),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ]
 
 
