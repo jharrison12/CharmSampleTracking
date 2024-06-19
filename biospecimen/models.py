@@ -228,9 +228,7 @@ class ShippedWSU(models.Model):
 
     class CourierChoices(models.TextChoices):
         FEDEX = 'F', _('FedEx')
-        USPS = 'P', _('USPS')
-        UPS = 'U', _('UPS')
-        DHL = 'D', _('DHL')
+        IN_PERSON = 'P', _('In person')
 
     courier = models.CharField(max_length=1,choices=CourierChoices.choices,null=True,blank=True)
 
