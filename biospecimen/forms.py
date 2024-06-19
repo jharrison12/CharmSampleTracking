@@ -146,7 +146,7 @@ class ProcessedFormUrine(forms.Form):
     processed_aliquoted_off_site = forms.ChoiceField(widget=forms.Select, choices=PROCESSED_ALIQUOTED_OFF_SITE,label='If processed and aliquoted off site, under what conditions were the tubes transported to the processing site?')
     processed_aliquoted_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the specimen received at the processing site?',required=False)
     total_volume_of_urine_in_collection_cup = forms.IntegerField(label='What is the total volume of urine in the collection cup?',max_value=150,min_value=0)
-    precipate_bottom_of_container = forms.BooleanField(label='Are there precipitate(s) at the bottom of the collection container?',required=False)
+    precipate_bottom_of_container = forms.ChoiceField(label='Are there precipitate(s) at the bottom of the collection container?',required=False,choices=YES_NO)
     refrigerated_prior_to_processing = forms.BooleanField(label='Was the collection cup placed at refrigerated temperature prior to processing?',required=False)
     refrigerated_placed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collected cup placed at refrigerated temperature?',required=False)
     refrigerated_removed_date_time = forms.DateTimeField(widget=forms.TextInput(attrs={'class': "datetimepicker"}),label='When was the collection cup removed from refrigerated temperature for processing?',required=False)
