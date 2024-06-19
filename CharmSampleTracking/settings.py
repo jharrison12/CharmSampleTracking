@@ -11,19 +11,23 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os, logging
 from pathlib import Path
-
+# import biospecimen
 import parameters
 from parameters import PASSWORD
 logging.basicConfig(level=logging.CRITICAL)
+
+STAGING_OR_PRODUCTION = False
 
 if 'DJANGO_DEBUG_FALSE' in os.environ:
     DEBUG = False
     SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
     ALLOWED_HOSTS = [os.environ['SITENAME']]
+    STAGING_OR_PRODUCTION=False
 else:
     DEBUG=True
     SECRET_KEY = 'django-insecure-tw4p8+j%-fr8qv7g999lv-_&q)_l!4w41h4*t5%=g(y2x*8zih'
     ALLOWED_HOSTS = []
+    STAGING_OR_PRODUCTION=True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,10 +79,12 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'biospecimen.context_processors.staging_or_production',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
     },
