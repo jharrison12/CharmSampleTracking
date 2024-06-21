@@ -325,12 +325,12 @@
                     {% if caregiver_bio.status_fk.processed_blood_fk.processed_aliquoted_off_site != 'N' %}
                     <div>Specimen Received Date Time: {{ caregiver_bio.status_fk.processed_blood_fk.specimen_received_date_time }}</div>
                     {% endif %}
-                <div>Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_tube_refrigerated_prior_to_centrifuge }}</div>
-                    {% if caregiver_bio.status_fk.processed_blood_fk.purple_edta_tube_refrigerated_prior_to_centrifuge == True %}
-                        <div>Date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_refrigerated_placed_date_time }}</div>
-                        <div>Date and time EDTA tubes were removed from refrigerated temperature prior to centrifuging: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_refrigerated_removed_date_time }}</div>
+                <div>Were the purple EDTA tubes placed at refrigerated temperature prior to centrifuging?: {{ edta_tubes.refrigerated_prior_to_centrifuge }}</div>
+                    {% if edta_tubes.refrigerated_prior_to_centrifuge %}
+                        <div>Date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging: {{ edta_tubes.refrigerated_placed_date_time }}</div>
+                        <div>Date and time EDTA tubes were removed from refrigerated temperature prior to centrifuging: {{ edta_tubes.refrigerated_removed_date_time }}</div>
                     {% endif %}
-                <div>Was the serum (red top) tube held at room temp for 30 to 60 min prior to centrifuging?: {{ caregiver_bio.bloodtube_set.values }}</div>
+                <div>Was the serum (red top) tube held at room temp for 30 to 60 min prior to centrifuging?: {{ serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge }}</div>
                 <h3>Blood Spot Card</h3>
                 {% if blood_spot_card.blood_spot_card_completed == True %}
                     Blood spot card completed? {{ blood_spot_card.blood_spot_card_completed }}

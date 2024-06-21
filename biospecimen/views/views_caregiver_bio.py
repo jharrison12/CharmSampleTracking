@@ -461,6 +461,15 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
     frozen_item = Frozen.objects.filter(status__caregiverbiospecimen=caregiver_bio)
     blood_aliquots = BloodAliquot.objects.filter(caregiver_bio_fk=caregiver_bio)
     try:
+        #values should be the same for both bues.
+        edta_tubes = BloodTube.objects.filter(caregiver_biospecimen_fk=caregiver_bio,tube_type='E').first()
+    except BloodTube.DoesNotExist:
+        edta_tubes = None
+    try:
+        serum_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S')
+    except BloodTube.DoesNotExist:
+        serum_tube = None
+    try:
         blood_spot_card = BloodSpotCard.objects.get(caregiver_bio_fk=caregiver_bio)
     except BloodSpotCard.DoesNotExist:
         logging.debug(f"Blood spots card not found")
@@ -520,6 +529,8 @@ def caregiver_biospecimen_entry_blood(request,caregiver_charm_id,caregiver_bio_p
                                                                                                         'processed_item':processed_item,
                                                                                                         'blood_aliquots':blood_aliquots,
                                                                                                         'blood_spot_card':blood_spot_card,
+                                                                                                        'edta_tubes':edta_tubes,
+                                                                                                        'serum_tube':serum_tube,
                                                                                                         'frozen_form':frozen_form,
                                                                                                         'shipped_to_wsu_item':shipped_to_wsu_item,
                                                                                                         'tube_ids':tube_ids
