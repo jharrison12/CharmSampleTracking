@@ -46,13 +46,21 @@ if (document.readyState !== 'loading') {
             });
         }
 
-
-        $('#id_processed_form-refrigerated_prior_to_processing').click(function () {
-            $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
-            $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
-            $('#id_processed_form-refrigerated_placed_date_time').val('');
-            $('#id_processed_form-refrigerated_removed_date_time').val('');
-        });
+        const refigerated_prior_to_processing = document.getElementById('id_processed_form-refrigerated_prior_to_processing')
+        if (refigerated_prior_to_processing) {
+            // $('#id_processed_form-refrigerated_prior_to_processing').click(function () {
+            //     $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
+            //     $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
+            //     $('#id_processed_form-refrigerated_placed_date_time').val('');
+            //     $('#id_processed_form-refrigerated_removed_date_time').val('');
+            refigerated_prior_to_processing.addEventListener('change', function () {
+                var style = this.value == "True" ? 'block' : 'none';
+                document.getElementById('refrigerated_placed_date_time').style.display = style;
+                document.getElementById('refrigerated_removed_date_time').style.display = style;
+                $('#refrigerated_placed_date_time').val('');
+                $('#refrigerated_removed_date_time').val('');
+            });
+        };
 
 
 
@@ -93,12 +101,28 @@ if (document.readyState !== 'loading') {
         }
 
 
-        $('#id_processed_form-refrigerated_prior_to_processing').click(function () {
-            $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
-            $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
-            $('#id_processed_form-refrigerated_placed_date_time').val('');
-            $('#id_processed_form-refrigerated_removed_date_time').val('');
-        });
+        // $('#id_processed_form-refrigerated_prior_to_processing').click(function () {
+        //     $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
+        //     $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
+        //     $('#id_processed_form-refrigerated_placed_date_time').val('');
+        //     $('#id_processed_form-refrigerated_removed_date_time').val('');
+        // });
+
+        const refigerated_prior_to_processing = document.getElementById('id_processed_form-refrigerated_prior_to_processing')
+        if (refigerated_prior_to_processing) {
+            // $('#id_processed_form-refrigerated_prior_to_processing').click(function () {
+            //     $('#refrigerated_placed_date_time')[this.checked ? "show" : "hide"]();
+            //     $('#refrigerated_removed_date_time')[this.checked ? "show" : "hide"]();
+            //     $('#id_processed_form-refrigerated_placed_date_time').val('');
+            //     $('#id_processed_form-refrigerated_removed_date_time').val('');
+            refigerated_prior_to_processing.addEventListener('change', function () {
+                var style = this.value == "True" ? 'block' : 'none';
+                document.getElementById('refrigerated_placed_date_time').style.display = style;
+                document.getElementById('refrigerated_removed_date_time').style.display = style;
+                $('#refrigerated_placed_date_time').val('');
+                $('#refrigerated_removed_date_time').val('');
+            });
+        };
 
     });
 }

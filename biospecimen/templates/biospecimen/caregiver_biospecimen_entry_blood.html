@@ -164,7 +164,12 @@
                 <label for="{{ processed_form.edta_purple_refrigerated_removed_date_time.id_for_label }}" class="form-label">{{ processed_form.edta_purple_refrigerated_removed_date_time.label }}</label>
                 {{ processed_form.edta_purple_refrigerated_removed_date_time }}
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="held_at_room_temperature_30_to_60_prior_to_centrifuge">
+                {{ processed_form.held_at_room_temperature_30_to_60_prior_to_centrifuge.errors }}
+                <label for="{{ processed_form.held_at_room_temperature_30_to_60_prior_to_centrifuge.id_for_label }}" class="form-label">{{ processed_form.held_at_room_temperature_30_to_60_prior_to_centrifuge.label }}</label>
+                {{ processed_form.held_at_room_temperature_30_to_60_prior_to_centrifuge }}
+                </div>
+                <div class="form-group" id="whole_blood_blue_cap_all_collected">
                 {{ processed_form.whole_blood_blue_cap_all_collected.errors }}
                 <label for="{{ processed_form.whole_blood_blue_cap_all_collected.id_for_label }}" class="form-label">{{ processed_form.whole_blood_blue_cap_all_collected.label }}</label>
                 {{ processed_form.whole_blood_blue_cap_all_collected }}
@@ -325,6 +330,7 @@
                         <div>Date and time EDTA tubes were placed at refrigerated temperature prior to centrifuging: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_refrigerated_placed_date_time }}</div>
                         <div>Date and time EDTA tubes were removed from refrigerated temperature prior to centrifuging: {{ caregiver_bio.status_fk.processed_blood_fk.purple_edta_refrigerated_removed_date_time }}</div>
                     {% endif %}
+                <div>Was the serum (red top) tube held at room temp for 30 to 60 min prior to centrifuging?: {{ caregiver_bio.bloodtube_set.values }}</div>
                 <h3>Blood Spot Card</h3>
                 {% if blood_spot_card.blood_spot_card_completed == True %}
                     Blood spot card completed? {{ blood_spot_card.blood_spot_card_completed }}

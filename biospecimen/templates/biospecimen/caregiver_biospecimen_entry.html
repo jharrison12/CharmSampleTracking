@@ -181,6 +181,11 @@
                   <label for="{{ processed_form.number_of_tubes_collected_7_ml_if_some_missing.id_for_label }}" class="form-label"> {{ processed_form.number_of_tubes_collected_7_ml_if_some_missing.label }}</label>
                   {{ processed_form.number_of_tubes_collected_7_ml_if_some_missing }}
               </div>
+              <div class="form-group" id="notes_and_deviations">
+                  {{ processed_form.notes_and_deviations.errors }}
+                  <label for="{{ processed_form.notes_and_deviations.id_for_label }}" class="form-label"> {{ processed_form.notes_and_deviations.label }}</label>
+                  {{ processed_form.notes_and_deviations }}
+              </div>
           <input type="submit" value="Submit" />
           </form>
         </div>
@@ -209,6 +214,7 @@
                     <div>If any aliquots were partial, what is the estimated volume of the partial aliquot?:{{ caregiver_bio.status_fk.processed_fk.partial_aliquot_7ml_volume }}</div>
                     <div>If any aliquots were missing, how many were collected?:{{ caregiver_bio.status_fk.processed_fk.number_of_tubes_collected_7_ml_if_some_missing }}</div>
                 {% endif %}
+                <div>Notes and deviations:{{ caregiver_bio.status_fk.processed_fk.notes_and_deviations }}</div>
             </div>
         </div>
     {% endif %}

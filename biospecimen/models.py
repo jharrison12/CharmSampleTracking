@@ -369,7 +369,7 @@ class ProcessedBlood(models.Model):
             self.specimen_received_date_time = form.cleaned_data['specimen_received_date_time']
         edta_tubes = BloodTube.objects.filter(caregiver_biospecimen_fk=caregiver_bio,tube_type='E')
         serum_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S')
-        serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge = 'Y'
+        serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge = form.cleaned_data['held_at_room_temperature_30_to_60_prior_to_centrifuge']
         serum_tube.save()
         for tube in edta_tubes:
             tube.refrigerated_prior_to_centrifuge = form.cleaned_data['edta_purple_tube_refrigerated_prior_to_centrifuge']
@@ -793,7 +793,7 @@ class BloodTube(models.Model):
     refrigerated_prior_to_centrifuge = models.BooleanField(null=True, blank=True)
     refrigerated_placed_date_time = models.DateTimeField(null=True,blank=True)
     refrigerated_removed_date_time = models.DateTimeField(null=True, blank=True)
-    held_at_room_temperature_30_to_60_prior_to_centrifuge = models.CharField(max_length=1,null=True,blank=True,choices=YesOrNo.choices)
+    held_at_room_temperature_30_to_60_prior_to_centrifuge = models.BooleanField(max_length=1,null=True,blank=True)
     collected_by = models.CharField(max_length=1, choices=CollectionLocation.choices,null=True,blank=True)
 
 class ChildBiospecimen(models.Model):
