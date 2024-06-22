@@ -74,7 +74,7 @@ def biospecimen_report_blood(request):
 
 @login_required
 def collected_report_urine(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
     else:
         collected_urine = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='U').filter(caregiver_fk__recruitment_location=request.user.recruitment_location)
@@ -82,7 +82,7 @@ def collected_report_urine(request):
 
 @login_required
 def shipped_to_wsu_report_urine(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='U')
     else:
         shipped_to_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True)\
@@ -91,7 +91,7 @@ def shipped_to_wsu_report_urine(request):
 
 @login_required
 def received_at_wsu_report_urine(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='U')
     else:
         received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True)\
@@ -101,7 +101,7 @@ def received_at_wsu_report_urine(request):
 
 @login_required
 def shipped_to_echo_report_urine(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         shipped_to_echo_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False)\
             .filter(collection_fk__collection_type='U')
     else:
@@ -112,7 +112,7 @@ def shipped_to_echo_report_urine(request):
 
 @login_required
 def collected_report_blood(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         collected_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
         collected_blood.prefetch_related('status_fk__collected_fk__component_set').all().order_by('component__component_type')
     else:
@@ -124,7 +124,7 @@ def collected_report_blood(request):
 
 @login_required
 def processed_report_blood(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         processed_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=True).filter(collection_fk__collection_type='B')
     else:
         processed_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=True)\
@@ -133,7 +133,7 @@ def processed_report_blood(request):
 
 @login_required
 def frozen_report_blood(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         frozen_blood = CaregiverBiospecimen.objects.filter(status_fk__collected_fk__isnull=False,status_fk__processed_blood_fk__isnull=False,status_fk__frozen_fk__isnull=False,status_fk__shipped_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
         # blood_card_frozen = BloodSpotCard.objects.get(caregiver_bio_fk=)
     else:
@@ -143,7 +143,7 @@ def frozen_report_blood(request):
 
 @login_required
 def shipped_to_wsu_report_blood(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         shipped_to_wsu_biospecimen_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_wsu_fk__isnull=False,status_fk__received_wsu_fk__isnull=True).filter(collection_fk__collection_type='B')
         shipped_to_wsu_biospecimen_blood.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
             'component__component_type')
@@ -156,7 +156,7 @@ def shipped_to_wsu_report_blood(request):
 
 @login_required
 def received_at_wsu_report_blood(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         received_at_wsu_biospecimen = CaregiverBiospecimen.objects.filter(status_fk__received_wsu_fk__isnull=False,status_fk__shipped_echo_fk__isnull=True).filter(collection_fk__collection_type='B')
         received_at_wsu_biospecimen.prefetch_related('status_fk__shipped_wsu_fk__component_set').all().order_by(
             'component__component_type')
@@ -171,7 +171,7 @@ def received_at_wsu_report_blood(request):
 
 @login_required
 def shipped_to_echo_report_blood(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         shipped_to_echo_report_blood = CaregiverBiospecimen.objects.filter(status_fk__shipped_echo_fk__isnull=False).filter(collection_fk__collection_type='B')
         shipped_to_echo_report_blood.prefetch_related('status_fk__shipped_echo_fk__component_set').all().order_by(
             'component__component_type')

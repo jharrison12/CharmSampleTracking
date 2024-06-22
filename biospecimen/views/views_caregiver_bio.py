@@ -136,7 +136,7 @@ def biospecimen_entry(request):
 
 @login_required
 def charm_identifiers(request):
-    if request.user.is_staff:
+    if request.user.is_staff or request.user.recruitment_location=='A':
         list_of_charm_ids = Caregiver.objects.all()
     else:
         location = request.user.recruitment_location
@@ -146,6 +146,7 @@ def charm_identifiers(request):
 @login_required
 def list_of_bio_ids(request,caregiver_charm_id):
     caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+    logging.critical(f"recruitment location is {request.user.recruitment_location}")
     try:
         caregiver.check_recruitment(request=request,caregiver=caregiver)
     except PermissionError:
@@ -189,6 +190,7 @@ def child_biospecimen_page(request,child_charm_id):
 @login_required
 def caregiver_biospecimen_initial(request,caregiver_charm_id,caregiver_bio_pk):
     caregiver_bio = CaregiverBiospecimen.objects.get(pk=caregiver_bio_pk)
+    logging.critical(f"recruitment location is {request.user.recruitment_location}")
     try:
         caregiver_bio.check_recruitment(request=request,caregiver_bio=caregiver_bio,caregiver_charm_id=caregiver_charm_id)
     except PermissionError:

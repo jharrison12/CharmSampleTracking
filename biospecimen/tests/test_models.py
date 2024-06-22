@@ -367,6 +367,7 @@ class CustomBlooodModelSaveFunctionsTest(DatabaseSetup):
                                               2023, 5, 5, 5, 5, 5),
                                           'processed_form-edta_purple_refrigerated_removed_date_time': timezone.datetime(
                                               2023, 5, 5, 5, 5, 5),
+                                          'processed_form-held_at_room_temperature_30_to_60_prior_to_centrifuge': True,
                                           'processed_form-whole_blood_blue_cap_all_collected': False,
                                           'processed_form-whole_blood_blue_cap_partial_aliquot_volume': 1.0,
                                           'processed_form-whole_blood_blue_cap_number_collected': 1,
@@ -542,7 +543,7 @@ class CustomBlooodModelSaveFunctionsTest(DatabaseSetup):
         self.blood_processed_form_send(primary_key)
         caregiver_bio = CaregiverBiospecimen.objects.get(pk=primary_key)
         serum_tube = BloodTube.objects.get(caregiver_biospecimen_fk=caregiver_bio,tube_type='S',tube_number=1)
-        self.assertEqual('Y',serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge)
+        self.assertEqual(True,serum_tube.held_at_room_temperature_30_to_60_prior_to_centrifuge)
 
     def test_that_blood_tubes_centri_fuged_in_refrigerated_centriguge(self):
         primary_key = self.return_caregiver_bio_pk('4100', 'B', 'S')

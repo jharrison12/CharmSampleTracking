@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
 
 import logging
-logging.basicConfig(level=logging.debug)
+logging.basicConfig(level=logging.CRITICAL)
 
 URINE = "U"
 BLOOD_DICT_FORM = {'whole_blood': 'W',
@@ -51,6 +51,7 @@ class User(AbstractUser):
         DETROIT = 'D', _('Detroit')
         TRAVERSE_CITY = 'T', _('Traverse City')
         FLINT = 'F', _('Flint')
+        ALL = 'A', _('All')
 
     recruitment_location = models.CharField(max_length=1,choices=RecruitmentLocation.choices)
     is_staff = models.BooleanField('staff status',default=False)
@@ -671,7 +672,8 @@ class Caregiver(models.Model):
     recruitment_location = models.CharField(max_length=1,choices=Cohort.choices)
 
     def check_recruitment(self,request,caregiver=None):
-        if (request.user.is_staff) or (caregiver.recruitment_location==request.user.recruitment_location):
+        logging.critical(f"in check recruiment. recruitment location is {request.user.recruitment_location}")
+        if (request.user.is_staff) or (caregiver.recruitment_location==request.user.recruitment_location) or (request.user.recruitment_location=='A'):
             return True
         elif (caregiver.recruitment_location!=request.user.recruitment_location):
             raise PermissionError
@@ -746,10 +748,11 @@ class CaregiverBiospecimen(models.Model):
 
     def check_recruitment(self,request,caregiver_bio=None,caregiver_charm_id=None):
         caregiver = Caregiver.objects.get(charm_project_identifier=caregiver_charm_id)
+        logging.debug(f"recruitment location is {request.user.recruitment_location}")
         if(caregiver_bio.caregiver_fk.charm_project_identifier!=caregiver_charm_id):
             raise PermissionError
         if (request.user.is_staff) or (caregiver_bio.caregiver_fk.recruitment_location==request.user.recruitment_location) \
-                or (caregiver.recruitment_location==request.user.recruitment_location):
+                or (caregiver.recruitment_location==request.user.recruitment_location) or (request.user.recruitment_location=='A'):
             return True
         elif (caregiver_bio.caregiver_fk.recruitment_location!=request.user.recruitment_location) \
                 or (caregiver.recruitment_location!=request.user.recruitment_location):
