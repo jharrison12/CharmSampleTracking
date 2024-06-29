@@ -53,7 +53,7 @@ class User(AbstractUser):
         FLINT = 'F', _('Flint')
         ALL = 'A', _('All')
 
-    recruitment_location = models.CharField(max_length=1,choices=RecruitmentLocation.choices,null=True)
+    recruitment_location = models.CharField(max_length=1,choices=RecruitmentLocation.choices,null=True,blank=True)
     is_staff = models.BooleanField('staff status',default=False)
 
 class Project(models.Model):
