@@ -163,7 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+#test
 AUTH_USER_MODEL = "biospecimen.User"
 LOGIN_REDIRECT_URL = '/'
 # LOGIN_URL = '/'

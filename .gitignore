@@ -9,4 +9,4 @@ biospecimen/__init__.py
 biospecimen/fixtures
 parameters.py
 settings.py
-CharmBiospecimenTracking/settings.py
+/CharmSampleTracking/settings.py
