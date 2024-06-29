@@ -21,8 +21,9 @@ STAGING_OR_PRODUCTION = False
 if 'DJANGO_DEBUG_FALSE' in os.environ:
     DEBUG = False
     SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-    ALLOWED_HOSTS = [os.environ['SITENAME']]
+    ALLOWED_HOSTS = [os.environ['SITENAME'],'https://35.8.124.21:443/']
     STAGING_OR_PRODUCTION=False
+    CSRF_TRUSTED_ORIGINS = ['https://charmbiospecimen.epidemiology.epi.msu.edu']
 else:
     DEBUG=True
     SECRET_KEY = 'django-insecure-tw4p8+j%-fr8qv7g999lv-_&q)_l!4w41h4*t5%=g(y2x*8zih'
