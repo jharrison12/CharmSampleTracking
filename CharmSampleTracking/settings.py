@@ -18,16 +18,21 @@ logging.basicConfig(level=logging.CRITICAL)
 
 STAGING_OR_PRODUCTION = False
 
-if 'DJANGO_DEBUG_FALSE' in os.environ:
+if 'DJANGO_DEBUG_FALSE' in os.environ and 'PRODUCTION' in os.environ:
     DEBUG = False
     SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
     ALLOWED_HOSTS = [os.environ['SITENAME'],'https://35.8.124.21:443/']
     STAGING_OR_PRODUCTION=False
     CSRF_TRUSTED_ORIGINS = ['https://charmbiospecimen.epidemiology.epi.msu.edu']
+elif 'STAGING' in os.environ:
+    DEBUG=True
+    SECRET_KEY = 'django-insecure-tw4p8+j%-fr8qv7g999lv-_&q)_l!4w41h4*t5%=g(y2x*8zih'
+    ALLOWED_HOSTS = ['localhost','35.8.124.21']
+    STAGING_OR_PRODUCTION=True
 else:
     DEBUG=True
     SECRET_KEY = 'django-insecure-tw4p8+j%-fr8qv7g999lv-_&q)_l!4w41h4*t5%=g(y2x*8zih'
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['*']
     STAGING_OR_PRODUCTION=True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -105,8 +110,30 @@ WSGI_APPLICATION = 'CharmSampleTracking.wsgi.application'
 # }
 
 
-if 'PRODUCTION' in os.environ:
+if 'DJANGO_DEBUG_FALSE' in os.environ and 'PRODUCTION' in os.environ and 'STAGING' not in os.environ:
     #Update with production connection variables
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ['PRODUCTION_DB_NAME'],
+            'USER': 'root',
+            'PASSWORD': os.environ['PRODUCTION_DB_PASSWORD'],
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
+    }
+elif 'STAGING' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ['STAGING_DB_NAME'],
+            'USER': 'root',
+            'PASSWORD': os.environ['STAGING_DB_PASSWORD'],
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
+    }
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -115,18 +142,6 @@ if 'PRODUCTION' in os.environ:
             'PASSWORD': PASSWORD,
             'HOST': 'localhost',
             'PORT': '3306',
-        }
-    }
-else:
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'charm_bio_track',
-            'USER': 'root',
-            'PASSWORD': PASSWORD,
-            'HOST':'localhost',
-            'PORT':'3306',
         }
     }
 
@@ -184,6 +199,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'msuechonotifications@gmail.com'
-EMAIL_HOST_PASSWORD = parameters.EMAIL_PASSWORD
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD',parameters.EMAIL_PASSWORD)
 
 DATETIME_FORMAT = "%m/%d/%Y %H:%M:%S"
